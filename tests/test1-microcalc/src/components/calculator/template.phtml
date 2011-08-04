@@ -1,0 +1,114 @@
+<style>
+.calculator
+{
+    margin: 14px auto;
+    width: 228px;
+    height: 322px;
+    background: url(~/calculator-fon.png) no-repeat;
+}
+
+.calculator div
+{
+    float: left;
+}
+
+.calculator-history, .calculator-number
+{
+    text-align: right;
+    font-family: Tahoma;
+}
+
+.calculator-history
+{
+    width: 177px;
+    margin-left: 25px;
+    margin-top: 64px;
+    font-size: 11px;
+    line-height: 12px;
+    color: #334;
+    overflow-x: hidden;
+    white-space: nowrap;
+}
+
+.calculator-memory
+{
+    float:left;
+    font-size: 13px;
+    margin-left: 20px;
+    padding-top: 10px;
+    padding-left: 5px;
+    visibility: hidden;
+}
+
+.calculator-number
+{
+    width: 168px;
+    color: #556;
+    font-size: 22px;
+}
+
+.calculator-number.calculator-number-small
+{
+    font-size: 16px;
+    padding-top: 6px;
+}
+.calculator-number.calculator-number-tiny
+{
+    font-size: 11px;
+    padding-top: 10px;
+}
+
+.calculator-buttons
+{
+    padding-top: 12px;
+    padding-left: 19px;
+    padding-bottom: 8px;
+}
+
+.calculator-buttons .button
+{
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+</style>
+
+<div id="calculator" class="calculator">
+    <div id="history" class="calculator-history">&nbsp;</div>
+    <div style="height: 27px">
+        <div id="memory" class="calculator-memory">M</div>
+        <div id="number" class="calculator-number">0</div>
+    </div>
+    <div class="calculator-buttons">
+        <syq:button id="bt_MC" clas="button-mem" text="MC" />
+        <syq:button id="bt_MR" clas="button-mem" text="MR" />
+        <syq:button id="bt_MS" clas="button-mem" text="MS" />
+        <syq:button id="bt_MP" clas="button-mem" text="M+" />
+        <syq:button id="bt_MM" clas="button-mem" text="M-" />
+        <syq:button id="bt_BS" clas="button-op" text="←" style="font: bold 20px Verdana; line-height: 21px" />
+        <syq:button id="bt_CE" clas="button-op" text="CE" />
+        <syq:button id="bt_C"  clas="button-op" text="C" />
+        <syq:button id="bt_SIGN" clas="button-op" text="±" style="font-family: Arial" />
+        <syq:button id="bt_SQRT" clas="button-op" text="√" style="font: 8px Verdana; line-height: 27px" />
+        <syq:button id="bt_7" clas="button-num" text="7" />
+        <syq:button id="bt_8" clas="button-num" text="8" />
+        <syq:button id="bt_9" clas="button-num" text="9" />
+        <syq:button id="bt_DIV" clas="button-op" text="/" style="font-size: 9px" />
+        <syq:button id="bt_PERCENT" clas="button-op" text="%" />
+        <syq:button id="bt_4" clas="button-num" text="4" />
+        <syq:button id="bt_5" clas="button-num" text="5" />
+        <syq:button id="bt_6" clas="button-num" text="6" />
+        <syq:button id="bt_MUL" clas="button-op" text="*" style="font-size: 11px; line-height: 31px" />
+        <syq:button id="bt_OBR" clas="button-op" text="1/x" style="font-size: 12px; line-height: 25px" />
+        <div style="float:left; width: 156px">
+            <syq:button id="bt_1" clas="button-num" text="1" />
+            <syq:button id="bt_2" clas="button-num" text="2" />
+            <syq:button id="bt_3" clas="button-num" text="3" />
+            <syq:button id="bt_SUB" clas="button-op" text="–" style="font-size: 11px" />
+            <syq:button id="bt_0" clas="button-0" text="0" />
+            <syq:button id="bt_POINT" clas="button-num" text="," />
+            <syq:button id="bt_ADD" clas="button-op" text="+" />
+        </div>
+        <syq:button id="bt_EQU" clas="button-equ" text="=" style="font-size: 22px; line-height: 54px" />
+    </div>
+    <div class="clearfix">&nbsp;</div>
+</div>
