@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<project>
+  <!-- Output SWF options -->
+  <output>
+    <movie disabled="False" />
+    <movie input="" />
+    <movie path="bin" />
+    <movie fps="0" />
+    <movie width="0" />
+    <movie height="0" />
+    <movie version="13" />
+    <movie background="#FFFFFF" />
+  </output>
+  <!-- Other classes to be compiled into your SWF -->
+  <classpaths>
+    <class path="..\..\src" />
+    <class path="src" />
+  </classpaths>
+  <!-- Build options -->
+  <build>
+    <option directives="" />
+    <option flashStrict="False" />
+    <option mainClass="Main" />
+    <option enabledebug="True" />
+    <option additional="" />
+  </build>
+  <!-- haxelib libraries -->
+  <haxelib>
+    <!-- example: <library name="..." /> -->
+  </haxelib>
+  <!-- Class files to compile (other referenced classes will automatically be included) -->
+  <compileTargets>
+    <compile path="src\Start.hx" />
+  </compileTargets>
+  <!-- Paths to exclude from the Project Explorer tree -->
+  <hiddenPaths>
+    <hidden path="nbproject" />
+    <hidden path="bin" />
+  </hiddenPaths>
+  <!-- Executed before build -->
+  <preBuildCommand>$(ProjectDir)\..\..\tools\build.exe prebuild -Dsrc.dir=$(ProjectDir)\src -Ddest.dir=$(OutputDir)\$(OutputName) -Dlib.dir=$(ProjectDir)\..\..</preBuildCommand>
+  <!-- Executed after build -->
+  <postBuildCommand alwaysRun="False">$(ProjectDir)\..\..\tools\build.exe postbuild -Dsrc.dir=$(ProjectDir)\src -Ddest.dir=$(OutputDir)\$(OutputName) -Dlib.dir=$(ProjectDir)\..\..</postBuildCommand>
+  <!-- Other project options -->
+  <options>
+    <option showHiddenPaths="False" />
+    <option testMovie="OpenDocument" />
+    <option testMovieCommand="http://syquerylib-test0/" />
+  </options>
+</project>

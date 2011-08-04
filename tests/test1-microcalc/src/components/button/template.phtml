@@ -1,0 +1,48 @@
+<style>
+    .button div
+    {
+        cursor: pointer;
+        text-align: center;
+        color: #556;
+        font-size: 15px;
+        font-family: Tahoma;
+        float: none !important;
+    }
+
+    .button.button-mem div
+    {
+        font-size: 12px;
+    }
+    .button.button-op div
+    {
+        font-size: 11px;
+    }
+    .button.button-num div, .button.button-0 div
+    {
+        font-weight: bold;
+        color: #778;
+    }
+
+    .button.button-0 { clear:left; }
+
+    .button div { position: absolute; }
+    .button .button-text { position: relative; }
+    .button .button-actFon { display: none; background-position: 0 -100% !important; }
+
+    .button-num, .button-num .button-actFon { background-image: url(~/bt_num.png); }
+    .button-mem, .button-mem .button-actFon { background-image: url(~/bt_mem.png); }
+    .button-op,  .button-op  .button-actFon { background-image: url(~/bt_op.png); }
+    .button-0,   .button-0   .button-actFon { background-image: url(~/bt_0.png); }
+    .button-equ, .button-equ .button-actFon { background-image: url(~/bt_equ.png); }
+
+    .button-num, .button-num div { width: 34px; line-height: 27px; height: 27px; }
+    .button-mem, .button-mem div { width: 34px; line-height: 27px; height: 27px; }
+    .button-op,  .button-op  div { width: 34px; line-height: 27px; height: 27px; }
+    .button-0,   .button-0   div { width: 73px; line-height: 27px; height: 27px; }
+    .button-equ, .button-equ div { width: 34px; line-height: 59px; height: 59px; }
+</style>
+
+<div id="b" class="button">
+    <div class="button-actFon">&nbsp;</div>
+    <div id="t" class="button-text"></div>
+</div>
