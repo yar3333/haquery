@@ -5,7 +5,7 @@ import php.NativeArray;
 import php.Serializable;
 import haquery.server.HaqComponent;
 
-extern class HaqXmlNode implements Serializable
+@:native("HaqXmlNode") extern class HaqXmlNode implements Serializable
 {
 	public var parent(default,null) : HaqXmlNodeElement;
     
@@ -21,7 +21,7 @@ extern class HaqXmlNode implements Serializable
     public function unserialize(serialized : String) : Void;
 }
 
-extern class HaqXmlNodeElement extends HaqXmlNode
+@:native("HaqXmlNodeElement") extern class HaqXmlNodeElement extends HaqXmlNode
 {
 	public var innerHTML : String;
 	
@@ -54,11 +54,11 @@ extern class HaqXmlNodeElement extends HaqXmlNode
     public function setInnerText(text : String) : Void;
 }
 
-extern class HaqXml extends HaqXmlNodeElement
+@:native("HaqXml") extern class HaqXml extends HaqXmlNodeElement
 {
     static function __init__() : Void
 	{
-		untyped __php__("require_once dirname(__FILE__) . '/HaqXml.php';");
+		untyped __php__("require_once dirname(__FILE__) . '/haquery/server/HaqXml.php';");
 	}
     
 	public function new(str:String = '') : Void;
@@ -66,7 +66,7 @@ extern class HaqXml extends HaqXmlNodeElement
 	public function toString() : String;
 }
 
-extern class HaqXmlNodeText extends HaqXmlNode
+@:native("HaqXmlNodeText") extern class HaqXmlNodeText extends HaqXmlNode
 {
     public var text : String;
 
@@ -76,7 +76,7 @@ extern class HaqXmlNodeText extends HaqXmlNode
     override public function unserialize(serialized:String) : Void;
 }
 
-extern class HaqXmlAttribute
+@:native("HaqXmlAttribute") extern class HaqXmlAttribute
 {
     public var name : String;
     public var value : String;
@@ -86,7 +86,7 @@ extern class HaqXmlAttribute
     public function __toString() : String;
 }
 
-extern class HaqXmlParser
+@:native("HaqXmlParser") extern class HaqXmlParser
 {
 	static public function parse(str : String) : NativeArray;
 }

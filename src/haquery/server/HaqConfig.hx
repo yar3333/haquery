@@ -1,13 +1,14 @@
 #if php
 package haquery.server;
+
 /**
  * Хранит настройки приложения.
  * Реальные настройки следует прописывать в отдельных файлах в папке /configs сайта.<br />
  * Например, в файле настроек по-умолчанию /configs/default.php:<br />
  * <code>
  * <?php<br />
- * HaQuery::$config->dbType = 'mysql';<br />
- * HaQuery::$config->isTraceProfiler = true;<br />
+ * HaQuery.config.db.type = 'mysql';<br />
+ * HaQuery.config.isTraceProfiler = true;<br />
  * ?>
  * </code>
  * <br />
@@ -17,31 +18,8 @@ package haquery.server;
  */
 class HaqConfig
 {
-    /**
-     * Настройки подключения к БД: тип СУБД (например, 'mysql').
-     */
-    public var dbType : String;
-
-    /**
-     * Настройки подключения к БД: hostname или IP сервера СУБД.
-     */
-    public var dbServer : String;
-
-    /**
-     * Настройки подключения к БД: имя пользователя.
-     */
-    public var dbUsername : String;
-
-    /**
-     * Настройки подключения к БД: пароль.
-     */
-    public var dbPassword : String;
-
-    /**
-     * Настройки подключения к БД: имя БД.
-     */
-    public var dbDatabase : String;
-
+    public var db : { type:String, host:String, user:String, pass:String, database:String };
+	
     /**
      * Вызывать ли session_start() при старте.
      */
@@ -62,12 +40,6 @@ class HaqConfig
     public var sqlTraceLevel : Int;
 
     /**
-     * Считать ли ошибки выполнения SQL-запросов критичными и, соответственно,
-     * прерывать ли выполнение скрипта, когда такая ошибка возникает.
-     */
-    public var stopOnSqlError : Bool;
-
-    /**
      * Логгировать ли информацию о загрузке компонентов.
      */
     public var isTraceComponent : Bool;
@@ -80,38 +52,31 @@ class HaqConfig
     /**
      * Выводить в лог только если IP пользователя равен данному (пустое поле означает выводить всё).
      */
-    public var traceFilter_IP : String;
+    public var filterTracesByIP : String;
 
     /**
      * Произвольные данные.
      */
     public var custom : Dynamic;
 
-    /**
-     * Ассоциативный массив ключей и значений 
-     * для подстановки в исходный HTML-текст страницы.
-     * @var array 
-     */
-    public var consts : Hash<String>;
-	
 	public var componentsFolders(default, null) : Array<String>;
 	
 	public function new() : Void
 	{
-		dbType = '';
-		dbServer = '';
-		dbUsername = '';
-		dbPassword = '';
-		dbDatabase = '';
+		db = {
+			 type : null
+			,host : null
+			,user : null
+			,pass : null
+			,database : null
+		};
 		autoSessionStart = true;
 		autoDatabaseConnect = true;
 		sqlTraceLevel = 1;
-		stopOnSqlError = true;
 		isTraceComponent = false;
 		isTraceProfiler = false;
-		traceFilter_IP = '';
+		filterTracesByIP = '';
 		custom = null;
-		consts = new Hash<String>();
 		componentsFolders = new Array<String>();
 	}
 }

@@ -57,7 +57,7 @@
     	    <arg value="-cp"/><arg value="${lib.dir}${file.separator}src"/>
     	    <arg value="-cp"/><arg value="${src.dir}"/>
     	    <arg value="-js"/>
-    	    <arg value="${dest.dir}${file.separator}support${file.separator}syquery.js"/>
+    	    <arg value="${dest.dir}${file.separator}support${file.separator}haquery.js"/>
     	    <arg value="-main"/><arg value="Main"/>
     	    <arg value="-debug"/>
     	</exec>
