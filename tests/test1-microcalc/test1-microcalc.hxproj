@@ -38,14 +38,13 @@
     <hidden path="bin" />
   </hiddenPaths>
   <!-- Executed before build -->
-  <preBuildCommand>$(ProjectDir)\..\..\tools\build.exe prebuild -Dsrc.dir=$(ProjectDir)\src -Ddest.dir=$(OutputDir)\$(OutputName) -Dlib.dir=$(ProjectDir)\..\.. -Ddatabase.connection=mysql://root:123456@localhost/test
-</preBuildCommand>
+  <preBuildCommand>$(ProjectDir)\..\..\tools\build.exe prebuild -Dsrc.dir=$(ProjectDir)\src -Ddest.dir=$(OutputDir)\$(OutputName) -Dlib.dir=$(ProjectDir)\..\.. -Ddatabase.connection=mysql://root:123456@localhost/test</preBuildCommand>
   <!-- Executed after build -->
   <postBuildCommand alwaysRun="False">$(ProjectDir)\..\..\tools\build.exe postbuild -Dsrc.dir=$(ProjectDir)\src -Ddest.dir=$(OutputDir)\$(OutputName) -Dlib.dir=$(ProjectDir)\..\..</postBuildCommand>
   <!-- Other project options -->
   <options>
     <option showHiddenPaths="False" />
-    <option testMovie="Custom" />
-    <option testMovieCommand="http://syquerylib-microcalc/" />
+    <option testMovie="OpenDocument" />
+    <option testMovieCommand="http://syquerylib-test1/" />
   </options>
 </project>
