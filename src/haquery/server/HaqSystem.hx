@@ -121,7 +121,7 @@ class HaqSystem
             }
 
             var component = page.findComponent(componentID);
-            if (component==null) HaQuery.error("Component id = '" + componentID + "' not found!");
+            if (component==null) throw "Component id = '" + componentID + "' not found.";
             var handler = controlID + '_' + php.Web.getParams().get('HAQUERY_EVENT');
             Reflect.callMethod(component, handler, null);
 

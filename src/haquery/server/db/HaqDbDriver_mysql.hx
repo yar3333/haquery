@@ -27,20 +27,19 @@ class HaqDbDriver_mysql implements HaqDbDriver
         if (HaQuery.config.sqlTraceLevel>=2) trace("SQL QUERY: " + sql);
         var r = connection.request(sql);
         var errno:Int = untyped __call__('mysql_errno');
-        if (errno != 0 && HaQuery.config.stopOnSqlError)
+        if (errno != 0)
         {
-            HaQuery.error(
-				  "sql query error:"
-				+ "\nSQL QUERY: " + sql 
-				+ "\nSQL RESULT: " + affectedRows() + " rows affected."
-				+ " Error code = " + errno + ": " + getLastErrorMessage() + '.'
-			);
+            throw "sql query error:\n"
+				+ "SQL QUERY: " + sql + "\n"
+				+ "SQL RESULT: " + affectedRows() + " rows affected, error code = " + errno + " (" + getLastErrorMessage() + ").";
         }
         if (HaQuery.config.sqlTraceLevel>0)
         {
-            if (HaQuery.config.sqlTraceLevel==1 && errno!=0) trace("SQL QUERY: " + sql);
-            if (HaQuery.config.sqlTraceLevel>=3 || errno!=0)
-                trace("SQL RESULT: " + affectedRows() + " rows affected. Error code = " + errno + ": " + getLastErrorMessage() + '.');
+            if (HaQuery.config.sqlTraceLevel == 1 && errno != 0) trace("SQL QUERY: " + sql);
+            if (HaQuery.config.sqlTraceLevel >= 3 || errno != 0)
+			{
+                trace("SQL RESULT: " + affectedRows() + " rows affected, error code = " + errno + " (" + getLastErrorMessage() + ').');
+			}
         }
         return r;
     }
@@ -105,8 +104,8 @@ class HaqDbDriver_mysql implements HaqDbDriver
 				return "'" + date.toString() + "'";
 			}
 		}
-		HaQuery.error("Unsupported parameter type '" + Type.getClassName(Type.getClass(v)) + "'.");
-		return null;
+		
+		throw "Unsupported parameter type '" + Type.getClassName(Type.getClass(v)) + "'.";
     }
 
     public function lastInsertId() : Int

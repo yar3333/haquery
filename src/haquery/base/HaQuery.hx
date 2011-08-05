@@ -1,5 +1,7 @@
 package haquery.base;
 
+import haxe.Stack;
+
 #if php
 	import php.Lib;
 	import php.Web;
@@ -14,6 +16,7 @@ package haquery.base;
 	import haquery.server.HaqRoute;
 	import haquery.server.HaqBootstrap;
 	import haquery.server.HaqSystem;
+	import haquery.server.db.HaqDb;
 #else
 	import haxe.Firebug;
 	import js.Lib;
@@ -59,19 +62,10 @@ class HaQuery
 				Session.start();
 			}
 
-			/*if (HaQuery.config.autoDatabaseConnect)
+			if (config.autoDatabaseConnect && config.db.type!=null)
 			{
-				//if (HaqDb.connect())
-				{
-					if (!php.FileSystem.exists(HaqOrm.getFilePath()))
-					{
-						HaQuery.trace("generation ORM");
-						ob_start();
-						HaqOrm.makeAll();
-						ob_end_clean();
-					}
-				}
-			}*/
+				HaqDb.connect(HaQuery.config.db);
+			}
 			
 			if (route.routeType == HaqRouteType.file)
 			{
@@ -110,7 +104,7 @@ class HaQuery
 		#end
 	}
 
-    static public function error(message:String, ?pos : haxe.PosInfos)
+    /*static public function error(message:String, ?pos : haxe.PosInfos)
     {
 		#if php
 			var stack : Array<NativeArray> = untyped Lib.toHaxeArray(untyped __call__('debug_backtrace'));
@@ -136,11 +130,11 @@ class HaQuery
 					if (row.exists('args'))
 					{
 						var argsArray = Lib.toHaxeArray(row.get('args'));
-						/*if (argsArray.length >= 4)
-						{
-							var args3 : Array<Dynamic> = Lib.toHaxeArray(argsArray[3]);
-							if (args3!=null) args = args3.join("\n\t\t");
-						}*/
+						//if (argsArray.length >= 4)
+						//{
+						//	var args3 : Array<Dynamic> = Lib.toHaxeArray(argsArray[3]);
+						//	if (args3!=null) args = args3.join("\n\t\t");
+						//}
 					}
 					text+= args!='' ? "\t\t" + args + "\n" : '';
 				}
@@ -158,12 +152,16 @@ class HaQuery
 			stack = stack.substr(stack.indexOf('\n')+1);
 			throw message + "\nStack trace:\n" + stack;
 		#end
-    }
+    }*/
 	
 	#if debug
 		static public function assert(e:Bool, errorMessage:String=null, ?pos : haxe.PosInfos) : Void
 		{
-			if (!e) error(errorMessage!=null ? errorMessage : "ASSERT", pos);
+			if (!e) 
+			{
+				if (errorMessage == null) errorMessage = "ASSERT";
+				throw errorMessage + " in " + pos.fileName + ' at line ' + pos.lineNumber;
+			}
 		}
 	#else
 		static public inline function assert(e:Bool, ?pos : haxe.PosInfos) : Void
@@ -199,14 +197,14 @@ class HaQuery
 		 */
 		static public function path2url(path:String) : String
 		{   
-			path = FileSystem.fullPath(path).replace("\\", '/');
+			var realPath = FileSystem.fullPath('').replace("\\", '/') + '/' + path.trim('/\\');
 			var rootPath:String = StringTools.replace(Web.getDocumentRoot(), "\\", '/');
-			if (!StringTools.startsWith(path, rootPath))
+			if (!StringTools.startsWith(realPath, rootPath))
 			{
-				HaQuery.error("Can't resolve path '" + path + "'.");
+				throw "Can't resolve path '" + path + "' with realPath = '" + realPath + "' and rootPath = '" + rootPath + "'.";
 			}
 			var n = rootPath.length;
-			var s = path.substr(n);
+			var s = realPath.substr(n);
 			return '/' + s.ltrim('/');
 		}
 		
@@ -222,9 +220,9 @@ class HaQuery
 		
 		static function trace(v:Dynamic, ?pos : haxe.PosInfos) : Void
 		{
-			if (HaQuery.config.traceFilter_IP!='')
+			if (HaQuery.config.filterTracesByIP!='')
 			{
-				if (HaQuery.config.traceFilter_IP!=Web.getClientIP()) return;
+				if (HaQuery.config.filterTracesByIP!=Web.getClientIP()) return;
 			}
 			
 			var text = '';
@@ -233,9 +231,8 @@ class HaQuery
 			if (!isNull(v))
 			{
 				text = "DUMP " + pos.fileName + ":" + pos.lineNumber + "\n";
-				var dump = '';
-				untyped __php__("ob_start(); var_dump($v); $dump = ob_get_clean();");
-				text += StringTools.htmlUnescape(StringTools.stripTags(dump));
+				var dump = ''; untyped __php__("ob_start(); var_dump($v); $dump = ob_get_clean();");
+				text += dump;
 			}
 
 			var tempDir = HaQuery.folders.temp;
@@ -244,12 +241,40 @@ class HaQuery
 				FileSystem.createDirectory(tempDir);
 			}
 			
+			if (text!='') Lib.println("<script>if (console) console.debug(decodeURIComponent(\"" + StringTools.urlEncode(text) + "\"));</script>");
+			
 			var f : FileOutput = php.io.File.append(tempDir + "haquery.log", false);
 			if (f != null)
 			{
-				f.writeString(text!=null ? StringTools.format('%.3f', Date.now().getTime()-startTime)+" HAQUERY "+StringTools.replace(text, "\n", "\n\t")+"\n" : "\n");
+				f.writeString(text != null ? StringTools.format('%.3f', Date.now().getTime() - startTime) + " HAQUERY " + StringTools.replace(text, "\n", "\n\t") + "\n" : "\n");
 				f.close();
 			}
+		}
+		
+		public static function traceException(e:Dynamic) : Void
+		{
+			var text = "HAXE EXCEPTION: " + Std.string(e) + "\n"
+					 + "Stack trace:" + Stack.toString(Stack.exceptionStack()).replace('\n', '\n\t');
+			var nativeStack : Array<Hash<Dynamic>> = Stack.nativeExceptionStack();
+			assert(nativeStack != null);
+			text += "\n\n";
+			text += "NATIVE EXCEPTION: " + Std.string(e) + "\n";
+			text += "Stack trace:\n";
+			for (row in nativeStack)
+			{
+				text += "\t";
+				if (row.exists('class')) text += row.get('class') + row.get('type');
+				text += row.get('function');
+
+				if (row.exists('file'))
+				{
+					text += " in " + row.get('file') + " at line " + row.get('line') + "\n";
+				}
+				else
+					text += "\n";
+			}
+			trace(text);
+			Sys.exit(1);
 		}
 	#end
 }

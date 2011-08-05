@@ -1,5 +1,5 @@
 <?php
-class haquery_server_HaqProfiler
+class HaqProfiler
 {
     private static $blocks = array();
     private static $opened = array();
@@ -75,14 +75,14 @@ class haquery_server_HaqProfiler
 
     static function getTotalResults()
     {
-        $f = HaqSystem::getUserSitePath().'temp/profiler.data';
+        $f = 'temp/profiler.data';
         if (!is_file($f)) return array(0,array());
         return unserialize(file_get_contents($f));
     }
 
     static function resetTotalResults()
     {
-        $f = HaqSystem::getUserSitePath().'temp/profiler.data';
+        $f = 'temp/profiler.data';
         @unlink($f);
     }
 }

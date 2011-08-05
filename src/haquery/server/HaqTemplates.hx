@@ -77,7 +77,7 @@ class HaqTemplates
 		
 		if (r.doc == null && r.serverHandlers == null && r.clas == null)
 		{
-			HaQuery.error('Component "'+tag+'" not found.');
+			throw 'Component "'+tag+'" not found.';
 		}
 		
 		if (r.clas == null) r.clas = haquery.server.HaqComponent;
@@ -220,7 +220,7 @@ class HaqTemplates
 	{
 		path = FileSystem.fullPath(path).replace('\\', '/').rtrim('/');
 		var basePath = FileSystem.fullPath('').replace('\\', '/').rtrim('/');
-		if (!path.startsWith(basePath)) HaQuery.error('path2relative with path = ' + path);
+		if (!path.startsWith(basePath)) throw 'path2relative with path = ' + path;
 		path = path.substr(basePath.length + 1);
 		return path.length > 0 ? path + '/' : '';
 	}

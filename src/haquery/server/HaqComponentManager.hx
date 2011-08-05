@@ -75,7 +75,7 @@ class HaqComponentManager
 	
 	static function getNameByTag(tag:String) : String
     {
-        if (!tag.startsWith('haq:')) HaQuery.error ('Component tag "'+tag+'" must started with "haq:".');
+        if (!tag.startsWith('haq:')) throw "Component tag '"+tag+"' must started with 'haq:' prefix.";
 		return tag.substr("haq:".length).toLowerCase().split('-').join('_');
     }
 	

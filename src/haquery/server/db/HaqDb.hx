@@ -2,7 +2,7 @@ package haquery.server.db;
 
 import php.Lib;
 import php.db.Mysql;
-import haquery.server.HaQuery;
+//import haquery.server.HaQuery;
 import haquery.server.db.HaqDbDriver;
 import haquery.server.db.HaqDbDriver_mysql;
 import haquery.server.HaqProfiler;
@@ -17,25 +17,15 @@ class HaqDb
 {
     static public var connection : HaqDbDriver = null;
 
-    static public function connect(dbType:String=null, dbServer:String=null, dbUsername:String=null, dbPassword:String=null, dbDatabase:String=null) : Bool
+    static public function connect(params : { type:String, host:String, user:String, pass:String, database:String }) : Bool
     {
 		if (connection != null) return true;
-        
-        if (dbType == null)
-        {
-            dbType = HaQuery.config.dbType;
-            dbServer = HaQuery.config.dbServer;
-            dbUsername = HaQuery.config.dbUsername;
-            dbPassword = HaQuery.config.dbPassword;
-            dbDatabase = HaQuery.config.dbDatabase;
-        }
-        if (dbType!=null && dbServer!=null && dbDatabase!=null)
-        {
-            connection = Type.createInstance(Type.resolveClass('haquery.server.db.HaqDbDriver_' + dbType), [dbServer, dbUsername, dbPassword, dbDatabase]);
-            return true;
-        }
-
-        return false;
+		connection = Type.createInstance(
+			Type.resolveClass(
+				'haquery.server.db.HaqDbDriver_' + params.type), 
+				[ params.host, params.user, params.pass, params.database ]
+			);
+		return true;
     }
 
     /**
