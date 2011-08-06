@@ -1,9 +1,8 @@
 package haquery.server;
 
-import php.Lib;
-import haquery.server.HaQuery;
 import haquery.server.HaqComponent;
 import haquery.server.HaqXml;
+import php.Lib;
 
 class HaqComponentManager 
 {

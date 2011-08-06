@@ -1,9 +1,9 @@
 package haquery.server;
 
+import haquery.server.HaQuery;
+import haquery.server.HaqXml;
 import php.Lib;
 import php.NativeArray;
-import haquery.server.HaqXml;
-import haquery.server.HaQuery;
 
 /**
  * Серверный (php-шный) аналог jQuery.
