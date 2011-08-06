@@ -1,15 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project>
+<project version="2">
   <!-- Output SWF options -->
   <output>
-    <movie disabled="False" />
+    <movie outputType="Application" />
     <movie input="" />
     <movie path="bin" />
     <movie fps="0" />
     <movie width="0" />
     <movie height="0" />
-    <movie version="13" />
+    <movie version="0" />
+    <movie minorVersion="0" />
+    <movie platform="PHP" />
     <movie background="#FFFFFF" />
+    <movie preferredSDK="HaXe;;d:\MyProg\_tools\motion-twin\haxe\modified\bin" />
   </output>
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
@@ -47,4 +50,6 @@
     <option testMovie="OpenDocument" />
     <option testMovieCommand="http://haquerylib-test1/" />
   </options>
+  <!-- Plugin storage -->
+  <storage />
 </project>
