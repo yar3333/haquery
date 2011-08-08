@@ -111,7 +111,7 @@ class HaqTemplates
 			}
 			if (!FileSystem.exists(Path.directory(stylesFilePath)))
 			{
-				FileSystem.createDirectory(Path.directory(stylesFilePath));
+				createDirectory(Path.directory(stylesFilePath));
 			}
 			File.putContent(stylesFilePath, css);
 			File.putContent(dataFilePath, Lib.serialize(data));
@@ -244,5 +244,12 @@ class HaqTemplates
         }
         s = s.rtrim("\n,") + "\n];";
 		return s;
+	}
+	
+	static function createDirectory(path:String)
+	{
+		var parentPath = Path.directory(path);
+		if (parentPath != null && parentPath != '' && !FileSystem.exists(parentPath)) createDirectory(parentPath);
+		FileSystem.createDirectory(path);
 	}
 }

@@ -77,7 +77,7 @@ class HaqConfig
 		isTraceProfiler = false;
 		filterTracesByIP = '';
 		custom = null;
-		componentsFolders = new Array<String>();
+		componentsFolders = [ 'haquery/components' ];
 	}
 }
 #end

@@ -12,28 +12,14 @@ import haquery.server.HaqComponent;
 import haquery.server.HaqProfiler;
 import haquery.server.HaqRoute;
 
-/**
- * Класс обеспечивает управление приложением на HaQuery.
- * Выполняет:
- * поиск и компиляцию компонентов,
- * разбор ЧПУ (человеко-понятного URL),
- * формирование HTML,
- * перенаправление ajax-вызовов.
- */
 class HaqSystem
 {
     public function new(route:HaqRoute) : Void
     {
-		var beginTime = Date.now().getTime();
+		var startTime = Date.now().getTime();
 
         trace(null);
-        trace(
-            "init(" + route.pagePath + ") "//+   time2db(time())
-            //+"\nsitePath = "+HaQuery.getSitePath()
-            //+"\nsiteUrl = "+HaQuery.getSiteUrl()
-            +"\nHTTP_HOST = " + Web.getHttpHost()
-            +"\nclientIP = " + Web.getClientIP()
-        );
+        trace("HAQUERY START route.pagePath = " + route.pagePath + ", HTTP_HOST = " + Web.getHttpHost() + ", clientIP = " + Web.getClientIP());
 
         HaqProfiler.begin('HaqSystem::init(): build components');
             var templates = new HaqTemplates(HaQuery.config.componentsFolders);
@@ -130,8 +116,7 @@ class HaqSystem
             Lib.print('HAQUERY_OK' + HaqInternals.getAjaxAnswer());
         }
 
-        var endTime = Date.now().getTime();
-        trace(StringTools.format("page rendered %.3f s", endTime-beginTime) /*+ StringTools.format(", %d component files included", HaqSystem.includeCount)*/);
+        trace(StringTools.format("HAQUERY FINISH %.5f s", Date.now().getTime()-startTime));
 
         if (HaQuery.config.isTraceProfiler)
         {
