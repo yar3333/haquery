@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="haquery">
-	<target name="pre-build" depends="gen-import-components" />
+	<target name="pre-build" depends="gen-imports" />
 	
 	<target name="post-build">
 		<antcall target="build-js" />
@@ -14,29 +14,54 @@
 		</antcall>
 	</target>
 	
-    <target name="gen-import-components" description="Generates dummy class importing component classes">
-    	<echo message="Generate imports from path ${src.dir}" />
+    <target name="gen-imports" description="Generates dummy class importing other classes">
     	
-        <pathconvert property="import.server.component.classes" pathsep="${line.separator}">
-            <fileset dir="${src.dir}">
-                <include name="**/Server.hx"/>
-                <include name="**/Bootstrap.hx"/>
-            </fileset>
-            <packagemapper from="${src.dir}${file.separator}*.hx" to="import *;"/>
-        </pathconvert>
+    	<property name="lib.dir.src.abspath" location="${lib.dir}${file.separator}src" />
+    	<echo message="Generate imports from path ${lib.dir.src.abspath}" />
+	    	<pathconvert property="lib.server.classes" pathsep="${line.separator}">
+	            <fileset dir="${lib.dir.src.abspath}">
+	                <include name="**${file.separator}Server.hx"/>
+	            </fileset>
+	            <packagemapper from="${lib.dir.src.abspath}${file.separator}*.hx" to="import *;"/>
+	        </pathconvert>
+	    	<echo message="${lib.server.classes}" />
+	        
+	    	<pathconvert property="lib.client.classes" pathsep="${line.separator}">
+	            <fileset dir="${lib.dir.src.abspath}">
+	                <include name="**${file.separator}Client.hx"/>
+	            </fileset>
+	            <packagemapper from="${lib.dir.src.abspath}${file.separator}*.hx" to="import *;"/>
+	        </pathconvert>
+    		<echo message="${lib.client.classes}" />
+    	
+    	<property name="src.dir.abspath" location="${src.dir}" />
+    	<echo message="Generate imports from path ${src.dir.abspath}" />
+	    	<pathconvert property="src.server.classes" pathsep="${line.separator}">
+	            <fileset dir="${src.dir.abspath}">
+	                <include name="**${file.separator}Server.hx"/>
+	                <include name="**${file.separator}Bootstrap.hx"/>
+	            </fileset>
+	            <packagemapper from="${src.dir.abspath}${file.separator}*.hx" to="import *;"/>
+	        </pathconvert>
+			<echo message="${src.server.classes}" />
+	        
+	    	<pathconvert property="src.client.classes" pathsep="${line.separator}">
+	            <fileset dir="${src.dir.abspath}">
+	                <include name="**${file.separator}Client.hx"/>
+	            </fileset>
+	            <packagemapper from="${src.dir.abspath}${file.separator}*.hx" to="import *;"/>
+	        </pathconvert>
+			<echo message="${src.client.classes}" />
         
-    	<pathconvert property="import.client.component.classes" pathsep="${line.separator}">
-            <fileset dir="${src.dir}">
-                <include name="**/Client.hx"/>
-            </fileset>
-            <packagemapper from="${src.dir}${file.separator}*.hx" to="import *;"/>
-        </pathconvert>
-        
-    	<property name="import.dest.path" value="${src.dir}/ImportComponents.hx"/>
+    	<property name="import.dest.path" value="${src.dir}/Imports.hx"/>
     	<echo file="${import.dest.path}" message="#if php${line.separator}" />
-    	<echo file="${import.dest.path}" message="${import.server.component.classes}" append="true" />
+    	<echo file="${import.dest.path}" message="${lib.server.classes}" append="true" />
+    	<echo file="${import.dest.path}" message="${line.separator}" append="true" />
+    	<echo file="${import.dest.path}" message="${src.server.classes}" append="true" />
     	<echo file="${import.dest.path}" message="${line.separator}#else${line.separator}" append="true" />
-    	<echo file="${import.dest.path}" message="${import.client.component.classes}" append="true" />
+    	<echo file="${import.dest.path}" message="${lib.client.classes}" append="true" />
+    	<echo file="${import.dest.path}" message="${line.separator}" append="true" />
+    	<echo file="${import.dest.path}" message="${src.client.classes}" append="true" />
     	<echo file="${import.dest.path}" message="${line.separator}#end" append="true" />
     </target>
 	
@@ -61,7 +86,6 @@
     	    <arg value="-main"/><arg value="Main"/>
     	    <arg value="-debug"/>
     	</exec>
-    	<echo message="${haxe.output}" />
     </target>
 	
 	<target name="gen-orm">

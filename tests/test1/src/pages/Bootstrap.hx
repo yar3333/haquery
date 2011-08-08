@@ -1,4 +1,3 @@
-#if php
 package pages;
 
 import haquery.server.HaqBootstrap;
@@ -15,5 +14,3 @@ class Bootstrap implements HaqBootstrap
 		config.componentsFolders.push('components');
 	}
 }
- 
-#end

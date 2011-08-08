@@ -101,6 +101,9 @@ class HaqComponent
 	public function connectEventHandlers(child:Component, event:HaqEvent) : Void
 	{
 		var handlerName = child.id + '_' + event.name;
+		/*var hasMethod = false;
+		try { hasMethod = Reflect.hasMethod(this, handlerName); } catch (e:Dynamic) {}*/
+		//if (hasMethod)
 		if (Reflect.hasMethod(this, handlerName))
 		{
 			event.bind(cast(this, Component), Reflect.field(this, handlerName));
@@ -137,6 +140,6 @@ class HaqComponent
 	public function getNextAnonimID() : String
 	{
 		nextAnonimID++;
-		return Std.string(nextAnonimID);
+		return "haqc_" + Std.string(nextAnonimID);
 	}
 }
