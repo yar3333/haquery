@@ -74,7 +74,7 @@ class HaqSystem
                 // вставляем подключение haquery.js и styles.css
                 var incCss = Lambda.map(templates.getStyleFilePaths(), function(path:String):String { return getCssLink(path); } ).join('\n        ')
 						   + (pageInfo.css != '' ? "\n      <style>" + pageInfo.css + "</style>" : '');
-				var incJs = [ getScriptLink('support/jquery.js'), getScriptLink('support/haquery.js') ].join('\n        ');
+				var incJs = [ getScriptLink('haquery/client/jquery.js'), getScriptLink('haquery/client/haquery.js') ].join('\n        ');
 				
 				//var reCloseHead = new EReg('\\s*</head>', '');
 				//var closeHeadTagPos = reCloseHead.match(html) ?reCloseHead.matchedPos().pos : html.length;

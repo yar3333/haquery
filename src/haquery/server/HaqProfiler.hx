@@ -4,7 +4,7 @@ package haquery.server;
 {
     static function __init__() : Void
 	{
-		untyped __php__("require_once dirname(__FILE__) . '/haquery/server/HaqProfiler.php';");
+		untyped __php__("require_once 'haquery/server/HaqProfiler.php';");
 	}
 	
 	static public function begin(name:String) : Void;
