@@ -95,4 +95,35 @@
     	    <arg value="${src.dir}"/>
     	</exec>
 	</target>
+	
+	<target name="gen-doc">
+		<mkdir dir="${doc.dir}${file.separator}server"/>
+		<exec executable="haxe">
+    	    <arg value="-cp"/><arg value="${lib.dir}${file.separator}src"/>
+    	    <arg value="-cp"/><arg value="${src.dir}" />
+			<arg value="-php"/><arg value="${doc.dir}${file.separator}temp" />
+    	    <arg value="-main"/><arg value="Main" />
+    	    <arg value="-xml"/>
+    	    <arg value="${doc.dir}${file.separator}server${file.separator}content.xml"/>
+    	</exec>
+		<delete dir="${doc.dir}${file.separator}temp"/>
+		<exec executable="haxedoc" dir="${doc.dir}${file.separator}server">
+			<arg value="content.xml"/>
+    	</exec>
+		<delete file="${doc.dir}${file.separator}server${file.separator}content.xml"/>
+		
+		<mkdir dir="${doc.dir}${file.separator}client"/>
+		<exec executable="haxe">
+    	    <arg value="-cp"/><arg value="${lib.dir}${file.separator}src"/>
+    	    <arg value="-cp"/><arg value="${src.dir}" />
+			<arg value="-js"/><arg value="nul" />
+    	    <arg value="-main"/><arg value="Main" />
+    	    <arg value="-xml"/>
+    	    <arg value="${doc.dir}${file.separator}client${file.separator}content.xml"/>
+    	</exec>
+		<exec executable="haxedoc" dir="${doc.dir}${file.separator}client">
+			<arg value="content.xml"/>
+    	</exec>
+		<delete file="${doc.dir}${file.separator}client${file.separator}content.xml"/>
+	</target>
 </project>

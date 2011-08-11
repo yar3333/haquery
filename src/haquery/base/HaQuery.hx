@@ -164,7 +164,7 @@ class HaQuery
 			}
 		}
 	#else
-		static public inline function assert(e:Bool, ?pos : haxe.PosInfos) : Void
+		static public inline function assert(e:Bool, errorMessage:String=null, ?pos : haxe.PosInfos) : Void
 		{
 		}
 	#end
