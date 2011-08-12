@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="HaQueryLib-test0" default="gen-orm">
+<project name="HaQuerySite">
 	<property name="src.dir" location="src" />
 	<property name="dest.dir" location="bin" />
 	<property name="doc.dir" location="doc" />
