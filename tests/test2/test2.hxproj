@@ -39,17 +39,16 @@
   <hiddenPaths>
     <hidden path="nbproject" />
     <hidden path="bin" />
-    <hidden path="build.xml" />
   </hiddenPaths>
   <!-- Executed before build -->
-  <preBuildCommand>cmd /C "ant -f $(ProjectDir)\build.xml pre-build"</preBuildCommand>
+  <preBuildCommand>$(ProjectDir)\..\..\tools\build.exe prebuild -Dsrc.dir=$(ProjectDir)\src -Ddest.dir=$(OutputDir)\$(OutputName) -Dlib.dir=$(ProjectDir)\..\.. -Ddatabase.connection=mysql://root:123456@localhost/test</preBuildCommand>
   <!-- Executed after build -->
-  <postBuildCommand alwaysRun="False">cmd /C "ant -f $(ProjectDir)\build.xml post-build"</postBuildCommand>
+  <postBuildCommand alwaysRun="False">$(ProjectDir)\..\..\tools\build.exe postbuild -Dsrc.dir=$(ProjectDir)\src -Ddest.dir=$(OutputDir)\$(OutputName) -Dlib.dir=$(ProjectDir)\..\..</postBuildCommand>
   <!-- Other project options -->
   <options>
     <option showHiddenPaths="False" />
     <option testMovie="OpenDocument" />
-    <option testMovieCommand="http://haquerylib-test1/" />
+    <option testMovieCommand="http://haquerylib-test2/" />
   </options>
   <!-- Plugin storage -->
   <storage />

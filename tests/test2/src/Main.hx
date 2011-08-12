@@ -1,6 +1,6 @@
 package ;
 
-import Imports;
+import ImportComponents;
 
 class Main 
 {

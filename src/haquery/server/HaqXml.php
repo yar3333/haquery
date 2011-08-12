@@ -129,7 +129,7 @@ class HaqXmlNodeElement extends HaqXmlNode
         if ($sAttrs!='') $sAttrs = ' '.$sAttrs;
         
         if (count($this->nodes)==0 && (
-                array_key_exists($this->name, haquery_server_HaqXmlParser::getSelfClosingTags())
+                array_key_exists($this->name, HaqXmlParser::getSelfClosingTags())
                 ||
                 strpos($this->name, ':')!==false
            )
@@ -189,7 +189,7 @@ class HaqXmlNodeElement extends HaqXmlNode
         switch($name)
         {
             case 'innerHTML':
-                $nodes = haquery_server_HaqXmlParser::parse($value);
+                $nodes = HaqXmlParser::parse($value);
                 $this->nodes = array();
                 $this->children = array();
                 foreach ($nodes as $node) $this->addChild($node);
@@ -225,7 +225,7 @@ class HaqXmlNodeElement extends HaqXmlNode
      */
     function find($selector)
     {
-        $parsedSelectors = haquery_server_HaqXmlParser::parseCssSelector($selector);
+        $parsedSelectors = HaqXmlParser::parseCssSelector($selector);
         $resNodes = array();
         foreach ($parsedSelectors as $s)
         {
@@ -374,7 +374,7 @@ class HaqXml extends HaqXmlNodeElement
     function __construct($str='')
     {
         parent::__construct('', array());
-        $nodes = haquery_server_HaqXmlParser::parse($str);
+        $nodes = HaqXmlParser::parse($str);
         foreach ($nodes as $node) $this->addChild($node);
     }
 }
@@ -436,7 +436,7 @@ class HaqXmlAttribute
     }
 }
 
-class haquery_server_HaqXmlParser
+class HaqXmlParser
 {
     public static function getSelfClosingTags() { return array('img'=>1, 'br'=>1, 'input'=>1, 'meta'=>1, 'link'=>1, 'hr'=>1, 'base'=>1, 'embed'=>1, 'spacer'=>1); }
     private static function getRegExpForID() { return '[a-z](?:-?[_a-z0-9])*'; }
