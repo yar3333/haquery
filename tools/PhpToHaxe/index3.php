@@ -1,3 +1,4 @@
 <?php 
-require "convertor.php";
-convertor(MODE_PHP_DOC_CONSTS_TO_HAXE_CONSTS);
+require_once "PhpToHaxe.php";
+$mode = PhpToHaxe::MODE_DOC_CONSTS;
+require "page.php";

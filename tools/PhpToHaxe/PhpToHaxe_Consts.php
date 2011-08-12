@@ -1,6 +1,6 @@
 <?php
 
-class PhpDocConstsToHaxe
+class PhpToHaxe_Consts
 {
     private $typeNamesMapping;
     
