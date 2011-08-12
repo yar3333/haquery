@@ -1,4 +1,3 @@
-#if php
 package tests;
 
 import php.Lib;
@@ -240,4 +239,3 @@ class HaqXmlTest extends haxe.unit.TestCase
     }	
 	
 }
-#end
