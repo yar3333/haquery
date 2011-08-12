@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title><haq:placeholder id="title"></haq:placeholder>{title}</title>
+        {styles}
+        <link rel="stylesheet" href="/support/default.css" />
+        {scripts}
+        <script src="/support/jquery.number_format.js"></script>
+    </head>
+    <body>
+        <div id="mainShadow" style="display:none">&nbsp;</div>
+        <table cellspacing="0">
+            <tr>
+                <td width="50%">&nbsp;</td>
+                <td class="main">
+                    <div class="mainInner1">
+                        <div class="mainInner2">
+                            <div class="header">
+                                <div class="logo">
+                                    <a href="/">MicroCalc.ru</a>
+                                </div>
+                                <h1 class="headerSlogan">
+                                    Калькулятор онлайн
+                                </h1>
+                                <div class="mainMenu">
+                                    <a href="/why">Зачем это нужно?</a>
+                                </div>
+                            </div>
+
+                            <div class="contentContainer">
+                            <div class="content">
+                                <haq:placeholder id="content" />
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="footer">
+                        <tr>
+                            <td class="footer-l">
+                                &copy; 2011 <a href="http://{copyrights}">{copyrights}</a>
+                            </td>
+                            <td class="footer-c">
+                                <a href="mailto:{email}">{email}</a>
+                            </td>
+                            <td class="footer-r">
+                                <div style="padding-top: 10px">
+<!--LiveInternet counter--><script type="text/javascript"><!--
+document.write("<a href='http://www.liveinternet.ru/click' "+
+"target=_blank><img src='//counter.yadro.ru/hit?t38.6;r"+
+escape(document.referrer)+((typeof(screen)=="undefined")?"":
+";s"+screen.width+"*"+screen.height+"*"+(screen.colorDepth?
+screen.colorDepth:screen.pixelDepth))+";u"+escape(document.URL)+
+";"+Math.random()+
+"' alt='' title='LiveInternet' "+
+"border='0' width='31' height='31'><\/a>")
+//--></script><!--/LiveInternet-->
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td width="50%">&nbsp;</td>
+            </tr>
+        </table>
+    </body>
+</html>
