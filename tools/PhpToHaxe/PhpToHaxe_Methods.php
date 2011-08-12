@@ -1,6 +1,6 @@
 <?php
 
-class PhpDocMethodsToHaxe
+class PhpToHaxe_Methods
 {
     private $typeNamesMapping;
     

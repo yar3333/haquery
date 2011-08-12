@@ -1,5 +1,6 @@
 <?php
-class PhpCodeToHaxe
+
+class PhpToHaxe_Code
 {
     private $typeNamesMapping;
     private $functionNameMapping;
@@ -263,82 +264,7 @@ class PhpCodeToHaxe
                     $values[$i] = 'static';
                     break;
                 case 'T_VARIABLE':
-                    if (substr($values[$i],0,1)=='$') $values[$i] = substr($values[$i],1);
-
-                    //$v['abc'] -> v.getset('abc')
-                    if (
-                        $i+3<count($names) && $names[$i+1]=='[' 
-                     && ($names[$i+2]=='T_CONSTANT_ENCAPSED_STRING' || $names[$i+2]=='T_ENCAPSED_AND_WHITESPACE')
-                    ) {
-                        $n = $this->getPairPos($names, $i+1);
-                        $values[$n] = ')';
-
-                        if (
-                            $this->isBeforeLexem($names, $n, '[', 1)
-                         || $this->isBeforeLexem($names, $n, ']', 1)
-                         || $this->isBeforeLexem($names, $n, ')', 1)
-                         || $this->isBeforeLexem($names, $n, '.', 1)
-                         || $this->isBeforeLexem($names, $n, '+', 1)
-                         || $this->isBeforeLexem($names, $n, '-', 1)
-                         || $this->isBeforeLexem($names, $n, '*', 1)
-                         || $this->isBeforeLexem($names, $n, '/', 1)
-                         || $this->isBeforeLexem($names, $n, ',', 1)
-                        ) {
-                            $values[$i+1] = '.get(';
-                        }
-                        else
-                        if ($this->isBeforeLexem($names, $n, '=', 1))
-                        {
-                            $values[$i+1] = '.set(';
-                        }
-                        else
-                        {
-                            $values[$i+1] = '.getset(';
-                        }
-                    }
-
-                    if (isset($this->varNamesMapping[$values[$i]]))
-                    {
-                        $values[$i] = $this->varNamesMapping[$values[$i]];
-                    }
-
-                    if ($i-1>=0 && $names[$i-1]=='T_ENCAPSED_AND_WHITESPACE')
-                    {
-                        $values[$i] = '" + ' . $values[$i];
-                    }
-                    else
-                    if ($i-1>=0 && $names[$i-1]=='"')
-                    {
-                        $values[$i-1] = '';
-                    }
-
-                    if ($i+1<count($names) && $names[$i+1]=='T_ENCAPSED_AND_WHITESPACE')
-                    {
-                        $values[$i] = $values[$i] . ' + "';
-                    }
-                    else
-                    if ($i+1<count($names) && $names[$i+1]=='"')
-                    {
-                        $values[$i+1] = '';
-                    }
-
-                    if ($i+1<count($names) && $names[$i+1]=='T_VARIABLE')
-                    {
-                        $values[$i] .= ' + ';
-                    }
-
-                    if (
-                        !$this->isAfterLexem($names, $i, 'T_FUNCTION', 3)
-                     && (
-                                $this->isAfterLexem($names, $i, 'T_PROTECTED', 3)
-                             || $this->isAfterLexem($names, $i, 'T_PRIVATE', 3)
-                             || $this->isAfterLexem($names, $i, 'T_PUBLIC', 3)
-                             || $this->isAfterLexem($names, $i, 'T_STATIC', 3)
-                        )
-                    ) {
-                        $values[$i] = 'var ' . $values[$i];
-                    }
-
+                    $this->processVar($names, $values, $i);
                     break;
                 case 'T_STRING':
                     if (isset($this->functionNameMapping[$values[$i]]))
@@ -491,8 +417,7 @@ class PhpCodeToHaxe
             }
         }
         
-        
-        if (!$this->isAfterLexem($names, $i, array('T_PUBLIC', 'T_PROTECTED', 'T_PRIVATE'), 4))
+        if (!$this->isAfterLexem($names, $i, array('T_PUBLIC', 'T_PROTECTED', 'T_PRIVATE'), 2))
         {
             $values[$i] = 'public ' . $values[$i];
         }
@@ -634,5 +559,107 @@ class PhpCodeToHaxe
         $comment = preg_replace("/^\\s*[*]\\s*@return\\s+[_a-zA-Z][_a-zA-Z0-9]*\\s*[\r\n]+/m", "", $comment);
         
         $values[$i] = $comment;
+    }
+
+    private function detectVarType(&$names, &$values, $i)
+    {
+        $n = $i - 1;
+        while ($n > 0 && in_array($names[$n], array('T_WHITESPACE','T_PUBLIC','T_PROTECTED','T_PRIVATE'))) $n--;
+        if ($n < 0 || $names[$n]!='T_DOC_COMMENT') return '';
+        $comment = $values[$n];
+        
+        if (preg_match("/@var\\s+(?<type>[_a-zA-Z][_a-zA-Z0-9]*)/", $comment, $m))
+        {
+            $comment = preg_replace("/^\\s*[*]?\\s*@var\\s+[_a-zA-Z][_a-zA-Z0-9]*\\s*\n/m", "", $comment);
+            $values[$n] = $comment;
+            return $this->getHaxeType($m['type']);
+        }
+        
+        return '';
+    }
+    
+    private function processVar(&$names, &$values, &$i)
+    {
+        if (substr($values[$i],0,1)=='$') $values[$i] = substr($values[$i],1);
+        
+        $type = $this->detectVarType($names, $values, $i);
+        if ($type!=='')
+        {
+            $values[$i] = $values[$i] . " : $type";
+        }
+
+        if (
+            $i+3<count($names) && $names[$i+1]=='[' 
+         && ($names[$i+2]=='T_CONSTANT_ENCAPSED_STRING' || $names[$i+2]=='T_ENCAPSED_AND_WHITESPACE')
+        ) {
+            $n = $this->getPairPos($names, $i+1);
+            $values[$n] = ')';
+
+            if (
+                $this->isBeforeLexem($names, $n, '[', 1)
+             || $this->isBeforeLexem($names, $n, ']', 1)
+             || $this->isBeforeLexem($names, $n, ')', 1)
+             || $this->isBeforeLexem($names, $n, '.', 1)
+             || $this->isBeforeLexem($names, $n, '+', 1)
+             || $this->isBeforeLexem($names, $n, '-', 1)
+             || $this->isBeforeLexem($names, $n, '*', 1)
+             || $this->isBeforeLexem($names, $n, '/', 1)
+             || $this->isBeforeLexem($names, $n, ',', 1)
+            ) {
+                $values[$i+1] = '.get(';
+            }
+            else
+            if ($this->isBeforeLexem($names, $n, '=', 1))
+            {
+                $values[$i+1] = '.set(';
+            }
+            else
+            {
+                $values[$i+1] = '.getset(';
+            }
+        }
+
+        if (isset($this->varNamesMapping[$values[$i]]))
+        {
+            $values[$i] = $this->varNamesMapping[$values[$i]];
+        }
+
+        if ($i-1>=0 && $names[$i-1]=='T_ENCAPSED_AND_WHITESPACE')
+        {
+            $values[$i] = '" + ' . $values[$i];
+        }
+        else
+        if ($i-1>=0 && $names[$i-1]=='"')
+        {
+            $values[$i-1] = '';
+        }
+
+        if ($i+1<count($names) && $names[$i+1]=='T_ENCAPSED_AND_WHITESPACE')
+        {
+            $values[$i] = $values[$i] . ' + "';
+        }
+        else
+        if ($i+1<count($names) && $names[$i+1]=='"')
+        {
+            $values[$i+1] = '';
+        }
+
+        if ($i+1<count($names) && $names[$i+1]=='T_VARIABLE')
+        {
+            $values[$i] .= ' + ';
+        }
+
+        if (
+            !$this->isAfterLexem($names, $i, 'T_FUNCTION', 3)
+         && (
+                    $this->isAfterLexem($names, $i, 'T_PROTECTED', 3)
+                 || $this->isAfterLexem($names, $i, 'T_PRIVATE', 3)
+                 || $this->isAfterLexem($names, $i, 'T_PUBLIC', 3)
+                 || $this->isAfterLexem($names, $i, 'T_STATIC', 3)
+            )
+        ) {
+            $values[$i] = 'var ' . $values[$i];
+        }
+        
     }
 }

@@ -1,3 +1,4 @@
 <?php 
-require "convertor.php";
-convertor(MODE_PHP_CODE_TO_HAXE_EXTERN_CODE);
+require_once "PhpToHaxe.php";
+$mode = PhpToHaxe::MODE_EXTERN_CODE;
+require "page.php";
