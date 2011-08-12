@@ -1,15 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project>
+<project version="2">
   <!-- Output SWF options -->
   <output>
-    <movie disabled="False" />
+    <movie outputType="Application" />
     <movie input="" />
     <movie path="bin" />
     <movie fps="0" />
     <movie width="0" />
     <movie height="0" />
-    <movie version="13" />
+    <movie version="0" />
+    <movie minorVersion="0" />
+    <movie platform="PHP" />
     <movie background="#FFFFFF" />
+    <movie preferredSDK="HaXe;;d:\MyProg\_tools\motion-twin\haxe\modified\bin" />
   </output>
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
@@ -36,15 +39,18 @@
   <hiddenPaths>
     <hidden path="nbproject" />
     <hidden path="bin" />
+    <hidden path="tools" />
   </hiddenPaths>
   <!-- Executed before build -->
-  <preBuildCommand>$(ProjectDir)\..\..\tools\build.exe prebuild -Dsrc.dir=$(ProjectDir)\src -Ddest.dir=$(OutputDir)\$(OutputName) -Dlib.dir=$(ProjectDir)\..\..</preBuildCommand>
+  <preBuildCommand>tools/build.exe pre-build</preBuildCommand>
   <!-- Executed after build -->
-  <postBuildCommand alwaysRun="False">$(ProjectDir)\..\..\tools\build.exe postbuild -Dsrc.dir=$(ProjectDir)\src -Ddest.dir=$(OutputDir)\$(OutputName) -Dlib.dir=$(ProjectDir)\..\..</postBuildCommand>
+  <postBuildCommand alwaysRun="False">tools/build.exe post-build</postBuildCommand>
   <!-- Other project options -->
   <options>
     <option showHiddenPaths="False" />
     <option testMovie="OpenDocument" />
-    <option testMovieCommand="http://syquerylib-test0/" />
+    <option testMovieCommand="http://haquerylib-test0/" />
   </options>
+  <!-- Plugin storage -->
+  <storage />
 </project>
