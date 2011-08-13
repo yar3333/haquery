@@ -1,13 +1,15 @@
 <?php
 $typeNamesMapping = array(
-     '' => 'Unknow'
-    ,'int' => 'Int'
+     'int' => 'Int'
     ,'integer' => 'Int'
     ,'float' => 'Float'
     ,'bool' => 'Bool'
+    ,'boolean' => 'Bool'
     ,'string' => 'String'
     ,'array' => 'NativeArray'
     ,'mixed' => 'Dynamic'
+    ,'mixes' => 'Dynamic'
+    ,'object' => 'Dynamic'
     ,'void' => 'Void'
 );
 
