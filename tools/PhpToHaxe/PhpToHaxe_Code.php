@@ -19,6 +19,7 @@ class PhpToHaxe_Code
     {
         $text = str_replace("\r\n", "\n", $text);
         $text = str_replace("\r", "\n", $text);
+        $text = preg_replace("/^(\\s*<[?]php)+/", "", $text);
         $tokens = token_get_all("<?php " . $text);
 
         $names = array();
@@ -43,11 +44,25 @@ class PhpToHaxe_Code
             array_shift($values);
         }
 
-        $r = $this->processTokensToText($names, $values);
+        $this->changeProtectedToPrivate($names, $values);
+        
+        $r = $this->tokensToText($names, $values);
         if ($this->wantExtern) $r = preg_replace("/[\t ]*\n[\t ]*\n[\t ]*\n/", "\n\n", $r);
         return $r;
     }
 
+    private function changeProtectedToPrivate(&$names, &$values)
+    {
+        for ($i=0; $i<count($names); $i++)
+        {
+            if ($names[$i]=='T_PROTECTED')
+            {
+                $names[$i] = 'T_PRIVATE';
+                $values[$i] = 'protected';
+            }
+        }
+    }
+    
     private function isBeforeLexem($names, $n, $lexem, $dist)
     {
         for ($i=$n+1; $dist>0 && $i<count($names); $i++)
@@ -195,7 +210,7 @@ class PhpToHaxe_Code
         return true;
     }
 
-    private function processTokensToText($names, $values)
+    private function tokensToText($names, $values)
     {
         $text = '';
         for ($i=0;$i<count($names);$i++)
@@ -238,22 +253,18 @@ class PhpToHaxe_Code
                     }
                     break;
 
-                case 'T_PROTECTED':
                 case 'T_PRIVATE':
-                    if (!$this->wantExtern)
-                    {
-                        $values[$i] = 'private';
-                    }
-                    else
+                    if ($this->wantExtern)
                     {
                         if ($this->isBeforeLexem($names, $i, 'T_VARIABLE', 2))
                         {
                             $beg = $i - 1;
-                            while ($beg > 0 && in_array($names[$beg], array('T_STATIC', 'T_WHITESPACE'))) $beg--;
+                            while ($beg > 0 && in_array($names[$beg], array('T_STATIC', 'T_WHITESPACE', 'T_DOC_COMMENT'))) $beg--;
                             $beg++;
                             $end = $this->findLexemPosOnCurrentLevel($names, $i, ';');
                             array_splice($names,  $beg, $end - $beg + 1);
                             array_splice($values, $beg, $end - $beg + 1);
+                            $i = $beg - 1;
                         }
                     }
                     break;
@@ -267,72 +278,14 @@ class PhpToHaxe_Code
                     $this->processVar($names, $values, $i);
                     break;
                 case 'T_STRING':
-                    if (isset($this->functionNameMapping[$values[$i]]))
+                    if ($this->isAfterLexem($names, $i, 'T_CONST', 1))
                     {
-                        $rval = $this->functionNameMapping[$values[$i]];
-                        $newFuncName = is_string($rval) ? $rval : $rval[0];
-                        $values[$i] = $newFuncName;
-                        if (is_array($rval))
-                        {
-                            if ($i+1<count($names) && $names[$i+1]=='(')
-                            {
-                                $n = $this->getPairPos($names, $i+1);
-
-                                $params = $this->splitTokensByComma(
-                                    array_slice($names,  $i+2, $n-$i-2)
-                                  , array_slice($values, $i+2, $n-$i-2)
-                                );
-
-                                $insertNames = array();
-                                $insertValues = array();
-
-                                for ($j=0; $j<count($rval); $j++)
-                                {
-                                    $param = $rval[$j];
-
-                                    if (is_string($param))
-                                    {
-                                        $insertNames[] = strpos('([{}])', $param)!==false ? $param : '_CORRECTED';
-                                        $insertValues[] = $param;
-                                    }
-                                    else
-                                    {
-                                        if (isset($params[$param]))
-                                        {
-                                            $killSkobki = 
-                                                    $j>0 && $rval[$j-1]=='(' 
-                                                 && $j+1<count($rval) && $rval[$j+1]==')'
-                                                 && $j+2<count($rval) && $rval[$j+2]=='.'
-                                                 && $this->isSolidExpression($params[$param]['names']);
-
-                                            if ($killSkobki)
-                                            {
-                                                array_pop($insertNames);
-                                                array_pop($insertValues);
-                                            }
-
-                                            $insertNames = array_merge($insertNames, $params[$param]['names']);
-                                            $insertValues = array_merge($insertValues, $params[$param]['values']);
-
-                                            if ($killSkobki) $j++;
-                                        }
-                                        else
-                                        {
-                                            if ($j+2==count($rval) && $rval[$j+1]==')' && $j>1 && rtrim($rval[$j-1])==',')
-                                            {
-                                                array_pop($insertNames);
-                                                array_pop($insertValues);
-                                            }
-                                        }
-                                    }
-                                }
-
-                                array_splice($names, $i, $n-$i+1, $insertNames);
-                                array_splice($values, $i, $n-$i+1, $insertValues);
-
-                                $i--;
-                            }
-                        }
+                        $type = $this->detectVarType($names, $values, $i);
+                        if ($type!=='') $values[$i] = $values[$i] . " : $type";
+                    }
+                    else
+                    {
+                        $this->processFunctionCall($names, $values, $i);
                     }
                     break;
                 case 'T_ARRAY':
@@ -417,13 +370,13 @@ class PhpToHaxe_Code
             }
         }
         
-        if (!$this->isAfterLexem($names, $i, array('T_PUBLIC', 'T_PROTECTED', 'T_PRIVATE'), 2))
+        if (!$this->isAfterLexem($names, $i, array('T_PUBLIC', 'T_PRIVATE'), 2))
         {
             $values[$i] = 'public ' . $values[$i];
         }
         
         $commentIndex = $i - 1;
-        while ($commentIndex > 0 && $names[$commentIndex]=='T_WHITESPACE') $commentIndex--; 
+        while ($commentIndex > 0 && in_array($names[$commentIndex], array('T_WHITESPACE', 'T_PUBLIC', 'T_PRIVATE', 'T_STATIC'))) $commentIndex--; 
         
         $commentVarTypes = array();
         $returnType = 'void';
@@ -491,16 +444,20 @@ class PhpToHaxe_Code
                 $type = $commentVarTypes[$name];
             }
             
-            $resParamsStr[] = $name .':' . $this->getHaxeType($type) . ($defVal!=='' ? ' = '.$defVal : '');
+            $resParamsStr[] = $name . ($type!='' ? ':'.$this->getHaxeType($type):'') . ($defVal!=='' ? ' = '.$defVal : '');
         }
         
         array_splice($names,  $begParamsIndex+1, $endParamsIndex-$begParamsIndex-1, array('T_COMMENT'));
         array_splice($values, $begParamsIndex+1, $endParamsIndex-$begParamsIndex-1, array(implode(', ', $resParamsStr)));
         
-        array_splice($names,  $begParamsIndex+3, 0, array('T_COMMENT'));
-        array_splice($values, $begParamsIndex+3, 0, array(" : " . $this->getHaxeType($returnType)));
+        $i = $begParamsIndex + 2;
         
-        $i = $begParamsIndex + 3;
+        if ($returnType!='')
+        {
+            array_splice($names,  $begParamsIndex+3, 0, array('T_COMMENT'));
+            array_splice($values, $begParamsIndex+3, 0, array(" : " . $this->getHaxeType($returnType)));
+            $i++;
+        }
         
         if ($this->wantExtern)
         {
@@ -557,6 +514,7 @@ class PhpToHaxe_Code
         $comment = preg_replace("/(@param\\s+)[_a-zA-Z][_a-zA-Z0-9]*\\s+[\$]([_a-zA-Z0-9]*)/", "\\1\\2", $comment);
         $comment = preg_replace("/^\\s*[*]\\s*@param\\s+[_a-zA-Z][_a-zA-Z0-9]*\\s*[\r\n]+/m", "", $comment);
         $comment = preg_replace("/^\\s*[*]\\s*@return\\s+[_a-zA-Z][_a-zA-Z0-9]*\\s*[\r\n]+/m", "", $comment);
+        $comment = preg_replace("/^\\s*[*]\\s*[\r\n]+/m", "", $comment);
         
         $values[$i] = $comment;
     }
@@ -564,13 +522,14 @@ class PhpToHaxe_Code
     private function detectVarType(&$names, &$values, $i)
     {
         $n = $i - 1;
-        while ($n > 0 && in_array($names[$n], array('T_WHITESPACE','T_PUBLIC','T_PROTECTED','T_PRIVATE'))) $n--;
+        while ($n > 0 && in_array($names[$n], array('T_WHITESPACE','T_PUBLIC','T_PRIVATE','T_CONST','T_STATIC'))) $n--;
         if ($n < 0 || $names[$n]!='T_DOC_COMMENT') return '';
         $comment = $values[$n];
         
         if (preg_match("/@var\\s+(?<type>[_a-zA-Z][_a-zA-Z0-9]*)/", $comment, $m))
         {
             $comment = preg_replace("/^\\s*[*]?\\s*@var\\s+[_a-zA-Z][_a-zA-Z0-9]*\\s*\n/m", "", $comment);
+            $comment = preg_replace("/^\\s*[*]\\s*[\r\n]+/m", "", $comment);
             $values[$n] = $comment;
             return $this->getHaxeType($m['type']);
         }
@@ -649,17 +608,81 @@ class PhpToHaxe_Code
             $values[$i] .= ' + ';
         }
 
-        if (
-            !$this->isAfterLexem($names, $i, 'T_FUNCTION', 3)
-         && (
-                    $this->isAfterLexem($names, $i, 'T_PROTECTED', 3)
-                 || $this->isAfterLexem($names, $i, 'T_PRIVATE', 3)
-                 || $this->isAfterLexem($names, $i, 'T_PUBLIC', 3)
-                 || $this->isAfterLexem($names, $i, 'T_STATIC', 3)
-            )
+        if (!$this->isAfterLexem($names, $i, 'T_FUNCTION', 3)
+         && $this->isAfterLexem($names, $i, array('T_PUBLIC','T_PRIVATE','T_STATIC'), 3)
         ) {
             $values[$i] = 'var ' . $values[$i];
         }
-        
+    }
+    
+    function processFunctionCall(&$names, &$values, &$i)
+    {
+        if (isset($this->functionNameMapping[$values[$i]]))
+        {
+            $rval = $this->functionNameMapping[$values[$i]];
+            $newFuncName = is_string($rval) ? $rval : $rval[0];
+            $values[$i] = $newFuncName;
+            if (is_array($rval))
+            {
+                if ($i+1<count($names) && $names[$i+1]=='(')
+                {
+                    $n = $this->getPairPos($names, $i+1);
+
+                    $params = $this->splitTokensByComma(
+                        array_slice($names,  $i+2, $n-$i-2)
+                      , array_slice($values, $i+2, $n-$i-2)
+                    );
+
+                    $insertNames = array();
+                    $insertValues = array();
+
+                    for ($j=0; $j<count($rval); $j++)
+                    {
+                        $param = $rval[$j];
+
+                        if (is_string($param))
+                        {
+                            $insertNames[] = strpos('([{}])', $param)!==false ? $param : '_CORRECTED';
+                            $insertValues[] = $param;
+                        }
+                        else
+                        {
+                            if (isset($params[$param]))
+                            {
+                                $killSkobki = 
+                                        $j>0 && $rval[$j-1]=='(' 
+                                     && $j+1<count($rval) && $rval[$j+1]==')'
+                                     && $j+2<count($rval) && $rval[$j+2]=='.'
+                                     && $this->isSolidExpression($params[$param]['names']);
+
+                                if ($killSkobki)
+                                {
+                                    array_pop($insertNames);
+                                    array_pop($insertValues);
+                                }
+
+                                $insertNames = array_merge($insertNames, $params[$param]['names']);
+                                $insertValues = array_merge($insertValues, $params[$param]['values']);
+
+                                if ($killSkobki) $j++;
+                            }
+                            else
+                            {
+                                if ($j+2==count($rval) && $rval[$j+1]==')' && $j>1 && rtrim($rval[$j-1])==',')
+                                {
+                                    array_pop($insertNames);
+                                    array_pop($insertValues);
+                                }
+                            }
+                        }
+                    }
+
+                    array_splice($names, $i, $n-$i+1, $insertNames);
+                    array_splice($values, $i, $n-$i+1, $insertValues);
+
+                    $i--;
+                }
+            }
+        }
     }
 }
