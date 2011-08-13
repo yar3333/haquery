@@ -27,7 +27,7 @@ class HaqComponentManager
         var name : String = tagOrName.startsWith('haq:') ? getNameByTag(tagOrName) : tagOrName;
 		var template = templates.get(name);
 		//trace('createComponent: template.className = ' + Type.getClassName(template.clas));
-		var component : HaqComponent = newComponent(parent, template.clas, name, id, template.doc, attr, innerHTML);
+		var component : HaqComponent = newComponent(parent, template.cssClass, name, id, template.doc, attr, innerHTML);
 		if (!tag2id2component.exists(name)) tag2id2component.set(name, new Array<HaqComponent>());
 		tag2id2component.get(name).push(component);
 		return component;
