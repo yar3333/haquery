@@ -348,6 +348,8 @@ class PhpToHaxe_Code
     
     private function processFunction(&$names, &$values, &$i)
     {
+        $phpEmptyArray = 'untyped __php__("array()")';
+        
         if ($this->wantExtern)
         {
             if ($this->isAfterLexem($names, $i, 'T_PRIVATE', 2))
@@ -435,8 +437,27 @@ class PhpToHaxe_Code
                 if (count($paramNames) > 0)
                 {
                     $defVal = $paramValues[0];
+                    array_shift($paramNames); array_shift($paramValues);
+                    $this->trimAndPad($paramNames, $paramValues, 0, 0);
+                    if (count($paramNames)>=2 && $paramNames[0]=='(' && $paramNames[1]==')')
+                    {
+                        $defVal .= "()";
+                        array_shift($paramNames); array_shift($paramValues);
+                        array_shift($paramNames); array_shift($paramValues);
+                        
+                    }
+                    else if (count($paramNames)>=3 && $paramNames[0]=='(' && $paramNames[1]=='T_WHITESPACE' && $paramNames[2]==')')
+                    {
+                        $defVal .= "()";
+                        array_shift($paramNames); array_shift($paramValues);
+                        array_shift($paramNames); array_shift($paramValues);
+                        array_shift($paramNames); array_shift($paramValues);
+                    }
+                        
+                        
+                    if ($defVal=='array()') $defVal = $phpEmptyArray;
                 }
-                array_shift($paramNames); array_shift($paramValues);
+                
             }
             
             if ($type == '' && isset($commentVarTypes[$name]))
@@ -444,7 +465,14 @@ class PhpToHaxe_Code
                 $type = $commentVarTypes[$name];
             }
             
-            $resParamsStr[] = $name . ($type!='' ? ':'.$this->getHaxeType($type):'') . ($defVal!=='' ? ' = '.$defVal : '');
+            if ($type=='')
+            {
+                if ($defVal=='true' || $defVal=='false') $type = 'Bool';
+                else
+                if ($defVal==$phpEmptyArray) $type = 'NativeArray';
+            }
+            
+            $resParamsStr[] = $name . ($type!='' ? ':'.$this->getHaxeType($type):'') . ($defVal!=='' ? '='.$defVal : '');
         }
         
         array_splice($names,  $begParamsIndex+1, $endParamsIndex-$begParamsIndex-1, array('T_COMMENT'));
@@ -474,7 +502,7 @@ class PhpToHaxe_Code
         }
     }
     
-    function getVarTypesByDocComment($comment)
+    private function getVarTypesByDocComment($comment)
     {
         $r = array();
         
@@ -489,7 +517,7 @@ class PhpToHaxe_Code
         return $r;
     }
     
-    function getReturnTypesByDocComment($comment)
+    private function getReturnTypesByDocComment($comment)
     {
         if (preg_match("/@return\\s+(?<type>[_a-zA-Z][_a-zA-Z0-9]*)/", $comment, $m))
         {
@@ -498,7 +526,7 @@ class PhpToHaxe_Code
         return '';
     }
     
-    function getHaxeType($phpType)
+    private function getHaxeType($phpType)
     {
         if (isset($this->typeNamesMapping[$phpType]))
         {
@@ -615,7 +643,7 @@ class PhpToHaxe_Code
         }
     }
     
-    function processFunctionCall(&$names, &$values, &$i)
+    private function processFunctionCall(&$names, &$values, &$i)
     {
         if (isset($this->functionNameMapping[$values[$i]]))
         {

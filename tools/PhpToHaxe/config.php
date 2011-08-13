@@ -11,6 +11,9 @@ $typeNamesMapping = array(
     ,'mixes' => 'Dynamic'
     ,'object' => 'Dynamic'
     ,'void' => 'Void'
+    
+    ,'true' => 'Bool'
+    ,'false' => 'Bool'
 );
 
 $varNamesMapping = array(
