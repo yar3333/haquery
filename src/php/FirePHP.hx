@@ -2,7 +2,12 @@ package php;
 
 @:native("FirePHP") extern class FirePHP
 {
-    /**
+    static function __init__() : Void
+	{
+		untyped __php__("require_once 'php/FirePHP.php';");
+	}
+    
+	/**
      * FirePHP version
      */
     static inline public var VERSION : String = '0.3';    // @pinf replace '0.3' with '%%package.version%%'

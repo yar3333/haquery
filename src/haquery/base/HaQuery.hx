@@ -11,6 +11,7 @@ import haxe.Stack;
 	import php.FileSystem;
 	import php.io.FileOutput;
 	import php.io.Path;
+	import php.FirePHP;
 	import haquery.server.HaqInternals;
 	import haquery.server.HaqConfig;
 	import haquery.server.HaqRoute;
@@ -241,7 +242,18 @@ class HaQuery
 				FileSystem.createDirectory(tempDir);
 			}
 			
-			if (text!='') Lib.println("<script>if (console) console.debug(decodeURIComponent(\"" + StringTools.urlEncode(text) + "\"));</script>");
+			if (text != '')
+			{
+				var isHeadersSent : Bool = untyped __call__('headers_sent');
+				if (!isHeadersSent)
+				{
+					FirePHP.getInstance(true).trace(text);
+				}
+				else
+				{
+					Lib.println("<script>if (console) console.debug(decodeURIComponent(\"" + StringTools.urlEncode(text) + "\"));</script>");
+				}
+			}
 			
 			var f : FileOutput = php.io.File.append(tempDir + "haquery.log", false);
 			if (f != null)
@@ -255,7 +267,7 @@ class HaQuery
 		{
 			var text = "HAXE EXCEPTION: " + Std.string(e) + "\n"
 					 + "Stack trace:" + Stack.toString(Stack.exceptionStack()).replace('\n', '\n\t');
-			var nativeStack : Array<Hash<Dynamic>> = Stack.nativeExceptionStack();
+			var nativeStack : Array<Hash<Dynamic>> = php.Stack.nativeExceptionStack();
 			assert(nativeStack != null);
 			text += "\n\n";
 			text += "NATIVE EXCEPTION: " + Std.string(e) + "\n";
