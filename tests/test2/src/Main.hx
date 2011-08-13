@@ -1,6 +1,10 @@
 package ;
 
-import ImportComponents;
+import Imports;
+
+#if php
+import php.FirePHP;
+#end
 
 class Main 
 {
