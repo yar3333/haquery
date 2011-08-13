@@ -11,7 +11,7 @@ typedef HaqTemplate =
 { 
 	var doc : HaqXml;
 	var serverHandlers: Hash<Array<String>>;
-	var clas : Class<HaqComponent>;
+	var cssClass : Class<HaqComponent>;
 }
 
 private typedef HaqCachedTemplate = {
@@ -52,7 +52,7 @@ class HaqTemplates
 	
 	public function get(tag:String) : HaqTemplate
 	{
-		var r : HaqTemplate = { doc : null, serverHandlers : null, clas : null };
+		var r : HaqTemplate = { doc : null, serverHandlers : null, cssClass : null };
 
 		var i = componentsFolders.length - 1;
 		while (i >= 0)
@@ -65,22 +65,22 @@ class HaqTemplates
 				if (r.serverHandlers == null && t.serverHandlers != null) r.serverHandlers = t.serverHandlers;
 			}
 			
-			if (r.clas == null)
+			if (r.cssClass == null)
 			{
 				var className = path2relative(componentsFolder).replace('/', '.') + tag + '.Server';
 				//trace('Test class for existance: ' + className);
-				r.clas = untyped Type.resolveClass(className);
+				r.cssClass = untyped Type.resolveClass(className);
 			}
 			
 			i--;
 		}
 		
-		if (r.doc == null && r.serverHandlers == null && r.clas == null)
+		if (r.doc == null && r.serverHandlers == null && r.cssClass == null)
 		{
 			throw 'Component "'+tag+'" not found.';
 		}
 		
-		if (r.clas == null) r.clas = haquery.server.HaqComponent;
+		if (r.cssClass == null) r.cssClass = haquery.server.HaqComponent;
 		
 		return r;
 	}
