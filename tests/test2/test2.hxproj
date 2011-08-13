@@ -39,11 +39,12 @@
   <hiddenPaths>
     <hidden path="nbproject" />
     <hidden path="bin" />
+    <hidden path="build.xml" />
   </hiddenPaths>
   <!-- Executed before build -->
-  <preBuildCommand>$(ProjectDir)\..\..\tools\build.exe prebuild -Dsrc.dir=$(ProjectDir)\src -Ddest.dir=$(OutputDir)\$(OutputName) -Dlib.dir=$(ProjectDir)\..\.. -Ddatabase.connection=mysql://root:123456@localhost/test</preBuildCommand>
+  <preBuildCommand>cmd /C "ant -f $(ProjectDir)\build.xml pre-build"</preBuildCommand>
   <!-- Executed after build -->
-  <postBuildCommand alwaysRun="False">$(ProjectDir)\..\..\tools\build.exe postbuild -Dsrc.dir=$(ProjectDir)\src -Ddest.dir=$(OutputDir)\$(OutputName) -Dlib.dir=$(ProjectDir)\..\..</postBuildCommand>
+  <postBuildCommand alwaysRun="False">cmd /C "ant -f $(ProjectDir)\build.xml post-build"</postBuildCommand>
   <!-- Other project options -->
   <options>
     <option showHiddenPaths="False" />
