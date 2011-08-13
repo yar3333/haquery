@@ -24,7 +24,8 @@ class HaqComponentManager
 		}
 		else
 		{
-			var pagePath = Lib.window.location.pathname.trim('/');
+			var pagePath = Lib.window.location.pathname; 
+			if (pagePath.endsWith("/")) pagePath = pagePath.substr(0, pagePath.length - 1);
 			if (pagePath == '') pagePath = 'index';
 			var className = 'pages.' + pagePath.replace('/', '.') + '.Client';
 			clas = untyped Type.resolveClass(className);
