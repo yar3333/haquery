@@ -11,27 +11,24 @@ class HaqTemplates
 	var componentsFolders : Array<String>;
 	var tag_elemID_serverHandlers : Hash<Hash<Array<String>>>;
 
-	public function new(componentsFolders:Array<String>, serverHandlers:Array<Array<Dynamic>>) 
+	public function new(componentsFolders:Array<String>, tag_elemID_serverHandlers:Hash<Hash<Array<String>>>) 
 	{
 		this.componentsFolders = componentsFolders;
-		tag_elemID_serverHandlers = new Hash<Hash<Array<String>>>();
-		
-		for (sh in serverHandlers)
-		{
-			var tag : String = sh[0];
-			for (i in 1...sh.length)
-			{
-				var elemID_eventNames : Array<String> = sh[i];
-				var elemID : String = elemID_eventNames[0];
-				var eventNames : String = elemID_eventNames[1];
-				if (!tag_elemID_serverHandlers.exists(tag))
-				{
-					tag_elemID_serverHandlers.set(tag, new Hash<Array<String>>());
-				}
-				tag_elemID_serverHandlers.get(tag).set(elemID, eventNames.split(','));
-			}
-		}
+		this.tag_elemID_serverHandlers = tag_elemID_serverHandlers;
 	}
+    
+    /*public static function parseServerHandlers(sh:Array<Dynamic>) : { tag:String, serverHandlers:Hash<Array<String>> }
+    {
+        var tag : String = sh.shift();
+        var r = new Hash<Array<String>>();
+        for (elemID_eventNames in sh)
+        {
+            var elemID : String = elemID_eventNames[0];
+            var eventNames : String = elemID_eventNames[1];
+            r.set(elemID, eventNames.split(','));
+        }
+        return { tag:tag, serverHandlers:r };
+    }*/
 	
 	public function get(tag:String) : HaqTemplate
 	{

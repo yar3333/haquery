@@ -56,7 +56,7 @@ class HaQuery
 			haxe.Log.trace = HaQuery.trace;
 			
 			var route = new HaqRoute(Web.getParams().get('route'));
-			loadBootstraps(route.pagePath);
+			loadBootstraps(route.path);
 			
 			if (HaQuery.config.autoSessionStart)
 			{
@@ -70,7 +70,7 @@ class HaQuery
 			
 			if (route.routeType == HaqRouteType.file)
 			{
-				FileSystem.setCurrentDirectory(Path.directory(route.pagePath));
+				FileSystem.setCurrentDirectory(Path.directory(route.path));
 				untyped __call__('require', Path.withoutDirectory(route.pagePath));
 			}
 			else
@@ -105,56 +105,6 @@ class HaQuery
 		#end
 	}
 
-    /*static public function error(message:String, ?pos : haxe.PosInfos)
-    {
-		#if php
-			var stack : Array<NativeArray> = untyped Lib.toHaxeArray(untyped __call__('debug_backtrace'));
-
-			var frow = Lib.hashOfAssociativeArray(stack.shift());
-			
-			var text = "\n"
-					 + "\t in class <b>" + pos.className + "</b> in file <b>" + pos.fileName + "</b> at line <b>" + pos.lineNumber + "</b>\n"
-					 + "\t in <b>" + frow.get('file') + "</b> at line <b>" + frow.get('line') + "</b>\n"
-					 + "Stack trace:\n";
-
-			for (nrow in stack)
-			{
-				var row : Hash<Dynamic> = Lib.hashOfAssociativeArray(nrow);
-				text+= "\t<b>";
-				if (row.exists('class')) text+= row.get('class')+row.get('type')+row.get('function');
-				else                     text+= row.get('function');
-
-				if (row.exists('file'))
-				{
-					text+= "</b> in <b>" + row.get('file') + "</b> at line <b>" + row.get('line') + "</b>\n";
-					var args = '';
-					if (row.exists('args'))
-					{
-						var argsArray = Lib.toHaxeArray(row.get('args'));
-						//if (argsArray.length >= 4)
-						//{
-						//	var args3 : Array<Dynamic> = Lib.toHaxeArray(argsArray[3]);
-						//	if (args3!=null) args = args3.join("\n\t\t");
-						//}
-					}
-					text+= args!='' ? "\t\t" + args + "\n" : '';
-				}
-				else
-					text += "\n";
-			}
-
-			HaQuery.trace("ERROR: " + message + StringTools.stripTags(text));
-			Lib.print(StringTools.replace(StringTools.replace("HAQUERY <b>ERROR:</b> "+StringTools.htmlEscape(message)+text, "\n", '<br />'), "\t", '&nbsp;&nbsp;&nbsp;&nbsp;'));
-			
-			Sys.exit(1);
-		#else
-			var stack : String = untyped __js__("(new Error()).stack");
-			stack = stack.substr(stack.indexOf('\n')+1);
-			stack = stack.substr(stack.indexOf('\n')+1);
-			throw message + "\nStack trace:\n" + stack;
-		#end
-    }*/
-	
 	#if debug
 		static public function assert(e:Bool, errorMessage:String=null, ?pos : haxe.PosInfos) : Void
 		{
@@ -181,7 +131,6 @@ class HaQuery
 			for (i in 0...folders.length)
 			{
 				var className = folders.slice(0,i).join('.') + '.Bootstrap';
-				//trace('loadBootstraps: ' + className);
 				var clas : Class<HaqBootstrap> = untyped Type.resolveClass(className);
 				if (clas != null)
 				{
@@ -233,7 +182,7 @@ class HaQuery
 			{
 				text = "DUMP " + pos.fileName + ":" + pos.lineNumber + "\n";
 				var dump = ''; untyped __php__("ob_start(); var_dump($v); $dump = ob_get_clean();");
-				text += dump;
+				text += StringTools.stripTags(dump);
 			}
 
 			var tempDir = HaQuery.folders.temp;
@@ -247,7 +196,7 @@ class HaQuery
 				var isHeadersSent : Bool = untyped __call__('headers_sent');
 				if (!isHeadersSent)
 				{
-					FirePHP.getInstance(true).trace(text);
+					//FirePHP.getInstance(true).trace(text);
 				}
 				else
 				{

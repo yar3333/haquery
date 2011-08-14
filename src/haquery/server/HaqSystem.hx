@@ -19,7 +19,8 @@ class HaqSystem
 		var startTime = Date.now().getTime();
 
         trace(null);
-        trace("HAQUERY START route.pagePath = " + route.pagePath + ", HTTP_HOST = " + Web.getHttpHost() + ", clientIP = " + Web.getClientIP());
+        trace("HAQUERY START route.pagePath = " + route.path + ", HTTP_HOST = " + Web.getHttpHost() + ", clientIP = " + Web.getClientIP());
+        trace("HAQUERY TEST");
 
         HaqProfiler.begin('HaqSystem::init(): build components');
             var templates = new HaqTemplates(HaQuery.config.componentsFolders);
@@ -32,24 +33,13 @@ class HaqSystem
 		{
 			params.set('pageID', route.pageID);
 		}
-        
-        /*HaqProfiler.begin('HaqSystem::init(): insert consts');
-            if (is_array(HaQuery.config.consts))
-            {
-                text = records2str([ HaQuery.config.consts ], text);
-            }
-        HaqProfiler.end();*/
-        
-        HaqProfiler.begin('HaqSystem::init(): page template');
-            var pageInfo = HaqTemplates.parsePage(route.pagePath);
-        HaqProfiler.end();
 
         HaqProfiler.begin('HaqSystem::init(): page construct');
 		var manager : HaqComponentManager = new HaqComponentManager(templates);
-		var page : HaqPage = manager.createPage(untyped Type.resolveClass(route.className), pageInfo.doc, params);
+		var page : HaqPage = manager.createPage(route.path, params);
         HaqProfiler.end();
 
-        if (!HaQuery.isPostback)    // простое обращение к странице
+        if (!HaQuery.isPostback)
         {
             HaqProfiler.begin('HaqSystem::init(): page render');
                 page.forEachComponent('preRender');
@@ -57,7 +47,6 @@ class HaqSystem
             HaqProfiler.end();
 
             HaqProfiler.begin('HaqSystem::init(): insert html and javascripts to <head>');
-                // вставляем подключение haquery.js и styles.css
                 var incCss = Lambda.map(templates.getStyleFilePaths(), function(path:String):String { return getCssLink(path); } ).join('\n        ');
 				var incJs = [ getScriptLink('haquery/client/jquery.js'), getScriptLink('haquery/client/haquery.js') ].join('\n        ');
 				
@@ -79,7 +68,7 @@ class HaqSystem
 					 + "        <script>\n"
 					 + "            if(typeof haquery=='undefined') alert('haquery.js must be loaded!');\n"
                      + "            " + templates.getInternalDataForPageHtml().replace('\n','\n            ') + '\n'
-					 + "            " + manager.getInternalDataForPageHtml().replace('\n', '\n            ') + '\n'
+					 + "            " + manager.getInternalDataForPageHtml(route.path).replace('\n', '\n            ') + '\n'
 					 + "            haquery.base.HaQuery.run();\n"
 					 + "        </script>\n"
                      + html.substr(closeBodyTagPos);

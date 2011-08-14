@@ -15,59 +15,56 @@ enum HaqRouteType
 class HaqRoute
 {
 	public var routeType(default,null) : HaqRouteType;
-	public var pagePath(default,null) : String;
+	public var path(default,null) : String;
 	public var className(default,null) : String;
-	public var templatePath(default,null) : String;
 	public var pageID(default,null) : String;
 	
-	public function new(path:String) : Void
+	public function new(url:String) : Void
 	{
-		if (path == 'index.php' || path == 'index')
+		if (url == 'index.php' || url == 'index')
 		{
 			Web.redirect('/');
 			php.Sys.exit(0);
 		}
 		
-		if (path.endsWith('/index'))
+		if (url.endsWith('/index'))
 		{
-			Web.redirect(path.substr(0, path.length - ("/index").length));
+			Web.redirect(url.substr(0, url.length - ("/index").length));
 			Sys.exit(0);
 		}
 		
-		if (FileSystem.exists(path) && path.endsWith('.php'))
+		if (FileSystem.exists(url) && url.endsWith('.php'))
 		{
 			routeType = HaqRouteType.file;
-			pagePath = path;
+			path = url;
 		}
 		else
 		{
 
-			path = path.trim('/');
-			if (path == '') path = 'index';
-			path = 'pages/' + path;
+			url = url.trim('/');
+			if (url == '') url = 'index';
+			url = 'pages/' + url;
 			
 
 			var pageID = null;
 			
-			if (!isPageExist(path))
+			if (!isPageExist(url))
 			{
-				var p = path.split('/');
+				var p = url.split('/');
 				pageID = p.pop();
-				path = p.join('/');
+				url = p.join('/');
 			}
 			
-			if (!isPageExist(path))
+			if (!isPageExist(url))
 			{
 				php.Web.setReturnCode(404);
 				Sys.exit(0);
 			}
 			
-			pagePath = path;
+			path = url;
 			
-			className = path.replace('/', '.') + '.Server';
+			className = url.replace('/', '.') + '.Server';
 			if (Type.resolveClass(className)==null) className = 'haquery.server.HaqPage';
-			
-			templatePath = FileSystem.exists(path + '/template.phtml') ? path + '/template.phtml' : null;
 		}
 	}
 	
