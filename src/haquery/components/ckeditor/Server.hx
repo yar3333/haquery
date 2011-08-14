@@ -6,7 +6,13 @@ class Server extends HaqComponent
 {
     public var text : String;
     
-    function preRender()
+	public function new()
+	{
+		super();
+		manager.registerScript(tag, '~/ckeditor.js');
+	}
+    
+	function preRender()
     {
         q('#e').html(text);
     }

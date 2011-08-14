@@ -1,15 +1,22 @@
 package haquery.components.ckeditor;
 
+import haquery.base.HaqEvent;
+
 class Client extends haquery.client.HaqComponent
 {
-    private var editor;
+    private var editor : CKEditor;
     
 	public var event_save : HaqEvent;
     public var event_close : HaqEvent;
 
-    public function init()
+    public var text(text_getter, text_setter) : String;
+	function text_getter() : String { return editor.getData(); }
+	function text_setter(t:String) : String { editor.setData(t); return t; }
+    
+	public function init()
     {
-        editor = CKEDITOR.replace(q('#e')[0].id, {
+        var self = this;
+		editor = CKEditor.replace(q('#e')[0].id, {
             toolbar: [
                 ['Source'], ['AjaxSave'], ['Undo','Redo','-','Cut','Copy','Paste','PasteText','PasteFromWord'], ['Find','Replace'], ['Styles'], ['Print'], ['Maximize','Close'], '/',
                 ['Font','FontSize'], ['NumberedList','BulletedList'], ['Outdent','Indent','Blockquote'], ['Format'], ['BGColor'], '/',
@@ -18,22 +25,9 @@ class Client extends haquery.client.HaqComponent
             skin: 'office2003',
             scayt_autoStartup: false,
             extraPlugins: "ajaxsave",
-            saveFunction: function(text) { event_save.call(text); },
-            closeFunction: function() { event_close.call(); },
+            saveFunction: function(text:String):Void { self.event_save.call([text]); },
+            closeFunction: function() { self.event_close.call(); },
             resize_enabled: false
         });
-        editor.config.saveFunction = function() { event_save.call(); };
-    }
-
-    public var text(text_getter, text_setter) : String;
-	
-	function text_getter(t) : String
-    {
-        return editor.getData();
-    }
-	
-	function text_setter(t:String) : Void
-    {
-        editor.setData(t);
     }
 }

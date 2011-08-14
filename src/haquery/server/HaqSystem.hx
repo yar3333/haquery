@@ -41,7 +41,7 @@ class HaqSystem
         HaqProfiler.end();*/
         
         HaqProfiler.begin('HaqSystem::init(): page template');
-            var pageInfo = HaqTemplates.parseComponent(route.pagePath);
+            var pageInfo = HaqTemplates.parsePage(route.pagePath);
         HaqProfiler.end();
 
         HaqProfiler.begin('HaqSystem::init(): page construct');
@@ -58,8 +58,7 @@ class HaqSystem
 
             HaqProfiler.begin('HaqSystem::init(): insert html and javascripts to <head>');
                 // вставляем подключение haquery.js и styles.css
-                var incCss = Lambda.map(templates.getStyleFilePaths(), function(path:String):String { return getCssLink(path); } ).join('\n        ')
-						   + (pageInfo.css != '' ? "\n      <style>" + pageInfo.css + "</style>" : '');
+                var incCss = Lambda.map(templates.getStyleFilePaths(), function(path:String):String { return getCssLink(path); } ).join('\n        ');
 				var incJs = [ getScriptLink('haquery/client/jquery.js'), getScriptLink('haquery/client/haquery.js') ].join('\n        ');
 				
 				//var reCloseHead = new EReg('\\s*</head>', '');

@@ -9,10 +9,15 @@ class HaqComponentManager
 	var templates : HaqTemplates;
 	var tag2id2component : Hash<Array<HaqComponent>>;
 	
+	var registeredScripts(default,null) : Array<String>;
+	var registeredStyles(default,null) : Array<String>;
+	
 	public function new(templates:HaqTemplates) : Void
 	{
 		this.templates = templates;
 		tag2id2component = new Hash<Array<HaqComponent>>();
+		registeredScripts = [];
+		registeredStyles = [];
 	}
 	
 	function newComponent(parent:HaqComponent, clas:Class<HaqComponent>, name:String, id:String, doc:HaqXml, attr:Hash<String>, innerHTML:String) : HaqComponent
@@ -26,8 +31,7 @@ class HaqComponentManager
 	{
         var name : String = tagOrName.startsWith('haq:') ? getNameByTag(tagOrName) : tagOrName;
 		var template = templates.get(name);
-		//trace('createComponent: template.className = ' + Type.getClassName(template.clas));
-		var component : HaqComponent = newComponent(parent, template.cssClass, name, id, template.doc, attr, innerHTML);
+		var component : HaqComponent = newComponent(parent, template.serverClass, name, id, template.doc, attr, innerHTML);
 		if (!tag2id2component.exists(name)) tag2id2component.set(name, new Array<HaqComponent>());
 		tag2id2component.get(name).push(component);
 		return component;
@@ -40,6 +44,37 @@ class HaqComponentManager
 		return untyped component;
 	}
     
+	public function registerScript(tag:String, urlToJs:String) : Void
+	{
+		/*if (urlToCss.startsWith('~/'))
+		{
+			templates.getStyleFilePaths
+		}*/
+		
+		if (registeredScripts.indexOf(urlToJs) == -1)
+		{
+			registeredScripts.push(urlToJs);
+		}
+	}
+	
+	public function registerStyle(tag:String, urlToCss:String) : Void
+	{
+		if (registeredStyles.indexOf(urlToCss) == -1)
+		{
+			registeredStyles.push(urlToCss);
+		}
+	}
+	
+	public function getRegisteredScripts() : Array<String>
+	{
+		return registeredScripts;
+	}
+	
+	public function getRegisteredStyles() : Array<String>
+	{
+		return registeredStyles;
+	}
+	
 	public function getInternalDataForPageHtml() : String
     {
 		var tags = templates.getTags();
@@ -78,7 +113,7 @@ class HaqComponentManager
 		return tag.substr("haq:".length).toLowerCase().split('-').join('_');
     }
 	
-   static function processPlaceholders(doc : HaqXml)
+    static function processPlaceholders(doc : HaqXml)
     {
         var placeholders : Array<HaqXmlNodeElement> = untyped Lib.toHaxeArray(doc.find('haq:placeholder'));
         var contents : Array<HaqXmlNodeElement> = untyped Lib.toHaxeArray(doc.find('>haq:content'));
