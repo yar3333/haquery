@@ -11,7 +11,7 @@ typedef HaqTemplate =
 { 
 	var doc : HaqXml;
 	var serverHandlers: Hash<Array<String>>;
-	var cssClass : Class<HaqComponent>;
+	var serverClass : Class<HaqComponent>;
 }
 
 private typedef HaqCachedTemplate = {
@@ -26,12 +26,14 @@ class HaqTemplates
 	
 	public function new(componentsFolders : Array<String>) : Void
 	{
-		//trace('new componentsFolders.length = ' + componentsFolders.length);
-		
-		this.componentsFolders = componentsFolders;
-		templates = new Hash<Hash<HaqCachedTemplate>>();
-		
+		this.componentsFolders = [];
 		for (folder in componentsFolders)
+		{
+			this.componentsFolders.push(path2relative(folder));
+		}
+		
+		templates = new Hash<Hash<HaqCachedTemplate>>();
+		for (folder in this.componentsFolders)
 		{
 			templates.set(folder, build(folder));
 		}
@@ -52,7 +54,7 @@ class HaqTemplates
 	
 	public function get(tag:String) : HaqTemplate
 	{
-		var r : HaqTemplate = { doc : null, serverHandlers : null, cssClass : null };
+		var r : HaqTemplate = { doc : null, serverHandlers : null, serverClass : null };
 
 		var i = componentsFolders.length - 1;
 		while (i >= 0)
@@ -65,35 +67,30 @@ class HaqTemplates
 				if (r.serverHandlers == null && t.serverHandlers != null) r.serverHandlers = t.serverHandlers;
 			}
 			
-			if (r.cssClass == null)
+			if (r.serverClass == null)
 			{
-				var className = path2relative(componentsFolder).replace('/', '.') + tag + '.Server';
-				//trace('Test class for existance: ' + className);
-				r.cssClass = untyped Type.resolveClass(className);
+				var className = componentsFolder.replace('/', '.') + tag + '.Server';
+				r.serverClass = untyped Type.resolveClass(className);
 			}
 			
 			i--;
 		}
 		
-		if (r.doc == null && r.serverHandlers == null && r.cssClass == null)
+		if (r.doc == null && r.serverHandlers == null && r.serverClass == null)
 		{
-			throw 'Component "'+tag+'" not found.';
+			throw 'Component "' + tag + '" not found.';
 		}
 		
-		if (r.cssClass == null) r.cssClass = haquery.server.HaqComponent;
+		if (r.serverClass == null) r.serverClass = haquery.server.HaqComponent;
 		
 		return r;
 	}
 	
 	private function build(componentsFolder : String) : Hash<HaqCachedTemplate>
 	{
-		componentsFolder = path2relative(componentsFolder);
-		//trace('componentsFolder = ' + componentsFolder);
-		
 		var dataFilePath = HaQuery.folders.temp + componentsFolder + 'components.data';
 		var stylesFilePath = HaQuery.folders.temp + componentsFolder + 'styles.css';
 		
-		//trace('dataFilePath = ' + dataFilePath);
 		var templatePaths : Array<String> = getComponentTemplatePaths(componentsFolder);
 		var cacheFileTime = FileSystem.exists(dataFilePath)  ? FileSystem.stat(dataFilePath).mtime.getTime() : 0.0;
 		if (!FileSystem.exists(dataFilePath) 
@@ -125,16 +122,46 @@ class HaqTemplates
 		}
 	}
 	
-	static public function parseComponent(componentFolder:String) : { css:String, doc:HaqXml, serverHandlers : Hash<Array<String>> }
+	static public function parsePage(pageFolder:String) : { doc:HaqXml, serverHandlers : Hash<Array<String>> }
 	{
-		componentFolder = path2relative(componentFolder);
-		//trace('componentFolder = ' + componentFolder);
+		pageFolder = path2relative(pageFolder);
 		
-		var templatePath = componentFolder + 'template.phtml';
+		var templatePath = pageFolder + 'template.phtml';
+		var text = FileSystem.exists(templatePath) ? getTemplateText(templatePath) : '';
 		
-        HaqProfiler.begin('HaqCache::parseComponent(): template file -> doc and css');
+        var doc = new HaqXml(text);
+		var serverHandlers = parseComponentServerHandlers(pageFolder);
+		
+		return { doc:doc, serverHandlers:serverHandlers };
+	}
+	
+	function parseComponent(componentFolder:String) : { css:String, doc:HaqXml, serverHandlers : Hash<Array<String>> }
+	{
+		var tag = Path.withoutDirectory(componentFolder);
+		
+		var templatePath = getFileUrl(tag, 'template.phtml');
+		var text = '';
+		if (templatePath != null)
+		{
+			text = getTemplateText(templatePath);
+			var supportUrl = getFileUrl(tag, 'support');
+			if (supportUrl != null)
+			{
+				text = text.replace('~/', supportUrl + '/');
+			}
+		}
+		
+        var cssAndDoc = parseComponentTemplate(text);
+		var serverHandlers = parseComponentServerHandlers(componentFolder);
+		
+		return { css:cssAndDoc.css, doc:cssAndDoc.doc, serverHandlers:serverHandlers };
+	}
+	
+	static function parseComponentTemplate(text:String) : { css:String, doc:HaqXml }
+	{
+        HaqProfiler.begin('HaqTemplate::parseComponent(): template file -> doc and css');
 			var css = '';
-			var doc = new HaqXml(FileSystem.exists(templatePath) ? getTemplateText(templatePath) : '');
+			var doc = new HaqXml(text);
 			var i = 0; 
 			var children : Array<HaqXmlNodeElement> = untyped Lib.toHaxeArray(doc.children);
 			while (i < children.length)
@@ -150,8 +177,13 @@ class HaqTemplates
 				i++;
 			}
         HaqProfiler.end();
-        
-		HaqProfiler.begin('HaqCache::parseComponent(): component server class -> handlers');
+		
+		return { css:css, doc:doc };
+	}
+	
+	static function parseComponentServerHandlers(componentFolder:String) : Hash<Array<String>>
+	{
+		HaqProfiler.begin('HaqTemplate::parseComponent(): component server class -> handlers');
             var serverMethods = [ 'click','change' ];   // какие серверные обработчики бывают
             var serverHandlers : Hash<Array<String>> = new Hash<Array<String>>();
 			var className = componentFolder.replace('/', '.') + 'Server';
@@ -181,7 +213,7 @@ class HaqTemplates
 			}
         HaqProfiler.end();
 		
-		return { css:css, doc:doc, serverHandlers:serverHandlers };
+		return serverHandlers;
 	}
 	
 	public function getStyleFilePaths() : Array<String>
@@ -189,13 +221,29 @@ class HaqTemplates
 		var r = new Array<String>();
 		for (folder in componentsFolders)
 		{
-			var path = HaQuery.folders.temp + path2relative(folder) + 'styles.css';
+			var path = HaQuery.folders.temp + folder + 'styles.css';
 			if (FileSystem.exists(path))
 			{
 				r.push(path);
 			}
 		}
 		return r;
+	}
+	
+	public function getFileUrl(tag:String, filePathRelativeToComponentFolder:String) : String
+	{
+		filePathRelativeToComponentFolder = filePathRelativeToComponentFolder.trim('/');
+		var i = componentsFolders.length - 1;
+		while (i >= 0)
+		{
+			var path = componentsFolders[i] + tag + '/' + filePathRelativeToComponentFolder;
+			if (FileSystem.exists(path))
+			{
+				return '/' + path;
+			}
+			i--;
+		}
+		return null;
 	}
 	
 	static function getComponentTemplatePaths(componentsFolder:String) : Array<String>
@@ -211,7 +259,6 @@ class HaqTemplates
 			{
 				r.push(templatePath);
 			}
-			
 		}
 		return r;
 	}
@@ -225,13 +272,11 @@ class HaqTemplates
 		return path.length > 0 ? path + '/' : '';
 	}
 	
-	static function getTemplateText(path:String) : String
+	static function getTemplateText(templatePath:String) : String
 	{
 		untyped __call__('ob_start');
-		untyped __call__('include', path);
+		untyped __call__('include', templatePath);
 		var text : String = untyped __call__('ob_get_clean');
-		var supportUrl = '/' + path2relative(Path.directory(path)) + 'support/';
-		text = text.replace('~/', supportUrl);
 		return text;
 	}
 	

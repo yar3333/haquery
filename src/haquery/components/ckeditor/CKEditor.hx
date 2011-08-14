@@ -1,4 +1,4 @@
-package js.ckeditor;
+package haquery.components.ckeditor;
 
 typedef CKEditorOptions = {
 	var toolbar : Array<Array<String>>;
@@ -12,11 +12,10 @@ typedef CKEditorOptions = {
 
 @:native("CKEDITOR") extern class CKEditor
 {
-    static function __init__() : Void
-	{
-		untyped __php__("require_once 'php/FirePHP.php';");
-	}
-	
 	public var config : CKEditorOptions;
-	public static function replace(elemID:String, options:CKEditorOptions);
+	
+	public static function replace(elemID:String, options:CKEditorOptions) : CKEditor;
+	
+	public function getData() : String;
+	public function setData(text:String) : Void;
 }

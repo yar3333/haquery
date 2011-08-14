@@ -2,6 +2,7 @@ package jQuery;
 
 import js.Dom;
 import js.XMLHttpRequest;
+typedef Dom = js.HtmlDom;
 
 #if JQUERY_NOCONFLICT
 @:native("jQuery")
