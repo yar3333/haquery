@@ -176,11 +176,11 @@ class HaQuery
 			}
 			
 			var text = '';
-			if (Type.getClassName(Type.getClass(v)) == 'String') text = v;
+			if (Type.getClassName(Type.getClass(v)) == 'String') text += v;
 			else
 			if (!isNull(v))
 			{
-				text = "DUMP " + pos.fileName + ":" + pos.lineNumber + "\n";
+				text += "DUMP\n";
 				var dump = ''; untyped __php__("ob_start(); var_dump($v); $dump = ob_get_clean();");
 				text += StringTools.stripTags(dump);
 			}
@@ -193,12 +193,24 @@ class HaQuery
 			
 			if (text != '')
 			{
-				var isHeadersSent : Bool = untyped __call__('headers_sent');
+                var isHeadersSent : Bool = untyped __call__('headers_sent');
 				if (!isHeadersSent)
 				{
 					try
                     {
-                        FirePHP.getInstance(true).trace(text);
+                        if (text.startsWith('HAXE EXCEPTION'))
+                        {
+                            FirePHP.getInstance(true).error(text);
+                        }
+                        else if (text.startsWith('HAQUERY'))
+                        {
+                            FirePHP.getInstance(true).info(text);
+                        }
+                        else
+                        {
+                            text = pos.fileName + ":" + pos.lineNumber + " : " + text;
+                            FirePHP.getInstance(true).log(text);
+                        }
                     }
                     catch (s:String)
                     {
@@ -207,14 +219,14 @@ class HaQuery
 				}
 				else
 				{
-					Lib.println("<script>if (console) console.debug(decodeURIComponent(\"" + StringTools.urlEncode(text) + "\"));</script>");
+					Lib.println("<script>if (console) console.debug(decodeURIComponent(\"" + StringTools.urlEncode("SERVER " + text) + "\"));</script>");
 				}
 			}
 			
 			var f : FileOutput = php.io.File.append(tempDir + "haquery.log", false);
 			if (f != null)
 			{
-				f.writeString(text != null ? StringTools.format('%.3f', Date.now().getTime() - startTime) + " HAQUERY " + StringTools.replace(text, "\n", "\n\t") + "\n" : "\n");
+				f.writeString(text != '' ? StringTools.format('%.3f', Date.now().getTime() - startTime) + " " + StringTools.replace(text, "\n", "\n\t") + "\n" : "\n");
 				f.close();
 			}
 		}
