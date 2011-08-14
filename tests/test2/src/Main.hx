@@ -3,7 +3,7 @@ package ;
 import Imports;
 
 #if php
-import php.FirePHP;
+import php.firePHP.FirePHP;
 #end
 
 class Main 

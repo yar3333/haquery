@@ -11,7 +11,7 @@ import haxe.Stack;
 	import php.FileSystem;
 	import php.io.FileOutput;
 	import php.io.Path;
-	import php.FirePHP;
+	import php.firePHP.FirePHP;
 	import haquery.server.HaqInternals;
 	import haquery.server.HaqConfig;
 	import haquery.server.HaqRoute;
@@ -196,7 +196,14 @@ class HaQuery
 				var isHeadersSent : Bool = untyped __call__('headers_sent');
 				if (!isHeadersSent)
 				{
-					//FirePHP.getInstance(true).trace(text);
+					try
+                    {
+                        FirePHP.getInstance(true).trace(text);
+                    }
+                    catch (s:String)
+                    {
+                        text += "\n\nFirePHP exception: " + s;
+                    }
 				}
 				else
 				{
