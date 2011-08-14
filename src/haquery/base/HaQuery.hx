@@ -209,7 +209,7 @@ class HaQuery
                         else
                         {
                             text = pos.fileName + ":" + pos.lineNumber + " : " + text;
-                            FirePHP.getInstance(true).log(text);
+                            FirePHP.getInstance(true).warn(text);
                         }
                     }
                     catch (s:String)
