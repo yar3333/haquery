@@ -35,7 +35,7 @@ class HaqComponentManager
 		var component : HaqComponent = untyped Type.createInstance(clas, []);
         if (Reflect.hasMethod(component, 'construct'))
         {
-            component.construct(this, parent, tag, id);
+            component.construct(this, parent, tag, id, templates.get(tag).elemID_serverHandlers);
         }
         else
         {

@@ -2,12 +2,13 @@ package haquery.server;
 
 import haquery.server.HaqComponent;
 import haquery.server.HaqXml;
+import haxe.Serializer;
 import php.Lib;
 
 class HaqComponentManager 
 {
 	var templates : HaqTemplates;
-	var tag2id2component : Hash<Array<HaqComponent>>;
+	var tag_id_component : Hash<Array<HaqComponent>>;
 	
 	var registeredScripts(default,null) : Array<String>;
 	var registeredStyles(default,null) : Array<String>;
@@ -15,7 +16,7 @@ class HaqComponentManager
 	public function new(templates:HaqTemplates) : Void
 	{
 		this.templates = templates;
-		tag2id2component = new Hash<Array<HaqComponent>>();
+		tag_id_component = new Hash<Array<HaqComponent>>();
 		registeredScripts = [];
 		registeredStyles = [];
 	}
@@ -32,16 +33,22 @@ class HaqComponentManager
         var name : String = tagOrName.startsWith('haq:') ? getNameByTag(tagOrName) : tagOrName;
 		var template = templates.get(name);
 		var component : HaqComponent = newComponent(parent, template.serverClass, name, id, template.doc, attr, innerHTML);
-		if (!tag2id2component.exists(name)) tag2id2component.set(name, new Array<HaqComponent>());
-		tag2id2component.get(name).push(component);
+		if (!tag_id_component.exists(name)) tag_id_component.set(name, new Array<HaqComponent>());
+		tag_id_component.get(name).push(component);
 		return component;
 	}
 	
-	public function createPage(clas:Class<HaqPage>, doc:HaqXml, attr:Hash<String>) : HaqPage
+	public function createPage(path:String, attr:Hash<String>) : HaqPage
 	{
+		var className = path.replace('/', '.') + '.Server';
+		if (Type.resolveClass(className)==null) className = 'haquery.server.HaqPage';
+		var pageClass = Type.resolveClass(className);
+		
+		var doc = HaqTemplates.parsePageTemplate(path);
 		processPlaceholders(doc);
-		var component : HaqComponent = newComponent(null, untyped clas, '', '', doc, attr, null);
-		return untyped component;
+		
+		var component : HaqPage = cast(newComponent(null, cast pageClass, '', '', doc, attr, null), HaqPage);
+		return component;
 	}
     
 	public function registerScript(tag:String, urlToJs:String) : Void
@@ -75,34 +82,29 @@ class HaqComponentManager
 		return registeredStyles;
 	}
 	
-	public function getInternalDataForPageHtml() : String
+	public function getInternalDataForPageHtml(path:String) : String
     {
-		var tags = templates.getTags();
-			  
-        var s = "haquery.client.HaqInternals.serverHandlers = [\n";
-        for (tag in tags)
-        {
-            var info = templates.get(tag);
-			if (info.serverHandlers.keys().hasNext())
-			{
-                s += "    ['" + tag + "',\n";
-				for (id in info.serverHandlers.keys())
-				{
-					s += "        ['" + id + "', '" + info.serverHandlers.get(id).join(',') + "'],\n";
-				}
-				s = s.rtrim("\n,") + "\n    ],\n";
-			}
-        }
-        s = s.rtrim("\n,") + "\n];\n";
-
+		var s = '';
+        
+        var tags = templates.getTags();
         s += "haquery.client.HaqInternals.tags = [\n";
-        for (tag in tag2id2component.keys())
+        for (tag in tag_id_component.keys())
         {
-            var components = tag2id2component.get(tag);
+            var components = tag_id_component.get(tag);
 			var ids = Lambda.map(components, function(x:HaqComponent):String { return x.fullID; } ).join(',');
 			s += "    ['" + tag + "', '" + ids + "'],\n";
         }
-        s = s.rtrim("\n,") + "\n];";
+        s = s.rtrim("\n,") + "\n];\n";
+		
+        var pageServerHandlers = HaqTemplates.parseServerHandlers(path);
+		s += "haquery.client.HaqInternals.serializedPageServerHandlers = \"" + Serializer.run(pageServerHandlers) + "\";\n";
+	
+        var componentsServerHandlers = new Hash<Hash<Array<String>>>();
+        for (tag in tags)
+        {
+            componentsServerHandlers.set(tag, templates.get(tag).serverHandlers);
+        }
+        s += "haquery.client.HaqInternals.serializedComponentsServerHandlers = \"" + Serializer.run(componentsServerHandlers) + "\";";
 
         return s;
     }

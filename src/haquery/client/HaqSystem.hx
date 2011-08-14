@@ -19,7 +19,7 @@ class HaqSystem
 	
 	public function new() : Void
 	{
-		var templates = new HaqTemplates(HaqInternals.componentsFolders, HaqInternals.serverHandlers);
+		var templates = new HaqTemplates(HaqInternals.componentsFolders, HaqInternals.componentsServerHandlers);
 		var manager = new HaqComponentManager(templates, HaqInternals.id_tag);
 		var page = manager.createPage();
 		for (elem in (new JQuery("*[id]")).toArray())
@@ -56,7 +56,11 @@ class HaqSystem
 
 		var r = callClientElemEventHandlers(component, elem, e);
 		if (!r) return false;
-        return callServerElemEventHandlers(templates, component, elem, e);
+        
+		var serverHandlers = component.parent == null 
+            ? HaqInternals.pageServerHandlers
+            : templates.get(component.tag).elemID_serverHandlers;
+        return callServerElemEventHandlers(serverHandlers, component, elem, e);
     }
 	
 	static function callClientElemEventHandlers(component:HaqComponent, elem:HtmlDom, e:js.Dom.Event) : Bool
@@ -72,53 +76,51 @@ class HaqSystem
 		return true;
 	}
 	
-	static function callServerElemEventHandlers(templates:HaqTemplates, component:HaqComponent, elem:HtmlDom, e:js.Dom.Event) : Bool
+	static function callServerElemEventHandlers(serverHandlers:Hash<Array<String>>, component:HaqComponent, elem:HtmlDom, e:js.Dom.Event) : Bool
 	{
 		var n = elem.id.lastIndexOf(HaqInternals.DELIMITER);
 		var elemID = n > 0 ? elem.id.substr(n + 1) : elem.id;
 		
-		if (templates.get(component.tag).elemID_serverHandlers == null
-         || templates.get(component.tag).elemID_serverHandlers.get(elemID) == null
-		) {
-			return true;  // для данного элемента нет серверных обработчиков
-		}
+        
+        if (serverHandlers != null && serverHandlers.get(elemID) != null)
+        {
+            var handlers = serverHandlers.get(elemID);
+            if (handlers.indexOf(e.type)==-1) return true;  // серверного обработчика нет
 
-		var handlers = templates.get(component.tag).elemID_serverHandlers.get(elemID);
-        if (handlers.indexOf(e.type)==-1) return true;  // серверного обработчика нет
+            var sendData : Dynamic = {};
+            sendData[untyped 'HAQUERY_POSTBACK'] = 1;
+            sendData[untyped 'HAQUERY_ID'] = elem.id;
+            sendData[untyped 'HAQUERY_EVENT'] = e.type;
 
-        var sendData : Dynamic = {};
-		sendData[untyped 'HAQUERY_POSTBACK'] = 1;
-		sendData[untyped 'HAQUERY_ID'] = elem.id;
-		sendData[untyped 'HAQUERY_EVENT'] = e.type;
-
-		for (sendElem in getElemsForSendToServer(component))
-		{
-			sendData[untyped sendElem.id] = sendElem.nodeName.toUpperCase() == 'INPUT' && sendElem.getAttribute('type').toUpperCase() == "CHECKBOX"
-				? (Reflect.field(sendElem, 'checked') ? new JQuery(sendElem).val() : '')
-				: new JQuery(sendElem).val();
-		}
-
-        JQueryStatic.post(
-            Lib.window.location.href,
-            sendData,
-            function(data:String) : Void
+            for (sendElem in getElemsForSendToServer(component))
             {
-				var okMsg = "HAQUERY_OK";
-                if (data.startsWith(okMsg))
-                {
-                    var code = data.substr(okMsg.length);
-                    trace("AJAX: "+code);
-                    untyped __js__("eval(code)");
-                }
-                else
-                {
-                    var errWin = Lib.window.open("", "HAQUERY_ERROR_AJAX");
-                    errWin.document.write(data);
-                }
+                sendData[untyped sendElem.id] = sendElem.nodeName.toUpperCase() == 'INPUT' && sendElem.getAttribute('type').toUpperCase() == "CHECKBOX"
+                    ? (Reflect.field(sendElem, 'checked') ? new JQuery(sendElem).val() : '')
+                    : new JQuery(sendElem).val();
             }
-        );
+
+            JQueryStatic.post(
+                Lib.window.location.href,
+                sendData,
+                function(data:String) : Void
+                {
+                    var okMsg = "HAQUERY_OK";
+                    if (data.startsWith(okMsg))
+                    {
+                        var code = data.substr(okMsg.length);
+                        trace("AJAX: "+code);
+                        untyped __js__("eval(code)");
+                    }
+                    else
+                    {
+                        var errWin = Lib.window.open("", "HAQUERY_ERROR_AJAX");
+                        errWin.document.write(data);
+                    }
+                }
+            );
+		}
 		
-		return true;
+        return true;
 	}
 	
 	static function getElemsForSendToServer(component:HaqComponent) : Iterable<HtmlDom>

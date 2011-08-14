@@ -1,16 +1,15 @@
 package haquery.client;
 
+import haxe.Unserializer;
 import js.Lib;
 
 class HaqInternals 
 {
 	public static inline var DELIMITER = '-';
 	
-	public static var componentsFolders : Array<String>;
-	public static var serverHandlers : Array<Array<Dynamic>>;
-	static var tags : Array<Array<String>>;
-	public static var lists : Array<Array<Dynamic>>; // [ [listID1,tag1,len1], [listID2,tag2,len2] ... ]
+    public static var componentsFolders : Array<String>;
 	
+    private static var tags : Array<Array<String>>;
 	public static var id_tag(id_tag_getter, null) : Hash<String>;
 	static var id_tag_cached : Hash<String>;
 	static function id_tag_getter() : Hash<String>
@@ -28,4 +27,28 @@ class HaqInternals
 		}
 		return id_tag_cached;
 	}
+    
+    static var serializedPageServerHandlers : String;
+    public static var pageServerHandlers(pageServerHandlers_getter, null) : Hash<Array<String>>;
+    static var pageServerHandlers_cached : Hash<Array<String>>;
+    static function pageServerHandlers_getter() : Hash<Array<String>>
+    {
+        if (pageServerHandlers_cached == null)
+        {
+            pageServerHandlers_cached = Unserializer.run(serializedPageServerHandlers);
+        }
+        return pageServerHandlers_cached;
+    }
+	
+    static var serializedComponentsServerHandlers : String;
+    public static var componentsServerHandlers(componentsServerHandlers_getter, null) : Hash<Hash<Array<String>>>;
+    static var componentsServerHandlers_cached : Hash<Hash<Array<String>>>;
+    static function componentsServerHandlers_getter() : Hash<Hash<Array<String>>>
+    {
+        if (componentsServerHandlers_cached == null)
+        {
+            componentsServerHandlers_cached = Unserializer.run(serializedComponentsServerHandlers);
+        }
+        return componentsServerHandlers_cached;
+    }
 }

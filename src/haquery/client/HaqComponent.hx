@@ -7,15 +7,14 @@ import haquery.server.HaQuery;
 
 class HaqComponent extends haquery.base.HaqComponent
 {
-	public function new() : Void
-	{
-		super();
-	}
-	
-	public function construct(manager:HaqComponentManager, parent:HaqComponent, tag:String,  id:String) : Void
+	var serverHandlers(default,null) : Hash<Array<String>>;
+    
+	public function construct(manager:HaqComponentManager, parent:HaqComponent, tag:String,  id:String, serverHandlers:Hash<Array<String>>) : Void
 	{
 		super.commonConstruct(manager, parent, tag, id);
 		
+        this.serverHandlers = serverHandlers;
+        
 		createEvents();
 		createChildComponents();
 		if (Reflect.hasMethod(this, 'init')) Reflect.callMethod(this, Reflect.field(this, 'init'), []);

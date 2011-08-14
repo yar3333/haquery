@@ -102,9 +102,10 @@ class HaqTemplates
 			// TODO: папка в public может и отсутствовать
 			for (folder in FileSystem.readDirectory(componentsFolder))
 			{
-				var parts : { css:String, doc:HaqXml, serverHandlers : Hash<Array<String>> } = parseComponent(componentsFolder+folder);
+				var parts : { css:String, doc:HaqXml } = parseComponent(componentsFolder + folder);
+				var serverHandlers = parseServerHandlers(componentsFolder + folder);
 				css += parts.css;
-				data.set(folder, { serializedDoc: Lib.serialize(parts.doc), serverHandlers: parts.serverHandlers });
+				data.set(folder, { serializedDoc: Lib.serialize(parts.doc), serverHandlers: serverHandlers });
 			}
 			if (!FileSystem.exists(Path.directory(stylesFilePath)))
 			{
@@ -122,44 +123,32 @@ class HaqTemplates
 		}
 	}
 	
-	static public function parsePage(pageFolder:String) : { doc:HaqXml, serverHandlers : Hash<Array<String>> }
+	static public function parsePageTemplate(pageFolder:String) : HaqXml
 	{
-		pageFolder = path2relative(pageFolder);
+		pageFolder = pageFolder.rtrim('/') + '/';
 		
 		var templatePath = pageFolder + 'template.phtml';
 		var text = FileSystem.exists(templatePath) ? getTemplateText(templatePath) : '';
 		
-        var doc = new HaqXml(text);
-		var serverHandlers = parseComponentServerHandlers(pageFolder);
-		
-		return { doc:doc, serverHandlers:serverHandlers };
+        return new HaqXml(text);
 	}
 	
-	function parseComponent(componentFolder:String) : { css:String, doc:HaqXml, serverHandlers : Hash<Array<String>> }
-	{
-		var tag = Path.withoutDirectory(componentFolder);
-		
-		var templatePath = getFileUrl(tag, 'template.phtml');
-		var text = '';
-		if (templatePath != null)
-		{
-			text = getTemplateText(templatePath);
-			var supportUrl = getFileUrl(tag, 'support');
-			if (supportUrl != null)
-			{
-				text = text.replace('~/', supportUrl + '/');
-			}
-		}
-		
-        var cssAndDoc = parseComponentTemplate(text);
-		var serverHandlers = parseComponentServerHandlers(componentFolder);
-		
-		return { css:cssAndDoc.css, doc:cssAndDoc.doc, serverHandlers:serverHandlers };
-	}
-	
-	static function parseComponentTemplate(text:String) : { css:String, doc:HaqXml }
+	function parseComponent(componentFolder:String) : { css:String, doc:HaqXml }
 	{
         HaqProfiler.begin('HaqTemplate::parseComponent(): template file -> doc and css');
+			var tag = Path.withoutDirectory(componentFolder);
+			var templatePath = getFileUrl(tag, 'template.phtml');
+			var text = '';
+			if (templatePath != null)
+			{
+				text = getTemplateText(templatePath);
+				var supportUrl = getFileUrl(tag, 'support');
+				if (supportUrl != null)
+				{
+					text = text.replace('~/', supportUrl + '/');
+				}
+			}
+		
 			var css = '';
 			var doc = new HaqXml(text);
 			var i = 0; 
@@ -181,31 +170,29 @@ class HaqTemplates
 		return { css:css, doc:doc };
 	}
 	
-	static function parseComponentServerHandlers(componentFolder:String) : Hash<Array<String>>
+	public static function parseServerHandlers(componentFolder:String) : Hash<Array<String>>
 	{
-		HaqProfiler.begin('HaqTemplate::parseComponent(): component server class -> handlers');
+		componentFolder = componentFolder.rtrim('/') + '/';
+        
+        HaqProfiler.begin('HaqTemplate::parseComponent(): component server class -> handlers');
             var serverMethods = [ 'click','change' ];   // какие серверные обработчики бывают
             var serverHandlers : Hash<Array<String>> = new Hash<Array<String>>();
 			var className = componentFolder.replace('/', '.') + 'Server';
-			//trace('test class name = '+className);
+			trace('test class name = '+className);
 			var clas = Type.resolveClass(className); 
 			if (clas != null) 
 			{
 				var tempObj = Type.createEmptyInstance(clas);
-				//trace(className + ' => ' + Type.getInstanceFields(clas).length);
 				for (field in Type.getInstanceFields(clas))
 				{
-					//trace('Test ' + field);
 					if (Reflect.isFunction(Reflect.field(tempObj, field)))
 					{
-						//trace('======>OK');
 						var parts = field.split('_');
 						if (parts.length == 2 && serverMethods.indexOf(parts[1]) >= 0)
 						{
 							var nodeID = parts[0];
 							var method = parts[1];
 							if (!serverHandlers.exists(nodeID)) serverHandlers.set(nodeID, new Array<String>());
-							//trace('finded method = ' + method);
 							serverHandlers.get(nodeID).push(method);
 						}
 					}
@@ -213,6 +200,8 @@ class HaqTemplates
 			}
         HaqProfiler.end();
 		
+		//trace(componentFolder);
+		//trace(serverHandlers);
 		return serverHandlers;
 	}
 	
