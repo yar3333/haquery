@@ -113,8 +113,11 @@ class HaqSystem
                     }
                     else
                     {
-                        var errWin = Lib.window.open("", "HAQUERY_ERROR_AJAX");
-                        errWin.document.write(data);
+                        if (data != '')
+                        {
+                            var errWin = Lib.window.open("", "HAQUERY_ERROR_AJAX");
+                            errWin.document.write(data);
+                        }
                     }
                 }
             );

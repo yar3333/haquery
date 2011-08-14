@@ -78,10 +78,6 @@ class HaqSystem
         }
         else    // пришёл аякс-запрос
         {
-            /*dump = "ajax post =\n";
-            for(k=>v in php.Web.getParams) dump += k + " = " + v + "\n";
-            HaQuery.trace(dump);*/
-
             page.forEachComponent('preEventHandlers');
 
             var controlID : String = php.Web.getParams().get('HAQUERY_ID');
@@ -98,7 +94,6 @@ class HaqSystem
             var handler = controlID + '_' + php.Web.getParams().get('HAQUERY_EVENT');
             Reflect.callMethod(component, handler, null);
 
-            trace('HAQUERY_OK' + HaqInternals.getAjaxAnswer());
             php.Web.setHeader('Content-Type', 'text/plain; charset=utf-8');
             Lib.print('HAQUERY_OK' + HaqInternals.getAjaxAnswer());
         }
