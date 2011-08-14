@@ -20,7 +20,6 @@ class HaqSystem
 
         trace(null);
         trace("HAQUERY START route.pagePath = " + route.path + ", HTTP_HOST = " + Web.getHttpHost() + ", clientIP = " + Web.getClientIP());
-        trace("HAQUERY TEST");
 
         HaqProfiler.begin('HaqSystem::init(): build components');
             var templates = new HaqTemplates(HaQuery.config.componentsFolders);

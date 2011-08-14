@@ -1,10 +1,11 @@
-package php;
+package php.firePHP;
 
 @:native("FirePHP") extern class FirePHP
 {
     static function __init__() : Void
 	{
-		untyped __php__("require_once 'php/FirePHP.php';");
+		//untyped __php__("require_once 'php/firePHP/FirePHP/Init.php';");
+        untyped __php__("require_once 'php/firePHP/FirePHPCore/FirePHP.class.php';");
 	}
     
 	/**
