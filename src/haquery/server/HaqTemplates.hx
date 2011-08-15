@@ -228,7 +228,7 @@ class HaqTemplates
 			var path = componentsFolders[i] + tag + '/' + filePathRelativeToComponentFolder;
 			if (FileSystem.exists(path))
 			{
-				return '/' + path;
+				return path;
 			}
 			i--;
 		}

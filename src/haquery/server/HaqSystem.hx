@@ -67,17 +67,13 @@ class HaqSystem
         HaqProfiler.end();
 
         HaqProfiler.begin('HaqSystem::init(): insert html and javascripts to <head>');
-            var incCss = Lambda.map(templates.getStyleFilePaths(), function(path:String):String { return getCssLink(path); } ).join('\n        ');
-            var incJs = [ getScriptLink('haquery/client/jquery.js'), getScriptLink('haquery/client/haquery.js') ].join('\n        ');
+            var styleUrls = templates.getStyleFilePaths().concat(manager.getRegisteredStyles());
+            var pageStyles = Lambda.map(styleUrls, function(path:String):String { return getStyleLink(path); } ).join('\n        ');
+            html = html.replace("{styles}", pageStyles);
             
-            //var reCloseHead = new EReg('\\s*</head>', '');
-            //var closeHeadTagPos = reCloseHead.match(html) ?reCloseHead.matchedPos().pos : html.length;
-            html = html.replace("{styles}", incCss);
-            html = html.replace("{scripts}", incJs);
-/*				.substr(0, closeHeadTagPos) 
-                 + incCss
-                 + 
-                 + html.substr(closeHeadTagPos);*/
+            var scriptUrls = [ 'haquery/client/jquery.js', 'haquery/client/haquery.js' ].concat(manager.getRegisteredScripts());
+            var pageScripts = Lambda.map(scriptUrls, function(path:String):String { return getScriptLink(path); } ).join('\n        ');
+            html = html.replace("{scripts}", pageScripts);
             
             // вставляем подключение js-скрипты компонентов и вызова инициализации HaQuery
             var reCloseBody = new EReg('\\s*</body>', '');
@@ -122,15 +118,15 @@ class HaqSystem
         return 'HAQUERY_OK' + HaqInternals.getAjaxAnswer();
     }
     
-    static function getScriptLink(path:String) : String
+    static function getScriptLink(url:String) : String
     {
-        var url = HaQuery.path2url(path) + '?' + FileSystem.stat(path).mtime.getTime();
-        return "<script src='" + url + "'></script>";
+        var fullUrl = url + '?' + FileSystem.stat(url).mtime.getTime();
+        return "<script src='" + fullUrl + "'></script>";
     }
     
-	static function getCssLink(path:String) : String
+	static function getStyleLink(url:String) : String
     {
-        var url = HaQuery.path2url(path) + '?' + FileSystem.stat(path).mtime.getTime();
-        return "<link rel='stylesheet' type='text/css' href='" + url + "' />";
+        var fullUrl = url + '?' + FileSystem.stat(url).mtime.getTime();
+        return "<link rel='stylesheet' type='text/css' href='" + fullUrl + "' />";
     }
 }
