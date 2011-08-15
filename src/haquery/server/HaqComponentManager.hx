@@ -51,24 +51,29 @@ class HaqComponentManager
 		return component;
 	}
     
-	public function registerScript(tag:String, urlToJs:String) : Void
+	public function registerScript(tag:String, url:String) : Void
 	{
-		/*if (urlToCss.startsWith('~/'))
+		if (url.startsWith('~/'))
 		{
-			templates.getStyleFilePaths
-		}*/
+			url = templates.getFileUrl(tag, 'support') + url.substr(1);
+		}
 		
-		if (registeredScripts.indexOf(urlToJs) == -1)
+		if (registeredScripts.indexOf(url) == -1)
 		{
-			registeredScripts.push(urlToJs);
+			registeredScripts.push(url);
 		}
 	}
 	
-	public function registerStyle(tag:String, urlToCss:String) : Void
+	public function registerStyle(tag:String, url:String) : Void
 	{
-		if (registeredStyles.indexOf(urlToCss) == -1)
+		if (url.startsWith('~/'))
 		{
-			registeredStyles.push(urlToCss);
+			url = templates.getFileUrl(tag, 'support') + url.substr(1);
+		}
+		
+		if (registeredStyles.indexOf(url) == -1)
+		{
+			registeredStyles.push(url);
 		}
 	}
 	
