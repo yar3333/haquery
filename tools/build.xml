@@ -104,10 +104,12 @@
     	    <arg value="${doc.dir}${file.separator}server${file.separator}content.xml"/>
     	</exec>
 		<delete dir="${doc.dir}${file.separator}temp"/>
-		<exec executable="haxedoc" dir="${doc.dir}">
-			<arg value="server${file.separator}content.xml"/>
+		<copy file="${doc.dir}${file.separator}template.xml" todir="${doc.dir}${file.separator}server" />
+		<exec executable="haxedoc" dir="${doc.dir}${file.separator}server">
+			<arg value="content.xml"/>
     	</exec>
 		<delete file="${doc.dir}${file.separator}server${file.separator}content.xml"/>
+		<delete file="${doc.dir}${file.separator}server${file.separator}template.xml"/>
 		
 		<mkdir dir="${doc.dir}${file.separator}client"/>
 		<exec executable="haxe">
@@ -118,9 +120,11 @@
     	    <arg value="-xml"/>
     	    <arg value="${doc.dir}${file.separator}client${file.separator}content.xml"/>
     	</exec>
-		<exec executable="haxedoc" dir="${doc.dir}">
-			<arg value="client${file.separator}content.xml"/>
+		<copy file="${doc.dir}${file.separator}template.xml" todir="${doc.dir}${file.separator}client" />
+		<exec executable="haxedoc" dir="${doc.dir}${file.separator}client">
+			<arg value="content.xml"/>
     	</exec>
 		<delete file="${doc.dir}${file.separator}client${file.separator}content.xml"/>
+		<delete file="${doc.dir}${file.separator}client${file.separator}template.xml"/>
 	</target>
 </project>
