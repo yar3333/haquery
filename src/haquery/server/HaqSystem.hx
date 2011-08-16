@@ -69,11 +69,18 @@ class HaqSystem
         HaqProfiler.begin('HaqSystem::init(): insert html and javascripts to <head>');
             var styleUrls = templates.getStyleFilePaths().concat(manager.getRegisteredStyles());
             var pageStyles = Lambda.map(styleUrls, function(path:String):String { return getStyleLink(path); } ).join('\n        ');
-            html = html.replace("{styles}", pageStyles);
+            //html = html.replace("{styles}", pageStyles);
             
             var scriptUrls = [ 'haquery/client/jquery.js', 'haquery/client/haquery.js' ].concat(manager.getRegisteredScripts());
             var pageScripts = Lambda.map(scriptUrls, function(path:String):String { return getScriptLink(path); } ).join('\n        ');
-            html = html.replace("{scripts}", pageScripts);
+            //html = html.replace("{scripts}", pageScripts);
+            
+            var reCloseHead = new EReg('\\s*</head>', '');
+            var closeHeadTagPos = reCloseHead.match(html) ? reCloseHead.matchedPos().pos : 0;
+            html = html.substr(0, closeHeadTagPos)
+                 + pageStyles
+                 + pageScripts
+                 + html.substr(closeHeadTagPos);
             
             // вставляем подключение js-скрипты компонентов и вызова инициализации HaQuery
             var reCloseBody = new EReg('\\s*</body>', '');

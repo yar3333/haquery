@@ -29,7 +29,12 @@ class HaqTemplates
 		this.componentsFolders = [];
 		for (folder in componentsFolders)
 		{
-			this.componentsFolders.push(path2relative(folder));
+			var path = folder.replace('\\', '/').rtrim('/') + '/';
+            if (!FileSystem.isDirectory(path))
+            {
+                throw "Components directory '" + folder + "' do not exists.";
+            }
+            this.componentsFolders.push(path);
 		}
 		
 		templates = new Hash<Hash<HaqCachedTemplate>>();
@@ -252,15 +257,6 @@ class HaqTemplates
 		return r;
 	}
 	
-	static private function path2relative(path:String) : String
-	{
-		path = FileSystem.fullPath(path).replace('\\', '/').rtrim('/');
-		var basePath = FileSystem.fullPath('').replace('\\', '/').rtrim('/');
-		if (!path.startsWith(basePath)) throw 'path2relative with path = ' + path;
-		path = path.substr(basePath.length + 1);
-		return path.length > 0 ? path + '/' : '';
-	}
-	
 	static function getTemplateText(templatePath:String) : String
 	{
 		untyped __call__('ob_start');
@@ -274,7 +270,7 @@ class HaqTemplates
         var s = "haquery.client.HaqInternals.componentsFolders = [\n";
         for (folder in componentsFolders)
         {
-                s += "    '" + path2relative(folder) + "',\n";
+                s += "    '" + folder + "',\n";
         }
         s = s.rtrim("\n,") + "\n];";
 		return s;
