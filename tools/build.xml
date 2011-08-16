@@ -15,43 +15,40 @@
 	</target>
 	
     <target name="gen-imports" description="Generates dummy class importing other classes">
-    	
     	<property name="lib.dir.src.abspath" location="${lib.dir}${file.separator}src" />
     	<echo message="Generate imports from path ${lib.dir.src.abspath}" />
-	    	<pathconvert property="lib.server.classes" pathsep="${line.separator}">
-	            <fileset dir="${lib.dir.src.abspath}">
-	                <include name="**${file.separator}Server.hx"/>
-	            </fileset>
-	            <packagemapper from="${lib.dir.src.abspath}${file.separator}*.hx" to="import *;"/>
-	        </pathconvert>
-	    	<echo message="${lib.server.classes}" />
-	        
-	    	<pathconvert property="lib.client.classes" pathsep="${line.separator}">
-	            <fileset dir="${lib.dir.src.abspath}">
-	                <include name="**${file.separator}Client.hx"/>
-	            </fileset>
-	            <packagemapper from="${lib.dir.src.abspath}${file.separator}*.hx" to="import *;"/>
-	        </pathconvert>
-    		<echo message="${lib.client.classes}" />
+    	<pathconvert property="lib.server.classes" pathsep="${line.separator}">
+            <fileset dir="${lib.dir.src.abspath}">
+                <include name="**${file.separator}Server.hx"/>
+            </fileset>
+            <packagemapper from="${lib.dir.src.abspath}${file.separator}*.hx" to="import *;"/>
+        </pathconvert>
+    	<echo message="${lib.server.classes}" />
+    	<pathconvert property="lib.client.classes" pathsep="${line.separator}">
+            <fileset dir="${lib.dir.src.abspath}">
+                <include name="**${file.separator}Client.hx"/>
+            </fileset>
+            <packagemapper from="${lib.dir.src.abspath}${file.separator}*.hx" to="import *;"/>
+        </pathconvert>
+		<echo message="${lib.client.classes}" />
     	
     	<property name="src.dir.abspath" location="${src.dir}" />
     	<echo message="Generate imports from path ${src.dir.abspath}" />
-	    	<pathconvert property="src.server.classes" pathsep="${line.separator}">
-	            <fileset dir="${src.dir.abspath}">
-	                <include name="**${file.separator}Server.hx"/>
-	                <include name="**${file.separator}Bootstrap.hx"/>
-	            </fileset>
-	            <packagemapper from="${src.dir.abspath}${file.separator}*.hx" to="import *;"/>
-	        </pathconvert>
-			<echo message="${src.server.classes}" />
-	        
-	    	<pathconvert property="src.client.classes" pathsep="${line.separator}">
-	            <fileset dir="${src.dir.abspath}">
-	                <include name="**${file.separator}Client.hx"/>
-	            </fileset>
-	            <packagemapper from="${src.dir.abspath}${file.separator}*.hx" to="import *;"/>
-	        </pathconvert>
-			<echo message="${src.client.classes}" />
+    	<pathconvert property="src.server.classes" pathsep="${line.separator}">
+            <fileset dir="${src.dir.abspath}">
+                <include name="**${file.separator}Server.hx"/>
+                <include name="**${file.separator}Bootstrap.hx"/>
+            </fileset>
+            <packagemapper from="${src.dir.abspath}${file.separator}*.hx" to="import *;"/>
+        </pathconvert>
+		<echo message="${src.server.classes}" />
+    	<pathconvert property="src.client.classes" pathsep="${line.separator}">
+            <fileset dir="${src.dir.abspath}">
+                <include name="**${file.separator}Client.hx"/>
+            </fileset>
+            <packagemapper from="${src.dir.abspath}${file.separator}*.hx" to="import *;"/>
+        </pathconvert>
+		<echo message="${src.client.classes}" />
         
     	<property name="import.dest.path" value="${src.dir}/Imports.hx"/>
     	<echo file="${import.dest.path}" message="#if php${line.separator}" />
@@ -107,8 +104,8 @@
     	    <arg value="${doc.dir}${file.separator}server${file.separator}content.xml"/>
     	</exec>
 		<delete dir="${doc.dir}${file.separator}temp"/>
-		<exec executable="haxedoc" dir="${doc.dir}${file.separator}server">
-			<arg value="content.xml"/>
+		<exec executable="haxedoc" dir="${doc.dir}">
+			<arg value="server${file.separator}content.xml"/>
     	</exec>
 		<delete file="${doc.dir}${file.separator}server${file.separator}content.xml"/>
 		
@@ -121,8 +118,8 @@
     	    <arg value="-xml"/>
     	    <arg value="${doc.dir}${file.separator}client${file.separator}content.xml"/>
     	</exec>
-		<exec executable="haxedoc" dir="${doc.dir}${file.separator}client">
-			<arg value="content.xml"/>
+		<exec executable="haxedoc" dir="${doc.dir}">
+			<arg value="client${file.separator}content.xml"/>
     	</exec>
 		<delete file="${doc.dir}${file.separator}client${file.separator}content.xml"/>
 	</target>
