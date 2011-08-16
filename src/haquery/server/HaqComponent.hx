@@ -98,12 +98,6 @@ class HaqComponent extends haquery.base.HaqComponent
         }
     }
 
-    /**
-     * Рекурсивно вызывает метод с заданным именем для данного компонента и всех его потомков.
-     * @param string $f Название метода.
-     * @param bool $isFromTopToBottom Определяет порядок вызова - сверху вниз (true) или наоборот (false).
-     */
-
     function prepareDocToRender(baseNode:HaqXmlNodeElement) : Void
     {
 		var i = 0;
@@ -116,8 +110,9 @@ class HaqComponent extends haquery.base.HaqComponent
                 {
                     var text = node.component.render().trim();
                     var prev = node.getPrevSiblingNode();
-					
-					if (Type.getClassName(Type.getClass(prev)) == 'HaqXmlNodeText')
+                    
+                    //if (untyped __php__("$prev instanceof HaqXmlNodeText"))
+                    if (Reflect.isInstanceOf(prev, 'HaqXmlNodeText'))
 					{
 						var re : EReg = new EReg('(?:^|\n)([ ]+)$', 's');
 						if (re.match(cast(prev, HaqXmlNodeText).text))
