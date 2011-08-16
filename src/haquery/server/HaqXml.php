@@ -18,10 +18,9 @@ abstract class HaqXmlNode implements Serializable
     {
         if (!$this->parent) return null;
         $siblings = $this->parent->nodes;
-        for ($i=1; $i<count($siblings); $i++)
-        {
-            if ($siblings[$i]===$this) return $siblings[$i-1];
-        }
+        $n = array_search($this, $siblings, true);
+        if ($n===false) return null;
+        if ($n > 0) return $siblings[$n-1];
         return null;
     }
     
@@ -32,11 +31,9 @@ abstract class HaqXmlNode implements Serializable
     {
         if (!$this->parent) return null;
         $siblings = $this->parent->nodes;
-        $count = count($siblings)-1;
-        for ($i=0; $i<$count; $i++)
-        {
-            if ($siblings[$i]===$this) return $siblings[$i+1];
-        }
+        $n = array_search($this, $siblings, true);
+        if ($n===false) return null;
+        if ($n+1 < count($siblings)) return $siblings[$n+1];
         return null;
     }
     /**
@@ -46,10 +43,9 @@ abstract class HaqXmlNode implements Serializable
     {
         if (!$this->parent) return null;
         $siblings = $this->parent->children;
-        for ($i=1;$i<count($siblings);$i++)
-        {
-            if ($siblings[$i]===$this) return $siblings[$i-1];
-        }
+        $n = array_search($this, $siblings, true);
+        if ($n===false) return null;
+        if ($n > 0) return $siblings[$n-1];
         return null;
     }
 
@@ -60,11 +56,9 @@ abstract class HaqXmlNode implements Serializable
     {
         if (!$this->parent) return null;
         $siblings = $this->parent->children;
-        $count = count($siblings)-1;
-        for ($i=0;$i<$count;$i++)
-        {
-            if ($siblings[$i]===$this) return $siblings[$i+1];
-        }
+        $n = array_search($this, $siblings, true);
+        if ($n===false) return null;
+        if ($n+1 < count($siblings)) return $siblings[$n+1];
         return null;
     }
 }
@@ -111,11 +105,33 @@ class HaqXmlNodeElement extends HaqXmlNode
         $this->children = array();
     }
 
-    function addChild($node)
+    function addChild($node, $beforeNode=null)
     {
         $node->parent = $this;
-        array_push($this->nodes, $node);
-        if ($node instanceof HaqXmlNodeElement) array_push($this->children, $node);
+        if ($beforeNode == null)
+        {
+            array_push($this->nodes, $node);
+            if ($node instanceof HaqXmlNodeElement)
+            {
+                array_push($this->children, $node);
+            }
+        }
+        else
+        {
+            $n = array_search($beforeNode, $this->nodes, true);
+            if ($n!==false)
+            {
+                array_splice($this->nodes, $n, 0, array($node));
+                if ($node instanceof HaqXmlNodeElement)
+                {
+                    $n = array_search($beforeNode, $this->children, true);
+                    if ($n!==false)
+                    {
+                        array_splice($this->children, $n, 0, array($node));
+                    }
+                }
+            }
+        }
     }
 
     function toString()

@@ -71,7 +71,7 @@ class HaQuery
 			if (route.routeType == HaqRouteType.file)
 			{
 				FileSystem.setCurrentDirectory(Path.directory(route.path));
-				untyped __call__('require', Path.withoutDirectory(route.pagePath));
+				untyped __call__('require', Path.withoutDirectory(route.path));
 			}
 			else
 			{

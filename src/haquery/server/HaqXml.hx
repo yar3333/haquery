@@ -31,7 +31,7 @@ import haquery.server.HaqComponent;
     public var component : HaqComponent;
 
     public function new(name : String, attributes : NativeArray) : Void;
-    public function addChild(node : HaqXmlNode) : Void;
+    public function addChild(node : HaqXmlNode, ?beforeNode : HaqXmlNode) : Void;
     public function __toString() : String;
     override public function serialize() : String;
     override public function unserialize(serialized : String) : Void;
