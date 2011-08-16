@@ -75,7 +75,7 @@ class HaqComponent extends haquery.base.HaqComponent
 	
 	function createChildComponents() : Void
 	{
-		createChildComponents_inner(doc);
+		if (doc != null) createChildComponents_inner(doc);
 	}
 	
 	function createChildComponents_inner(baseNode:HaqXmlNodeElement) : Void
