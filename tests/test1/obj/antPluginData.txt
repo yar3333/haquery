@@ -1,1 +1,1 @@
-D:\MyProg\HaQueryLib\tests\test1\build.xml
+build.xml
