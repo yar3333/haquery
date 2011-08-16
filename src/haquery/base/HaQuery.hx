@@ -194,7 +194,7 @@ class HaQuery
 			if (text != '')
 			{
                 var isHeadersSent : Bool = untyped __call__('headers_sent');
-				if (!isHeadersSent)
+                if (!isHeadersSent)
 				{
 					try
                     {
@@ -254,7 +254,7 @@ class HaQuery
 					text += "\n";
 			}
 			trace(text);
-			Sys.exit(1);
+			//Sys.exit(1);
 		}
 	#end
 }
