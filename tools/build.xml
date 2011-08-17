@@ -99,7 +99,7 @@
     	    <arg value="-cp"/><arg value="${lib.dir}${file.separator}src"/>
     	    <arg value="-cp"/><arg value="${src.dir}" />
 			<arg value="-php"/><arg value="${doc.dir}${file.separator}temp" />
-    	    <arg value="-main"/><arg value="Main" />
+    	    <arg value="Main" />
     	    <arg value="-xml"/>
     	    <arg value="${doc.dir}${file.separator}server${file.separator}content.xml"/>
     	</exec>
@@ -116,7 +116,7 @@
     	    <arg value="-cp"/><arg value="${lib.dir}${file.separator}src"/>
     	    <arg value="-cp"/><arg value="${src.dir}" />
 			<arg value="-js"/><arg value="nul" />
-    	    <arg value="-main"/><arg value="Main" />
+    	    <arg value="Main" />
     	    <arg value="-xml"/>
     	    <arg value="${doc.dir}${file.separator}client${file.separator}content.xml"/>
     	</exec>
