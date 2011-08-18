@@ -30,9 +30,9 @@ class HaQuery
 	public static inline var VERSION = 2.1; 
 	
 	public static inline var folders = {
-		 pages : 'pages/'
-		,support : 'support/'
-		,temp : 'temp/'
+		 pages : 'pages'
+		,support : 'support'
+		,temp : 'temp'
 	};
 	
 	#if php
@@ -185,12 +185,6 @@ class HaQuery
 				text += StringTools.stripTags(dump);
 			}
 
-			var tempDir = HaQuery.folders.temp;
-			if (!FileSystem.exists(tempDir))
-			{
-				FileSystem.createDirectory(tempDir);
-			}
-			
 			if (text != '')
 			{
                 var isHeadersSent : Bool = untyped __call__('headers_sent');
@@ -223,7 +217,12 @@ class HaQuery
 				}
 			}
 			
-			var f : FileOutput = php.io.File.append(tempDir + "haquery.log", false);
+			if (!FileSystem.exists(HaQuery.folders.temp))
+			{
+				FileSystem.createDirectory(HaQuery.folders.temp);
+			}
+            
+			var f : FileOutput = php.io.File.append(HaQuery.folders.temp + "/haquery.log", false);
 			if (f != null)
 			{
 				f.writeString(text != '' ? StringTools.format('%.3f', Date.now().getTime() - startTime) + " " + StringTools.replace(text, "\n", "\n\t") + "\n" : "\n");

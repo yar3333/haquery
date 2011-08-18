@@ -53,7 +53,7 @@ class HaqComponentManager
 	{
 		if (url.startsWith('~/'))
 		{
-			url = templates.getFileUrl(tag, 'support') + url.substr(1);
+			url = templates.getFileUrl(tag, HaQuery.folders.support) + url.substr(1);
 		}
 		
 		if (registeredScripts.indexOf(url) == -1)
@@ -66,7 +66,7 @@ class HaqComponentManager
 	{
 		if (url.startsWith('~/'))
 		{
-			url = templates.getFileUrl(tag, 'support') + url.substr(1);
+			url = templates.getFileUrl(tag, HaQuery.folders.support) + url.substr(1);
 		}
 		
 		if (registeredStyles.indexOf(url) == -1)

@@ -43,7 +43,7 @@ class HaqRoute
 
 			url = url.trim('/');
 			if (url == '') url = 'index';
-			url = 'pages/' + url;
+			url = HaQuery.folders.pages + '/' + url;
 			
 
 			var pageID = null;

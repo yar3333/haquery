@@ -27,7 +27,7 @@ class HaqComponentManager
 			var pagePath = Lib.window.location.pathname; 
 			if (pagePath.endsWith("/")) pagePath = pagePath.substr(0, pagePath.length - 1);
 			if (pagePath == '') pagePath = 'index';
-			var className = 'pages.' + pagePath.replace('/', '.') + '.Client';
+			var className = HaQuery.folders.pages.replace('/\\', '.') + '.' + pagePath.replace('/', '.') + '.Client';
 			clas = untyped Type.resolveClass(className);
 			if (clas == null) clas = untyped Type.resolveClass('haquery.client.HaqPage');
 		}

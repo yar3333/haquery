@@ -93,8 +93,8 @@ class HaqTemplates
 	
 	private function build(componentsFolder : String) : Hash<HaqCachedTemplate>
 	{
-		var dataFilePath = HaQuery.folders.temp + componentsFolder + 'components.data';
-		var stylesFilePath = HaQuery.folders.temp + componentsFolder + 'styles.css';
+        var dataFilePath = HaQuery.folders.temp + '/' + componentsFolder + 'components.data';
+		var stylesFilePath = HaQuery.folders.temp + '/' + componentsFolder + 'styles.css';
 		
 		var templatePaths : Array<String> = getComponentTemplatePaths(componentsFolder);
 		var cacheFileTime = FileSystem.exists(dataFilePath)  ? FileSystem.stat(dataFilePath).mtime.getTime() : 0.0;
@@ -193,7 +193,7 @@ class HaqTemplates
 		var r = new Array<String>();
 		for (folder in componentsFolders)
 		{
-			var path = HaQuery.folders.temp + folder + 'styles.css';
+			var path = HaQuery.folders.temp + '/' + folder + 'styles.css';
 			if (FileSystem.exists(path))
 			{
 				r.push(path);
@@ -271,7 +271,7 @@ class HaqTemplates
     function getComponentTemplateDoc(tag:String, templatePath:String) : HaqXml
 	{
 		var text : String = templatePath != null && FileSystem.exists(templatePath) ? File.getContent(templatePath) : '';
-        var supportUrl = getFileUrl(tag, 'support');
+        var supportUrl = getFileUrl(tag, HaQuery.folders.support);
         if (supportUrl != null)
         {
             text = text.replace('~/', supportUrl + '/');
