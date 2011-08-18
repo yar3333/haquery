@@ -132,7 +132,7 @@ class HaqTemplates
 	{
         HaqProfiler.begin('HaqTemplate::parseComponent(): template file -> doc and css');
 			var tag = Path.withoutDirectory(componentFolder);
-            var doc = getComponentTemplateDoc(tag, getFileUrl(tag, 'template.phtml'));
+            var doc = getComponentTemplateDoc(tag, getFileUrl(tag, 'template.html'));
 			var css = '';
 			var i = 0; 
 			var children : Array<HaqXmlNodeElement> = untyped Lib.toHaxeArray(doc.children);
@@ -226,7 +226,7 @@ class HaqTemplates
 		var folders = FileSystem.readDirectory(componentsFolder);
 		for (folder in folders)
 		{
-			var templatePath = componentsFolder + folder + '/template.phtml';
+			var templatePath = componentsFolder + folder + '/template.html';
 			if (FileSystem.exists(templatePath))
 			{
 				r.push(templatePath);
@@ -239,7 +239,7 @@ class HaqTemplates
 	{
 		pageFolder = pageFolder.rtrim('/') + '/';
 		
-		var templatePath = pageFolder + 'template.phtml';
+		var templatePath = pageFolder + 'template.html';
 		var pageText = FileSystem.exists(templatePath) ? File.getContent(templatePath) : '';
         var pageDoc = new HaqXml(pageText);
         if (HaQuery.config.layout == null) return pageDoc;

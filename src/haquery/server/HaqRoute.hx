@@ -71,6 +71,6 @@ class HaqRoute
     static function isPageExist(path:String) : Bool
 	{
 		path = path.trim('/') + '/';
-		return (FileSystem.exists(path + 'template.phtml') || Type.resolveClass(path.replace('/', '.') + 'Server') != null);
+		return (FileSystem.exists(path + 'template.html') || Type.resolveClass(path.replace('/', '.') + 'Server') != null);
 	}
 }
