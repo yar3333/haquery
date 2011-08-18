@@ -44,11 +44,9 @@ class HaqComponentManager
 		if (Type.resolveClass(className)==null) className = 'haquery.server.HaqPage';
 		var pageClass = Type.resolveClass(className);
 		
-		var doc = HaqTemplates.parsePageTemplate(path);
-		processPlaceholders(doc);
-		
-		var component : HaqPage = cast(newComponent(null, cast pageClass, '', '', doc, attr, null), HaqPage);
-		return component;
+		var doc = HaqTemplates.getPageTemplateDoc(path);
+		var page : HaqPage = cast(newComponent(null, cast pageClass, '', '', doc, attr, null), HaqPage);
+		return page;
 	}
     
 	public function registerScript(tag:String, url:String) : Void
@@ -118,27 +116,5 @@ class HaqComponentManager
     {
         if (!tag.startsWith('haq:')) throw "Component tag '"+tag+"' must started with 'haq:' prefix.";
 		return tag.substr("haq:".length).toLowerCase().split('-').join('_');
-    }
-	
-    static function processPlaceholders(doc : HaqXml)
-    {
-        var placeholders : Array<HaqXmlNodeElement> = untyped Lib.toHaxeArray(doc.find('haq:placeholder'));
-        var contents : Array<HaqXmlNodeElement> = untyped Lib.toHaxeArray(doc.find('>haq:content'));
-        for (ph in placeholders)
-        {
-            var content : HaqXmlNodeElement = null;
-            for (c in contents) 
-            {
-                if (c.getAttribute('id')==ph.getAttribute('id'))
-                {
-                    content = c;
-                    break;
-                }
-            }
-            if (content!=null) ph.parent.replaceChildWithInner(ph, content);
-            else               ph.parent.replaceChildWithInner(ph, ph);
-        }
-        
-        for (c in contents) c.remove();
     }
 }

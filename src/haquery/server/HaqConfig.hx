@@ -60,6 +60,11 @@ class HaqConfig
     public var custom : Dynamic;
 
 	public var componentsFolders(default, null) : Array<String>;
+    
+    /**
+     * Path to layout file (null if layout do not need).
+     */
+    public var layout : String;
 	
 	public function new() : Void
 	{
@@ -78,6 +83,7 @@ class HaqConfig
 		filterTracesByIP = '';
 		custom = null;
 		componentsFolders = [ 'haquery/components' ];
+        layout = null;
 	}
 }
 #end
