@@ -128,34 +128,12 @@ class HaqTemplates
 		}
 	}
 	
-	static public function parsePageTemplate(pageFolder:String) : HaqXml
-	{
-		pageFolder = pageFolder.rtrim('/') + '/';
-		
-		var templatePath = pageFolder + 'template.phtml';
-		var text = FileSystem.exists(templatePath) ? getTemplateText(templatePath) : '';
-		
-        return new HaqXml(text);
-	}
-	
 	function parseComponent(componentFolder:String) : { css:String, doc:HaqXml }
 	{
         HaqProfiler.begin('HaqTemplate::parseComponent(): template file -> doc and css');
 			var tag = Path.withoutDirectory(componentFolder);
-			var templatePath = getFileUrl(tag, 'template.phtml');
-			var text = '';
-			if (templatePath != null)
-			{
-				text = getTemplateText(templatePath);
-				var supportUrl = getFileUrl(tag, 'support');
-				if (supportUrl != null)
-				{
-					text = text.replace('~/', supportUrl + '/');
-				}
-			}
-		
+            var doc = getComponentTemplateDoc(tag, getFileUrl(tag, 'template.phtml'));
 			var css = '';
-			var doc = new HaqXml(text);
 			var i = 0; 
 			var children : Array<HaqXmlNodeElement> = untyped Lib.toHaxeArray(doc.children);
 			while (i < children.length)
@@ -257,12 +235,48 @@ class HaqTemplates
 		return r;
 	}
 	
-	static function getTemplateText(templatePath:String) : String
+	static public function getPageTemplateDoc(pageFolder:String) : HaqXml
 	{
-		untyped __call__('ob_start');
-		untyped __call__('include', templatePath);
-		var text : String = untyped __call__('ob_get_clean');
-		return text;
+		pageFolder = pageFolder.rtrim('/') + '/';
+		
+		var templatePath = pageFolder + 'template.phtml';
+		var pageText = FileSystem.exists(templatePath) ? File.getContent(templatePath) : '';
+        var pageDoc = new HaqXml(pageText);
+        if (HaQuery.config.layout == null) return pageDoc;
+        
+        if (!FileSystem.exists(HaQuery.config.layout))
+        {
+            throw "Layout file '" + HaQuery.config.layout + "' not found.";
+        }
+        var layoutDoc = new HaqXml(File.getContent(HaQuery.config.layout));
+        var placeholders : Array<HaqXmlNodeElement> = untyped Lib.toHaxeArray(layoutDoc.find('haq:placeholder'));
+        var contents : Array<HaqXmlNodeElement> = untyped Lib.toHaxeArray(pageDoc.find('>haq:content'));
+        for (ph in placeholders)
+        {
+            var content : HaqXmlNodeElement = null;
+            for (c in contents) 
+            {
+                if (c.getAttribute('id')==ph.getAttribute('id'))
+                {
+                    content = c;
+                    break;
+                }
+            }
+            if (content!=null) ph.parent.replaceChildWithInner(ph, content);
+            else               ph.parent.replaceChildWithInner(ph, ph);
+        }
+        return layoutDoc;
+	}
+	
+    function getComponentTemplateDoc(tag:String, templatePath:String) : HaqXml
+	{
+		var text : String = templatePath != null && FileSystem.exists(templatePath) ? File.getContent(templatePath) : '';
+        var supportUrl = getFileUrl(tag, 'support');
+        if (supportUrl != null)
+        {
+            text = text.replace('~/', supportUrl + '/');
+        }
+        return new HaqXml(text);
 	}
 	
 	public function getInternalDataForPageHtml() : String
