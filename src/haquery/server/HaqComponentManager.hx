@@ -99,15 +99,13 @@ class HaqComponentManager
         }
         s = s.rtrim("\n,") + "\n];\n";
 		
-        var pageServerHandlers = HaqTemplates.parseServerHandlers(path);
-		s += "haquery.client.HaqInternals.serializedPageServerHandlers = \"" + Serializer.run(pageServerHandlers) + "\";\n";
-	
-        var componentsServerHandlers = new Hash<Hash<Array<String>>>();
+        var serverHandlers = new Hash<Hash<Array<String>>>();
+        serverHandlers.set('', HaqTemplates.parseServerHandlers(path));
         for (tag in tags)
         {
-            componentsServerHandlers.set(tag, templates.get(tag).serverHandlers);
+            serverHandlers.set(tag, templates.get(tag).serverHandlers);
         }
-        s += "haquery.client.HaqInternals.serializedComponentsServerHandlers = \"" + Serializer.run(componentsServerHandlers) + "\";";
+        s += "haquery.client.HaqInternals.serializedServerHandlers = \"" + Serializer.run(serverHandlers) + "\";";
 
         return s;
     }

@@ -160,7 +160,17 @@ class HaqQuery
      */
     public function html(html:String=null,isParse=false) : Dynamic
     {
-        if (untyped __physeq__(html, null)) return this.nodes.length > 0 ? this.nodes[0].innerHTML : null;
+        if (untyped __physeq__(html, null))
+        {
+            if (this.nodes.length == 0) return null;
+            var node = this.nodes[0];
+            if (HaQuery.isPostback && node.name == 'textarea' && node.hasAttribute('id'))
+            {
+                var fullID = prefixID + node.getAttribute('id');
+                if (php.Web.getParams().exists(fullID)) return php.Web.getParams().get(fullID);
+            }
+            return node.innerHTML;
+        }
         for (node in this.nodes)
         {
             if (isParse) node.innerHTML = html;
@@ -201,11 +211,12 @@ class HaqQuery
                 
                 if (HaQuery.isPostback && node.hasAttribute('id'))
                 {
-                    var fullID = this.prefixID + node.getAttribute('id');
-                    if (/*$_POST*/php.Web.getParams().exists(fullID)) return /*$_POST*/php.Web.getParams().get(fullID);
+                    var fullID = prefixID + node.getAttribute('id');
+                    if (php.Web.getParams().exists(fullID)) return php.Web.getParams().get(fullID);
                 }
                 
                 if (node.name=='textarea') return node.innerHTML;
+                
                 if (node.name=='select')
                 {
                     var options : Array<HaqXmlNodeElement> = untyped Lib.toHaxeArray(node.find('>option'));
