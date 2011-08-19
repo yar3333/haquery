@@ -8,7 +8,7 @@ class Server extends HaqComponent
     
 	function preRender()
     {
-		manager.registerScript(tag, '~/ckeditor.js');
+		manager.registerScript(tag, 'ckeditor.js');
         q('#e').html(text);
     }
 }

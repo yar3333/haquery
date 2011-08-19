@@ -45,13 +45,12 @@ class Client extends HaqComponent
         var editable : String = q('#editor').attr('editable');
 
         var self = this;
-
-        this.editor = CodeMirror.create(q('#editor')[0],
+        editor = CodeMirror.create(q('#editor').get(0),
         {
             mode: mode,
             indentUnit: 4,
             value: text,
-            readOnly : editable=='' || editable.toLowerCase()=='false' || editable=='0',
+            readOnly : editable == null || editable == '' || editable.toLowerCase() == 'false' || editable == '0',
             onChange: function()
             {
                 if (self.editor!=null) self.q('#text').val(self.editor.getValue());
@@ -103,17 +102,16 @@ class Client extends HaqComponent
     {
         return new JQuery(this.editor.getWrapperElement()).hasClass('CodeMirror-focused');
     }
-
+    
     function loadCssFile(filename:String) : Void
     {
-        filename = '/' + Type.getClassName(Type.getClass(this)).replace('.', '/') + '/' + HaQuery.folders.support + '/' + filename;
-        trace('filename to load = ' + filename);
-
+        var path = manager.getSupportUrl(tag) + filename;
+        trace('filename to load = ' + path);
         var fileref = Lib.document.createElement("link");
         new JQuery(fileref)
             .attr("rel", "stylesheet")
             .attr("type", "text/css")
-            .attr("href", filename);
+            .attr("href", path);
 
         Lib.document.getElementsByTagName("head")[0].appendChild(fileref);
     }

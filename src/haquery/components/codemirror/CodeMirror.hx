@@ -13,9 +13,9 @@ typedef CodeMirrorInitParams = {
 
 @:native('CodeMirror') extern class CodeMirror 
 {
-    static function create(elem:HtmlDom, params:CodeMirrorInitParams) : CodeMirror
+    static inline function create(elem:HtmlDom, params:CodeMirrorInitParams) : CodeMirror
     {
-        return untyped __js__("CodeMirror(elem, params)");
+        return untyped CodeMirror(elem, params);
     }
     
     public function getValue() : String;

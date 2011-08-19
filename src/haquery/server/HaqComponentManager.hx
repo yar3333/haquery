@@ -51,10 +51,7 @@ class HaqComponentManager
     
 	public function registerScript(tag:String, url:String) : Void
 	{
-		if (url.startsWith('~/'))
-		{
-			url = templates.getFileUrl(tag, HaQuery.folders.support) + url.substr(1);
-		}
+		url = templates.getFileUrl(tag, HaQuery.folders.support) + '/' + url;
 		
 		if (registeredScripts.indexOf(url) == -1)
 		{
@@ -64,10 +61,7 @@ class HaqComponentManager
 	
 	public function registerStyle(tag:String, url:String) : Void
 	{
-		if (url.startsWith('~/'))
-		{
-			url = templates.getFileUrl(tag, HaQuery.folders.support) + url.substr(1);
-		}
+        url = templates.getFileUrl(tag, HaQuery.folders.support) + '/' + url;
 		
 		if (registeredStyles.indexOf(url) == -1)
 		{

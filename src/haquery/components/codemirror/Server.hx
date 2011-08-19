@@ -3,7 +3,7 @@ package haquery.components.codemirror;
 import haquery.server.HaqComponent;
 import haquery.server.HaQuery;
 
-class CodeMirrorComponent extends HaqComponent
+class Server extends HaqComponent
 {
     public var mode : String;
     public var text : String;
@@ -18,7 +18,7 @@ class CodeMirrorComponent extends HaqComponent
         mode = 'htmlmixed';
         text = null;
         cssClass = '';
-        editable = false;
+        editable = true;
         customData = null;
     }
     
@@ -37,6 +37,15 @@ class CodeMirrorComponent extends HaqComponent
 
     public function preRender() : Void
     {
+        manager.registerScript(tag, 'lib/codemirror.js');
+        if (mode == 'htmlmixed')
+        {
+            manager.registerScript(tag, 'mode/htmlmixed/htmlmixed.js');
+            manager.registerScript(tag, 'mode/xml/xml.js');
+            manager.registerScript(tag, 'mode/javascript/javascript.js');
+            manager.registerScript(tag, 'mode/css/css.js');
+        }
+        
         q('#customData').val(StringTools.escape(StringTools.jsonEncode(customData)));
 
         q('#editor').attr('mode', mode);

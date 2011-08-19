@@ -8,8 +8,10 @@ import php.Lib;
 /**
  * Базовый класс для компонентов и страниц.
  */
-class HaqComponent extends haquery.base.HaqComponent
+class HaqComponent extends haquery.base.HaqComponent<HaqComponent>
 {
+    var manager : HaqComponentManager;
+    
     /**
      * То, что было задано между открытием и закрытием тега компонента.
      */
@@ -35,9 +37,10 @@ class HaqComponent extends haquery.base.HaqComponent
 
 	public function construct(manager:HaqComponentManager, parent: HaqComponent, tag:String, id:String, doc: HaqXml, params:Hash<String>, innerHTML:String) : Void
     {
-		super.commonConstruct(manager, parent, tag, id);
+		super.commonConstruct(parent, tag, id);
         
-		this.doc = doc;
+		this.manager = manager;
+        this.doc = doc;
 		this.params = params;
         this.innerHTML = innerHTML;
 		
