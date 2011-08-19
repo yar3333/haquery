@@ -66,4 +66,11 @@ class HaqComponentManager
 		}
 		return r;
 	}
+    
+    public function getSupportUrl(tag : String)
+    {
+        var className = Type.getClassName(templates.get(tag).clas);
+        var n = className.lastIndexOf('.');
+        return '/' + className.substr(0, n).replace('.', '/') + '/' + HaQuery.folders.support + '/';
+    }
 }

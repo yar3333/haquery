@@ -5,14 +5,17 @@ import jQuery.JQuery;
 import haquery.server.HaqEvent;
 import haquery.server.HaQuery;
 
-class HaqComponent extends haquery.base.HaqComponent
+class HaqComponent extends haquery.base.HaqComponent<HaqComponent>
 {
+    var manager : HaqComponentManager;
+	
 	var serverHandlers(default,null) : Hash<Array<String>>;
     
 	public function construct(manager:HaqComponentManager, parent:HaqComponent, tag:String,  id:String, serverHandlers:Hash<Array<String>>) : Void
 	{
-		super.commonConstruct(manager, parent, tag, id);
+		super.commonConstruct(parent, tag, id);
 		
+		this.manager = manager;
         this.serverHandlers = serverHandlers;
         
 		createEvents();

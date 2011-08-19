@@ -66,13 +66,13 @@ class HaqPage extends HaqComponent
     
     static function getScriptLink(path:String) : String
     {
-        var url = '/' + path + '?' + FileSystem.stat(path).mtime.getTime();
+        var url = '/' + path + '?' + FileSystem.stat(path).mtime.getTime()/1000;
         return "<script src='" + url + "'></script>";
     }
     
 	static function getStyleLink(path:String) : String
     {
-        var url = '/' + path + '?' + FileSystem.stat(path).mtime.getTime();
+        var url = '/' + path + '?' + FileSystem.stat(path).mtime.getTime()/1000;
         return "<link rel='stylesheet' type='text/css' href='" + url + "' />";
     }
     

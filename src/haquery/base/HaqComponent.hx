@@ -2,22 +2,18 @@ package haquery.base;
 
 #if php
 import haquery.server.HaqInternals;
-import haquery.server.HaqComponentManager;
 import haquery.server.HaqEvent;
 import haquery.server.HaQuery;
-typedef Component = haquery.server.HaqComponent;
+private typedef TComponent = haquery.server.HaqComponent;
 #else
 import haquery.client.HaqInternals;
-import haquery.client.HaqComponentManager;
 import haquery.client.HaqEvent;
 import haquery.client.HaQuery;
-typedef Component = haquery.client.HaqComponent;
+private typedef TComponent = haquery.client.HaqComponent;
 #end
 
-class HaqComponent
+class HaqComponent<Component:TComponent>
 {
-    var manager : HaqComponentManager;
-	
     /**
      * ID компонента; для главной страницы равен пустой строке.
      */
@@ -59,11 +55,10 @@ class HaqComponent
 		nextAnonimID = 0;
 	}
 	
-	function commonConstruct(manager:HaqComponentManager, parent:Component, tag:String,  id:String) 
+	function commonConstruct(parent:Component, tag:String,  id:String) 
 	{
 		if (id == null || id == '') id = parent != null ? parent.getNextAnonimID() : '';
 		
-		this.manager = manager;
 		this.parent = parent;
 		this.tag = tag;
 		this.id = id;
@@ -74,7 +69,7 @@ class HaqComponent
 		if (parent != null) 
 		{
 			HaQuery.assert(!parent.components.exists(id), "Component with same id '" + id + "' already exist.");
-			parent.components.set(id, cast(this, Component));
+			parent.components.set(id, cast this);
 		}
 	}
 	
@@ -89,10 +84,10 @@ class HaqComponent
 					var event : HaqEvent = Reflect.field(this, field);
 					if (event == null)
 					{
-						event = new HaqEvent(cast(this, Component), field.substr("event_".length));
+						event = new HaqEvent(cast this, field.substr("event_".length));
 						Reflect.setField(this, field, event);
 					}
-					parent.connectEventHandlers(cast(this, Component), event);
+					parent.connectEventHandlers(cast this, event);
 				}
 			}
 		}
@@ -101,9 +96,6 @@ class HaqComponent
 	public function connectEventHandlers(child:Component, event:HaqEvent) : Void
 	{
 		var handlerName = child.id + '_' + event.name;
-		/*var hasMethod = false;
-		try { hasMethod = Reflect.hasMethod(this, handlerName); } catch (e:Dynamic) {}*/
-		//if (hasMethod)
 		if (Reflect.hasMethod(this, handlerName))
 		{
 			event.bind(cast(this, Component), Reflect.field(this, handlerName));
@@ -123,7 +115,7 @@ class HaqComponent
      */
     public function findComponent(fullID) : Component
     {
-        if (fullID == '') return cast(this, Component);
+        if (fullID == '') return cast this;
         var ids = fullID.split(HaqInternals.DELIMITER);
         var r = this;
         for (id in ids)
@@ -132,9 +124,9 @@ class HaqComponent
 			{
 				return null;
 			}
-            r = r.components.get(id);
+            r = cast r.components.get(id);
         }
-		return cast(r, Component);
+		return cast r;
     }
 	
 	public function getNextAnonimID() : String
