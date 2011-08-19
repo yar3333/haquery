@@ -253,7 +253,6 @@ class HaQuery
 					text += "\n";
 			}
 			trace(text);
-			//Sys.exit(1);
 		}
 	#end
 }
