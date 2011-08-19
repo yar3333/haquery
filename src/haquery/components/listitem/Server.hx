@@ -13,7 +13,7 @@ class Server extends HaqComponent
 {
 	override public function construct(manager:HaqComponentManager, parent:HaqComponent, tag:String, id:String, doc:HaqXml, params:Hash<String>, innerHTML:String):Void 
 	{
-		doc = new HaqXml(innerHTML);
+		var doc = new HaqXml(innerHTML);
 		
 		if (params!=null && params.exists('seralizedParams'))
 		{
@@ -38,10 +38,8 @@ class Server extends HaqComponent
 	override public function connectEventHandlers(child:HaqComponent, event:HaqEvent) : Void
 	{
 		var handlerName = parent.id + '_' + child.id + '_' + event.name;
-		//trace("Check event handler exist " + handlerName);
 		if (Reflect.hasMethod(parent.parent, handlerName))
 		{
-			//trace("YES: " + handlerName);
 			event.bind(parent.parent, Reflect.field(parent.parent, handlerName));
 		}
 	}
