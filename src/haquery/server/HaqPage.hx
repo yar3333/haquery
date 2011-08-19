@@ -50,7 +50,7 @@ class HaqPage extends HaqComponent
         {
             child = child.getNextSiblingElement();
         }
-        head.addChild(new HaqXmlNodeText(text + '\n        '), child);
+        head.addChild(new HaqXmlNodeText('    ' + text + '\n    '), child);
     }
     
     public function insertInitInnerBlock(text:String)
@@ -64,16 +64,16 @@ class HaqPage extends HaqComponent
         body.addChild(new HaqXmlNodeText("\n        " + text.replace('\n', '\n        ') + '\n    '));
     }
     
-    static function getScriptLink(url:String) : String
+    static function getScriptLink(path:String) : String
     {
-        var fullUrl = url + '?' + FileSystem.stat(url).mtime.getTime();
-        return "<script src='" + fullUrl + "'></script>";
+        var url = '/' + path + '?' + FileSystem.stat(path).mtime.getTime();
+        return "<script src='" + url + "'></script>";
     }
     
-	static function getStyleLink(url:String) : String
+	static function getStyleLink(path:String) : String
     {
-        var fullUrl = url + '?' + FileSystem.stat(url).mtime.getTime();
-        return "<link rel='stylesheet' type='text/css' href='" + fullUrl + "' />";
+        var url = '/' + path + '?' + FileSystem.stat(path).mtime.getTime();
+        return "<link rel='stylesheet' type='text/css' href='" + url + "' />";
     }
     
 }

@@ -19,12 +19,13 @@ class HaqSystem
 	
 	public function new() : Void
 	{
-		var templates = new HaqTemplates(HaqInternals.componentsFolders, HaqInternals.componentsServerHandlers);
+		var templates = new HaqTemplates(HaqInternals.componentsFolders, HaqInternals.serverHandlers);
 		var manager = new HaqComponentManager(templates, HaqInternals.id_tag);
-		var page = manager.createPage();
-		for (elem in (new JQuery("*[id]")).toArray())
+		
+        var page = manager.createPage();
+        for (elem in (new JQuery("*[id]")).toArray())
 		{
-			connectElemEventHandlers(page, templates, untyped elem);
+			connectElemEventHandlers(page, templates, elem);
 		}
 	}
 
@@ -37,13 +38,19 @@ class HaqSystem
         if (component == null) return;
         for (eventName in elemEventNames)
         {
-            if (Reflect.hasMethod(component, elemID+"_"+eventName)
-             || templates.get(component.tag).elemID_serverHandlers!=null
-             && templates.get(component.tag).elemID_serverHandlers.get(elemID)!=null
-             && templates.get(component.tag).elemID_serverHandlers.get(elemID).indexOf(eventName)!=-1
-            ) {
-				new JQuery(elem).bind(eventName, null, function(e:js.Dom.Event):Bool { return elemEventHandler(templates, page, elem, e); } );
-			}
+            var needHandler = Reflect.hasMethod(component, elemID + "_" + eventName);
+            if (!needHandler)
+            {
+                var serverHandlers = templates.get(component.tag).elemID_serverHandlers;
+                if (serverHandlers != null && serverHandlers.get(elemID) != null && serverHandlers.get(elemID).indexOf(eventName) != -1)
+                {
+                    needHandler = true;
+                }
+            }
+            if (needHandler)
+            {
+                new JQuery(elem).bind(eventName, null, function(e:js.Dom.Event):Bool { return elemEventHandler(templates, page, elem, e); } );
+            }
         }
     }
 
@@ -57,9 +64,7 @@ class HaqSystem
 		var r = callClientElemEventHandlers(component, elem, e);
 		if (!r) return false;
         
-		var serverHandlers = component.parent == null 
-            ? HaqInternals.pageServerHandlers
-            : templates.get(component.tag).elemID_serverHandlers;
+		var serverHandlers = templates.get(component.tag).elemID_serverHandlers;
         return callServerElemEventHandlers(serverHandlers, component, elem, e);
     }
 	
@@ -130,11 +135,11 @@ class HaqSystem
 	{
 		var idParts : Array<String> = component.fullID.split(HaqInternals.DELIMITER);
 		var reStr = '(^[^' + HaqInternals.DELIMITER + ']+$)';
-		trace('reStr = ' + reStr);
+		//trace('reStr = ' + reStr);
 		for (i in 0...idParts.length)
 		{
 			var s = '(^' + idParts.slice(0, i + 1).join(HaqInternals.DELIMITER) + HaqInternals.DELIMITER + '[^' + HaqInternals.DELIMITER + ']+$)';
-			trace('reStr = ' + s);
+			//trace('reStr = ' + s);
 			reStr += '|' + s;
 		}
 		var re : EReg = new EReg(reStr, '');

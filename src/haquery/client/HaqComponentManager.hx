@@ -24,10 +24,12 @@ class HaqComponentManager
 		}
 		else
 		{
-			var pagePath = Lib.window.location.pathname; 
+			var pagePath = Lib.window.location.pathname;
+			if (pagePath.startsWith("/")) pagePath = pagePath.substr(1);
 			if (pagePath.endsWith("/")) pagePath = pagePath.substr(0, pagePath.length - 1);
 			if (pagePath == '') pagePath = 'index';
 			var className = HaQuery.folders.pages.replace('/\\', '.') + '.' + pagePath.replace('/', '.') + '.Client';
+            trace("Page class name = " + className);
 			clas = untyped Type.resolveClass(className);
 			if (clas == null) clas = untyped Type.resolveClass('haquery.client.HaqPage');
 		}
@@ -47,7 +49,8 @@ class HaqComponentManager
     
 	public function createPage() : HaqPage
     {
-		return cast(createComponent(null, '', ''), HaqPage);
+		var page : HaqPage = cast(createComponent(null, '', ''), HaqPage);
+        return page;
     }
 	
 	public function getChildComponents(parent:HaqComponent) : Array<{ id:String, tag:String }>

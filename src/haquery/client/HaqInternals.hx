@@ -28,27 +28,16 @@ class HaqInternals
 		return id_tag_cached;
 	}
     
-    static var serializedPageServerHandlers : String;
-    public static var pageServerHandlers(pageServerHandlers_getter, null) : Hash<Array<String>>;
-    static var pageServerHandlers_cached : Hash<Array<String>>;
-    static function pageServerHandlers_getter() : Hash<Array<String>>
-    {
-        if (pageServerHandlers_cached == null)
-        {
-            pageServerHandlers_cached = Unserializer.run(serializedPageServerHandlers);
-        }
-        return pageServerHandlers_cached;
-    }
 	
-    static var serializedComponentsServerHandlers : String;
-    public static var componentsServerHandlers(componentsServerHandlers_getter, null) : Hash<Hash<Array<String>>>;
-    static var componentsServerHandlers_cached : Hash<Hash<Array<String>>>;
-    static function componentsServerHandlers_getter() : Hash<Hash<Array<String>>>
+    static var serializedServerHandlers : String;
+    public static var serverHandlers(serverHandlers_getter, null) : Hash<Hash<Array<String>>>;
+    static var serverHandlers_cached : Hash<Hash<Array<String>>>;
+    static function serverHandlers_getter() : Hash<Hash<Array<String>>>
     {
-        if (componentsServerHandlers_cached == null)
+        if (serverHandlers_cached == null)
         {
-            componentsServerHandlers_cached = Unserializer.run(serializedComponentsServerHandlers);
+            serverHandlers_cached = Unserializer.run(serializedServerHandlers);
         }
-        return componentsServerHandlers_cached;
+        return serverHandlers_cached;
     }
 }
