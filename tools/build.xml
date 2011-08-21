@@ -1,19 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="haquery">
-	<target name="pre-build" depends="gen-imports" />
-	
-	<target name="post-build">
-		<antcall target="build-js" />
-		<antcall target="copy-support-files">
-			<param name="path.from" value="${lib.dir}${file.separator}src" />
-			<param name="path.to" value="${dest.dir}" />
-		</antcall>
-		<antcall target="copy-support-files">
-			<param name="path.from" value="${src.dir}" />
-			<param name="path.to" value="${dest.dir}" />
-		</antcall>
-	</target>
-	
     <target name="gen-imports" description="Generates dummy class importing other classes">
     	<property name="lib.dir.src.abspath" location="${lib.dir}${file.separator}src" />
     	<echo message="Generate imports from path ${lib.dir.src.abspath}" />
@@ -93,44 +79,24 @@
     	</exec>
 	</target>
 	
-	<target name="gen-doc">
-		<mkdir dir="${doc.dir}${file.separator}server"/>
-		<exec executable="haxe">
-    	    <arg value="-cp"/><arg value="${lib.dir}${file.separator}src"/>
-    	    <arg value="-cp"/><arg value="${src.dir}" />
-			<arg value="-php"/><arg value="${doc.dir}${file.separator}temp" />
-    	    <arg value="Main" />
-    	    <arg value="-xml"/>
-    	    <arg value="${doc.dir}${file.separator}server${file.separator}content.xml"/>
-    	</exec>
-		<delete dir="${doc.dir}${file.separator}temp"/>
-		<copy file="${doc.dir}${file.separator}template.xml" todir="${doc.dir}${file.separator}server" />
-		<exec executable="haxedoc" dir="${doc.dir}${file.separator}server">
-			<arg value="content.xml"/>
-    	</exec>
-		<delete file="${doc.dir}${file.separator}server${file.separator}content.xml"/>
-		<delete file="${doc.dir}${file.separator}server${file.separator}template.xml"/>
-		
-		<mkdir dir="${doc.dir}${file.separator}client"/>
-		<exec executable="haxe">
-    	    <arg value="-cp"/><arg value="${lib.dir}${file.separator}src"/>
-    	    <arg value="-cp"/><arg value="${src.dir}" />
-			<arg value="-js"/><arg value="nul" />
-    	    <arg value="Main" />
-    	    <arg value="-xml"/>
-    	    <arg value="${doc.dir}${file.separator}client${file.separator}content.xml"/>
-    	</exec>
-		<copy file="${doc.dir}${file.separator}template.xml" todir="${doc.dir}${file.separator}client" />
-		<exec executable="haxedoc" dir="${doc.dir}${file.separator}client">
-			<arg value="content.xml"/>
-    	</exec>
-		<delete file="${doc.dir}${file.separator}client${file.separator}content.xml"/>
-		<delete file="${doc.dir}${file.separator}client${file.separator}template.xml"/>
-	</target>
-	
 	<target name="clean-dest">
 		<delete includeemptydirs="true">
 			<fileset dir="${dest.dir}" />
 		</delete>
 	</target>
+	
+	<target name="pre-build" depends="gen-imports" />
+	
+	<target name="post-build">
+		<antcall target="build-js" />
+		<antcall target="copy-support-files">
+			<param name="path.from" value="${lib.dir}${file.separator}src" />
+			<param name="path.to" value="${dest.dir}" />
+		</antcall>
+		<antcall target="copy-support-files">
+			<param name="path.from" value="${src.dir}" />
+			<param name="path.to" value="${dest.dir}" />
+		</antcall>
+	</target>
+	
 </project>
