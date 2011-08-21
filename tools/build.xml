@@ -127,4 +127,10 @@
 		<delete file="${doc.dir}${file.separator}client${file.separator}content.xml"/>
 		<delete file="${doc.dir}${file.separator}client${file.separator}template.xml"/>
 	</target>
+	
+	<target name="clean-dest">
+		<delete includeemptydirs="true">
+			<fileset dir="${dest.dir}" />
+		</delete>
+	</target>
 </project>
