@@ -4,15 +4,14 @@ import haquery.client.HaqPage;
 
 class Client extends HaqPage
 {
-	public function mybt1_click()
+	public function simpleButton_click()
 	{
-		q('#status').html("mybt1 client pressed!");
-		//return true;
+		q('#status').html("simpleButton pressed on client");
 	}
     
-	public function mybt2_click()
+	public function componentButton_click()
 	{
-		q('#status').html("mybt2 client pressed!");
-		return false;
+		q('#status').html("componentButton pressed on client");
+		return false; // false to disable server handler call
 	}
 }

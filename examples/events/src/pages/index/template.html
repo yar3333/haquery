@@ -5,11 +5,20 @@
         <title>test2</title>
     </head>
     <body>
-        Page<br />
-        <input type="button" id="mybt1" value="Press me 1!" /><br />
-        <haq:button id="mybt2" text="Press me 2!" /><br />
-        <div id="status"></div>
+        <h3>Button events test</h3>
         
-        <haq:ckeditor />
+        Simple html button: 
+        <input type="button" id="simpleButton" value="simpleButton" />
+        
+        <br /><br />
+        
+        HaQuery.components.button: 
+        <div style="width: 370px">
+            <haq:button id="componentButton" text="componentButton" />
+        </div>
+        
+        <br /><br />
+        
+        <div id="status"></div>
     </body>
 </html>

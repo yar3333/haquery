@@ -4,18 +4,13 @@ import haquery.server.HaqPage;
 
 class Server extends HaqPage
 {
-	public function init()
-    {
-    }
-    
-    public function mybt1_click()
+    public function simpleButton_click()
 	{
-		q('#status').html("mybt1 server pressed!");
+		q('#status').html("simpleButton pressed on server");
 	}
 	
-    public function mybt2_click()
+    public function componentButton_click()
 	{
-        //throw "MYERR";
-		q('#status').html("mybt2 server pressed!");
+		q('#status').html("componentButton pressed on server");
 	}
 }
