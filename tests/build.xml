@@ -2,7 +2,6 @@
 <project name="Site">
 	<property name="src.dir" location="src" />
 	<property name="dest.dir" location="bin" />
-	<property name="doc.dir" location="doc" />
 	
 	<property environment="env" />
 	<property name="lib.dir" value="${env.HAQUERYPATH}" />
@@ -12,8 +11,8 @@
 		<ant antfile="${build.file.path}" target="gen-orm" />
 	</target>
 	
-	<target name="gen-doc">
-		<ant antfile="${build.file.path}" target="gen-doc" />
+	<target name="clean-dest">
+		<ant antfile="${build.file.path}" target="clean-dest" />
 	</target>
 	
 	<target name="pre-build">
