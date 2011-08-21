@@ -98,7 +98,7 @@ class HaqComponent<Component:TComponent>
 		var handlerName = child.id + '_' + event.name;
 		if (Reflect.hasMethod(this, handlerName))
 		{
-			event.bind(cast(this, Component), Reflect.field(this, handlerName));
+			event.bind(cast this, Reflect.field(this, handlerName));
 		}
 	}
 	

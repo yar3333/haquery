@@ -161,7 +161,7 @@ class HaqTemplates
             var serverMethods = [ 'click','change' ];   // какие серверные обработчики бывают
             var serverHandlers : Hash<Array<String>> = new Hash<Array<String>>();
 			var className = componentFolder.replace('/', '.') + 'Server';
-			trace('test class name = '+className);
+			//trace('test class name = '+className);
 			var clas = Type.resolveClass(className); 
 			if (clas != null) 
 			{
@@ -274,7 +274,7 @@ class HaqTemplates
         var supportUrl = getFileUrl(tag, HaQuery.folders.support);
         if (supportUrl != null)
         {
-            text = text.replace('~/', supportUrl + '/');
+            text = text.replace('~/', '/' + supportUrl + '/');
         }
         return new HaqXml(text);
 	}
