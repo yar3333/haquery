@@ -61,6 +61,7 @@ class HaqRoute
 			if (!isPageExist(path))
 			{
 				php.Web.setReturnCode(404);
+                Lib.print("<h1>File not found (404)</h1>");
 				Sys.exit(0);
 			}
 			
