@@ -24,7 +24,7 @@ class HaqRoute
 		if (url == 'index.php' || url == 'index')
 		{
 			Web.redirect('/');
-			php.Sys.exit(0);
+			Sys.exit(0);
 		}
 		
 		if (url.endsWith('/index'))
@@ -40,31 +40,35 @@ class HaqRoute
 		}
 		else
 		{
-
 			url = url.trim('/');
 			if (url == '') url = 'index';
-			url = HaQuery.folders.pages + '/' + url;
-			
-
+			path = HaQuery.folders.pages + '/' + url;
+            
+            if (isPageExist(path + '/index'))
+            {
+                path = path + '/index';
+            }
+            
 			var pageID = null;
 			
-			if (!isPageExist(url))
+			if (!isPageExist(path))
 			{
-				var p = url.split('/');
+				var p = path.split('/');
 				pageID = p.pop();
-				url = p.join('/');
+				path = p.join('/');
 			}
 			
-			if (!isPageExist(url))
+			if (!isPageExist(path))
 			{
 				php.Web.setReturnCode(404);
 				Sys.exit(0);
 			}
 			
-			path = url;
-			
-			className = url.replace('/', '.') + '.Server';
-			if (Type.resolveClass(className)==null) className = 'haquery.server.HaqPage';
+			className = path.replace('/', '.') + '.Server';
+			if (Type.resolveClass(className) == null)
+            {
+                className = 'haquery.server.HaqPage';
+            }
 		}
 	}
 	
