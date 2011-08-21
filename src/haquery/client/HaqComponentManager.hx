@@ -28,10 +28,16 @@ class HaqComponentManager
 			if (pagePath.startsWith("/")) pagePath = pagePath.substr(1);
 			if (pagePath.endsWith("/")) pagePath = pagePath.substr(0, pagePath.length - 1);
 			if (pagePath == '') pagePath = 'index';
-			var className = HaQuery.folders.pages.replace('/\\', '.') + '.' + pagePath.replace('/', '.') + '.Client';
-            trace("Page class name = " + className);
-			clas = untyped Type.resolveClass(className);
-			if (clas == null) clas = untyped Type.resolveClass('haquery.client.HaqPage');
+			var baseClassName = HaQuery.folders.pages.replace('/\\', '.') + '.' + pagePath.replace('/', '.');
+			clas = untyped Type.resolveClass(baseClassName+'.index.Client');
+			if (clas == null) 
+            {
+                clas = untyped Type.resolveClass(baseClassName + '.Client');
+                if (clas == null)
+                {
+                    clas = untyped Type.resolveClass('haquery.client.HaqPage');
+                }
+            }
 		}
 		
 		var component : HaqComponent = untyped Type.createInstance(clas, []);

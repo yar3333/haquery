@@ -18,7 +18,7 @@ class Server extends HaqComponent
         mode = 'htmlmixed';
         text = null;
         cssClass = '';
-        editable = true;
+        editable = false;
         customData = null;
     }
     
