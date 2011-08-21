@@ -1,28 +1,24 @@
-<?php include "support/layout.phtml" ?>
-
 <haq:content id="content">
-    <div class="panReklama">
-        <p>Старый знакомый для простых вычислений.</p>
-        <p>Быстро, удобно, надёжно, да к тому же онлайн.</p>
-        <p>Если вдруг что-то пойдёт не так - смело пишите на e-mail.</p>
-        <p>Пусть вам почаще нужно будет подсчитывать свои доходы!</p>
-        <p>Удачи!</p>
+<div class="panReklama">
+    <p>Old friend for simple calculations.</p>
+    <p>Quick and online.</p>
+    <p>Have a good day!</p>
+</div>
+
+<div class="panCalculator">
+    <haq:calculator id="calc" />
+</div>
+
+<div class="panJoke">
+    <div style="height: 130px">
+        <haq:joke />
     </div>
 
-    <div class="panCalculator">
-        <haq:calculator id="calc" />
+    <div class="panHistory">
+        <span class="h2">Calculation history</span>
+        <textarea id="history" readonly="readonly"></textarea>
     </div>
+</div>
 
-    <div class="panJoke">
-        <div style="height: 130px">
-            <haq:joke />
-        </div>
-
-        <div class="panHistory">
-            <span class="h2">История вычислений</span>
-            <textarea id="history" readonly="readonly"></textarea>
-        </div>
-    </div>
-
-    <div class="clearfix">&nbsp;</div>
+<div class="clearfix">&nbsp;</div>
 </haq:content>
