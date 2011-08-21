@@ -8,7 +8,7 @@ class Client extends HaqPage
 {
     public function init()
     {
-		var calculator : components.calculator.Client = cast(components.get('calc'), components.calculator.Client);
+		var calculator : components.calculator.Client = cast components.get('calc');
 		calculator.setHistoryTextArea(q('#history'));
     }
 }
