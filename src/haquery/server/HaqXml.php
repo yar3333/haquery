@@ -488,7 +488,7 @@ class HaqXmlParser
         {
             $i = 0;
             $nodes = self::parseInner($str, $matches, $i);
-            if ($i<count($matches)) throw new Exception("Error parsing XML:\n<br>".htmlspecialchars($str));
+            if ($i<count($matches)) throw new Exception("Error parsing XML:\n<br>".$str);
             return $nodes;
         }
         return strlen($str) > 0 ? array(new HaqXmlNodeText($str)) : array();
@@ -556,7 +556,7 @@ class HaqXmlParser
             $nodes = self::parseInner($str, $matches, $i);
             foreach ($nodes as $node) $elem->addChild($node);
             if ($matches[$i]['close'][0]=='' || $matches[$i]['tagClose'][0]!=$tag)
-                throw new Exception ("XML parse error: tag &lt;$tag&gt; not closed. ParsedText = \n<pre>".htmlspecialchars($str)."</pre>\n");
+                throw new Exception ("XML parse error: tag <$tag> not closed. ParsedText = \n<pre>".$str."</pre>\n");
         }
 
         return $elem;
