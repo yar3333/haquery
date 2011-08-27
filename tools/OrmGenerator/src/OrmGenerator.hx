@@ -16,12 +16,6 @@ class OrmGenerator
 
 	static public function make(basePath:String)
     {
-        if (!HaqDb.connect())
-        {
-            Lib.println("Подключение к БД не установлено.");
-            return;
-        }
-
 		basePath = basePath.replace('\\', '/').rtrim('/') + '/';
 		var modelFolder = basePath + 'models/';
 		
