@@ -9,7 +9,7 @@ typedef OrmHaxeVar = {>HaqDbTableFieldData,
 	var haxeDefVal : String;
 }
 
-class OrmHaxeClassGenerator 
+class OrmHaxeClass
 {
 	var fullClassName : String;
 	var baseFullClassName : String;

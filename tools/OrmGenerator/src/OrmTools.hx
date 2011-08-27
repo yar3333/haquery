@@ -1,6 +1,6 @@
 package ;
 
-import OrmHaxeClassGenerator;
+import OrmHaxeClass;
 import haquery.server.db.HaqDbDriver;
 
 class OrmTools 

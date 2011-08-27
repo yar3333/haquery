@@ -33,7 +33,13 @@ class Main
 			Sys.exit(1);
 		}
 		
-		HaqDb.connect(re.matched(1), re.matched(4), re.matched(2), re.matched(3), re.matched(5));
+		HaqDb.connect({
+             type : re.matched(1)
+            ,user : re.matched(2)
+            ,pass : re.matched(3)
+            ,host : re.matched(4)
+            ,database : re.matched(5)
+        });
 		OrmGenerator.make(args[1]);
 	}
 
