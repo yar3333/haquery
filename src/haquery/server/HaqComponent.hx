@@ -175,19 +175,12 @@ class HaqComponent extends haquery.base.HaqComponent<HaqComponent>
         return new HaqQuery(this.prefixID, query, nodes);
     }
 
-    /**
-     * Вызывает метод клиентского класса компонента. Например:
-     * <code>
-     * $this->callJsMethod('show("Hello!")');
-     * </code>
-     * @param string $jsCode Название метода со скобками и параметрами в них (если они нужны).
-     */
-    public function callJsMethod(jsCode)
+    function callClientMethod(method:String, params:Array<Dynamic>) : Void
     {
-		HaqInternals.addAjaxAnswer(
-            this.fullID.length!=0
-				? "haquery.client.HaQuery.page.findComponent('" + this.fullID + "')." + jsCode + ";"
-				: "haquery.client.HaQuery.page." + jsCode + ";"
-        );
+		var funcName = this.fullID.length != 0
+			? "haquery.client.HaQuery.page.findComponent('" + fullID + "')." + method
+			: "haquery.client.HaQuery.page." + method;
+		
+		HaqInternals.addAjaxAnswer(HaqTools.getCallClientFunctionString(funcName, params) + ';');
     }
 }
