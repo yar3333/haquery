@@ -66,7 +66,7 @@ class OrmHaxeClass
 			  + imports.join('\n') + (imports.length > 0 ? '\n\n' : '')
 			  + 'class ' + clas.className + (baseFullClassName != null ? ' extends ' + baseFullClassName : '') + '\n'
 			  + '{\n'
-			  + (vars.length > 0 ? '\t' + vars.join('\n\t') + '\n\n' : '')
+			  + (vars.length > 0 ? '\t' + vars.join(';\n\t') + ';\n\n' : '')
 			  + (methods.length > 0 ? '\t' + methods.join('\n\n\t') + '\n' : '')
 			  + '}';
 		return s;

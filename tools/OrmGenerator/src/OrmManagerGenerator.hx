@@ -37,14 +37,16 @@ class OrmManagerGenerator
 		model.addImport('php.db.ResultSet');
 		model.addImport('haquery.server.db.HaqDb');
 		
-		model.addMethod('modelByParams', vars, modelFullClassName,
+		model.addMethod('new', [], 'Void', '');
+        
+        model.addMethod('newModelFromParams', vars, modelFullClassName,
 			 "var _obj = new " + modelFullClassName + "();\n"
 			+Lambda.map(vars, function(v:OrmHaxeVar) { return '_obj.' + v.haxeName + ' = ' + v.haxeName + ';'; } ).join('\n') + "\n"
 			+"return _obj;",
 			true
 		);
 		
-		model.addMethod('modelByRow', [ OrmTools.createVar('d', 'Dynamic') ], modelFullClassName,
+		model.addMethod('newModelFromRow', [ OrmTools.createVar('d', 'Dynamic') ], modelFullClassName,
 			 "var _obj = new " + modelFullClassName + "();\n"
 			 +Lambda.map(vars, function(v:OrmHaxeVar) { return '_obj.' + v.haxeName + " = Reflect.field(d, '" + v.haxeName + "');"; } ).join('\n') + "\n"
 			+"return _obj;",
@@ -55,7 +57,7 @@ class OrmManagerGenerator
 		if (getVars.length > 0)
 		{
 			model.addMethod('get', getVars, modelFullClassName,
-				"return object('SELECT * FROM `" + table + "`" + getWhereSql(getVars) + ");"
+				"return getObjectBySql('SELECT * FROM `" + table + "`" + getWhereSql(getVars) + ");"
 			);
 		}
 		
@@ -79,7 +81,7 @@ class OrmManagerGenerator
 				+Lambda.map(createVars, function(v) { return "HaqDb.quote(" + v.haxeName + ")"; } ).join(" + ', ' + ")
 			+" + ')');\n"
 			+"if (HaqDb.affectedRows() < 1) return null;\n"
-			+"return modelByParams(" + Lambda.map(vars, function(v) { return v.isAutoInc ? 'HaqDb.lastInsertId()' : v.haxeName; } ).join(", ") + ");"
+			+"return newModelFromParams(" + Lambda.map(vars, function(v) { return v.isAutoInc ? 'HaqDb.lastInsertId()' : v.haxeName; } ).join(", ") + ");"
 		);
 		
 		var deleteVars = Lambda.filter(vars, function(v:OrmHaxeVar) { return v.isKey; } );
@@ -89,23 +91,23 @@ class OrmManagerGenerator
 		);
 		
 		model.addMethod('all', [ OrmTools.createVar('_order', 'String', getOrderDefVal(vars)) ], 'Array<'+modelFullClassName+'>',
-			 "return objects('SELECT * FROM `" + table + "`' + (_order != null ? ' ORDER BY ' + _order : ''));"
+			 "return getObjectsBySql('SELECT * FROM `" + table + "`' + (_order != null ? ' ORDER BY ' + _order : ''));"
 		);
 		
-		model.addMethod('object', [ OrmTools.createVar('sql', 'String') ], modelFullClassName,
+		model.addMethod('getObjectBySql', [ OrmTools.createVar('sql', 'String') ], modelFullClassName,
 			 "var rows : ResultSet = HaqDb.query(sql + ' LIMIT 1');\n"
 			+"if (rows.length == 0) return null;\n"
-			+"return modelByRow(rows.next());"
+			+"return newModelFromRow(rows.next());"
 		);
 		
-		model.addMethod('objects', [ OrmTools.createVar('sql', 'String') ], 'Array<'+modelFullClassName+'>',
+		model.addMethod('getObjectsBySql', [ OrmTools.createVar('sql', 'String') ], 'Array<'+modelFullClassName+'>',
 			 "var rows : ResultSet = HaqDb.query(sql);\n"
 			+"var list : Array<models.Users> = [];\n"
 			+"for (row in rows)\n"
 			+"{\n"
-			+"	list.push(modelByRow(row));\n"
+			+"	list.push(newModelFromRow(row));\n"
 			+"}\n"
-			+"return r;"
+			+"return list;"
 		);
 		
 		for (uniqueField in HaqDb.connection.getUniqueFields(table))
@@ -132,23 +134,27 @@ class OrmManagerGenerator
 	
 	static function createGetByMethod(table:String, vars:List<OrmHaxeVar>, modelFullClassName:String, whereVars:List<OrmHaxeVar>, model:OrmHaxeClass) : Void
 	{
-		model.addMethod(
+		if (whereVars == null || whereVars.length == 0) return;
+        
+        model.addMethod(
 			'getBy' + Lambda.map(whereVars, function(v) { return OrmTools.capitalize(v.haxeName); } ).join('And'),
 			whereVars, 
 			modelFullClassName,
 			
-			"return object('SELECT * FROM `" + table + "`" + getWhereSql(whereVars) + ");"
+			"return getObjectBySql('SELECT * FROM `" + table + "`" + getWhereSql(whereVars) + ");"
 		);
 	}
 	
 	static function createGetsByMethod(table:String, vars:List<OrmHaxeVar>, modelFullClassName:String, whereVars:List<OrmHaxeVar>, model:OrmHaxeClass) : Void
 	{
+		if (whereVars == null || whereVars.length == 0) return;
+
 		model.addMethod(
 			'getBy' + Lambda.map(whereVars, function(v) { return OrmTools.capitalize(v.haxeName); } ).join('And'),
 			Lambda.concat(whereVars, [ OrmTools.createVar('_order', 'String', getOrderDefVal(vars)) ]), 
 			'Array<' + modelFullClassName + '>',
 			
-			"return objects('SELECT * FROM `" + table + "`" + getWhereSql(whereVars) + " + (_order != null ? ' ORDER BY ' + _order : ''));"
+			"return getObjectsBySql('SELECT * FROM `" + table + "`" + getWhereSql(whereVars) + " + (_order != null ? ' ORDER BY ' + _order : ''));"
 		);
 	}
 	

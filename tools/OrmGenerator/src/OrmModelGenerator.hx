@@ -42,7 +42,9 @@ class OrmModelGenerator
 			model.addVar(v);
 		}
 		
-		if (Lambda.exists(vars, function(v:OrmHaxeVar) { return v.isKey; } ) && Lambda.exists(vars, function(v:OrmHaxeVar) { return !v.isKey; } ))
+        model.addMethod('new', [], 'Void', '');
+        
+        if (Lambda.exists(vars, function(v:OrmHaxeVar) { return v.isKey; } ) && Lambda.exists(vars, function(v:OrmHaxeVar) { return !v.isKey; } ))
 		{
 			var settedVars = Lambda.filter(vars, function(v:OrmHaxeVar) { return !v.isKey && !v.isAutoInc; } );
 			if (settedVars.length > 0)
