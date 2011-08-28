@@ -75,7 +75,7 @@ class HaqComponent<Component:TComponent>
 	
 	function createEvents() : Void
 	{
-		if (parent!=null)
+		if (parent != null)
 		{
 			for (field in Type.getInstanceFields(Type.getClass(this)))
 			{
@@ -87,19 +87,20 @@ class HaqComponent<Component:TComponent>
 						event = new HaqEvent(cast this, field.substr("event_".length));
 						Reflect.setField(this, field, event);
 					}
-					parent.connectEventHandlers(cast this, event);
+					parent.connectEventHandlers(event);
 				}
 			}
 		}
 	}
 	
-	public function connectEventHandlers(child:Component, event:HaqEvent) : Void
+	public function connectEventHandlers(event:HaqEvent) : Void
 	{
-		var handlerName = child.id + '_' + event.name;
-		if (Reflect.hasMethod(this, handlerName))
-		{
-			event.bind(cast this, Reflect.field(this, handlerName));
-		}
+		trace("base[" + fullID + "] connectEventHandlers event = " + event.name);
+        var handlerName = event.component.id + '_' + event.name;
+        if (Reflect.hasMethod(this, handlerName))
+        {
+            event.bind(cast this, Reflect.field(this, handlerName));
+        }
 	}
 	
     public function forEachComponent(f:String, isFromTopToBottom=true) : Void

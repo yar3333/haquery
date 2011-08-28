@@ -2,11 +2,9 @@ package haquery.components.listitem;
 
 import haquery.server.HaqComponent;
 import haquery.server.HaqComponentManager;
-import haquery.server.HaqEvent;
 import haquery.server.HaqXml;
-import haquery.server.HaQuery;
 
-class Server extends HaqComponent
+class Server extends Base
 {
 	override public function construct(manager:HaqComponentManager, parent:HaqComponent, tag:String, id:String, doc:HaqXml, params:Dynamic, innerHTML:String):Void 
 	{
@@ -42,14 +40,5 @@ class Server extends HaqComponent
         var doc = new HaqXml(innerHTML);
         
         super.construct(manager, parent, tag, id, doc , params, '');
-	}
-	
-	override public function connectEventHandlers(child:HaqComponent, event:HaqEvent) : Void
-	{
-		var handlerName = /*parent.id + '_' +*/ child.id + '_' + event.name;
-		if (Reflect.hasMethod(parent.parent, handlerName))
-		{
-			event.bind(parent.parent, Reflect.field(parent.parent, handlerName));
-		}
 	}
 }

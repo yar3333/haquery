@@ -2,6 +2,7 @@ package haquery.client;
 
 import haxe.Unserializer;
 import js.Lib;
+import js.Dom;
 
 class HaqInternals 
 {
