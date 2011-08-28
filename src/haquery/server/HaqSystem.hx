@@ -88,18 +88,19 @@ class HaqSystem
         page.forEachComponent('preEventHandlers');
 
         var controlID : String = php.Web.getParams().get('HAQUERY_ID');
-        var componentID = '';
+        var component : HaqComponent = page;
         var n = controlID.lastIndexOf(HaqInternals.DELIMITER);
         if (n>0)
         {
-            componentID = controlID.substr(0, n);
+            var componentID = controlID.substr(0, n);
+            component = page.findComponent(componentID);
+            if (component == null)
+            {
+                throw "Component id = '" + componentID + "' not found.";
+            }
             controlID = controlID.substr(n+1);
         }
-
-        var component = page.findComponent(componentID);
-        if (component==null) throw "Component id = '" + componentID + "' not found.";
-        var handler = controlID + '_' + php.Web.getParams().get('HAQUERY_EVENT');
-        Reflect.callMethod(component, handler, null);
+        component.callElemEventHandler(controlID, php.Web.getParams().get('HAQUERY_EVENT'));
         
         php.Web.setHeader('Content-Type', 'text/plain; charset=utf-8');
         

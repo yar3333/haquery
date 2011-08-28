@@ -8,7 +8,7 @@ class Server extends Base
 {
 	override public function construct(manager:HaqComponentManager, parent:HaqComponent, tag:String, id:String, doc:HaqXml, params:Dynamic, innerHTML:String):Void 
 	{
-		if (params!=null)
+		if (params != null)
 		{
             var reConsts = new EReg("[{]([_a-zA-Z][_a-zA-Z0-9]*)[}]", "");
             
@@ -41,4 +41,13 @@ class Server extends Base
         
         super.construct(manager, parent, tag, id, doc , params, '');
 	}
+    
+    override function callElemEventHandler(elemID:String, eventName:String) : Void
+    {
+        if (parent != null && parent.parent != null)
+        {
+            var handler = elemID + '_' + eventName;
+            Reflect.callMethod(parent.parent, handler, [this]);
+        }
+    }
 }

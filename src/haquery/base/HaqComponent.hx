@@ -95,7 +95,7 @@ class HaqComponent<Component:TComponent>
 	
 	public function connectEventHandlers(event:HaqEvent) : Void
 	{
-		trace("base[" + fullID + "] connectEventHandlers event = " + event.name);
+		//trace("base[" + fullID + "] connectEventHandlers event = " + event.name);
         var handlerName = event.component.id + '_' + event.name;
         if (Reflect.hasMethod(this, handlerName))
         {
