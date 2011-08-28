@@ -11,28 +11,40 @@ import haquery.server.HaQuery;
 
 class Server extends HaqComponent
 {
-	override public function construct(manager:HaqComponentManager, parent:HaqComponent, tag:String, id:String, doc:HaqXml, params:Hash<String>, innerHTML:String):Void 
+	override public function construct(manager:HaqComponentManager, parent:HaqComponent, tag:String, id:String, doc:HaqXml, params:Dynamic, innerHTML:String):Void 
 	{
-		var doc = new HaqXml(innerHTML);
-		
-		if (params!=null && params.exists('seralizedParams'))
+		if (params!=null)
 		{
-			var childrenParams : Hash<Hash<String>> = untyped Lib.unserialize(params.get('seralizedParams'));
-			for (id in childrenParams.keys())
-			{
-				var elems : Array<HaqXmlNodeElement> = untyped Lib.toHaxeArray(doc.find('#' + id));
-				for (e in elems)
-				{
-					var childrenAttrs : Hash<String> = childrenParams.get(id);
-					for (attrName in childrenAttrs.keys())
-					{
-						e.setAttribute(attrName, childrenAttrs.get(attrName));
-					}
-				}
-			}
-		}
-		
-		super.construct(manager, parent, tag, id, doc , params, '');
+            var reConsts = new EReg("[{]([_a-zA-Z][_a-zA-Z0-9]*)[}]", "");
+            
+            if (Type.getClassName(Type.getClass(params)) == "Hash")
+            {
+                var paramsAsHash : Hash<String> = cast params;
+                while (reConsts.match(innerHTML))
+                {
+                    var const = reConsts.matched(1);
+                    if (paramsAsHash.exists(const))
+                    {
+                        innerHTML = innerHTML.replace('{' + const + '}', paramsAsHash.get(const));
+                    }
+                }
+            }
+            else
+            {
+                while (reConsts.match(innerHTML))
+                {
+                    var const = reConsts.matched(1);
+                    if (Reflect.hasField(params, const))
+                    {
+                        innerHTML = innerHTML.replace('{' + const + '}', Reflect.field(params, const));
+                    }
+                }
+            }
+        }
+        
+        var doc = new HaqXml(innerHTML);
+        
+        super.construct(manager, parent, tag, id, doc , params, '');
 	}
 	
 	override public function connectEventHandlers(child:HaqComponent, event:HaqEvent) : Void

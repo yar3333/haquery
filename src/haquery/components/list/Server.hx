@@ -27,23 +27,24 @@ class Server extends HaqComponent
         }
 	}
 
-    public function bind(params:Array<Hash<Hash<String>>>)
+    public function bind(constsList:Array<Dynamic>)
     {
-        HaQuery.assert(!HaQuery.isPostback, 'Call bind on postback is not allowed.');
+        HaQuery.assert(!HaQuery.isPostback, 'List binding on postback is not allowed.');
 	
-		for (i in 0...params.length)
+		for (i in 0...constsList.length)
         {
-			var p = new Hash<String>(); 
-			p.set('seralizedParams', Lib.serialize(params[i]));
-			manager.createComponent(this, 'haq:listitem', Std.string(i), p, innerHTML);
+			manager.createComponent(this, 'haq:listitem', Std.string(i), constsList[i], innerHTML);
         }
-		q('#length').val(Std.string(params.length));
+		q('#length').val(Std.string(constsList.length));
     }
     
     override function render()
     {
         var r = '';
-		for (component in components) r += component.render().trim() + "\n";
+		for (component in components)
+        {
+            r += component.render().trim() + "\n";
+        }
         return super.render() + '\n' + r;
     }
 }

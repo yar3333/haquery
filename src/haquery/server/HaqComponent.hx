@@ -27,7 +27,10 @@ class HaqComponent extends haquery.base.HaqComponent<HaqComponent>
      */
     public var visible : Bool;
     
-	private var params : Hash<String>;
+	/**
+	 * Params, which must be loaded to object variables.
+	 */
+    private var params : Dynamic;
 
 	public function new() : Void
 	{
@@ -35,7 +38,7 @@ class HaqComponent extends haquery.base.HaqComponent<HaqComponent>
 		visible = true;
 	}
 
-	public function construct(manager:HaqComponentManager, parent: HaqComponent, tag:String, id:String, doc: HaqXml, params:Hash<String>, innerHTML:String) : Void
+	public function construct(manager:HaqComponentManager, parent: HaqComponent, tag:String, id:String, doc: HaqXml, params:Dynamic, innerHTML:String) : Void
     {
 		super.commonConstruct(parent, tag, id);
         
@@ -63,15 +66,19 @@ class HaqComponent extends haquery.base.HaqComponent<HaqComponent>
 				) fields.set(field.toLowerCase(), field);
 			}
             
-			for (k in params.keys())
+			if (Type.getClassName(Type.getClass(params)) == 'Hash')
             {
-                var v = params.get(k);
-				k = k.toLowerCase();
-				if (fields.exists(k))
-				{
-					var field = fields.get(k);
-					Reflect.setField(this, field, v);
-				}
+                var paramsAsHash : Hash<String> = cast params;
+                for (k in paramsAsHash.keys())
+                {
+                    var v = paramsAsHash.get(k);
+                    k = k.toLowerCase();
+                    if (fields.exists(k))
+                    {
+                        var field = fields.get(k);
+                        Reflect.setField(this, field, v);
+                    }
+                }
             }
         }
 	}
