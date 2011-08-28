@@ -18,7 +18,8 @@ class HaqComponent extends haquery.base.HaqComponent<HaqComponent>
 		this.manager = manager;
         this.serverHandlers = serverHandlers;
         
-		createEvents();
+		connectElemEventHandlers();
+        createEvents();
 		createChildComponents();
 		if (Reflect.hasMethod(this, 'init')) Reflect.callMethod(this, Reflect.field(this, 'init'), []);
 	}
@@ -40,4 +41,9 @@ class HaqComponent extends haquery.base.HaqComponent<HaqComponent>
 		}
 		return new JQuery(selector, base);
 	}
+    
+    private function connectElemEventHandlers() : Void
+    {
+        HaqElemEventManager.connect(this, HaqElemEventManager.getComponentElems(this), manager.templates);
+    }
 }

@@ -6,7 +6,7 @@ import haquery.client.HaqTemplates;
 
 class HaqComponentManager 
 {
-    var templates : HaqTemplates;
+    public var templates(default,null) : HaqTemplates;
 	var id_tag : Hash<String>;
 	
 	public function new(templates:HaqTemplates, id_tag:Hash<String>) : Void
@@ -47,7 +47,7 @@ class HaqComponentManager
         }
         else
         {
-            throw "Component client class '"+Type.getClassName(clas)+"' must be inherited from class 'haquery.client.HaqComponent'.";
+            throw "Component client class '" + Type.getClassName(clas) + "' must be inherited from class 'haquery.client.HaqComponent'.";
         }
 
         return component;
@@ -62,7 +62,7 @@ class HaqComponentManager
 	public function getChildComponents(parent:HaqComponent) : Array<{ id:String, tag:String }>
 	{
 		var r : Array<{ id:String, tag:String }> = new Array<{ id:String, tag:String }>();
-		var re = new EReg('^'+parent.prefixID+'[^'+HaqInternals.DELIMITER+']+$', '');
+		var re = new EReg('^' + parent.prefixID + '[^' + HaqInternals.DELIMITER + ']+$', '');
 		for (fullID in id_tag.keys())
 		{
 			if (re.match(fullID))

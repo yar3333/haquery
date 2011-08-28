@@ -1,16 +1,14 @@
 package haquery.components.listitem;
 
-import haquery.client.HaqComponent;
-import haquery.client.HaqEvent;
+import haquery.client.HaqElemEventManager;
 
-class Client extends HaqComponent
+class Client extends Base
 {
-	override public function connectEventHandlers(child:HaqComponent, event:HaqEvent) : Void
-	{
-		var handlerName = /*parent.id + '_' +*/ child.id + '_' + event.name;
-		if (Reflect.hasMethod(parent.parent, handlerName))
-		{
-			event.bind(parent.parent, Reflect.field(parent.parent, handlerName));
-		}
-	}
+    override function connectElemEventHandlers():Void 
+    {
+        if (parent != null && parent.parent != null)
+        {
+            HaqElemEventManager.connect(parent.parent, HaqElemEventManager.getComponentElems(this), manager.templates);
+        }
+    }
 }

@@ -16,7 +16,8 @@ class Client extends HaqComponent
 
     public function b_click()
     {
-		return event_click.call([isActive()]);
+		trace("b_click client");
+        return event_click.call([isActive()]);
     }
 
     public function setActive(isActive:Bool)
