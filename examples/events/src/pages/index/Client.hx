@@ -12,6 +12,6 @@ class Client extends HaqPage
 	public function componentButton_click()
 	{
 		q('#status').html("componentButton pressed on client");
-		return false; // false to disable server handler call
+		//return false; // false to disable server handler call
 	}
 }

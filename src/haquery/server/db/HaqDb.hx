@@ -1,8 +1,6 @@
 package haquery.server.db;
 
-import php.Lib;
 import php.db.Mysql;
-//import haquery.server.HaQuery;
 import haquery.server.db.HaqDbDriver;
 import haquery.server.db.HaqDbDriver_mysql;
 import haquery.server.HaqProfiler;

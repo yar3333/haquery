@@ -1,11 +1,8 @@
 package haquery.components.listitem;
 
-import php.Lib;
-import php.Web;
 import haquery.server.HaqComponent;
 import haquery.server.HaqComponentManager;
 import haquery.server.HaqEvent;
-import haquery.server.HaqInternals;
 import haquery.server.HaqXml;
 import haquery.server.HaQuery;
 
@@ -49,7 +46,7 @@ class Server extends HaqComponent
 	
 	override public function connectEventHandlers(child:HaqComponent, event:HaqEvent) : Void
 	{
-		var handlerName = parent.id + '_' + child.id + '_' + event.name;
+		var handlerName = /*parent.id + '_' +*/ child.id + '_' + event.name;
 		if (Reflect.hasMethod(parent.parent, handlerName))
 		{
 			event.bind(parent.parent, Reflect.field(parent.parent, handlerName));
