@@ -12,6 +12,7 @@ import pages.index.Server;
 import haquery.components.button.Client;
 import haquery.components.ckeditor.Client;
 import haquery.components.codemirror.Client;
+import haquery.components.listitem.Client;
 import haquery.components.splitter.Client;
 import haquery.components.tabs.Client;
 import pages.index.Client;

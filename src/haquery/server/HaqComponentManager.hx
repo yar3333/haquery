@@ -23,7 +23,7 @@ class HaqComponentManager
 	
 	function newComponent(parent:HaqComponent, clas:Class<HaqComponent>, name:String, id:String, doc:HaqXml, attr:Hash<String>, innerHTML:String) : HaqComponent
 	{
-		var r = Type.createInstance(clas, []);
+		var r : HaqComponent = Type.createInstance(clas, []);
 		r.construct(this, parent, name, id, doc, attr, innerHTML);
 		return r;
 	}

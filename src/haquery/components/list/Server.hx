@@ -1,15 +1,7 @@
 package haquery.components.list;
 
-import php.Lib;
-import php.Web;
-import haquery.server.HaqComponentManager;
-import haquery.server.HaqInternals;
-import haquery.server.HaqTemplates;
 import haquery.server.HaQuery;
-import haquery.server.HaqXml;
-
 import haquery.server.HaqComponent;
-import haquery.server.HaqEvent;
 
 class Server extends HaqComponent
 {
@@ -21,7 +13,7 @@ class Server extends HaqComponent
 			trace('length = ' + length);
 			for (i in 0...length)
 			{
-				trace("createComponent haq:listitem " + Std.string(i));
+				//trace("createComponent haq:listitem " + Std.string(i));
 				manager.createComponent(this, 'haq:listitem', Std.string(i), null, innerHTML);
 			}
         }
