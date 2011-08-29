@@ -1,9 +1,7 @@
 package haquery.client;
 
 import js.Lib;
-import jQuery.JQuery;
-import haquery.server.HaqEvent;
-import haquery.server.HaQuery;
+import haquery.client.HaqQuery;
 
 class HaqComponent extends haquery.base.HaqComponent<HaqComponent>
 {
@@ -33,17 +31,17 @@ class HaqComponent extends haquery.base.HaqComponent<HaqComponent>
 		}
 	}
 	
-	public function q(?selector:String, ?base:Dynamic) : JQuery
+	public function q(?selector:String, ?base:Dynamic) : HaqQuery
 	{
 		if (selector != null && Type.getClassName(Type.getClass(selector)) == "String" && this.prefixID != '')
 		{
 			selector = StringTools.replace(selector, '#', '#' + this.prefixID);
 		}
-		return new JQuery(selector, base);
+		return new HaqQuery(selector, base);
 	}
     
     private function connectElemEventHandlers() : Void
     {
-        HaqElemEventManager.connect(this, HaqElemEventManager.getComponentElems(this), manager.templates);
+        HaqElemEventManager.connect(this, this, manager.templates);
     }
 }

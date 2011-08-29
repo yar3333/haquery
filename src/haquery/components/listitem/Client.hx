@@ -8,7 +8,7 @@ class Client extends Base
     {
         if (parent != null && parent.parent != null)
         {
-            HaqElemEventManager.connect(parent.parent, HaqElemEventManager.getComponentElems(this), manager.templates);
+            HaqElemEventManager.connect(parent.parent, this, manager.templates);
         }
     }
 }

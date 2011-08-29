@@ -3,14 +3,16 @@ package haquery.base;
 #if php
 	import haquery.server.HaqComponent;
     import haquery.server.HaQuery;
+    import haquery.server.HaqQuery;
 #else
 	import haquery.client.HaqComponent;
     import haquery.client.HaQuery;
+    import haquery.client.HaqQuery;
 #end
 
 private typedef Handler = {
 	var o : HaqComponent;
-	var f : HaqComponent->Dynamic->Bool;
+	var f : HaqEventTarget->Dynamic->Bool;
 }
 
 class HaqEvent
@@ -27,7 +29,7 @@ class HaqEvent
 		this.name = name;
 	}
 
-	public function bind(obj:HaqComponent, func:HaqComponent->Dynamic->Bool)
+	public function bind(obj:HaqComponent, func:HaqEventTarget->Dynamic->Bool)
 	{
 		handlers.push( { o: obj, f: func } );
 		return this;
@@ -36,13 +38,15 @@ class HaqEvent
 	public  function call(params:Array<Dynamic>=null) : Bool
 	{
 		//trace("Event call for " + component.fullID + " - " + name + " #" + handlers.length);
+        
+        if (params == null) params = [];
 		
-		var i = handlers.length - 1;
+        var i = handlers.length - 1;
 		while (i>=0)
 		{
 			var obj = handlers[i].o;
 			var func = handlers[i].f;
-			var r = Reflect.callMethod(obj, func, params);
+            var r = Reflect.callMethod(obj, func, cast([HaqEventTarget.component(component)], Array<Dynamic>).concat(params));
 			#if php
 				if (untyped __physeq__(r, false)) return false;
 			#else

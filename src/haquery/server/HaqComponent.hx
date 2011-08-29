@@ -194,6 +194,6 @@ class HaqComponent extends haquery.base.HaqComponent<HaqComponent>
     public function callElemEventHandler(elemID:String, eventName:String) : Void
     {
         var handler = elemID + '_' + eventName;
-        Reflect.callMethod(this, handler, null);
+        Reflect.callMethod(this, handler, [prefixID + elemID]);
     }
 }
