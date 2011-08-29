@@ -2,7 +2,6 @@ package haquery.client;
 
 import js.Dom;
 import js.Lib;
-import jQuery.JQuery;
 
 class HaqElemEventManager 
 {
@@ -20,7 +19,7 @@ class HaqElemEventManager
     {
         if (elems_cached == null)
         {
-            elems_cached = (new JQuery("*[id]")).toArray();
+            elems_cached = (new HaqQuery("*[id]")).toArray();
         }
         return elems_cached;
     }
@@ -41,18 +40,20 @@ class HaqElemEventManager
         return r;
     }
 	
-    public static function connect(component:HaqComponent, elems:Array<HtmlDom>, templates:HaqTemplates)
+    public static function connect(componentWithHandlers:HaqComponent, componentWithEvents:HaqComponent, templates:HaqTemplates)
     {
+        var elems:Array<HtmlDom> = getComponentElems(componentWithEvents);
+        
         for (elem in elems)
         {
             var n = elem.id.lastIndexOf(HaqInternals.DELIMITER);
             var elemID = n != -1 ? elem.id.substr(n + 1) : elem.id;
             for (eventName in elemEventNames)
             {
-                var needHandler = Reflect.hasMethod(component, elemID + "_" + eventName);
+                var needHandler = Reflect.hasMethod(componentWithHandlers, elemID + "_" + eventName);
                 if (!needHandler)
                 {
-                    var serverHandlers = templates.get(component.tag).elemID_serverHandlers;
+                    var serverHandlers = templates.get(componentWithHandlers.tag).elemID_serverHandlers;
                     if (serverHandlers != null && serverHandlers.get(elemID) != null 
                      && serverHandlers.get(elemID).indexOf(eventName) != -1
                     ) {
@@ -61,37 +62,37 @@ class HaqElemEventManager
                 }
                 if (needHandler)
                 {
-                    new JQuery(elem).bind(eventName, null, function(e:js.Dom.Event):Bool {
-                        return elemEventHandler(component, elem, templates, e); 
+                    new HaqQuery(elem).bind(eventName, null, function(e:js.Dom.Event):Bool {
+                        return elemEventHandler(componentWithHandlers, componentWithEvents, elem, templates, e); 
                     });
                 }
             }
         }
     }
 
-    static function elemEventHandler(component:HaqComponent, elem:HtmlDom, templates:HaqTemplates, e:js.Dom.Event) : Bool
+    static function elemEventHandler(componentWithHandlers:HaqComponent, componentWithEvents:HaqComponent, elem:HtmlDom, templates:HaqTemplates, e:js.Dom.Event) : Bool
     {
-		var r = callClientElemEventHandlers(component, elem, e);
+		var r = callClientElemEventHandlers(componentWithHandlers, componentWithEvents, elem, e);
 		if (!r) return false;
         
-		var serverHandlers = templates.get(component.tag).elemID_serverHandlers;
-        return callServerElemEventHandlers(serverHandlers, component, elem, e);
+		var serverHandlers = templates.get(componentWithHandlers.tag).elemID_serverHandlers;
+        return callServerElemEventHandlers(elem, componentWithEvents, e, serverHandlers);
     }
 	
-	static function callClientElemEventHandlers(component:HaqComponent, elem:HtmlDom, e:js.Dom.Event) : Bool
+	static function callClientElemEventHandlers(componentWithHandlers:HaqComponent, componentWithEvents:HaqComponent, elem:HtmlDom, e:js.Dom.Event) : Bool
 	{
 		var n = elem.id.lastIndexOf(HaqInternals.DELIMITER);
 		var elemID = n > 0 ? elem.id.substr(n + 1) : elem.id;
 		var methodName = elemID + "_" + e.type;
-		if (Reflect.hasMethod(component, methodName))
+		if (Reflect.hasMethod(componentWithHandlers, methodName))
 		{
-			var r = Reflect.callMethod(component, Reflect.field(component, methodName), [e]);
+			var r = Reflect.callMethod(componentWithHandlers, Reflect.field(componentWithHandlers, methodName), [ HaqEventTarget.elem(new HaqQuery(elem)), e ]);
 			if (r == false) return false;
 		}
 		return true;
 	}
 	
-	static function callServerElemEventHandlers(serverHandlers:Hash<Array<String>>, component:HaqComponent, elem:HtmlDom, e:js.Dom.Event) : Bool
+	static function callServerElemEventHandlers(elem:HtmlDom, componentWithEvents:HaqComponent, e:js.Dom.Event, serverHandlers:Hash<Array<String>>) : Bool
 	{
 		var n = elem.id.lastIndexOf(HaqInternals.DELIMITER);
 		var elemID = n > 0 ? elem.id.substr(n + 1) : elem.id;
@@ -109,11 +110,11 @@ class HaqElemEventManager
             for (sendElem in getElemsForSendToServer(elem.id))
             {
                 sendData[untyped sendElem.id] = sendElem.nodeName.toUpperCase() == 'INPUT' && sendElem.getAttribute('type').toUpperCase() == "CHECKBOX"
-                    ? (Reflect.field(sendElem, 'checked') ? new JQuery(sendElem).val() : '')
-                    : new JQuery(sendElem).val();
+                    ? (Reflect.field(sendElem, 'checked') ? new HaqQuery(sendElem).val() : '')
+                    : new HaqQuery(sendElem).val();
             }
-
-            JQueryStatic.post(
+            
+            HaqQuery._static.post(
                 Lib.window.location.href,
                 sendData,
                 function(data:String) : Void
@@ -152,7 +153,7 @@ class HaqElemEventManager
         trace('reStr = ' + reStr);
 		var re : EReg = new EReg(reStr, '');
 		
-		var jqAllElemsWithID = new JQuery("[id]");
+		var jqAllElemsWithID = new HaqQuery("[id]");
 		var allElemsWithID : Array<HtmlDom> = untyped jqAllElemsWithID.toArray();
 		var elems = Lambda.filter(allElemsWithID, function(elem:HtmlDom):Bool {
 			if (!re.match(elem.id)) return false;

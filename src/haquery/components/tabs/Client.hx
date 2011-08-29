@@ -1,7 +1,6 @@
 package haquery.components.tabs;
 
-import jQuery.JQuery;
-import js.Lib;
+import haquery.client.HaqQuery;
 import haquery.client.HaqEvent;
 import haquery.client.HaqComponent;
 
@@ -31,8 +30,8 @@ class Client extends HaqComponent
             var elemID = elem.id.substr(self.prefixID.length);
             if (elemID!=tabID)
             {
-                new JQuery(elem).removeClass('active');
-                self.parent.q('#' + new JQuery(elem).attr('panelID')).removeClass('active');
+                new HaqQuery(elem).removeClass('active');
+                self.parent.q('#' + new HaqQuery(elem).attr('panelID')).removeClass('active');
                 self.event_hided.call([elemID]);
             }
         });

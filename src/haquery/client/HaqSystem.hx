@@ -1,11 +1,7 @@
 package haquery.client;
 
-import js.Dom.HtmlDom;
-import js.Lib;
-import jQuery.JQuery;
 import haquery.client.HaqComponentManager;
 import haquery.client.HaqTemplates;
-import haquery.client.HaQuery;
 
 class HaqSystem 
 {

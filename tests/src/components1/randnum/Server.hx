@@ -1,4 +1,3 @@
-#if php
 package components1.randnum;
 
 import php.Lib;
@@ -11,4 +10,3 @@ class Server extends HaqComponent
 		q('#n').html('123');
 	}
 }
-#end

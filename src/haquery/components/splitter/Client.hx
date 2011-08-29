@@ -1,7 +1,6 @@
 package haquery.components.splitter;
 
-import jQuery.JQuery;
-import js.Lib;
+import haquery.client.HaqQuery;
 import haquery.client.HaqEvent;
 import haquery.client.HaqComponent;
 
@@ -105,18 +104,18 @@ class Client extends HaqComponent
         var self = this;
 
         mouseupHandler = function(e) { self.mouseup(e); };
-        new JQuery(js.Lib.document).mouseup(this.mouseupHandler);
+        new HaqQuery(js.Lib.document).mouseup(this.mouseupHandler);
 
         mousemoveHandler = function(e) { self.mousemove(e); };
-        new JQuery(js.Lib.document).mousemove(this.mousemoveHandler);
+        new HaqQuery(js.Lib.document).mousemove(this.mousemoveHandler);
     }
     
     private function mouseup(e)
     {
         if (!this.dragMode) return;
         this.dragMode = false;
-        new JQuery(js.Lib.document).unbind('mouseup', mouseupHandler);
-        new JQuery(js.Lib.document).unbind('mousemove', mousemoveHandler);
+        new HaqQuery(js.Lib.document).unbind('mouseup', mouseupHandler);
+        new HaqQuery(js.Lib.document).unbind('mousemove', mousemoveHandler);
         this.q('#f').hide();
     }
 

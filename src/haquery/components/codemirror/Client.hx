@@ -1,8 +1,8 @@
 package haquery.components.codemirror;
 
-import haquery.client.HaQuery;
-import jQuery.JQuery;
 import js.Lib;
+import haquery.client.HaQuery;
+import haquery.client.HaqQuery;
 import haquery.client.HaqEvent;
 import haquery.client.HaqComponent;
 
@@ -62,7 +62,7 @@ class Client extends HaqComponent
             }
         });
 
-        new JQuery(Lib.window).keydown(function(event) : Bool
+        new HaqQuery(Lib.window).keydown(function(event) : Bool
         {
             if (!self.hasFocus()) return true;
             if ((event.ctrlKey || event.metaKey) && !event.altKey)
@@ -100,7 +100,7 @@ class Client extends HaqComponent
 
     public function hasFocus() : Bool
     {
-        return new JQuery(this.editor.getWrapperElement()).hasClass('CodeMirror-focused');
+        return new HaqQuery(this.editor.getWrapperElement()).hasClass('CodeMirror-focused');
     }
     
     function loadCssFile(filename:String) : Void
@@ -108,7 +108,7 @@ class Client extends HaqComponent
         var path = manager.getSupportUrl(tag) + filename;
         trace('filename to load = ' + path);
         var fileref = Lib.document.createElement("link");
-        new JQuery(fileref)
+        new HaqQuery(fileref)
             .attr("rel", "stylesheet")
             .attr("type", "text/css")
             .attr("href", path);
