@@ -76,7 +76,7 @@ class HaqElemEventManager
 		if (!r) return false;
         
 		var serverHandlers = templates.get(componentWithHandlers.tag).elemID_serverHandlers;
-        return callServerElemEventHandlers(elem, componentWithEvents, e, serverHandlers);
+        return callServerElemEventHandlers(elem, e, serverHandlers);
     }
 	
 	static function callClientElemEventHandlers(componentWithHandlers:HaqComponent, componentWithEvents:HaqComponent, elem:HtmlDom, e:js.Dom.Event) : Bool
@@ -86,13 +86,13 @@ class HaqElemEventManager
 		var methodName = elemID + "_" + e.type;
 		if (Reflect.hasMethod(componentWithHandlers, methodName))
 		{
-			var r = Reflect.callMethod(componentWithHandlers, Reflect.field(componentWithHandlers, methodName), [ HaqEventTarget.elem(new HaqQuery(elem)), e ]);
+			var r = Reflect.callMethod(componentWithHandlers, Reflect.field(componentWithHandlers, methodName), [ componentWithEvents, e ]);
 			if (r == false) return false;
 		}
 		return true;
 	}
 	
-	static function callServerElemEventHandlers(elem:HtmlDom, componentWithEvents:HaqComponent, e:js.Dom.Event, serverHandlers:Hash<Array<String>>) : Bool
+	static function callServerElemEventHandlers(elem:HtmlDom, e:js.Dom.Event, serverHandlers:Hash<Array<String>>) : Bool
 	{
 		var n = elem.id.lastIndexOf(HaqInternals.DELIMITER);
 		var elemID = n > 0 ? elem.id.substr(n + 1) : elem.id;
