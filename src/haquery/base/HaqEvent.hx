@@ -12,7 +12,7 @@ package haquery.base;
 
 private typedef Handler = {
 	var o : HaqComponent;
-	var f : HaqEventTarget->Dynamic->Bool;
+	var f : HaqComponent->Dynamic->Bool;
 }
 
 class HaqEvent
@@ -29,7 +29,7 @@ class HaqEvent
 		this.name = name;
 	}
 
-	public function bind(obj:HaqComponent, func:HaqEventTarget->Dynamic->Bool)
+	public function bind(obj:HaqComponent, func:HaqComponent->Dynamic->Bool)
 	{
 		handlers.push( { o: obj, f: func } );
 		return this;
@@ -46,7 +46,7 @@ class HaqEvent
 		{
 			var obj = handlers[i].o;
 			var func = handlers[i].f;
-            var r = Reflect.callMethod(obj, func, cast([HaqEventTarget.component(component)], Array<Dynamic>).concat(params));
+            var r = Reflect.callMethod(obj, func, cast([component], Array<Dynamic>).concat(params));
 			#if php
 				if (untyped __physeq__(r, false)) return false;
 			#else

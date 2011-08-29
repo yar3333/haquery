@@ -1,9 +1,7 @@
 package haquery.server;
 
-import haquery.server.HaqQuery;
-import haquery.server.HaQuery;
-import haquery.server.HaqXml;
 import php.Lib;
+import haquery.server.HaqXml;
 
 /**
  * Базовый класс для компонентов и страниц.
@@ -194,6 +192,6 @@ class HaqComponent extends haquery.base.HaqComponent<HaqComponent>
     public function callElemEventHandler(elemID:String, eventName:String) : Void
     {
         var handler = elemID + '_' + eventName;
-        Reflect.callMethod(this, handler, [prefixID + elemID]);
+        Reflect.callMethod(this, handler, [ this ]);
     }
 }
