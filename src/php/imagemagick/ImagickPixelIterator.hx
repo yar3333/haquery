@@ -1,6 +1,6 @@
 package php.imagemagick;
 
-@:native('ImagickPixelIterator') extern class ImagickPixelIterator
+@:native('ImagickPixelIterator') extern class ImagickPixelIterator implements ArrayAccess<ArrayAccess<ImagickPixel>>
 {
 	public function clear() : Bool;
 	public function new(wand:Imagick) : Void;
