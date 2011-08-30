@@ -46,7 +46,7 @@ class HaqEvent
 		{
 			var obj = handlers[i].o;
 			var func = handlers[i].f;
-            var r = Reflect.callMethod(obj, func, cast([component], Array<Dynamic>).concat(params));
+            var r = Reflect.callMethod(obj, func, cast([component.parent], Array<Dynamic>).concat(params));
 			#if php
 				if (untyped __physeq__(r, false)) return false;
 			#else
