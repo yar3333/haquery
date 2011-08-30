@@ -75,7 +75,7 @@ class HaqTemplates
 			if (r.serverClass == null)
 			{
 				var className = componentsFolder.replace('/', '.') + tag + '.Server';
-				r.serverClass = untyped Type.resolveClass(className);
+				r.serverClass = cast Type.resolveClass(className);
 			}
 			
 			i--;
@@ -104,7 +104,6 @@ class HaqTemplates
 			var css = '';
 			var data : Hash<HaqCachedTemplate> = new Hash<HaqCachedTemplate>();
 			
-			// TODO: папка в public может и отсутствовать
 			for (folder in FileSystem.readDirectory(componentsFolder))
 			{
 				var parts : { css:String, doc:HaqXml } = parseComponent(componentsFolder + folder);
