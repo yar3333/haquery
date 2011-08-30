@@ -87,25 +87,36 @@ class HaqDbDriver_mysql implements HaqDbDriver
 
     public function quote(v:Dynamic) : String
     {
-		if (untyped __physeq__(v, null)) return 'NULL';
-		if (untyped __physeq__(v, true)) return '1';
-		if (untyped __physeq__(v, false)) return '0';
-		if (Type.typeof(v) == ValueType.TInt) return Std.string(v);
-		
         switch (Type.typeof(v))
         {
             case ValueType.TClass(cls):
-                if (cls == String) return connection.quote(v);
+                if (cls == String)
+                {
+                    return connection.quote(v);
+                }
                 else
                 if (cls == Date)
                 {
                     var date : Date = cast(v, Date);
                     return "'" + date.toString() + "'";
                 }
+            
+            case ValueType.TInt:
+                return Std.string(v);
+            
+            case ValueType.TFloat:
+                return Std.string(v);
+            
+            case ValueType.TNull:
+                return 'NULL';
+            
+            case ValueType.TBool:
+                return cast(v, Bool) ? '1' : '0';
+            
             default:
         }
         
-		throw "Unsupported parameter type '" + Type.getClassName(Type.getClass(v)) + "'.";
+        throw "Unsupported parameter type '" + Type.getClassName(Type.getClass(v)) + "'.";
     }
 
     public function lastInsertId() : Int
