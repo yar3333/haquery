@@ -159,7 +159,7 @@ class HaqElemEventManager
 			if (!re.match(elem.id)) return false;
             var elemTag = elem.nodeName.toUpperCase();
             var elemType = elemTag=="INPUT" ? elem.getAttribute('type').toUpperCase() : '';
-            return elemTag == "INPUT" && Lambda.has(["PASSWORD", "HIDDEN", "CHECKBOX", "RADIO"], elemType)
+            return elemTag == "INPUT" && Lambda.has(["TEXT", "PASSWORD", "HIDDEN", "CHECKBOX", "RADIO"], elemType)
 				|| elemTag == "TEXTAREA"
 				|| elemTag == "SELECT";
 		});
