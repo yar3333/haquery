@@ -51,8 +51,11 @@ class HaqTemplatesTest extends TestCase
 	public function testComponents1CreateRandNum()
 	{
 		var templates = new HaqTemplates([ 'components1' ]);
-		var manager = new HaqComponentManager(templates);
-		var randnum : HaqComponent = manager.createComponent(null, 'haq:randnum', 'rn', new Hash<String>(), '');
+        assertTrue(templates.get('randnum') != null);
+        assertEquals('components1.randnum.Server', Type.getClassName(templates.get('randnum').serverClass));
+		
+        var manager : HaqComponentManager = new HaqComponentManager(templates);
+		var randnum : HaqComponent = manager.createComponent(null, 'randnum', 'rn', null, '');
 		assertTrue(randnum != null);
 		assertEquals('components1.randnum.Server', Type.getClassName(Type.getClass(randnum)));
 		

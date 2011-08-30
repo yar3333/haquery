@@ -1,6 +1,9 @@
 package ;
 
+import Imports;
+
 #if php
+
 import php.Lib;
 import tests.HaqTemplatesTest;
 import tests.HaqXmlTest;
