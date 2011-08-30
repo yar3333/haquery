@@ -102,7 +102,7 @@ class OrmManagerGenerator
 		
 		model.addMethod('getObjectsBySql', [ OrmTools.createVar('sql', 'String') ], 'Array<'+modelFullClassName+'>',
 			 "var rows : ResultSet = HaqDb.query(sql);\n"
-			+"var list : Array<models.Users> = [];\n"
+			+"var list : Array<" + modelFullClassName + "> = [];\n"
 			+"for (row in rows)\n"
 			+"{\n"
 			+"	list.push(newModelFromRow(row));\n"

@@ -47,7 +47,7 @@
   <options>
     <option showHiddenPaths="False" />
     <option testMovie="Custom" />
-    <option testMovieCommand="php;bin/index.php" />
+    <option testMovieCommand="php;bin/index.php mysql://root:123456@localhost/stoloboev src" />
   </options>
   <!-- Plugin storage -->
   <storage />
