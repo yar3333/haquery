@@ -92,19 +92,19 @@ class HaqDbDriver_mysql implements HaqDbDriver
 		if (untyped __physeq__(v, false)) return '0';
 		if (Type.typeof(v) == ValueType.TInt) return Std.string(v);
 		
-		if (Type.typeof(v) == ValueType.TObject)
-		{
-			if (Type.getClassName(Type.getClass(v)) == 'String')
-			{
-				return connection.quote(v);
-			}
-			if (Type.getClassName(Type.getClass(v)) == 'Date')
-			{
-				var date : Date = cast(v, Date);
-				return "'" + date.toString() + "'";
-			}
-		}
-		
+        switch (Type.typeof(v))
+        {
+            case ValueType.TClass(cls):
+                if (cls == String) return connection.quote(v);
+                else
+                if (cls == Date)
+                {
+                    var date : Date = cast(v, Date);
+                    return "'" + date.toString() + "'";
+                }
+            default:
+        }
+        
 		throw "Unsupported parameter type '" + Type.getClassName(Type.getClass(v)) + "'.";
     }
 
