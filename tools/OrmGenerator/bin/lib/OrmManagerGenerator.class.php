@@ -40,7 +40,7 @@ class OrmManagerGenerator {
 			$deleteVars = $vars;
 		}
 		$model->addMethod("delete", $deleteVars, "Void", "HaqDb.query('DELETE FROM `" . $table . "`" . OrmManagerGenerator::getWhereSql($deleteVars) . " + ' LIMIT 1');", null, null);
-		$model->addMethod("all", new _hx_array(array(OrmTools::createVar("_order", "String", OrmManagerGenerator::getOrderDefVal($vars)))), "Array<" . $modelFullClassName . ">", "return getObjectsBySql('SELECT * FROM `" . $table . "`' + (_order != null ? ' ORDER BY ' + _order : ''));", null, null);
+		$model->addMethod("getAll", new _hx_array(array(OrmTools::createVar("_order", "String", OrmManagerGenerator::getOrderDefVal($vars)))), "Array<" . $modelFullClassName . ">", "return getObjectsBySql('SELECT * FROM `" . $table . "`' + (_order != null ? ' ORDER BY ' + _order : ''));", null, null);
 		$model->addMethod("getObjectBySql", new _hx_array(array(OrmTools::createVar("sql", "String", null))), $modelFullClassName, "var rows : ResultSet = HaqDb.query(sql + ' LIMIT 1');\x0A" . "if (rows.length == 0) return null;\x0A" . "return newModelFromRow(rows.next());", null, null);
 		$model->addMethod("getObjectsBySql", new _hx_array(array(OrmTools::createVar("sql", "String", null))), "Array<" . $modelFullClassName . ">", "var rows : ResultSet = HaqDb.query(sql);\x0A" . "var list : Array<" . $modelFullClassName . "> = [];\x0A" . "for (row in rows)\x0A" . "{\x0A" . "\x09list.push(newModelFromRow(row));\x0A" . "}\x0A" . "return list;", null, null);
 		{
@@ -294,7 +294,7 @@ function OrmManagerGenerator_14(&$positionVar, &$vars) {
 	if($positionVar->isEmpty()) {
 		return "null";
 	} else {
-		return $positionVar->first()->haxeName;
+		return "'" . $positionVar->first()->haxeName . "'";
 	}
 }
 function OrmManagerGenerator_15(&$vars, $v) {

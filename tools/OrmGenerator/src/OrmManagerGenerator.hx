@@ -90,7 +90,7 @@ class OrmManagerGenerator
 			"HaqDb.query('DELETE FROM `" + table + "`" + getWhereSql(deleteVars) + " + ' LIMIT 1');"
 		);
 		
-		model.addMethod('all', [ OrmTools.createVar('_order', 'String', getOrderDefVal(vars)) ], 'Array<'+modelFullClassName+'>',
+		model.addMethod('getAll', [ OrmTools.createVar('_order', 'String', getOrderDefVal(vars)) ], 'Array<'+modelFullClassName+'>',
 			 "return getObjectsBySql('SELECT * FROM `" + table + "`' + (_order != null ? ' ORDER BY ' + _order : ''));"
 		);
 		
@@ -161,7 +161,7 @@ class OrmManagerGenerator
 	static function getOrderDefVal(vars:List<OrmHaxeVar>) : String
 	{
 		var positionVar = Lambda.filter(vars, function(v) { return v.name == 'position'; } );
-		return positionVar.isEmpty() ? 'null' : positionVar.first().haxeName;
+		return positionVar.isEmpty() ? 'null' : "'" + positionVar.first().haxeName + "'";
 	}
     
     static function getWhereSql(vars:List<OrmHaxeVar>) : String
