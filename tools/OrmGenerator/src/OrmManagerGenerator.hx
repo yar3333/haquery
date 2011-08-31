@@ -71,7 +71,7 @@ class OrmManagerGenerator
                  +"{\n"
                  +"\tposition = HaqDb.query('SELECT MAX(`position`) FROM `" + table + "`" 
                     +getWhereSql(getForeignKeyVars(table, vars))
-                    +").getIntResult() + 1;\n"
+                    +").getIntResult(0) + 1;\n"
                  +"}\n\n"
                 : ""
             )
