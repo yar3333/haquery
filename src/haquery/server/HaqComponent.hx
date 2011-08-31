@@ -180,7 +180,7 @@ class HaqComponent extends haquery.base.HaqComponent<HaqComponent>
         return new HaqQuery(this.prefixID, query, nodes);
     }
 
-    function callClientMethod(method:String, params:Array<Dynamic>) : Void
+    function callClientMethod(method:String, ?params:Array<Dynamic>) : Void
     {
 		var funcName = this.fullID.length != 0
 			? "haquery.client.HaQuery.page.findComponent('" + fullID + "')." + method
