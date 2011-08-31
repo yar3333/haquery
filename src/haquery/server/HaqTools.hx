@@ -1,5 +1,6 @@
 package haquery.server;
 
+import php.Web;
 import Type;
 
 class HaqTools 
@@ -27,11 +28,33 @@ class HaqTools
 		throw "Can't convert this type from server to client (typeof = " + Type.typeof(v) + ").";
 	}
 	
-	static public function getCallClientFunctionString(func:String, params:Array<Dynamic>) : String
+	public static function getCallClientFunctionString(func:String, params:Array<Dynamic>) : String
 	{
 		return func 
 			+ "(" 
 				+ Lambda.map(params, function(p) { return serverVarToClientString(p); } ).join(', ') 
 			+ ")";
 	}
+    
+    static function hexClientIP()
+    {
+        var ip : String = Web.getClientIP();
+        var parts = ip.split('.');
+        var hex = "";
+        for (part in parts)
+        {
+            hex += StringTools.format("%02x", part);
+        }
+        return hex;
+    }
+    
+    public static function uuid() : String
+    {
+        var time : Int = Math.floor(Date.now().getTime()*1000);
+        return StringTools.format("%08s", hexClientIP().substr(0,8))
+              +StringTools.format("-%08x", time / 65536)
+              +StringTools.format("-%04x", time % 65536)
+              +StringTools.format("-%04x", Math.floor(Math.random() * 65536))
+              +StringTools.format("%04x", Math.floor(Math.random() * 65536));
+    }
 }

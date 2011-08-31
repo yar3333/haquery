@@ -194,4 +194,9 @@ class HaqComponent extends haquery.base.HaqComponent<HaqComponent>
         var handler = elemID + '_' + eventName;
         Reflect.callMethod(this, handler, [ this ]);
     }
+    
+    function getSupportPath():String
+    {
+        return manager.getSupportPath(tag);
+    }
 }
