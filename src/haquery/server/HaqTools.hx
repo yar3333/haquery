@@ -32,7 +32,7 @@ class HaqTools
 	{
 		return func 
 			+ "(" 
-				+ Lambda.map(params, function(p) { return serverVarToClientString(p); } ).join(', ') 
+                + (params!=null ? Lambda.map(params, serverVarToClientString).join(', ') : '')
 			+ ")";
 	}
     
