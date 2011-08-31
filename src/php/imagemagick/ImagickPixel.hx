@@ -1,5 +1,7 @@
 package php.imagemagick;
 
+import php.NativeArray;
+
 @:native('ImagickPixel') extern class ImagickPixel
 {
 	public function clear() : Bool;
