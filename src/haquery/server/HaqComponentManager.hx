@@ -104,9 +104,15 @@ class HaqComponentManager
         return s;
     }
 	
-	static function getNameByTag(tag:String) : String
+    public function getSupportPath(tag:String):String
+    {
+		return templates.getFileUrl(tag, HaQuery.folders.support) + '/';
+    }
+	
+    function getNameByTag(tag:String) : String
     {
         if (!tag.startsWith('haq:')) throw "Component tag '"+tag+"' must started with 'haq:' prefix.";
 		return tag.substr("haq:".length).toLowerCase().split('-').join('_');
     }
+    
 }
