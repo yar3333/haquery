@@ -101,7 +101,9 @@ class HaqTemplates
 		if (!FileSystem.exists(dataFilePath) 
 		  || Lambda.exists(templatePaths, function(path):Bool { return FileSystem.stat(path).mtime.getTime() >  cacheFileTime; } )
 		) {
-			var css = '';
+			trace("HAQUERY rebuilding components");
+            
+            var css = '';
 			var data : Hash<HaqCachedTemplate> = new Hash<HaqCachedTemplate>();
 			
 			for (folder in FileSystem.readDirectory(componentsFolder))
@@ -131,7 +133,7 @@ class HaqTemplates
 	{
         HaqProfiler.begin('HaqTemplate::parseComponent(): template file -> doc and css');
 			var tag = Path.withoutDirectory(componentFolder);
-            var doc = getComponentTemplateDoc(tag, getFileUrl(tag, 'template.html'));
+            var doc = getComponentTemplateDoc(tag);
 			var css = '';
 			var i = 0; 
 			var children : Array<HaqXmlNodeElement> = untyped Lib.toHaxeArray(doc.children);
@@ -152,7 +154,7 @@ class HaqTemplates
 		return { css:css, doc:doc };
 	}
 	
-	public static function parseServerHandlers(componentFolder:String) : Hash<Array<String>>
+	public function parseServerHandlers(componentFolder:String) : Hash<Array<String>>
 	{
 		componentFolder = componentFolder.rtrim('/') + '/';
         
@@ -208,6 +210,8 @@ class HaqTemplates
 		while (i >= 0)
 		{
 			var path = componentsFolders[i] + tag + '/' + filePathRelativeToComponentFolder;
+            trace("Find file = " + path);
+            
 			if (FileSystem.exists(path))
 			{
 				return path;
@@ -237,7 +241,7 @@ class HaqTemplates
         return urls;
 	}
 	
-	static function getComponentTemplatePaths(componentsFolder:String) : Array<String>
+	function getComponentTemplatePaths(componentsFolder:String) : Array<String>
 	{
 		componentsFolder = componentsFolder.rtrim('/') + '/';
 		
@@ -254,7 +258,7 @@ class HaqTemplates
 		return r;
 	}
 	
-	static public function getPageTemplateDoc(pageFolder:String) : HaqXml
+	public function getPageTemplateDoc(pageFolder:String) : HaqXml
 	{
 		pageFolder = pageFolder.rtrim('/') + '/';
 		
@@ -287,14 +291,19 @@ class HaqTemplates
         return layoutDoc;
 	}
 	
-    function getComponentTemplateDoc(tag:String, templatePath:String) : HaqXml
+    function getComponentTemplateDoc(tag:String) : HaqXml
 	{
-		var text : String = templatePath != null && FileSystem.exists(templatePath) ? File.getContent(templatePath) : '';
-        var supportUrl = getFileUrl(tag, HaQuery.folders.support);
-        if (supportUrl != null)
+		var files = getFileUrls(tag, 'template.html');
+        var text : String = Lambda.map(files, File.getContent).join('');
+        
+        var self = this;
+        var reSupportFileUrl = new EReg("~/([-_/\\.a-zA-Z0-9]*)", "");
+        text = reSupportFileUrl.customReplace(text, function(re:EReg)
         {
-            text = text.replace('~/', '/' + supportUrl + '/');
-        }
+            var f = self.getFileUrl(tag, HaQuery.folders.support + '/' + re.matched(1));
+            return f != null ? '/' + f : re.matched(0);
+        });
+        
         return new HaqXml(text);
 	}
 	
@@ -309,7 +318,7 @@ class HaqTemplates
 		return s;
 	}
 	
-	static function createDirectory(path:String)
+	function createDirectory(path:String)
 	{
 		var parentPath = Path.directory(path);
 		if (parentPath != null && parentPath != '' && !FileSystem.exists(parentPath)) createDirectory(parentPath);
