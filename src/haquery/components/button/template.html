@@ -4,30 +4,30 @@
         border-collapse: collapse;
         border: 0;
         padding: 0;
+        margin: 0 auto;
         cursor: pointer;
         background: url(~/bt_r.png) no-repeat top right;
-        margin:auto;
     }
 
-    .button .button-inner
+    .button td
     {
-        height: 21px;
         background: url(~/bt_l.png) no-repeat;
     }
 
-    .button .button-text
+    .button span
     {
-        text-align: center;
-        padding: 0 8px !important;
         line-height: 21px;
+        display: block;
+        text-align: center;
+        padding: 0 8px;
         font-size: 13px;
         color: #888;
     }
     
-    .button.active .button-text
+    .button.active span
     {
         color: #fff;
     }
 </style>
 
-<table id="b" class="button active"><tr><td class="button-inner button-text">OK</td></tr></table>
+<table id="b" class="button active"><tr><td><span>OK</span></td></tr></table>

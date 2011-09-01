@@ -16,7 +16,7 @@ class Server extends HaqComponent
 	
 	public function preRender()
 	{
-		if (text!=null) q('#b .button-text').html(text);
+		if (text!=null) q('#b span').html(text);
 		if (cssClass!=null) q('#b').addClass(cssClass);
 		if (style!=null) q('#b').attr('style',style);
 		if (hidden) q('#b').css('visibility','hidden');

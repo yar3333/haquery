@@ -27,7 +27,7 @@ class Client extends HaqComponent
 
     public function isActive()
     {
-        return this.q('#b').hasClass('active');
+        return q('#b').hasClass('active');
     }
 
     public function show()
