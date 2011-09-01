@@ -224,7 +224,7 @@ class HaQuery
 			var f : FileOutput = php.io.File.append(HaQuery.folders.temp + "/haquery.log", false);
 			if (f != null)
 			{
-				f.writeString(text != '' ? StringTools.format('%.3f', Date.now().getTime() - startTime) + " " + StringTools.replace(text, "\n", "\n\t") + "\n" : "\n");
+				f.writeString(text != '' ? StringTools.format('%.3f', (Date.now().getTime() - startTime) / 1000.0) + " " + StringTools.replace(text, "\n", "\n\t") + "\n" : "\n");
 				f.close();
 			}
 		}
