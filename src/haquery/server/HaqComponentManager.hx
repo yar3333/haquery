@@ -44,7 +44,7 @@ class HaqComponentManager
 		if (Type.resolveClass(className)==null) className = 'haquery.server.HaqPage';
 		var pageClass = Type.resolveClass(className);
 		
-		var doc = HaqTemplates.getPageTemplateDoc(path);
+		var doc = templates.getPageTemplateDoc(path);
 		var page : HaqPage = cast(newComponent(null, cast pageClass, '', '', doc, attr, null), HaqPage);
 		return page;
 	}
@@ -94,7 +94,7 @@ class HaqComponentManager
         s = s.rtrim("\n,") + "\n];\n";
 		
         var serverHandlers = new Hash<Hash<Array<String>>>();
-        serverHandlers.set('', HaqTemplates.parseServerHandlers(path));
+        serverHandlers.set('', templates.parseServerHandlers(path));
         for (tag in tags)
         {
             serverHandlers.set(tag, templates.get(tag).serverHandlers);

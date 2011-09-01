@@ -12,29 +12,26 @@ class Server extends Base
 		{
             var reConsts = new EReg("[{]([_a-zA-Z][_a-zA-Z0-9]*)[}]", "");
             
-            if (Type.getClassName(Type.getClass(params)) == "Hash")
-            {
-                var paramsAsHash : Hash<String> = cast params;
-                while (reConsts.match(innerHTML))
-                {
-                    var const = reConsts.matched(1);
-                    if (paramsAsHash.exists(const))
+            innerHTML = reConsts.customReplace(innerHTML, Type.getClassName(Type.getClass(params)) == "Hash"
+                ?   function(re)
                     {
-                        innerHTML = innerHTML.replace('{' + const + '}', paramsAsHash.get(const));
+                        var const = re.matched(1);
+                        if (cast(params, Hash<Dynamic>).exists(const))
+                        {
+                            return cast(params, Hash<Dynamic>).get(const);
+                        }
+                        return re.matched(0);
                     }
-                }
-            }
-            else
-            {
-                while (reConsts.match(innerHTML))
-                {
-                    var const = reConsts.matched(1);
-                    if (Reflect.hasField(params, const))
+                :   function(re)
                     {
-                        innerHTML = innerHTML.replace('{' + const + '}', Reflect.field(params, const));
+                        var const = re.matched(1);
+                        if (Reflect.hasField(params, const))
+                        {
+                            return Reflect.field(params, const);
+                        }
+                        return re.matched(0);
                     }
-                }
-            }
+            );
         }
         
         var doc = new HaqXml(innerHTML);
