@@ -201,7 +201,7 @@ class HaqTemplates
 		return r;
 	}
 	
-	public function getFileUrl(tag:String, filePathRelativeToComponentFolder:String) : String
+	function getFileUrl(tag:String, filePathRelativeToComponentFolder:String) : String
 	{
 		filePathRelativeToComponentFolder = filePathRelativeToComponentFolder.trim('/');
 		var i = componentsFolders.length - 1;
@@ -215,6 +215,26 @@ class HaqTemplates
 			i--;
 		}
 		return null;
+	}
+    
+    /**
+     * Find all files in component folders with parent to child order.
+     */
+    function getFileUrls(tag:String, filePathRelativeToComponentFolder:String) : Array<String>
+	{
+		var urls : Array<String> = [];
+        
+        filePathRelativeToComponentFolder = filePathRelativeToComponentFolder.trim('/');
+		for (componentsFolder in componentsFolders)
+		{
+			var path = componentsFolder + tag + '/' + filePathRelativeToComponentFolder;
+			if (FileSystem.exists(path))
+			{
+				urls.push(path);
+			}
+		}
+		
+        return urls;
 	}
 	
 	static function getComponentTemplatePaths(componentsFolder:String) : Array<String>
@@ -295,4 +315,9 @@ class HaqTemplates
 		if (parentPath != null && parentPath != '' && !FileSystem.exists(parentPath)) createDirectory(parentPath);
 		FileSystem.createDirectory(path);
 	}
+    
+    public function getSupportPath(tag:String) : String
+    {
+        return getFileUrl(tag, HaQuery.folders.support) + '/';
+    }
 }

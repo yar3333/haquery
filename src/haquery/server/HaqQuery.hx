@@ -272,7 +272,7 @@ class HaqQuery
      */
     public function css(name:String, val:String=null) : Dynamic
     {
-        if (untyped __phyeq(val, null))
+        if (untyped __physeq__(val, null))
         {
             if (this.nodes.length > 0)
             {

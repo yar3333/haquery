@@ -51,7 +51,7 @@ class HaqComponentManager
     
 	public function registerScript(tag:String, url:String) : Void
 	{
-		url = templates.getFileUrl(tag, HaQuery.folders.support) + '/' + url;
+		url = templates.getSupportPath(tag) + url;
 		
 		if (registeredScripts.indexOf(url) == -1)
 		{
@@ -61,7 +61,7 @@ class HaqComponentManager
 	
 	public function registerStyle(tag:String, url:String) : Void
 	{
-        url = templates.getFileUrl(tag, HaQuery.folders.support) + '/' + url;
+        url = templates.getSupportPath(tag) + url;
 		
 		if (registeredStyles.indexOf(url) == -1)
 		{
@@ -104,9 +104,9 @@ class HaqComponentManager
         return s;
     }
 	
-    public function getSupportPath(tag:String):String
+    public function getSupportPath(tag:String) : String
     {
-		return templates.getFileUrl(tag, HaQuery.folders.support) + '/';
+		return templates.getSupportPath(tag);
     }
 	
     function getNameByTag(tag:String) : String

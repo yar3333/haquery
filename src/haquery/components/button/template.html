@@ -5,25 +5,29 @@
         border: 0;
         padding: 0;
         cursor: pointer;
-        background: url(~/bt_l.png) no-repeat;
+        background: url(~/bt_r.png) no-repeat top right;
         margin:auto;
     }
 
-    .button td
+    .button .button-inner
     {
-        text-align: center;
-        background: url(~/bt_r.png) no-repeat top right;
-        font-size: 13px;
-        color: #888;
-        line-height: 21px;
         height: 21px;
-        padding: 0 8px !important;
+        background: url(~/bt_l.png) no-repeat;
     }
 
-    .button.active td
+    .button .button-text
+    {
+        text-align: center;
+        padding: 0 8px !important;
+        line-height: 21px;
+        font-size: 13px;
+        color: #888;
+    }
+    
+    .button.active .button-text
     {
         color: #fff;
     }
 </style>
 
-<table id="b" class="button active"><tr><td>OK</td></tr></table>
+<table id="b" class="button active"><tr><td class="button-inner button-text">OK</td></tr></table>

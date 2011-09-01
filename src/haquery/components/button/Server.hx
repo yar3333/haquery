@@ -10,14 +10,14 @@ class Server extends HaqComponent
 	public var event_click : HaqEvent;
 
 	public var text : String;
-	public var clas : String;
+	public var cssClass : String;
 	public var style : String;
 	public var hidden : Bool;
 	
 	public function preRender()
 	{
-		if (text!=null) q('#b td').html(text);
-		if (clas!=null) q('#b').addClass(clas);
+		if (text!=null) q('#b .button-text').html(text);
+		if (cssClass!=null) q('#b').addClass(cssClass);
 		if (style!=null) q('#b').attr('style',style);
 		if (hidden) q('#b').css('visibility','hidden');
 	}
