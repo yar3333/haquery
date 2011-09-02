@@ -11,7 +11,7 @@ class Client extends HaqComponent
     
     public var enabled(enabled_getter, enabled_setter) : Bool;
     
-    public function doClick()
+    public function click()
     {
         q('#b').click();
     }

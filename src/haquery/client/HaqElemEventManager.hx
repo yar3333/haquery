@@ -150,7 +150,7 @@ class HaqElemEventManager
 			var s = '(^' + ids.slice(0, i + 1).join(HaqInternals.DELIMITER) + HaqInternals.DELIMITER + '[^' + HaqInternals.DELIMITER + ']+$)';
 			reStr += '|' + s;
 		}
-        trace('reStr = ' + reStr);
+        //trace('reStr = ' + reStr);
 		var re : EReg = new EReg(reStr, '');
 		
 		var jqAllElemsWithID = new HaqQuery("[id]");

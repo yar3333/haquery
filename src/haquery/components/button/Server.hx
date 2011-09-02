@@ -24,6 +24,6 @@ class Server extends HaqComponent
 
 	public function b_click()
 	{
-		this.event_click.call();
+        event_click.call();
 	}
 }
