@@ -50,7 +50,7 @@ class HaqTools
     
     public static function uuid() : String
     {
-        var time : Int = Math.floor(Date.now().getTime()*1000);
+        var time : Int = Math.floor(Date.now().getTime());
         return StringTools.format("%08s", hexClientIP().substr(0,8))
               +StringTools.format("-%08x", time / 65536)
               +StringTools.format("-%04x", time % 65536)

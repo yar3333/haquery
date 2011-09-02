@@ -81,7 +81,7 @@ class HaqXmlNodeElement extends HaqXmlNode
     /**
      * @var HaqXmlNode[]
      */
-    protected $nodes;
+    public $nodes;
 
     /**
      * @var HaqXmlNodeElement[]
@@ -481,8 +481,9 @@ class HaqXmlParser
         $reElementClose = "<\s*/\s*(?<tagClose>$reElementName)\s*>";
         $reScript = "[<]\s*script\s*(?<scriptAttrs>[^>]*)>(?<scriptText>.*?)<\s*/\s*script\s*>";
         $reStyle = "<\s*style\s*(?<styleAttrs>[^>]*)>(?<styleText>.*?)<\s*/\s*style\s*>";
+        $reComment = "<!--.*?-->";
 
-        $re = "#(?<script>$reScript)|(?<style>$reStyle)|(?<elem>$reElementOpen(?<attrs>(?:\s+$reAttr)*)\s*$reElementEnd)|(?<close>$reElementClose)#is";
+        $re = "#(?<script>$reScript)|(?<style>$reStyle)|(?<elem>$reElementOpen(?<attrs>(?:\s+$reAttr)*)\s*$reElementEnd)|(?<close>$reElementClose)|(?<comment>$reComment)#is";
 
         if (preg_match_all($re, $str, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE))
         {
@@ -528,6 +529,11 @@ class HaqXmlParser
             }
             else
             if (isset($m['close']) && $m['close'][0]!='') break;
+            else
+            if (isset($m['comment']) && $m['comment'][0] != '')
+            {
+                array_push($nodes, new HaqXmlNodeText($m['comment'][0]));
+            }
             else
             {
                 throw new Exception();
