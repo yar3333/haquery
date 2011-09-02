@@ -1,11 +1,9 @@
 package haquery.components.button;
 
 import php.Lib;
-
-import haquery.server.HaqComponent;
 import haquery.server.HaqEvent;
 
-class Server extends HaqComponent
+class Server extends Base
 {
 	public var event_click : HaqEvent;
 

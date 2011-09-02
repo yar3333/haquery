@@ -13,32 +13,25 @@ class HaqXmlTest extends haxe.unit.TestCase
         this.assertEquals(1, nodes.length);
 
         var node = nodes[0];
-        //this.assertInstanceOf("HaqXmlNodeText", node);
         this.assertEquals('abc', cast(node, HaqXmlNodeText).text);
     }
 
     public function testTagWithClose()
     {
         var nodes = Lib.toHaxeArray(HaqXmlParser.parse("<br p=2 />"));
-        //this.assertInternalType("array", nodes);
         this.assertEquals(1, nodes.length);
 
-        /* @var $node HaqXmlNodeElement */
-        var node = nodes[0];
-        //this.assertInstanceOf("HaqXmlNodeElement", node);
-        this.assertEquals('br', cast(node, HaqXmlNodeElement).name);
+        var node : HaqXmlNodeElement = nodes[0];
+        this.assertEquals('br', node.name);
     }
 
     public function testTagAndText()
     {
         var nodes = Lib.toHaxeArray(HaqXmlParser.parse("<a>abc</a>"));
-        //this.assertInternalType("array", nodes);
         this.assertEquals(1, nodes.length);
 
-        /* @var $node HaqXmlNodeElement */
-        var node = nodes[0];
-        //this.assertInstanceOf("HaqXmlNodeElement", node);
-        this.assertEquals('a', cast(node, HaqXmlNodeElement).name);
+        var node : HaqXmlNodeElement = nodes[0];
+        this.assertEquals('a', node.name);
     }
 
     public function getParsedAsString(str:String)
@@ -76,6 +69,18 @@ class HaqXmlTest extends haxe.unit.TestCase
 		assertEquals(s, php.io.File.getContent('tests/HaqXmlTest-out.html'));
     }
 
+    public function testComment()
+    {
+        var nodes : Array<HaqXmlNode> = cast Lib.toHaxeArray(HaqXmlParser.parse("<a><!-- comment<p></p> --></a>"));
+        this.assertEquals(1, nodes.length);
+        this.assertEquals("HaqXmlNodeElement", getClassName(nodes[0]));
+        
+        var node : HaqXmlNodeElement = cast nodes[0];
+        var subnodes = Lib.toHaxeArray(node.nodes);
+        this.assertEquals(1, subnodes.length);
+        this.assertEquals("HaqXmlNodeText", getClassName(subnodes[0]));
+    }
+    
     public function processSerializationTest(str:String)
     {
 		var srcNodesNative = HaqXmlParser.parse(str);
@@ -84,8 +89,6 @@ class HaqXmlTest extends haxe.unit.TestCase
         
 		var s: String = php.Lib.serialize(srcNodesNative);
 		var r: Dynamic = php.Lib.unserialize(s);
-		
-		//untyped __php__("var_dump($r);");
 		
 		var dstNodes = Lib.toHaxeArray(cast(r, NativeArray));
 		var dstNodesStr = dstNodes.join('');
@@ -236,6 +239,11 @@ class HaqXmlTest extends haxe.unit.TestCase
         var prev = node.getPrevSiblingNode();
         //this.assertInstanceOf("HaqXmlNodeText", prev);
         this.assertEquals("\n        ", cast(prev, HaqXmlNodeText).text);
-    }	
-	
+    }
+    
+    
+    public static function getClassName(obj:Dynamic) : String
+    {
+        return untyped __call__("get_class", obj);
+    }
 }

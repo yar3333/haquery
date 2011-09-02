@@ -48,7 +48,7 @@ class HaqSystem
             html = renderAjax(page);
         }
         
-        trace(StringTools.format("HAQUERY FINISH %.5f s", Date.now().getTime()-startTime));
+        trace(StringTools.format("HAQUERY FINISH %.3f s", (Date.now().getTime()-startTime)/1000.0));
 
         if (HaQuery.config.isTraceProfiler)
         {
