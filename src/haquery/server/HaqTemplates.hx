@@ -59,7 +59,7 @@ class HaqTemplates
 	
 	public function get(tag:String) : HaqTemplate
 	{
-		var r : HaqTemplate = { doc : null, serverHandlers : null, serverClass : null };
+        var r : HaqTemplate = { doc : null, serverHandlers : null, serverClass : null };
 
 		var i = componentsFolders.length - 1;
 		while (i >= 0)
@@ -162,30 +162,25 @@ class HaqTemplates
             var serverMethods = [ 'click','change' ];   // какие серверные обработчики бывают
             var serverHandlers : Hash<Array<String>> = new Hash<Array<String>>();
 			var className = componentFolder.replace('/', '.') + 'Server';
-			//trace('test class name = '+className);
-			var clas = Type.resolveClass(className); 
-			if (clas != null) 
-			{
-				var tempObj = Type.createEmptyInstance(clas);
-				for (field in Type.getInstanceFields(clas))
-				{
-					if (Reflect.isFunction(Reflect.field(tempObj, field)))
-					{
-						var parts = field.split('_');
-						if (parts.length == 2 && serverMethods.indexOf(parts[1]) >= 0)
-						{
-							var nodeID = parts[0];
-							var method = parts[1];
-							if (!serverHandlers.exists(nodeID)) serverHandlers.set(nodeID, new Array<String>());
-							serverHandlers.get(nodeID).push(method);
-						}
-					}
-				}
-			}
+			var clas = Type.resolveClass(className);
+            if (clas == null) return null;
+            var tempObj = Type.createEmptyInstance(clas);
+            for (field in Type.getInstanceFields(clas))
+            {
+                if (Reflect.isFunction(Reflect.field(tempObj, field)))
+                {
+                    var parts = field.split('_');
+                    if (parts.length == 2 && serverMethods.indexOf(parts[1]) >= 0)
+                    {
+                        var nodeID = parts[0];
+                        var method = parts[1];
+                        if (!serverHandlers.exists(nodeID)) serverHandlers.set(nodeID, new Array<String>());
+                        serverHandlers.get(nodeID).push(method);
+                    }
+                }
+            }
         HaqProfiler.end();
 		
-		//trace(componentFolder);
-		//trace(serverHandlers);
 		return serverHandlers;
 	}
 	
