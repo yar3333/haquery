@@ -9,6 +9,8 @@ class Client extends HaqComponent
 {
     public var event_click : HaqEvent;
     
+    public var enabled(enabled_getter, enabled_setter) : Bool;
+    
     public function doClick()
     {
         q('#b').click();
@@ -16,18 +18,19 @@ class Client extends HaqComponent
 
     public function b_click()
     {
-        return event_click.call([isActive()]);
+        return enabled ? event_click.call() : false;
     }
 
-    public function setActive(isActive:Bool)
+    function enabled_getter() : Bool
     {
-        if (isActive) q('#b').addClass('active');
-        else          q('#b').removeClass('active');
+        return !q('#b').hasClass('disabled');
     }
-
-    public function isActive()
+    
+    function enabled_setter(enable : Bool) : Bool
     {
-        return q('#b').hasClass('active');
+        if (enable) q('#b').removeClass('disabled');
+        else        q('#b').addClass('disabled');
+        return enable;
     }
 
     public function show()
