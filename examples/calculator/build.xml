@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="HaQuerySite">
-	<property name="src.dir" location="src" />
-	<property name="dest.dir" location="bin" />
-	
 	<target name="pre-build">
         <property environment="env" />
 		<ant antfile="${env.HAQUERYPATH}\tools\build.xml" target="pre-build" />
