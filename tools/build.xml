@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="haquery">
-    <target name="gen-imports" description="Generates dummy class importing other classes">
+	<property environment="env" />
+	<property name="lib.dir" location="${env.HAQUERYPATH}" />
+	
+	<target name="gen-imports" description="Generates dummy class importing other classes">
     	<property name="lib.dir.src.abspath" location="${lib.dir}${file.separator}src" />
     	<echo message="Generate imports from path ${lib.dir.src.abspath}" />
     	<pathconvert property="lib.server.classes" pathsep="${line.separator}">
