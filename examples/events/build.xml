@@ -1,25 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Site">
+<project name="HaQuerySite">
 	<property name="src.dir" location="src" />
 	<property name="dest.dir" location="bin" />
 	
-	<property environment="env" />
-	<property name="lib.dir" value="${env.HAQUERYPATH}" />
-	<property name="build.file.path" value="${lib.dir}${file.separator}tools${file.separator}build.xml" />
-	
-	<target name="gen-orm">
-		<ant antfile="${build.file.path}" target="gen-orm" />
-	</target>
-	
-	<target name="clean-dest">
-		<ant antfile="${build.file.path}" target="clean-dest" />
-	</target>
-	
 	<target name="pre-build">
-		<ant antfile="${build.file.path}" target="pre-build" />
+        <property environment="env" />
+		<ant antfile="${env.HAQUERYPATH}\tools\build.xml" target="pre-build" />
 	</target>
 	
 	<target name="post-build">
-		<ant antfile="${build.file.path}" target="post-build" />
+        <property environment="env" />
+		<ant antfile="${env.HAQUERYPATH}\tools\build.xml" target="post-build" />
 	</target>
 </project>
