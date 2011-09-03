@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="haquery">
+	<property name="src.dir" location="src" />
+	<property name="dest.dir" location="bin" /> 
+	
 	<property environment="env" />
 	<property name="lib.dir" location="${env.HAQUERYPATH}" />
 	
