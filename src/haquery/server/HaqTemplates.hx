@@ -205,7 +205,7 @@ class HaqTemplates
 		while (i >= 0)
 		{
 			var path = componentsFolders[i] + tag + '/' + filePathRelativeToComponentFolder;
-            trace("Find file = " + path);
+            //trace("Find file = " + path);
             
 			if (FileSystem.exists(path))
 			{
