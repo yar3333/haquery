@@ -27,7 +27,7 @@ import haxe.Stack;
 
 class HaQuery
 {
-	public static inline var VERSION = 1.1; 
+	public static inline var VERSION = 1.2; 
 	
 	public static var folders = {
 		 pages : 'pages'
