@@ -14,6 +14,8 @@ import haquery.server.HaqRoute;
 
 class HaqSystem
 {
+    public static var page : HaqPage;
+    
     public function new(route:HaqRoute) : Void
     {
 		var startTime = Date.now().getTime();
@@ -35,7 +37,7 @@ class HaqSystem
 
         HaqProfiler.begin('HaqSystem::init(): page construct');
 		var manager : HaqComponentManager = new HaqComponentManager(templates);
-		var page : HaqPage = manager.createPage(route.path, params);
+		page = manager.createPage(route.path, params);
         HaqProfiler.end();
 
         var html : String;
