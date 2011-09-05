@@ -183,8 +183,8 @@ class HaqComponent extends haquery.base.HaqComponent<HaqComponent>
     function callClientMethod(method:String, ?params:Array<Dynamic>) : Void
     {
 		var funcName = this.fullID.length != 0
-			? "haquery.client.HaQuery.page.findComponent('" + fullID + "')." + method
-			: "haquery.client.HaQuery.page." + method;
+			? "haquery.client.HaqSystem.page.findComponent('" + fullID + "')." + method
+			: "haquery.client.HaqSystem.page." + method;
 		
 		HaqInternals.addAjaxAnswer(HaqTools.getCallClientFunctionString(funcName, params) + ';');
     }

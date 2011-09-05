@@ -102,17 +102,7 @@ class HaqElemEventManager
             var handlers = serverHandlers.get(elemID);
             if (handlers.indexOf(e.type)==-1) return true;  // серверного обработчика нет
 
-            var sendData : Dynamic = {};
-            sendData[untyped 'HAQUERY_POSTBACK'] = 1;
-            sendData[untyped 'HAQUERY_ID'] = elem.id;
-            sendData[untyped 'HAQUERY_EVENT'] = e.type;
-
-            for (sendElem in getElemsForSendToServer(elem.id))
-            {
-                sendData[untyped sendElem.id] = sendElem.nodeName.toUpperCase() == 'INPUT' && sendElem.getAttribute('type').toUpperCase() == "CHECKBOX"
-                    ? (Reflect.field(sendElem, 'checked') ? new HaqQuery(sendElem).val() : '')
-                    : new HaqQuery(sendElem).val();
-            }
+            var sendData = getDataObjectForSendToServer(elem.id, e.type);
             
             HaqQuery._static.post(
                 Lib.window.location.href,
@@ -140,6 +130,23 @@ class HaqElemEventManager
 		
         return true;
 	}
+    
+    public static function getDataObjectForSendToServer(fullElemID:String, eventType:String) : Dynamic
+    {
+        var sendData : Dynamic = {};
+        sendData[untyped 'HAQUERY_POSTBACK'] = 1;
+        sendData[untyped 'HAQUERY_ID'] = fullElemID;
+        sendData[untyped 'HAQUERY_EVENT'] = eventType;
+
+        for (sendElem in getElemsForSendToServer(fullElemID))
+        {
+            sendData[untyped sendElem.id] = sendElem.nodeName.toUpperCase() == 'INPUT' && sendElem.getAttribute('type').toUpperCase() == "CHECKBOX"
+                ? (Reflect.field(sendElem, 'checked') ? new HaqQuery(sendElem).val() : '')
+                : new HaqQuery(sendElem).val();
+        }
+        
+        return sendData;
+    }
 	
 	static function getElemsForSendToServer(fullElemID:String) : Iterable<HtmlDom>
 	{
