@@ -6,7 +6,7 @@ import haquery.server.HaqXml;
 /**
  * Базовый класс для компонентов и страниц.
  */
-class HaqComponent extends haquery.base.HaqComponent<HaqComponent>
+class HaqComponent extends haquery.base.HaqComponent
 {
     var manager : HaqComponentManager;
     

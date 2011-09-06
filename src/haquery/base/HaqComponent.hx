@@ -4,15 +4,15 @@ package haquery.base;
 import haquery.server.HaqInternals;
 import haquery.server.HaqEvent;
 import haquery.server.HaQuery;
-private typedef TComponent = haquery.server.HaqComponent;
+private typedef Component = haquery.server.HaqComponent;
 #else
 import haquery.client.HaqInternals;
 import haquery.client.HaqEvent;
 import haquery.client.HaQuery;
-private typedef TComponent = haquery.client.HaqComponent;
+private typedef Component = haquery.client.HaqComponent;
 #end
 
-class HaqComponent<Component:TComponent>
+class HaqComponent
 {
     /**
      * ID компонента; для главной страницы равен пустой строке.
