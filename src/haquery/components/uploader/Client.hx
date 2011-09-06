@@ -22,28 +22,32 @@ class Client extends Base
     {
         if (!enabled) return;
         
-        q('#file').css({
-            top: e.pageY - 5 + 'px',
-            left: e.pageX - 50 + 'px'
+        q('#file').offset({
+            top:  e.pageY - 10,
+            left: e.pageX - 50
         });
     }
 
+    public function file_mousemove(t, e)
+    {
+        container_mousemove(t, e);
+    }
+    
     public function file_change() : Bool
     {
-        q('#file').val();
-
+        var fileName : String = q('#file').val();
         var filter = q('#filter').val();
         if (filter != '')
         {
             var re = new EReg(filter, "");
-            if (!re.match(q('#file').val()))
+            if (!re.match(fileName))
             {
-                event_filterNotMatch.call();
+                event_filterNotMatch.call([fileName]);
                 return false;
             }
         }
 
-        if (!event_select.call(q('#file').val())) return false;
+        if (!event_select.call([fileName])) return false;
 
         event_uploading.call();
         enabled = false;
