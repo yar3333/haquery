@@ -3,7 +3,7 @@ package haquery.client;
 import js.Lib;
 import haquery.client.HaqQuery;
 
-class HaqComponent extends haquery.base.HaqComponent<HaqComponent>
+class HaqComponent extends haquery.base.HaqComponent
 {
     var manager : HaqComponentManager;
 	

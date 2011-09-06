@@ -103,33 +103,30 @@ class HaqElemEventManager
             if (handlers.indexOf(e.type)==-1) return true;  // серверного обработчика нет
 
             var sendData = getDataObjectForSendToServer(elem.id, e.type);
-            
-            HaqQuery._static.post(
-                Lib.window.location.href,
-                sendData,
-                function(data:String) : Void
-                {
-                    var okMsg = "HAQUERY_OK";
-                    if (data.startsWith(okMsg))
-                    {
-                        var code = data.substr(okMsg.length);
-                        trace("AJAX: "+code);
-                        untyped __js__("eval(code)");
-                    }
-                    else
-                    {
-                        if (data != '')
-                        {
-                            var errWin = Lib.window.open("", "HAQUERY_ERROR_AJAX");
-                            errWin.document.write(data);
-                        }
-                    }
-                }
-            );
+            HaqQuery._static.post(Lib.window.location.href, sendData, callServerHandlersCallbackFunction);
 		}
 		
         return true;
 	}
+    
+    public static function callServerHandlersCallbackFunction(data:String) : Void
+    {
+        var okMsg = "HAQUERY_OK";
+        if (data.startsWith(okMsg))
+        {
+            var code = data.substr(okMsg.length);
+            trace("AJAX: "+code);
+            untyped __js__("eval(code)");
+        }
+        else
+        {
+            if (data != '')
+            {
+                var errWin = Lib.window.open("", "HAQUERY_ERROR_AJAX");
+                errWin.document.write(data);
+            }
+        }
+    }
     
     public static function getDataObjectForSendToServer(fullElemID:String, eventType:String) : Dynamic
     {
