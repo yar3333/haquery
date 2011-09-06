@@ -1072,8 +1072,10 @@ package php.imagemagick;
 	public function clear() : Bool;
 	public function clipImage() : Bool;
 	public function clipPathImage(pathname:String, inside:Bool) : Bool;
-	public function clone() : Imagick;
-	public function clutImage(lookup_table:Imagick, ?channel:Float = Imagick.CHANNEL_DEFAULT) : Bool;
+	
+    inline public function clone() : Imagick { return Reflect.callMethod(this, 'clone', []); }
+	
+    public function clutImage(lookup_table:Imagick, ?channel:Float = Imagick.CHANNEL_DEFAULT) : Bool;
 	public function coalesceImages() : Imagick;
 	public function colorFloodfillImage(fill:Dynamic, fuzz:Float, bordercolor:Dynamic, x:Int, y:Int) : Bool;
 	public function colorizeImage(colorize:Dynamic, opacity:Dynamic) : Bool;
