@@ -53,10 +53,9 @@ class Client extends Base
         enabled = false;
 
         var frame : IFrame = q('#frame').get(0);
-        new HaqQuery(frame).load(function() {
+        new HaqQuery(frame).unbind('load').load(function() {
             var elem : HtmlDom = frame.contentWindow.document.body.firstChild;
             var text = elem.innerHTML;
-            js.Lib.alert("Loaded text = " + text);  
             HaqElemEventManager.callServerHandlersCallbackFunction(text); 
         });
         
@@ -82,6 +81,7 @@ class Client extends Base
     
     public function fileUploadComplete(errorCode:Int)
     {
+        enabled = true;
         event_complete.call([errorCode]);
     }
 }
