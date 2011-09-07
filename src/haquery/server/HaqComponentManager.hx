@@ -41,7 +41,7 @@ class HaqComponentManager
 	public function createPage(path:String, attr:Hash<String>) : HaqPage
 	{
 		var className = path.replace('/', '.') + '.Server';
-		if (Type.resolveClass(className)==null) className = 'haquery.server.HaqPage';
+		if (Type.resolveClass(className) == null) className = 'haquery.server.HaqPage';
 		var pageClass = Type.resolveClass(className);
 		
 		var doc = templates.getPageTemplateDoc(path);
@@ -88,7 +88,15 @@ class HaqComponentManager
         for (tag in tag_id_component.keys())
         {
             var components = tag_id_component.get(tag);
-			var ids = Lambda.map(components, function(x:HaqComponent):String { return x.fullID; } ).join(',');
+            var visibledComponents =  Lambda.filter(components, function (x) {
+                while (x != null)
+                {
+                    if (!x.visible) return false;
+                    x = x.parent;
+                }
+                return true;
+            });
+			var ids =  Lambda.map(visibledComponents, function(x) { return x.fullID; } ).join(',');
 			s += "    ['" + tag + "', '" + ids + "'],\n";
         }
         s = s.rtrim("\n,") + "\n];\n";
