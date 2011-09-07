@@ -116,19 +116,26 @@ class HaqComponent extends haquery.base.HaqComponent
             {
                 if (node.component!=null)
                 {
-                    var text = node.component.render().trim();
-                    var prev = node.getPrevSiblingNode();
-                    
-                    //if (untyped __php__("$prev instanceof HaqXmlNodeText"))
-                    if (Reflect.isInstanceOf(prev, 'HaqXmlNodeText'))
-					{
-						var re : EReg = new EReg('(?:^|\n)([ ]+)$', 's');
-						if (re.match(cast(prev, HaqXmlNodeText).text))
-						{
-							text = text.replace("\n", "\n"+re.matched(1));
-						}
-					}
-                    node.parent.replaceChild(node, new HaqXmlNodeText(text));
+                    if (node.component.visible)
+                    {
+                        var text = node.component.render().trim();
+                        var prev = node.getPrevSiblingNode();
+                        
+                        //if (untyped __php__("$prev instanceof HaqXmlNodeText"))
+                        if (Reflect.isInstanceOf(prev, 'HaqXmlNodeText'))
+                        {
+                            var re : EReg = new EReg('(?:^|\n)([ ]+)$', 's');
+                            if (re.match(cast(prev, HaqXmlNodeText).text))
+                            {
+                                text = text.replace("\n", "\n"+re.matched(1));
+                            }
+                        }
+                        node.parent.replaceChild(node, new HaqXmlNodeText(text));
+                    }
+                    else
+                    {
+                        node.remove();
+                    }
                 }
             }
             else
