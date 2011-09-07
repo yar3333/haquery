@@ -147,20 +147,9 @@ class HaqElemEventManager
 	
 	static function getElemsForSendToServer(fullElemID:String) : Iterable<HtmlDom>
 	{
-		var ids : Array<String> = fullElemID.split(HaqInternals.DELIMITER);
-		var reStr = '(^[^' + HaqInternals.DELIMITER + ']+$)';
-		for (i in 0...ids.length)
-		{
-			var s = '(^' + ids.slice(0, i + 1).join(HaqInternals.DELIMITER) + HaqInternals.DELIMITER + '[^' + HaqInternals.DELIMITER + ']+$)';
-			reStr += '|' + s;
-		}
-        //trace('reStr = ' + reStr);
-		var re : EReg = new EReg(reStr, '');
-		
 		var jqAllElemsWithID = new HaqQuery("[id]");
 		var allElemsWithID : Array<HtmlDom> = untyped jqAllElemsWithID.toArray();
 		var elems = Lambda.filter(allElemsWithID, function(elem:HtmlDom):Bool {
-			if (!re.match(elem.id)) return false;
             var elemTag = elem.nodeName.toUpperCase();
             var elemType = elemTag=="INPUT" ? elem.getAttribute('type').toUpperCase() : '';
             return elemTag == "INPUT" && Lambda.has(["TEXT", "PASSWORD", "HIDDEN", "CHECKBOX", "RADIO"], elemType)
