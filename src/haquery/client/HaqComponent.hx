@@ -31,11 +31,11 @@ class HaqComponent extends haquery.base.HaqComponent
 		}
 	}
 	
-	public function q(?selector:String, ?base:Dynamic) : HaqQuery
+	public function q(selector:String, ?base:Dynamic) : HaqQuery
 	{
-		if (selector != null && Type.getClassName(Type.getClass(selector)) == "String" && this.prefixID != '')
+		if (selector != null && prefixID != '')
 		{
-			selector = StringTools.replace(selector, '#', '#' + this.prefixID);
+			selector = StringTools.replace(selector, '#', '#' + prefixID);
 		}
 		return new HaqQuery(selector, base);
 	}
