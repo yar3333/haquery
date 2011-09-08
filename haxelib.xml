@@ -3,5 +3,5 @@
     <tag v="php"/>
     <tag v="js"/>
     <description>Web framework with PHP and JavaScript target</description>
-    <version name="1.2">Added component inheritance and ImageMagick library support</version>
+    <version name="1.2"></version>
 </project>
