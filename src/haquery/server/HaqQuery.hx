@@ -42,26 +42,19 @@ class HaqQuery
 
     /**
      * Возвращает количество выбранных DOM-элементов.
-     * @return int
      */
-    public function size() { return this.nodes.length; }
+    public function size() : Int { return this.nodes.length; }
 
     /**
-     * Возвращает либо массив выбранных DOM-элементов (если не задан параметр index),
-     * либо один элемент этого массива с указанным индексом.
-     * @param int $index Индекс элемента.
-     * @return HaqNode
+     * Возвращает один из выбранных DOM-элементов.
      */
-    public function get(index=null)
+    public function get(index:Int) : HaqXmlNodeElement
     {
-        return untyped __physeq__(index, null) ? this.nodes : this.nodes[index];
+        return this.nodes[index];
     }
 
     /**
      * Меняет или возвращает значение атрибута.
-     * @param string $name Название атрибута.
-     * @param string $value Новое значение атрибута.
-     * @return HaqQuery
      */
     public function attr(name:String, value:String=null) : Dynamic
     {
@@ -322,5 +315,13 @@ class HaqQuery
     public function hide() : HaqQuery
     {
         return this.css('display','none');
+    }
+    
+    public function each(f:Int->HaqXmlNodeElement->Void)
+    {
+        for (i in 0...nodes.length)
+        {
+            f(i, get(i));
+        }
     }
 }
