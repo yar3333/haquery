@@ -19,7 +19,7 @@ class HaqSystem
 		var startTime = Date.now().getTime();
 
         trace(null);
-        trace("HAQUERY START route.pagePath = " + route.path + ", HTTP_HOST = " + Web.getHttpHost() + ", clientIP = " + Web.getClientIP());
+        trace("HAQUERY START route.pagePath = " + route.path + ", HTTP_HOST = " + Web.getHttpHost() + ", clientIP = " + Web.getClientIP() + ", pageID = " + route.pageID);
 
         HaqProfiler.begin('HaqSystem::init(): build components');
             var templates = new HaqTemplates(HaQuery.config.componentsFolders);
