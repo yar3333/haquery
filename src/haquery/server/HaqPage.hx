@@ -10,7 +10,15 @@ import haquery.server.HaqXml;
  */
 class HaqPage extends HaqComponent
 {
-	public var contentType : String;
+	/**
+	 * Default value is "text/html; charset=utf-8".
+	 */
+    public var contentType : String;
+    
+    /**
+     * Last unexist URL part was placed in that var.
+     */
+    public var pageID : String;
 	
 	public function new() : Void
 	{

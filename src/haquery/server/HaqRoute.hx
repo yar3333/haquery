@@ -49,8 +49,6 @@ class HaqRoute
                 path = path + '/index';
             }
             
-			var pageID = null;
-			
 			if (!isPageExist(path))
 			{
 				var p = path.split('/');
