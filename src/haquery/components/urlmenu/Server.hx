@@ -27,7 +27,6 @@ class Server extends Container
             elem.setAttribute('href', self.base + '/' + (href != '' ? href + '/' : ''));
             
             var uri = Web.getURI().trim('/');
-            trace(uri);
             if (uri == href || uri.startsWith(href + '/'))
             {
                 elem.setAttribute('class', 'active');

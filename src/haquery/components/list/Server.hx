@@ -20,15 +20,17 @@ class Server extends HaqComponent
         }
 	}
 
-    public function bind(constsList:Array<Dynamic>)
+    public function bind(constsList:Iterable<Dynamic>)
     {
         HaQuery.assert(!HaQuery.isPostback, 'List binding on postback is not allowed.');
 	
-		for (i in 0...constsList.length)
+		var i = 0;
+        for (consts in constsList)
         {
-			manager.createComponent(this, 'haq:listitem', Std.string(i), constsList[i], innerHTML);
+			manager.createComponent(this, 'haq:listitem', Std.string(i), consts, innerHTML);
+            i++;
         }
-		q('#length').val(Std.string(constsList.length));
+		q('#length').val(Std.string(i));
     }
     
     override function render()
