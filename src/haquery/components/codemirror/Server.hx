@@ -45,6 +45,23 @@ class Server extends HaqComponent
             manager.registerScript(tag, 'mode/javascript/javascript.js');
             manager.registerScript(tag, 'mode/css/css.js');
         }
+        else if (mode=='css')
+        {
+            manager.registerScript(tag, 'mode/css/css.js');
+        }
+        else if (mode=='javascript')
+        {
+            manager.registerScript(tag, 'mode/javascript/javascript.js');
+        }
+        else if (mode=='php')
+        {
+            manager.registerScript(tag, 'mode/clike/clike.js');
+            manager.registerScript(tag, 'mode/php/php.js');
+        }
+        else if (mode=='clike')
+        {
+            manager.registerScript(tag, 'mode/clike/clike.js');
+        }
         
         q('#customData').val(StringTools.escape(StringTools.jsonEncode(customData)));
 
