@@ -1,7 +1,7 @@
-package jQuery.plugins.jQueryTools;
+package js.jQuery.plugins.jQueryTools;
 
 import js.Dom;
-import jQuery.JQuery;
+import js.jQuery.JQuery;
 
 /**
 	Flashembed

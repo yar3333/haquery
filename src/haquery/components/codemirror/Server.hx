@@ -2,6 +2,7 @@ package haquery.components.codemirror;
 
 import haquery.server.HaqComponent;
 import haquery.server.HaQuery;
+import haquery.StringTools;
 
 class Server extends HaqComponent
 {

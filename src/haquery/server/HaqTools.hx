@@ -1,7 +1,8 @@
 package haquery.server;
 
-import php.Web;
 import Type;
+import php.Web;
+import haquery.StringTools;
 
 class HaqTools 
 {
@@ -19,12 +20,12 @@ class HaqTools
                 return Std.string(v);
             
             case ValueType.TObject:
-                return 'StringTools.unescape("' + StringTools.escape(v) + '")';
+                return 'haquery.StringTools.unescape("' + StringTools.escape(v) + '")';
             
             case ValueType.TClass(clas):
                 if (Type.getClassName(clas) == 'String')
                 {
-                    return 'StringTools.unescape("' + StringTools.escape(v) + '")';
+                    return 'haquery.StringTools.unescape("' + StringTools.escape(v) + '")';
                 }
                 if (Type.getClassName(clas) == 'Date')
                 {

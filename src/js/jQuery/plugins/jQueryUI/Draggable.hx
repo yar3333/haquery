@@ -1,6 +1,6 @@
-package jQuery.plugins.jQueryUI;
+package js.jQuery.plugins.jQueryUI;
 
-import jQuery.JQuery;
+import js.jQuery.JQuery;
 
 /**
 	Draggable

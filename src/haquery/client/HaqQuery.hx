@@ -1,3 +1,3 @@
 package haquery.client;
 
-typedef HaqQuery = jQuery.JQuery;
+typedef HaqQuery = js.jQuery.JQuery;
