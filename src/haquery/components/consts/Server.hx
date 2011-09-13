@@ -3,6 +3,7 @@ package haquery.components.consts;
 import haquery.server.HaqComponent;
 import haquery.server.HaqComponentManager;
 import haquery.server.HaqXml;
+using haquery.StringTools;
 
 class Server extends HaqComponent
 {

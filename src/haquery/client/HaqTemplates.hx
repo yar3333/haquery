@@ -1,5 +1,7 @@
 package haquery.client;
 
+using haquery.StringTools;
+
 typedef HaqTemplate =
 { 
 	var elemID_serverHandlers: Hash<Array<String>>;

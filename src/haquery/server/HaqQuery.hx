@@ -4,6 +4,7 @@ import haquery.server.HaQuery;
 import haquery.server.HaqXml;
 import php.Lib;
 import php.NativeArray;
+using haquery.StringTools;
 
 /**
  * Серверный (php-шный) аналог jQuery.
@@ -25,7 +26,7 @@ class HaqQuery
     
     private function jQueryCall(method)
     {
-        HaqInternals.addAjaxAnswer("$('"+this.query.replace('#', '#'+this.prefixID)+"')." + method + ";");
+        HaqInternals.addAjaxAnswer("$('" + query.replace('#', '#' + prefixID) + "')." + method + ";");
     }
     
     public function new(prefixID:String, query:String, nodes:NativeArray)

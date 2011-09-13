@@ -6,6 +6,7 @@ import php.io.Path;
 import php.Lib;
 import haquery.server.HaqXml;
 import haquery.server.HaQuery;
+using haquery.StringTools;
 
 typedef HaqTemplate =
 { 

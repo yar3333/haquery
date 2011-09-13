@@ -3,6 +3,7 @@ package haquery.client;
 import js.Lib;
 import haquery.client.HaqComponent;
 import haquery.client.HaqTemplates;
+using haquery.StringTools;
 
 class HaqComponentManager 
 {

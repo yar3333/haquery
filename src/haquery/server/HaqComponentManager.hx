@@ -4,6 +4,7 @@ import haquery.server.HaqComponent;
 import haquery.server.HaqXml;
 import haxe.Serializer;
 import php.Lib;
+using haquery.StringTools;
 
 class HaqComponentManager 
 {
