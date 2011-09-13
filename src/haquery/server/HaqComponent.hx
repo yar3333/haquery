@@ -58,9 +58,10 @@ class HaqComponent extends haquery.base.HaqComponent
         {
 			var restrictedFields : Array<String> = Reflect.fields(Type.createEmptyInstance(Type.resolveClass('haquery.server.HaqComponent')));
 			var fields : Hash<String> = new Hash<String>(); // названиеполя => НазваниеПоля
-			for (field in Reflect.publicVars(this))
+			for (field in Reflect.fields(this) /*Reflect.publicVars(this)*/)
 			{
-				if (restrictedFields.indexOf(field) == -1 
+				if (!Reflect.isFunction(Reflect.field(this, field))
+                 && restrictedFields.indexOf(field) == -1 
 				 && !field.startsWith('event_')
 				) fields.set(field.toLowerCase(), field);
 			}
@@ -122,8 +123,7 @@ class HaqComponent extends haquery.base.HaqComponent
                         var text = node.component.render().trim();
                         var prev = node.getPrevSiblingNode();
                         
-                        //if (untyped __php__("$prev instanceof HaqXmlNodeText"))
-                        if (Reflect.instanceOf(prev, 'HaqXmlNodeText'))
+                        if (untyped __php__("$prev instanceof HaqXmlNodeText"))
                         {
                             var re : EReg = new EReg('(?:^|\n)([ ]+)$', 's');
                             if (re.match(cast(prev, HaqXmlNodeText).text))
