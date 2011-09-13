@@ -1,6 +1,6 @@
-package jQuery.plugins.jQueryTools;
+package js.jQuery.plugins.jQueryTools;
 
-import jQuery.JQuery;
+import js.jQuery.JQuery;
 
 /**
 	Mousewheel

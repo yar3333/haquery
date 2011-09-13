@@ -18,6 +18,7 @@ import haxe.Stack;
 	import haquery.server.HaqBootstrap;
 	import haquery.server.HaqSystem;
 	import haquery.server.db.HaqDb;
+	import haquery.StringTools;
 #else
 	import haxe.Firebug;
 	import js.Lib;

@@ -1,4 +1,4 @@
-package jQuery;
+package js.jQuery;
 
 import js.Dom;
 import js.XMLHttpRequest;

@@ -293,7 +293,7 @@ class HaqTemplates
         
         var self = this;
         var reSupportFileUrl = new EReg("~/([-_/\\.a-zA-Z0-9]*)", "");
-        text = reSupportFileUrl.customReplace(text, function(re:EReg)
+        text = reSupportFileUrl.customReplace(text, function(re)
         {
             var f = self.getFileUrl(tag, HaQuery.folders.support + '/' + re.matched(1));
             return f != null ? '/' + f : re.matched(0);

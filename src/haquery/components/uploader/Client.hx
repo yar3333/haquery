@@ -3,7 +3,7 @@ package haquery.components.uploader;
 import haquery.client.HaqElemEventManager;
 import haquery.client.HaqEvent;
 import haquery.client.HaqQuery;
-import jQuery.JQuery;
+import js.jQuery.JQuery;
 import js.Dom;
 
 class Client extends Base
