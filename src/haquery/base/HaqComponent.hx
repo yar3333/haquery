@@ -4,11 +4,13 @@ package haquery.base;
 import haquery.server.HaqInternals;
 import haquery.server.HaqEvent;
 import haquery.server.HaQuery;
+using haquery.StringTools;
 private typedef Component = haquery.server.HaqComponent;
 #else
 import haquery.client.HaqInternals;
 import haquery.client.HaqEvent;
 import haquery.client.HaQuery;
+using haquery.StringTools;
 private typedef Component = haquery.client.HaqComponent;
 #end
 

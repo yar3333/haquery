@@ -6,11 +6,11 @@ import php.io.Path;
 import php.Lib;
 import php.Sys;
 import php.Web;
-
 import haquery.server.HaQuery;
 import haquery.server.HaqComponent;
 import haquery.server.HaqProfiler;
 import haquery.server.HaqRoute;
+using haquery.StringTools;
 
 class HaqSystem
 {

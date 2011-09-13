@@ -2,6 +2,7 @@ package haquery.server;
 
 import php.Lib;
 import haquery.server.HaqXml;
+using haquery.StringTools;
 
 /**
  * Базовый класс для компонентов и страниц.
@@ -122,7 +123,7 @@ class HaqComponent extends haquery.base.HaqComponent
                         var prev = node.getPrevSiblingNode();
                         
                         //if (untyped __php__("$prev instanceof HaqXmlNodeText"))
-                        if (Reflect.isInstanceOf(prev, 'HaqXmlNodeText'))
+                        if (Reflect.instanceOf(prev, 'HaqXmlNodeText'))
                         {
                             var re : EReg = new EReg('(?:^|\n)([ ]+)$', 's');
                             if (re.match(cast(prev, HaqXmlNodeText).text))

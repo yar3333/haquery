@@ -18,12 +18,13 @@ import haxe.Stack;
 	import haquery.server.HaqBootstrap;
 	import haquery.server.HaqSystem;
 	import haquery.server.db.HaqDb;
-	import haquery.StringTools;
+	using haquery.StringTools;
 #else
 	import haxe.Firebug;
 	import js.Lib;
 	import haquery.client.HaqInternals;
 	import haquery.client.HaqSystem;
+	using haquery.StringTools;
 #end
 
 class HaQuery

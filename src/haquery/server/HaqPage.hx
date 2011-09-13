@@ -4,6 +4,7 @@ import php.Lib;
 import php.FileSystem;
 import haquery.server.HaqComponent;
 import haquery.server.HaqXml;
+using haquery.StringTools;
 
 /**
  * Базовый класс для страниц.

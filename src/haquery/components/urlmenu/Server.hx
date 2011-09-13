@@ -2,6 +2,7 @@ package haquery.components.urlmenu;
 
 import haquery.server.HaqComponent;
 import php.Web;
+using haquery.StringTools;
 typedef Container = haquery.components.container.Server;
 
 class Server extends Container

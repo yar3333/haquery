@@ -5,6 +5,7 @@ import php.io.Path;
 import php.Lib;
 import php.Sys;
 import php.Web;
+using haquery.StringTools;
 
 enum HaqRouteType
 {

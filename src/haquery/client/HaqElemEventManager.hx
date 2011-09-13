@@ -2,6 +2,7 @@ package haquery.client;
 
 import js.Dom;
 import js.Lib;
+using haquery.StringTools;
 
 class HaqElemEventManager 
 {
