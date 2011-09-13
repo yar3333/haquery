@@ -9,7 +9,7 @@ package haquery;
     
 	public function splitNational( s : String ) : Array<String>
     {
-		ensureCharset();
-        return untyped __php__("new _hx_array(mb_split($this->re, $s, $this->hglobal ? -1 : 2))");
+        ensureCharset();
+        return untyped __php__("new _hx_array(mb_split($this->pattern, $s, $this->hglobal ? -1 : 2))");
 	}
 }

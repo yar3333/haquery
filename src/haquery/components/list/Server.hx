@@ -13,8 +13,6 @@ class Server extends HaqComponent
 			trace('length = ' + length);
 			for (i in 0...length)
 			{
-				//trace("createComponent haq:listitem " + Std.string(i));
-                trace(innerHTML);
 				manager.createComponent(this, 'haq:listitem', Std.string(i), null, innerHTML);
 			}
         }
