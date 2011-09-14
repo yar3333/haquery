@@ -52,7 +52,7 @@ class HaqTemplates
 		{
 			for (tag in FileSystem.readDirectory(componentsFolder))
 			{
-				if (tags.indexOf(tag) == -1) tags.push(tag);
+				if (!Lambda.has(tags, tag)) tags.push(tag);
 			}
 		}
 		return tags;
@@ -171,7 +171,7 @@ class HaqTemplates
                 if (Reflect.isFunction(Reflect.field(tempObj, field)))
                 {
                     var parts = field.split('_');
-                    if (parts.length == 2 && serverMethods.indexOf(parts[1]) >= 0)
+                    if (parts.length == 2 && Lambda.has(serverMethods, parts[1]))
                     {
                         var nodeID = parts[0];
                         var method = parts[1];

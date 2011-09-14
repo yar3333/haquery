@@ -54,7 +54,7 @@ class HaqComponentManager
 	{
 		url = templates.getSupportPath(tag) + url;
 		
-		if (registeredScripts.indexOf(url) == -1)
+		if (!Lambda.has(registeredScripts, url))
 		{
 			registeredScripts.push(url);
 		}
@@ -64,7 +64,7 @@ class HaqComponentManager
 	{
         url = templates.getSupportPath(tag) + url;
 		
-		if (registeredStyles.indexOf(url) == -1)
+		if (!Lambda.has(registeredStyles, url))
 		{
 			registeredStyles.push(url);
 		}

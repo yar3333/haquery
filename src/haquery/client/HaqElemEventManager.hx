@@ -56,7 +56,7 @@ class HaqElemEventManager
                 {
                     var serverHandlers = templates.get(componentWithHandlers.tag).elemID_serverHandlers;
                     if (serverHandlers != null && serverHandlers.get(elemID) != null 
-                     && serverHandlers.get(elemID).indexOf(eventName) != -1
+                     && Lambda.has(serverHandlers.get(elemID), eventName)
                     ) {
                         needHandler = true;
                     }
@@ -101,7 +101,7 @@ class HaqElemEventManager
         if (serverHandlers != null && serverHandlers.get(elemID) != null)
         {
             var handlers = serverHandlers.get(elemID);
-            if (handlers.indexOf(e.type)==-1) return true;  // серверного обработчика нет
+            if (!Lambda.has(handlers, e.type)) return true;  // серверного обработчика нет
 
             var sendData = getDataObjectForSendToServer(elem.id, e.type);
             HaqQuery._static.post(Lib.window.location.href, sendData, callServerHandlersCallbackFunction);

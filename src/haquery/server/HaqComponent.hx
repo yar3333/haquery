@@ -61,7 +61,7 @@ class HaqComponent extends haquery.base.HaqComponent
 			for (field in Reflect.fields(this) /*Reflect.publicVars(this)*/)
 			{
 				if (!Reflect.isFunction(Reflect.field(this, field))
-                 && restrictedFields.indexOf(field) == -1 
+                 && !Lambda.has(restrictedFields, field)
 				 && !field.startsWith('event_')
 				) fields.set(field.toLowerCase(), field);
 			}
