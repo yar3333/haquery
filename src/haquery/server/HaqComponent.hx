@@ -49,7 +49,11 @@ class HaqComponent extends haquery.base.HaqComponent
 		loadParamsToObjectFields();
 		createEvents();
         createChildComponents();
-		if (Reflect.hasMethod(this, 'init')) Reflect.callMethod(this, Reflect.field(this, 'init'), []);
+		
+        if (Reflect.isFunction(Reflect.field(this, 'init')))
+        {
+            Reflect.callMethod(this, Reflect.field(this, 'init'), []);
+        }
     }
 	
 	private function loadParamsToObjectFields() : Void

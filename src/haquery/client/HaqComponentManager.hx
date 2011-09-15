@@ -3,7 +3,6 @@ package haquery.client;
 import js.Lib;
 import haquery.client.HaqComponent;
 import haquery.client.HaqTemplates;
-import haquery.Reflect;
 using haquery.StringTools;
 
 class HaqComponentManager 
@@ -43,7 +42,7 @@ class HaqComponentManager
 		}
 		
 		var component : HaqComponent = untyped Type.createInstance(clas, []);
-        if (Reflect.hasMethod(component, 'construct'))
+        if (Reflect.isFunction(Reflect.field(component, 'construct')))
         {
             component.construct(this, parent, tag, id, templates.get(tag).elemID_serverHandlers);
         }
