@@ -50,7 +50,12 @@ class HaqComponentManager
 		return page;
 	}
     
-	public function registerScript(tag:String, url:String) : Void
+	/**
+	 * Tells HaQuery to add html code to load file from support component folder.
+	 * @param	tag Component name.
+	 * @param	url Url to js file related to component support folder.
+	 */
+    public function registerScript(tag:String, url:String) : Void
 	{
 		url = templates.getSupportPath(tag) + url;
 		
