@@ -3,6 +3,7 @@ package haquery.client;
 import js.Lib;
 import haquery.client.HaqComponent;
 import haquery.client.HaqTemplates;
+import haquery.Reflect;
 using haquery.StringTools;
 
 class HaqComponentManager 
@@ -48,6 +49,7 @@ class HaqComponentManager
         }
         else
         {
+            trace(Reflect.fields(component));
             throw "Component client class '" + Type.getClassName(clas) + "' must be inherited from class 'haquery.client.HaqComponent'.";
         }
 
