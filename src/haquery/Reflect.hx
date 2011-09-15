@@ -12,7 +12,6 @@ class Reflect
 	**/
 	public static inline function field( o : Dynamic, field : String ) : Dynamic { return HaxeReflect.field(o, field); }
 
-
 	/**
 		Set an object field value.
 	**/
