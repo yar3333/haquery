@@ -51,7 +51,7 @@ class HaqElemEventManager
             var elemID = n != -1 ? elem.id.substr(n + 1) : elem.id;
             for (eventName in elemEventNames)
             {
-                var needHandler = Reflect.hasMethod(componentWithHandlers, elemID + "_" + eventName);
+                var needHandler = Reflect.isFunction(Reflect.field(componentWithHandlers, elemID + "_" + eventName));
                 if (!needHandler)
                 {
                     var serverHandlers = templates.get(componentWithHandlers.tag).elemID_serverHandlers;
@@ -85,7 +85,7 @@ class HaqElemEventManager
 		var n = elem.id.lastIndexOf(HaqInternals.DELIMITER);
 		var elemID = n > 0 ? elem.id.substr(n + 1) : elem.id;
 		var methodName = elemID + "_" + e.type;
-		if (Reflect.hasMethod(componentWithHandlers, methodName))
+		if (Reflect.isFunction(Reflect.field(componentWithHandlers, methodName)))
 		{
 			var r = Reflect.callMethod(componentWithHandlers, Reflect.field(componentWithHandlers, methodName), [ componentWithEvents, e ]);
 			if (r == false) return false;

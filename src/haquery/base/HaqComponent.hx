@@ -99,7 +99,7 @@ class HaqComponent
 	{
 		//trace("base[" + fullID + "] connectEventHandlers event = " + event.name);
         var handlerName = event.component.id + '_' + event.name;
-        if (Reflect.hasMethod(this, handlerName))
+        if (Reflect.isFunction(Reflect.field(this, handlerName)))
         {
             event.bind(cast this, Reflect.field(this, handlerName));
         }
@@ -107,9 +107,17 @@ class HaqComponent
 	
     public function forEachComponent(f:String, isFromTopToBottom=true) : Void
     {
-		if (isFromTopToBottom && Reflect.hasMethod(this, f)) Reflect.callMethod(this, Reflect.field(this, f), []);
+		if (isFromTopToBottom && Reflect.isFunction(Reflect.field(this, f)))
+        {
+            Reflect.callMethod(this, Reflect.field(this, f), []);
+        }
+        
         for (component in this.components) component.forEachComponent(f, isFromTopToBottom);
-        if (!isFromTopToBottom && Reflect.hasMethod(this, f)) Reflect.callMethod(this, Reflect.field(this, f), []);
+        
+        if (!isFromTopToBottom && Reflect.isFunction(Reflect.field(this, f)))
+        {
+            Reflect.callMethod(this, Reflect.field(this, f), []);
+        }
     }
 	
     /**
