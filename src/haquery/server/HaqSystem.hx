@@ -22,7 +22,7 @@ class HaqSystem
         trace("HAQUERY START route.pagePath = " + route.path + ", HTTP_HOST = " + Web.getHttpHost() + ", clientIP = " + Web.getClientIP() + ", pageID = " + route.pageID);
 
         HaqProfiler.begin('HaqSystem::init(): build components');
-            var templates = new HaqTemplates(HaQuery.config.componentsFolders);
+            var templates = new HaqTemplates(HaQuery.config.getComponentsFolders());
         HaqProfiler.end();
         
         HaQuery.isPostback = php.Web.getParams().get('HAQUERY_POSTBACK')!=null ? true : false;

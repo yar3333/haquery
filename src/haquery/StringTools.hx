@@ -55,7 +55,7 @@ class StringTools
 
 	public static inline function isEOF( c : Int ) : Bool { return HaxeStringTools.isEOF(c); }
     
-    public static #if !php inline #end function unescape(s:String) : String
+    public static function unescape(s:String) : String
     {
         #if php
 		untyped __php__("
@@ -73,7 +73,7 @@ class StringTools
         #end
     }
 
-    public static #if !php inline #end function escape(s:String) : String
+    public static function escape(s:String) : String
     {
         #if php
 		untyped __php__("
