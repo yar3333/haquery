@@ -1,8 +1,10 @@
 package components.calculator;
 
-import jQuery.JQuery;
+import js.jQuery.JQuery;
 import js.Lib;
 import haquery.client.HaqComponent;
+
+using StringTools;
 
 typedef StackItem = {
 	var num : Float;
@@ -47,7 +49,7 @@ class Client extends HaqComponent
     function bindKeysForIEAndFF()
     {
         var self = this;
-        this.q(Lib.document).keydown(function (e)
+        (new JQuery(Lib.document)).keydown(function (e)
         {
             switch (e.keyCode)
             {
@@ -83,7 +85,7 @@ class Client extends HaqComponent
     {
         var self = this;
 
-		this.q(Lib.document).keypress(function (e)
+		(new JQuery(Lib.document)).keypress(function (e)
         {
             switch (e.keyCode)
             {

@@ -1,6 +1,8 @@
 #if php
 package haquery.server;
 
+using haquery.StringTools;
+
 /**
  * Хранит настройки приложения.
  * Реальные настройки следует прописывать в отдельных файлах в папке /configs сайта.<br />
@@ -59,7 +61,17 @@ class HaqConfig
      */
     public var custom : Dynamic;
 
-	public var componentsFolders(default, null) : Array<String>;
+	var componentsFolders : Array<String>;
+    
+    public function addComponentsFolder(path:String) : Void
+    {
+        componentsFolders.push(path.replace('\\', '/').trim('/'));
+    }
+    
+    public function getComponentsFolders() : Array<String>
+    {
+        return componentsFolders;
+    }
     
     /**
      * Path to layout file (null if layout do not need).

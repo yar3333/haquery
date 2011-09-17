@@ -1,17 +1,22 @@
 <html>
     <head>
         <title>HaQuery Lists</title>
+        <style>
+            h3, h4 { margin-bottom: 0 }
+        </style>
     </head>
 
     <body>
-        Status: <span id="status"></span>
-            
+        <h3>PAGE</h3>
         <table>
             <tr>
-                <th>PAGE</th>
                 <th><haq:button id="pagebt" text="compButton" /></th>
                 <th><input type="button" id="pagesbt" value="simpButton" /></th>
             </tr>
+        </table>
+            
+        <h3>LIST</h3>
+        <table>
             <haq:list id="users">
                 <tr>
                     <td>{login}</td>
@@ -20,5 +25,8 @@
                 </tr>
             </haq:list>
         </table>
+        
+        <h4>Status</h4>
+        <span id="status"></span>
     </body>
 </html>
