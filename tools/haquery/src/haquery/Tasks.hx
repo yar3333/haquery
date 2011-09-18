@@ -21,13 +21,12 @@ class Tasks
     {
         var fo : FileOutput = File.write("src/Imports.hx", false);
         
-        fo.writeString("// HaQuery imports\n");
-        genImportsInner(fo, getPathToHaQueryLib() + '/src');
-        
-        fo.writeString("\n");
-        
-        fo.writeString("// Project imports\n");
-        genImportsInner(fo, 'src');
+        for (path in getClassPaths())
+        {
+            fo.writeString("// " + path + "\n");
+            genImportsInner(fo, path);
+            fo.writeString("\n");
+        }
         
         fo.close();
     }
@@ -47,19 +46,28 @@ class Tasks
     
     function isServerFile(path:String)
     {
-        if (FileSystem.isDirectory(path) && !path.endsWith('.svn')) return true;
+        if (FileSystem.isDirectory(path))
+        {
+            return !path.endsWith('.svn');
+        }
         return path.endsWith('/Server.hx') || path.endsWith('/Bootstrap.hx');
     }
     
     function isClientFile(path:String)
     {
-        if (FileSystem.isDirectory(path) && !path.endsWith('.svn')) return true;
+        if (FileSystem.isDirectory(path))
+        {
+            return !path.endsWith('.svn');
+        }
         return path.endsWith('/Client.hx');
     }
     
     function isSupportFile(path:String)
     {
-        if (FileSystem.isDirectory(path) && !path.endsWith('.svn')) return true;
+        if (FileSystem.isDirectory(path))
+        {
+            return !path.endsWith('.svn');
+        }
         return !path.endsWith('.hx') && !path.endsWith('.hxproj');
     }
     
@@ -73,49 +81,56 @@ class Tasks
         return "import " + Path.withoutExtension(file).replace('/', '.') + ';';
     }
     
-    function getPathToHaQueryLib()
+    public function getClassPaths()
     {
-        return Sys.getEnv('HAQUERYPATH');
+        var r : Array<String> = new Array<String>();
+        var files = FileSystem.readDirectory('');
+        for (file in files)
+        {
+            if (file.endsWith('.hxproj'))
+            {
+                var xml = Xml.parse(File.getContent(file));
+                var fast = new haxe.xml.Fast(xml.firstElement());
+                if (fast.hasNode.classpaths)
+                {
+                    var cp = fast.node.classpaths;
+                    for (elem in cp.elements)
+                    {
+                        if (elem.name == 'class' && elem.has.path)
+                        {
+                            r.push(elem.att.path.replace('\\', '/'));
+                            trace(elem.att.path);
+                        }
+                    }
+                }
+            }
+        }
+        return r;
     }
     
     // -------------------------------------------------------------------------------
     
     function buildJs()
     {
-        /*
-        <mkdir dir="${dest.dir}${file.separator}haquery${file.separator}client" />
-    	<exec executable="haxe">
-    	    <arg value="-cp"/><arg value="${lib.dir}${file.separator}src"/>
-    	    <arg value="-cp"/><arg value="${src.dir}"/>
-    	    <arg value="-js"/>
-    	    <arg value="${dest.dir}${file.separator}haquery${file.separator}client${file.separator}haquery.js"/>
-    	    <arg value="-main"/><arg value="Main"/>
-    	    <arg value="-debug"/>
-    	</exec>
-        */
+        hant.createDirectory('bin/haquery/client');
         
-        FileSystem.createDirectory('bin/haquery/client');
-        Sys.command('haxe', [
-             '-cp', getPathToHaQueryLib() + '/src'
-            ,'-cp', 'src'
-            ,'-js'
-            ,'bin/haquery/client/haquery.js'
-            ,'-main', 'Main'
-            ,'-debug'
-        ]);
+        var params = new Array<String>();
+        for (path in getClassPaths())
+        {
+            params.push('-cp'); params.push(path);
+        }
+        params.push('-js');
+        params.push('bin/haquery/client/haquery.js');
+        params.push('-main'); params.push('Main');
+        params.push('-debug');
+        
+        Sys.command('haxe', params);
     }
     
     public function genOrm(databaseConnectionString:String)
     {
-        /*
-   		<exec executable="php">
-    	    <arg value="${lib.dir}${file.separator}tools${file.separator}OrmGenerator${file.separator}bin${file.separator}index.php"/>
-    	    <arg value="${database.connection}"/>
-    	    <arg value="${src.dir}"/>
-    	</exec>
-        */
         Sys.command('php', [
-             getPathToHaQueryLib() + '/tools/OrmGenerator/bin/index.php' 
+            Path.directory(Sys.executablePath()) + '/haquery-orm/index.php' 
             ,databaseConnectionString
             ,'src'
         ]);
@@ -128,21 +143,11 @@ class Tasks
     
     public function postBuild()
     {
-        /*<target name="post-build">
-            <antcall target="build-js" />
-            <antcall target="copy-support-files">
-                <param name="path.from" value="${lib.dir}${file.separator}src" />
-                <param name="path.to" value="${dest.dir}" />
-            </antcall>
-            <antcall target="copy-support-files">
-                <param name="path.from" value="${src.dir}" />
-                <param name="path.to" value="${dest.dir}" />
-            </antcall>
-        </target>*/
-        
         buildJs();
         
-        hant.copyFolderContent(getPathToHaQueryLib() + '/src', 'bin', isSupportFile);
-        hant.copyFolderContent('src', 'bin', isSupportFile);
+        for (path in getClassPaths())
+        {
+            hant.copyFolderContent(path, 'bin', isSupportFile);
+        }
     }
 }
