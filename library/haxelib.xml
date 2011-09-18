@@ -1,7 +1,0 @@
-<project name="HaQuery" url="http://haquery.com" license="LGPL">
-    <user name="yar3333"/>
-    <tag v="php"/>
-    <tag v="js"/>
-    <description>Web framework with PHP and JavaScript target</description>
-    <version name="1.2"></version>
-</project>
