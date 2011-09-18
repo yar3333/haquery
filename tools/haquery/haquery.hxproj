@@ -40,8 +40,7 @@
   <!-- Executed before build -->
   <preBuildCommand />
   <!-- Executed after build -->
-  <postBuildCommand alwaysRun="False">nekotools boot bin/haquery.n
-cmd /C "xcopy /y bin\haquery.exe %HAXEPATH%"</postBuildCommand>
+  <postBuildCommand alwaysRun="False">nekotools boot bin/haquery.n</postBuildCommand>
   <!-- Other project options -->
   <options>
     <option showHiddenPaths="False" />
