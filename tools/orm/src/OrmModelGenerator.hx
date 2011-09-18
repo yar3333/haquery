@@ -8,6 +8,7 @@ import php.Lib;
 import haquery.server.db.HaqDb;
 import haquery.server.db.HaqDbDriver;
 import OrmHaxeClass;
+using haquery.StringTools;
 
 class OrmModelGenerator 
 {
