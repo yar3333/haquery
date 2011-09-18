@@ -1,3 +1,4 @@
+// ../src
 #if php
 import haquery.components.button.Server;
 import haquery.components.ckeditor.Server;
@@ -12,7 +13,6 @@ import haquery.components.splitter.Server;
 import haquery.components.tabs.Server;
 import haquery.components.uploader.Server;
 import haquery.components.urlmenu.Server;
-import components1.randnum.Server;
 #else
 import haquery.components.button.Client;
 import haquery.components.ckeditor.Client;
@@ -25,6 +25,12 @@ import haquery.components.splitter.Client;
 import haquery.components.tabs.Client;
 import haquery.components.uploader.Client;
 import haquery.components.urlmenu.Client;
+#end
 
+// src
+#if php
+import components1.randnum.Server;
+#else
 
 #end
+

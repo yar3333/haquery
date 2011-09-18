@@ -42,9 +42,9 @@
     <hidden path="build.xml" />
   </hiddenPaths>
   <!-- Executed before build -->
-  <preBuildCommand>cmd /C "ant -f $(ProjectDir)\build.xml pre-build"</preBuildCommand>
+  <preBuildCommand>haquery pre-build</preBuildCommand>
   <!-- Executed after build -->
-  <postBuildCommand alwaysRun="False">cmd /C "ant -f $(ProjectDir)\build.xml post-build"</postBuildCommand>
+  <postBuildCommand alwaysRun="False">haquery post-build</postBuildCommand>
   <!-- Other project options -->
   <options>
     <option showHiddenPaths="False" />
