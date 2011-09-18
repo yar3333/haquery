@@ -40,12 +40,13 @@
   <!-- Executed before build -->
   <preBuildCommand />
   <!-- Executed after build -->
-  <postBuildCommand alwaysRun="False" />
+  <postBuildCommand alwaysRun="False">nekotools boot bin/haquery.n
+cmd /C "xcopy /y bin\haquery.exe %HAXEPATH%"</postBuildCommand>
   <!-- Other project options -->
   <options>
     <option showHiddenPaths="False" />
     <option testMovie="Custom" />
-    <option testMovieCommand="run.bat" />
+    <option testMovieCommand="bin\haquery.exe" />
   </options>
   <!-- Plugin storage -->
   <storage />

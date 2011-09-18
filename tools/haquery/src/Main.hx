@@ -22,8 +22,8 @@ class Main
                 haquery.postBuild();
             
             default:
-                Lib.println('HaQuery compilation and deploying tool.');
-                Lib.println('Usage: hant <command>');
+                Lib.println('HaQuery building support and deploying tool.');
+                Lib.println('Usage: haquery <command>');
                 Lib.println('\t where <command> may be:');
                 Lib.println('\t\tgen-orm <databaseConnectionString>    Generate tables-related classes to model folder.');
                 Lib.println('\t\tpre-build                             Do pre-build step.');
