@@ -20,6 +20,9 @@ class Main
             
             case 'post-build': 
                 haquery.postBuild();
+                
+            case 'class-paths':
+                haquery.getClassPaths();
             
             default:
                 Lib.println('HaQuery building support and deploying tool.');

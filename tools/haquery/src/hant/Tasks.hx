@@ -3,11 +3,26 @@ package hant;
 import neko.FileSystem;
 import neko.io.File;
 import neko.Sys;
+using StringTools;
 
 class Tasks 
 {
     public function new()
     {
+    }
+    
+    public function createDirectory(path:String)
+    {
+        path = path.replace('\\', '/');
+        var dirs : Array<String> = path.split('/');
+        for (i in 0...dirs.length)
+        {
+            var dir = dirs.slice(0, i + 1).join('/');
+            if (!FileSystem.exists(dir))
+            {
+                FileSystem.createDirectory(dir);
+            }
+        }
     }
     
     public function findFiles(path:String, include:String->Bool) : Array<String>
@@ -16,7 +31,6 @@ class Tasks
         
         for (file in FileSystem.readDirectory(path))
         {
-            trace(file);
             if (include(path + '/' + file))
             {
                 if (FileSystem.isDirectory(path + '/' + file))
@@ -35,8 +49,6 @@ class Tasks
     
     public function copyFolderContent(fromFolder:String, toFolder:String, include:String->Bool)
     {
-        if (!FileSystem.exists(toFolder)) FileSystem.createDirectory(toFolder);
-        
         for (file in FileSystem.readDirectory(fromFolder))
         {
             if (include(fromFolder + '/' + file))
@@ -47,6 +59,7 @@ class Tasks
                 }
                 else
                 {
+                    if (!FileSystem.exists(toFolder)) createDirectory(toFolder);
                     File.copy(fromFolder + '/' + file, toFolder + '/' + file);
                 }
             }
