@@ -4,11 +4,11 @@
   <output>
     <movie outputType="Application" />
     <movie input="" />
-    <movie path="bin" />
+    <movie path="../haquery/bin/orm" />
     <movie fps="0" />
     <movie width="0" />
     <movie height="0" />
-    <movie version="0" />
+    <movie version="1" />
     <movie minorVersion="0" />
     <movie platform="PHP" />
     <movie background="#FFFFFF" />
@@ -38,6 +38,7 @@
   <hiddenPaths>
     <hidden path="nbproject" />
     <hidden path="bin" />
+    <hidden path="orm.hxml" />
   </hiddenPaths>
   <!-- Executed before build -->
   <preBuildCommand />
@@ -46,8 +47,8 @@
   <!-- Other project options -->
   <options>
     <option showHiddenPaths="False" />
-    <option testMovie="Custom" />
-    <option testMovieCommand="php;bin/index.php mysql://root:123456@localhost/stoloboev src" />
+    <option testMovie="OpenDocument" />
+    <option testMovieCommand="" />
   </options>
   <!-- Plugin storage -->
   <storage />
