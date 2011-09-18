@@ -2,6 +2,7 @@ package ;
 
 import OrmHaxeClass;
 import haquery.server.db.HaqDbDriver;
+using haquery.StringTools;
 
 class OrmTools 
 {

@@ -2,6 +2,7 @@ package ;
 
 import php.Lib;
 import haquery.server.db.HaqDbDriver;
+using haquery.StringTools;
 
 typedef OrmHaxeVar = {>HaqDbTableFieldData,
 	var haxeName : String;	

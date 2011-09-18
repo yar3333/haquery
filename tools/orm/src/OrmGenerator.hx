@@ -6,6 +6,7 @@ import php.Lib;
 import haquery.server.db.HaqDb;
 import haquery.server.db.HaqDbDriver;
 import OrmTools;
+using haquery.StringTools;
 
 class OrmGenerator
 {
