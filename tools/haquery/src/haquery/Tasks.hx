@@ -130,7 +130,7 @@ class Tasks
     public function genOrm(databaseConnectionString:String)
     {
         Sys.command('php', [
-            Path.directory(Sys.executablePath()) + '/haquery-orm/index.php' 
+            Path.directory(Sys.executablePath()).replace('\\', '/') + '/orm/index.php' 
             ,databaseConnectionString
             ,'src'
         ]);
