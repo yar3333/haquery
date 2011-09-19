@@ -3,8 +3,10 @@ package $(Package);
 import haquery.client.HaqComponent;
 import haquery.client.HaQuery;
 
-class $(FileName) extends HaqComponent $(CSLB){
-	function init() $(CSLB){
+class $(FileName) extends HaqComponent
+{
+    function init()
+    {
         $(EntryPoint)
-	}
+    }
 }

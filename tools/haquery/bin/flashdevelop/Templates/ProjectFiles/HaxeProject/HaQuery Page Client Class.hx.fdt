@@ -3,8 +3,10 @@ package $(Package);
 import haquery.client.HaqPage;
 import haquery.client.HaQuery;
 
-class $(FileName) extends HaqPage $(CSLB){
-	function init() $(CSLB){
+class $(FileName) extends HaqPage
+{
+	function init()
+    {
         $(EntryPoint)
-	}
+    }
 }

@@ -143,7 +143,33 @@ class Tasks
         log.start("Delete directory '" + path + "'");
         try
         {
+            for (file in FileSystem.readDirectory(path))
+            {
+                if (FileSystem.isDirectory(path + '/' + file))
+                {
+                    deleteDirectory(path + '/' + file);
+                }
+                else
+                {
+                    deleteFile(path + '/' + file);
+                }
+            }
+
             FileSystem.deleteDirectory(path);
+            log.finishOk();
+        }
+        catch (message:String)
+        {
+            log.finishFail(message);
+        }
+    }
+    
+    public function deleteFile(path:String)
+    {
+        log.start("Delete file '" + path + "'");
+        try
+        {
+            FileSystem.deleteFile(path);
             log.finishOk();
         }
         catch (message:String)

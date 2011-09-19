@@ -3,17 +3,22 @@ package $(Package);
 import haquery.server.HaqComponent;
 import haquery.server.HaQuery;
 
-class $(FileName) extends HaqComponent $(CSLB){
-	function init() $(CSLB){
-        if (!HaQuery.isPostback) $(CSLB){
+class $(FileName) extends HaqComponent
+{
+	function init()
+    {
+        if (!HaQuery.isPostback)
+        {
             $(EntryPoint)
         }
-        else $(CSLB){
+        else
+        {
             
         }
 	}
 	
-	function preRender() $(CSLB){
+	function preRender()
+    {
         
 	}
 }
