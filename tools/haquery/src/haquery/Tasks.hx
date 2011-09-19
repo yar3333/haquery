@@ -4,21 +4,26 @@ import neko.io.File;
 import neko.io.FileOutput;
 import neko.io.Path;
 import neko.Sys;
+import neko.Lib;
 import neko.FileSystem;
 
 using StringTools;
 
 class Tasks 
 {
+    var log : hant.Log;
     var hant : hant.Tasks;
     
     public function new()
     {
-        hant = new hant.Tasks();
+        log = new hant.Log(2);
+        hant = new hant.Tasks(log);
     }
     
     function genImports()
     {
+        log.start("Generate imports to 'src/Imports.hx'");
+        
         var fo : FileOutput = File.write("src/Imports.hx", false);
         
         for (path in getClassPaths())
@@ -29,6 +34,8 @@ class Tasks
         }
         
         fo.close();
+        
+        log.finishOk();
     }
     
     function genImportsInner(fo:FileOutput, srcPath:String)
@@ -99,7 +106,6 @@ class Tasks
                         if (elem.name == 'class' && elem.has.path)
                         {
                             r.push(elem.att.path.replace('\\', '/'));
-                            trace(elem.att.path);
                         }
                     }
                 }
@@ -112,6 +118,8 @@ class Tasks
     
     function buildJs()
     {
+        log.start("Build client to 'bin/haquery/client/haquery.js'");
+        
         hant.createDirectory('bin/haquery/client');
         
         var params = new Array<String>();
@@ -125,29 +133,109 @@ class Tasks
         params.push('-debug');
         
         Sys.command('haxe', params);
+        
+        log.finishOk();
     }
     
     public function genOrm(databaseConnectionString:String)
     {
+        log.start("Generate ORM classes to 'models'");
+        
         Sys.command('php', [
             Path.directory(Sys.executablePath()).replace('\\', '/') + '/orm/index.php' 
             ,databaseConnectionString
             ,'src'
         ]);
+        
+        log.finishOk();
     }
     
     public function preBuild()
     {
+        log.start("Do pre-build step");
+        
         genImports();
+        
+        log.finishOk();
     }
     
     public function postBuild()
     {
+        log.start("Do post-build step");
+        
         buildJs();
         
         for (path in getClassPaths())
         {
             hant.copyFolderContent(path, 'bin', isSupportFile);
         }
+        
+        log.finishOk();
+    }
+    
+    public function getHaxePath()
+    {
+        var r = Sys.getEnv('HAXEPATH');
+        
+        if (r == null)
+        {
+            throw "HaXe not found (HAXEPATH environment variable not set).";
+        }
+        
+        while (r.endsWith('\\') || r.endsWith('/'))
+        {
+            r = r.substr(0, r.length - 1);
+        }
+        r += '\\';
+        
+        
+        if (!FileSystem.exists(r + 'haxe.exe'))
+        {
+            throw "HaXe not found (file '" + r + "haxe.exe' do not exist).";
+        }
+        
+        return r;
+    }
+    
+    public function install()
+    {
+        log.start('Install HaxeMod');
+        
+        var haxePath = getHaxePath();
+        
+        if (!FileSystem.exists(haxePath + 'haxe.exe.official'))
+        {
+            hant.rename(haxePath + 'haxe.exe', haxePath + 'haxe.exe.official');
+        }
+        File.copy(Path.directory(Sys.executablePath()) + '\\haxemod\\haxe.exe', haxePath + 'haxe.exe');
+        
+        if (!FileSystem.exists(haxePath + 'std.official'))
+        {
+            hant.rename(haxePath + 'std', haxePath + 'std.official');
+            hant.copyFolderContent(Path.directory(Sys.executablePath()) + '\\haxemod\\std', haxePath + 'std', function(s) { return true; } );
+        }
+        
+        log.finishOk();
+    }
+    
+    public function uninstall()
+    {
+        log.start('Uninstall HaxeMod');
+        
+        var haxePath = getHaxePath();
+        
+        if (!FileSystem.exists(haxePath + 'haxe.exe.official'))
+        {
+            log.finishFail("HaxeMod does not installed.");
+        }
+        hant.rename(haxePath + 'haxe.exe.official', haxePath + 'haxe.exe');
+        
+        if (FileSystem.exists(haxePath + 'std.official'))
+        {
+            hant.deleteDirectory(haxePath + 'std');
+            hant.rename(haxePath + 'std.official', haxePath + 'std');
+        }
+        
+        log.finishOk();
     }
 }
