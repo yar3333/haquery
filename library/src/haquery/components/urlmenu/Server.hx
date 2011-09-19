@@ -31,7 +31,12 @@ class Server extends Container
         q('#m>a').each(function(index, elem) {
             var href = elem.getAttribute('href').trim('/');
             if (href == 'index') href = '';
-            href = self.base + '/' + (href != '' ? href + '/' : '');
+            href = self.base + (href != '' ? '/' + href : '');
+            
+            if (!href.endsWith('.html'))
+            {
+                href += '/';
+            }
             
             elem.setAttribute('href', href);
             
