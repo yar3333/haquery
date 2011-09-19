@@ -8,6 +8,7 @@ typedef Container = haquery.components.container.Server;
 class Server extends Container
 {
     public var base : String;
+    public var cssClass : String;
     
     override function getHeader() : String 
     {
@@ -21,14 +22,21 @@ class Server extends Container
     
     function preRender()
     {
+        if (cssClass != null)
+        {
+            q('#m').addClass(cssClass);
+        }
+        
         var self = this;
         q('#m>a').each(function(index, elem) {
             var href = elem.getAttribute('href').trim('/');
             if (href == 'index') href = '';
-            elem.setAttribute('href', self.base + '/' + (href != '' ? href + '/' : ''));
+            href = self.base + '/' + (href != '' ? href + '/' : '');
             
-            var uri = Web.getURI().trim('/');
-            if (uri == href || uri.startsWith(href + '/'))
+            elem.setAttribute('href', href);
+            
+            var uri = Web.getURI().rtrim('/') + '/';
+            if (uri == href || uri.startsWith(href))
             {
                 elem.setAttribute('class', 'active');
             }
