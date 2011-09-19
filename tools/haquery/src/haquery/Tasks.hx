@@ -88,6 +88,15 @@ class Tasks
         return "import " + Path.withoutExtension(file).replace('/', '.') + ';';
     }
     
+    function isNotSvn(path:String)
+    {
+        if (FileSystem.isDirectory(path))
+        {
+            return !path.endsWith('.svn');
+        }
+        return true;
+    }
+    
     public function getClassPaths()
     {
         var r : Array<String> = new Array<String>();
@@ -199,6 +208,32 @@ class Tasks
     
     public function install()
     {
+        installFlashDevelopTemplates();
+        installHaxeMod();
+    }
+    
+    function installFlashDevelopTemplates()
+    {
+        log.start('Install FlashDevelop templates');
+        
+        var srcPath = Path.directory(Sys.executablePath()).replace('\\', '/') + '/flashdevelop';
+        var haxePath = getHaxePath();
+        
+        var userLocalPath = Sys.getEnv('LOCALAPPDATA') != null ? Sys.getEnv('LOCALAPPDATA') : Sys.getEnv('APPDATA');
+        var flashDevelopUserDataPath = userLocalPath.replace('\\', '/') + '/FlashDevelop';
+        hant.copyFolderContent(srcPath, flashDevelopUserDataPath, isNotSvn);
+        
+        var projectFilePath = flashDevelopUserDataPath + '/Projects/380 HaXe - HaQuery Project/Project.hxproj';
+        var projectFileContent = File.getContent(projectFilePath);
+        var fo = File.write(projectFilePath);
+        fo.writeString(projectFileContent.replace("{HaQuerySrcPath}", FileSystem.fullPath(Path.directory(Sys.executablePath()) + '/../src')));
+        fo.close();
+        
+        log.finishOk();
+    }
+    
+    function installHaxeMod()
+    {
         log.start('Install HaxeMod');
         
         var haxePath = getHaxePath();
@@ -220,7 +255,21 @@ class Tasks
     
     public function uninstall()
     {
+        uninstallFlashDevelopTemplates();
+        uninstallHaxeMod();
+    }
+    
+    function uninstallFlashDevelopTemplates()
+    {
+        log.start('Uninstall FlashDevelop templates');
+        
+        log.finishOk();
+    }
+    
+    function uninstallHaxeMod()
+    {
         log.start('Uninstall HaxeMod');
+        
         
         var haxePath = getHaxePath();
         
@@ -238,4 +287,6 @@ class Tasks
         
         log.finishOk();
     }
+    
+    
 }

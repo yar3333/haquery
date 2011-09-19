@@ -14,7 +14,7 @@
   </output>
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
-    <class path="C:\motion-twin\haxe\lib\HaQuery\2,0\src" />
+    <class path="{HaQuerySrcPath}" />
     <class path="src" />
   </classpaths>
   <!-- Build options -->
