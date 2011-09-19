@@ -218,8 +218,9 @@ class Tasks
         
         var srcPath = Path.directory(Sys.executablePath()).replace('\\', '/') + '/flashdevelop';
         var haxePath = getHaxePath();
-        
-        var userLocalPath = Sys.getEnv('LOCALAPPDATA') != null ? Sys.getEnv('LOCALAPPDATA') : Sys.getEnv('APPDATA');
+        var userLocalPath = Sys.getEnv('LOCALAPPDATA') != null 
+            ? Sys.getEnv('LOCALAPPDATA') 
+            : Sys.getEnv('USERPROFILE') + '/Local Settings/Application Data';
         var flashDevelopUserDataPath = userLocalPath.replace('\\', '/') + '/FlashDevelop';
         hant.copyFolderContent(srcPath, flashDevelopUserDataPath, isNotSvn);
         
@@ -255,16 +256,16 @@ class Tasks
     
     public function uninstall()
     {
-        uninstallFlashDevelopTemplates();
+        //uninstallFlashDevelopTemplates();
         uninstallHaxeMod();
     }
     
-    function uninstallFlashDevelopTemplates()
+    /*function uninstallFlashDevelopTemplates()
     {
         log.start('Uninstall FlashDevelop templates');
         
         log.finishOk();
-    }
+    }*/
     
     function uninstallHaxeMod()
     {
