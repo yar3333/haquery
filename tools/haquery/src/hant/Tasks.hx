@@ -47,9 +47,12 @@ class Tasks
             for (i in 0...dirs.length)
             {
                 var dir = dirs.slice(0, i + 1).join('/');
-                if (!FileSystem.exists(dir))
+                if (!dir.endsWith(':'))
                 {
-                    FileSystem.createDirectory(dir);
+                    if (!FileSystem.exists(dir))
+                    {
+                        FileSystem.createDirectory(dir);
+                    }
                 }
             }
             log.finishOk();
@@ -147,5 +150,29 @@ class Tasks
         {
             log.finishFail(message);
         }
+    }
+    
+    public function getWindowsRegistryValue(key:String) : String
+    {
+        var dir = neko.Sys.getEnv("TMP");
+		if (dir == null)
+        {
+			dir = "."; 		
+        }
+        var temp = dir + "/hant-tasks-get_windows_registry_value.txt";
+		if (neko.Sys.command('regedit /E "' + temp + '" "' + key + '"') != 0) 
+        {
+			// might fail without appropriate rights
+			return null;
+		}
+		// it's possible that if registry access was disabled the proxy file is not created
+		var content = try neko.io.File.getContent(temp) catch ( e : Dynamic ) return null;
+        content = content.replace("\x00", "").replace('\r', '').replace('\\\\', '\\');
+		neko.FileSystem.deleteFile(temp);
+        
+        var re = new EReg('^@="(.*)"$', 'm');
+        if (re.match(content)) return re.matched(1);
+        
+        return content;
     }
 }
