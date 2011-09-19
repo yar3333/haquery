@@ -1,0 +1,19 @@
+package $(Package);
+
+import haquery.server.HaqPage;
+import haquery.server.HaQuery;
+
+class $(FileName) extends HaqPage $(CSLB){
+	function init() $(CSLB){
+        if (!HaQuery.isPostback) $(CSLB){
+            $(EntryPoint)
+        }
+        else $(CSLB){
+            
+        }
+	}
+	
+	function preRender() $(CSLB){
+        
+	}
+}
