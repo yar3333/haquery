@@ -117,7 +117,10 @@ class OrmManagerGenerator
 			createGetByMethod(table, vars, modelFullClassName, vs, model);
 		}
 		
-		createGetsByMethod(table, vars, modelFullClassName, getForeignKeyVars(table, vars), model);
+        for (v in getForeignKeyVars(table, vars))
+        {
+            createGetsByMethod(table, vars, modelFullClassName, [v], model);
+        }
 		
 		return model;
 	}
@@ -146,9 +149,9 @@ class OrmManagerGenerator
 		);
 	}
 	
-	static function createGetsByMethod(table:String, vars:List<OrmHaxeVar>, modelFullClassName:String, whereVars:List<OrmHaxeVar>, model:OrmHaxeClass) : Void
+	static function createGetsByMethod(table:String, vars:List<OrmHaxeVar>, modelFullClassName:String, whereVars:Iterable<OrmHaxeVar>, model:OrmHaxeClass) : Void
 	{
-		if (whereVars == null || whereVars.length == 0) return;
+		if (whereVars == null || !whereVars.iterator().hasNext()) return;
 
 		model.addMethod(
 			'getBy' + Lambda.map(whereVars, function(v) { return OrmTools.capitalize(v.haxeName); } ).join('And'),
@@ -165,7 +168,7 @@ class OrmManagerGenerator
 		return positionVar.isEmpty() ? 'null' : "'" + positionVar.first().haxeName + "'";
 	}
     
-    static function getWhereSql(vars:List<OrmHaxeVar>) : String
+    static function getWhereSql(vars:Iterable<OrmHaxeVar>) : String
     {
         return " WHERE " + Lambda.map(vars, function(v) { return "`" + v.name + "` = ' + HaqDb.quote(" + v.haxeName + ")"; } ).join("+' AND ");
     }
