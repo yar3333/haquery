@@ -11,7 +11,6 @@ class Server extends HaqComponent
         if (HaQuery.isPostback)
         {
 			var length = Std.parseInt(q('#length').val());
-			trace('length = ' + length);
 			for (i in 0...length)
 			{
 				manager.createComponent(this, 'haq:listitem', Std.string(i), null, innerHTML);
