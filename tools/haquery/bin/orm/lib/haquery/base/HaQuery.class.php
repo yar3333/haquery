@@ -2,7 +2,7 @@
 
 class haquery_base_HaQuery {
 	public function __construct(){}
-	static $VERSION = 1.2;
+	static $VERSION = 2.0;
 	static $folders;
 	static $config;
 	static $isPostback = false;

@@ -53,7 +53,12 @@ class OrmManagerGenerator {
 				unset($vs,$uniqueField);
 			}
 		}
-		OrmManagerGenerator::createGetsByMethod($table, $vars, $modelFullClassName, OrmManagerGenerator::getForeignKeyVars($table, $vars), $model);
+		if(null == OrmManagerGenerator::getForeignKeyVars($table, $vars)) throw new HException('null iterable');
+		$蜴t = OrmManagerGenerator::getForeignKeyVars($table, $vars)->iterator();
+		while($蜴t->hasNext()) {
+			$v = $蜴t->next();
+			OrmManagerGenerator::createGetsByMethod($table, $vars, $modelFullClassName, new _hx_array(array($v)), $model);
+		}
 		{
 			$GLOBALS['%s']->pop();
 			return $model;
@@ -86,7 +91,7 @@ class OrmManagerGenerator {
 	static function createGetsByMethod($table, $vars, $modelFullClassName, $whereVars, $model) {
 		$GLOBALS['%s']->push("OrmManagerGenerator::createGetsByMethod");
 		$製pos = $GLOBALS['%s']->length;
-		if($whereVars === null || $whereVars->length === 0) {
+		if($whereVars === null || !$whereVars->iterator()->hasNext()) {
 			$GLOBALS['%s']->pop();
 			return;
 		}
@@ -268,7 +273,7 @@ function OrmManagerGenerator_10(&$_g, &$_g1, &$baseFullClassName, &$createVars, 
 function OrmManagerGenerator_11(&$model, &$modelFullClassName, &$table, &$vars, &$whereVars, $v) {
 	$製pos = $GLOBALS['%s']->length;
 	{
-		$GLOBALS['%s']->push("OrmManagerGenerator::createGetByMethod@141");
+		$GLOBALS['%s']->push("OrmManagerGenerator::createGetByMethod@144");
 		$製pos2 = $GLOBALS['%s']->length;
 		{
 			$裨mp = OrmTools::capitalize($v->haxeName);
@@ -281,7 +286,7 @@ function OrmManagerGenerator_11(&$model, &$modelFullClassName, &$table, &$vars, 
 function OrmManagerGenerator_12(&$model, &$modelFullClassName, &$table, &$vars, &$whereVars, $v) {
 	$製pos = $GLOBALS['%s']->length;
 	{
-		$GLOBALS['%s']->push("OrmManagerGenerator::createGetsByMethod@154");
+		$GLOBALS['%s']->push("OrmManagerGenerator::createGetsByMethod@157");
 		$製pos2 = $GLOBALS['%s']->length;
 		{
 			$裨mp = OrmTools::capitalize($v->haxeName);
@@ -294,7 +299,7 @@ function OrmManagerGenerator_12(&$model, &$modelFullClassName, &$table, &$vars, 
 function OrmManagerGenerator_13(&$vars, $v) {
 	$製pos = $GLOBALS['%s']->length;
 	{
-		$GLOBALS['%s']->push("OrmManagerGenerator::getOrderDefVal@164");
+		$GLOBALS['%s']->push("OrmManagerGenerator::getOrderDefVal@167");
 		$製pos2 = $GLOBALS['%s']->length;
 		{
 			$裨mp = $v->name === "position";
@@ -315,7 +320,7 @@ function OrmManagerGenerator_14(&$positionVar, &$vars) {
 function OrmManagerGenerator_15(&$vars, $v) {
 	$製pos = $GLOBALS['%s']->length;
 	{
-		$GLOBALS['%s']->push("OrmManagerGenerator::getWhereSql@170");
+		$GLOBALS['%s']->push("OrmManagerGenerator::getWhereSql@173");
 		$製pos2 = $GLOBALS['%s']->length;
 		{
 			$裨mp = "`" . $v->name . "` = ' + HaqDb.quote(" . $v->haxeName . ")";
@@ -328,7 +333,7 @@ function OrmManagerGenerator_15(&$vars, $v) {
 function OrmManagerGenerator_16(&$foreignKeys, &$table, &$vars, $v) {
 	$製pos = $GLOBALS['%s']->length;
 	{
-		$GLOBALS['%s']->push("OrmManagerGenerator::getForeignKeyVars@176");
+		$GLOBALS['%s']->push("OrmManagerGenerator::getForeignKeyVars@179");
 		$製pos2 = $GLOBALS['%s']->length;
 		{
 			$裨mp = Lambda::exists($foreignKeys, array(new _hx_lambda(array(&$foreignKeys, &$table, &$v, &$vars), "OrmManagerGenerator_19"), 'execute'));
@@ -362,7 +367,7 @@ function OrmManagerGenerator_18(&$baseFullClassName, &$createVars, &$foreignKeyV
 function OrmManagerGenerator_19(&$foreignKeys, &$table, &$v, &$vars, $fk) {
 	$製pos = $GLOBALS['%s']->length;
 	{
-		$GLOBALS['%s']->push("OrmManagerGenerator::getForeignKeyVars@177");
+		$GLOBALS['%s']->push("OrmManagerGenerator::getForeignKeyVars@180");
 		$製pos3 = $GLOBALS['%s']->length;
 		{
 			$裨mp = $fk->key === $v->name;
