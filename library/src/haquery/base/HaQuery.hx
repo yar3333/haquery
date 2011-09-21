@@ -80,6 +80,7 @@ class HaQuery
 			}
 		#else
 			if (Firebug.detect()) Firebug.redirectTraces();
+            else                  haxe.Log.trace = HaQuery.trace;
 			var system = new HaqSystem();
 		#end
     }
@@ -122,53 +123,6 @@ class HaQuery
 	#end
 	
 	#if php
-		/**
-		 * Загружает файлы bootstrap.php, которые ищет в папках начиная от текущей и до $relativePath.
-		 * @param type $relativePath
-		 */
-		private static function loadBootstraps(relativePath:String) : Void
-		{
-			var folders = StringTools.trim(relativePath, '/').split('/');
-			for (i in 0...folders.length)
-			{
-				var className = folders.slice(0,i).join('.') + '.Bootstrap';
-				var clas : Class<HaqBootstrap> = untyped Type.resolveClass(className);
-				if (clas != null)
-				{
-					var b : HaqBootstrap = Type.createInstance(clas, []);
-					b.init(config);
-				}
-			}
-		}
-		
-		/**
-		 * Преобразует дисковый путь (path) в виртуальный (url).
-		 * @param string $path
-		 * @return string
-		 */
-		static public function path2url(path:String) : String
-		{   
-			var realPath = FileSystem.fullPath('').replace("\\", '/') + '/' + path.trim('/\\');
-			var rootPath:String = StringTools.replace(Web.getDocumentRoot(), "\\", '/');
-			if (!StringTools.startsWith(realPath, rootPath))
-			{
-				throw "Can't resolve path '" + path + "' with realPath = '" + realPath + "' and rootPath = '" + rootPath + "'.";
-			}
-			var n = rootPath.length;
-			var s = realPath.substr(n);
-			return '/' + s.ltrim('/');
-		}
-		
-		static public function jsEscape(s:String) : String
-		{
-			return untyped __call__('addcslashes', s, "\'\"\t\r\n\\");
-		}
-		
-		static function isNull(e:Dynamic) : Bool
-		{
-			return untyped __physeq__(e, null);
-		}
-		
 		static function trace(v:Dynamic, ?pos : haxe.PosInfos) : Void
 		{
 			if (HaQuery.config.filterTracesByIP!='')
@@ -229,6 +183,60 @@ class HaQuery
 				f.writeString(text != '' ? StringTools.format('%.3f', (Date.now().getTime() - startTime) / 1000.0) + " " + StringTools.replace(text, "\n", "\n\t") + "\n" : "\n");
 				f.close();
 			}
+		}
+    #else
+		static function trace(v:Dynamic, ?pos : haxe.PosInfos) : Void
+		{
+            // DO NOTHING
+        }
+    #end
+    
+    #if php
+		/**
+		 * Загружает файлы bootstrap.php, которые ищет в папках начиная от текущей и до $relativePath.
+		 * @param type $relativePath
+		 */
+		private static function loadBootstraps(relativePath:String) : Void
+		{
+			var folders = StringTools.trim(relativePath, '/').split('/');
+			for (i in 0...folders.length)
+			{
+				var className = folders.slice(0,i).join('.') + '.Bootstrap';
+				var clas : Class<HaqBootstrap> = untyped Type.resolveClass(className);
+				if (clas != null)
+				{
+					var b : HaqBootstrap = Type.createInstance(clas, []);
+					b.init(config);
+				}
+			}
+		}
+		
+		/**
+		 * Преобразует дисковый путь (path) в виртуальный (url).
+		 * @param string $path
+		 * @return string
+		 */
+		static public function path2url(path:String) : String
+		{   
+			var realPath = FileSystem.fullPath('').replace("\\", '/') + '/' + path.trim('/\\');
+			var rootPath:String = StringTools.replace(Web.getDocumentRoot(), "\\", '/');
+			if (!StringTools.startsWith(realPath, rootPath))
+			{
+				throw "Can't resolve path '" + path + "' with realPath = '" + realPath + "' and rootPath = '" + rootPath + "'.";
+			}
+			var n = rootPath.length;
+			var s = realPath.substr(n);
+			return '/' + s.ltrim('/');
+		}
+		
+		static public function jsEscape(s:String) : String
+		{
+			return untyped __call__('addcslashes', s, "\'\"\t\r\n\\");
+		}
+		
+		static function isNull(e:Dynamic) : Bool
+		{
+			return untyped __physeq__(e, null);
 		}
 		
 		public static function traceException(e:Dynamic) : Void
