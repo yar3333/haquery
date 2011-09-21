@@ -42,8 +42,20 @@ class HaqComponentManager
 	public function createPage(path:String, attr:Hash<String>) : HaqPage
 	{
 		var className = path.replace('/', '.') + '.Server';
-		if (Type.resolveClass(className) == null) className = 'haquery.server.HaqPage';
-		var pageClass = Type.resolveClass(className);
+		
+        var standardPageClass = Type.resolveClass('haquery.server.HaqPage');
+        var pageClass = Type.resolveClass(className);
+        if (pageClass == null)
+        {
+            pageClass = standardPageClass;
+        }
+        else
+        {
+            if (!HaqTools.isClassHasSuperClass(pageClass, standardPageClass))
+            {
+                throw "Class '" + className + "' must be inherited from '" + Type.getClassName(standardPageClass) + "'.";
+            }
+        }
 		
 		var doc = templates.getPageTemplateDoc(path);
 		var page : HaqPage = cast(newComponent(null, cast pageClass, '', '', doc, attr, null), HaqPage);

@@ -18,38 +18,44 @@ class HaqComponentManager
 	
 	public function createComponent(parent:HaqComponent, tag:String, id:String) : HaqComponent
     {
-		var clas : Class<HaqComponent>;
+		var pageClass : Class<HaqComponent>;
 		if (parent != null)
 		{
-			clas = templates.get(tag).clas;
+			pageClass = templates.get(tag).clas;
 		}
 		else
 		{
-			var pagePath = Lib.window.location.pathname;
+            var standardPageClass : Class<HaqComponent> = untyped Type.resolveClass('haquery.client.HaqPage');
+			
+            var pagePath = Lib.window.location.pathname;
 			if (pagePath.startsWith("/")) pagePath = pagePath.substr(1);
 			if (pagePath.endsWith("/")) pagePath = pagePath.substr(0, pagePath.length - 1);
 			if (pagePath == '') pagePath = 'index';
 			var baseClassName = HaQuery.folders.pages.replace('/\\', '.') + '.' + pagePath.replace('/', '.');
-			clas = untyped Type.resolveClass(baseClassName+'.index.Client');
-			if (clas == null) 
+			pageClass = untyped Type.resolveClass(baseClassName+'.index.Client');
+			if (pageClass == null) 
             {
-                clas = untyped Type.resolveClass(baseClassName + '.Client');
-                if (clas == null)
+                pageClass = untyped Type.resolveClass(baseClassName + '.Client');
+                if (pageClass == null)
                 {
-                    clas = untyped Type.resolveClass('haquery.client.HaqPage');
+                    pageClass = standardPageClass;
                 }
+            }
+            
+            if (!HaqTools.isClassHasSuperClass(pageClass, standardPageClass))
+            {
+                throw "Class '" + Type.getClassName(pageClass) + "' must be inherited from '" + Type.getClassName(standardPageClass) + "'.";
             }
 		}
 		
-		var component : HaqComponent = untyped Type.createInstance(clas, []);
+		var component : HaqComponent = untyped Type.createInstance(pageClass, []);
         if (Reflect.isFunction(Reflect.field(component, 'construct')))
         {
             component.construct(this, parent, tag, id, templates.get(tag).elemID_serverHandlers);
         }
         else
         {
-            trace(Reflect.fields(component));
-            throw "Component client class '" + Type.getClassName(clas) + "' must be inherited from class 'haquery.client.HaqComponent'.";
+            throw "Component client class '" + Type.getClassName(pageClass) + "' must be inherited from class 'haquery.client.HaqComponent'.";
         }
 
         return component;
