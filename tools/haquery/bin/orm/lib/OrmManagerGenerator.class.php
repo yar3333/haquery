@@ -29,7 +29,7 @@ class OrmManagerGenerator {
 		$model->addMethod("newModelFromRow", new _hx_array(array(OrmTools::createVar("d", "Dynamic", null))), $modelFullClassName, "var _obj = new " . $modelFullClassName . "();\x0A" . Lambda::map($vars, array(new _hx_lambda(array(&$baseFullClassName, &$fullClassName, &$model, &$modelFullClassName, &$table, &$vars), "OrmManagerGenerator_1"), 'execute'))->join("\x0A") . "\x0A" . "return _obj;", true, null);
 		$getVars = Lambda::filter($vars, array(new _hx_lambda(array(&$baseFullClassName, &$fullClassName, &$model, &$modelFullClassName, &$table, &$vars), "OrmManagerGenerator_2"), 'execute'));
 		if($getVars->length > 0) {
-			$model->addMethod("get", $getVars, $modelFullClassName, "return getObjectBySql('SELECT * FROM `" . $table . "`" . OrmManagerGenerator::getWhereSql($getVars) . ");", null, null);
+			$model->addMethod("get", $getVars, $modelFullClassName, "return getBySql('SELECT * FROM `" . $table . "`" . OrmManagerGenerator::getWhereSql($getVars) . ");", null, null);
 		}
 		$createVars = Lambda::filter($vars, array(new _hx_lambda(array(&$baseFullClassName, &$fullClassName, &$getVars, &$model, &$modelFullClassName, &$table, &$vars), "OrmManagerGenerator_3"), 'execute'));
 		$foreignKeys = haquery_server_db_HaqDb::$connection->getForeignKeys($table);
@@ -40,9 +40,9 @@ class OrmManagerGenerator {
 			$deleteVars = $vars;
 		}
 		$model->addMethod("delete", $deleteVars, "Void", "HaqDb.query('DELETE FROM `" . $table . "`" . OrmManagerGenerator::getWhereSql($deleteVars) . " + ' LIMIT 1');", null, null);
-		$model->addMethod("getAll", new _hx_array(array(OrmTools::createVar("_order", "String", OrmManagerGenerator::getOrderDefVal($vars)))), "Array<" . $modelFullClassName . ">", "return getObjectsBySql('SELECT * FROM `" . $table . "`' + (_order != null ? ' ORDER BY ' + _order : ''));", null, null);
-		$model->addMethod("getObjectBySql", new _hx_array(array(OrmTools::createVar("sql", "String", null))), $modelFullClassName, "var rows : ResultSet = HaqDb.query(sql + ' LIMIT 1');\x0A" . "if (rows.length == 0) return null;\x0A" . "return newModelFromRow(rows.next());", null, null);
-		$model->addMethod("getObjectsBySql", new _hx_array(array(OrmTools::createVar("sql", "String", null))), "Array<" . $modelFullClassName . ">", "var rows : ResultSet = HaqDb.query(sql);\x0A" . "var list : Array<" . $modelFullClassName . "> = [];\x0A" . "for (row in rows)\x0A" . "{\x0A" . "\x09list.push(newModelFromRow(row));\x0A" . "}\x0A" . "return list;", null, null);
+		$model->addMethod("getAll", new _hx_array(array(OrmTools::createVar("_order", "String", OrmManagerGenerator::getOrderDefVal($vars)))), "Array<" . $modelFullClassName . ">", "return getsBySql('SELECT * FROM `" . $table . "`' + (_order != null ? ' ORDER BY ' + _order : ''));", null, null);
+		$model->addMethod("getBySql", new _hx_array(array(OrmTools::createVar("sql", "String", null))), $modelFullClassName, "var rows : ResultSet = HaqDb.query(sql + ' LIMIT 1');\x0A" . "if (rows.length == 0) return null;\x0A" . "return newModelFromRow(rows.next());", null, null);
+		$model->addMethod("getsBySql", new _hx_array(array(OrmTools::createVar("sql", "String", null))), "Array<" . $modelFullClassName . ">", "var rows : ResultSet = HaqDb.query(sql);\x0A" . "var list : Array<" . $modelFullClassName . "> = [];\x0A" . "for (row in rows)\x0A" . "{\x0A" . "\x09list.push(newModelFromRow(row));\x0A" . "}\x0A" . "return list;", null, null);
 		{
 			$_g = 0; $_g1 = haquery_server_db_HaqDb::$connection->getUniqueFields($table);
 			while($_g < $_g1->length) {
@@ -85,7 +85,7 @@ class OrmManagerGenerator {
 			$GLOBALS['%s']->pop();
 			return;
 		}
-		$model->addMethod("getBy" . Lambda::map($whereVars, array(new _hx_lambda(array(&$model, &$modelFullClassName, &$table, &$vars, &$whereVars), "OrmManagerGenerator_11"), 'execute'))->join("And"), $whereVars, $modelFullClassName, "return getObjectBySql('SELECT * FROM `" . $table . "`" . OrmManagerGenerator::getWhereSql($whereVars) . ");", null, null);
+		$model->addMethod("getBy" . Lambda::map($whereVars, array(new _hx_lambda(array(&$model, &$modelFullClassName, &$table, &$vars, &$whereVars), "OrmManagerGenerator_11"), 'execute'))->join("And"), $whereVars, $modelFullClassName, "return getBySql('SELECT * FROM `" . $table . "`" . OrmManagerGenerator::getWhereSql($whereVars) . ");", null, null);
 		$GLOBALS['%s']->pop();
 	}
 	static function createGetsByMethod($table, $vars, $modelFullClassName, $whereVars, $model) {
@@ -95,7 +95,7 @@ class OrmManagerGenerator {
 			$GLOBALS['%s']->pop();
 			return;
 		}
-		$model->addMethod("getBy" . Lambda::map($whereVars, array(new _hx_lambda(array(&$model, &$modelFullClassName, &$table, &$vars, &$whereVars), "OrmManagerGenerator_12"), 'execute'))->join("And"), Lambda::concat($whereVars, new _hx_array(array(OrmTools::createVar("_order", "String", OrmManagerGenerator::getOrderDefVal($vars))))), "Array<" . $modelFullClassName . ">", "return getObjectsBySql('SELECT * FROM `" . $table . "`" . OrmManagerGenerator::getWhereSql($whereVars) . " + (_order != null ? ' ORDER BY ' + _order : ''));", null, null);
+		$model->addMethod("getBy" . Lambda::map($whereVars, array(new _hx_lambda(array(&$model, &$modelFullClassName, &$table, &$vars, &$whereVars), "OrmManagerGenerator_12"), 'execute'))->join("And"), Lambda::concat($whereVars, new _hx_array(array(OrmTools::createVar("_order", "String", OrmManagerGenerator::getOrderDefVal($vars))))), "Array<" . $modelFullClassName . ">", "return getsBySql('SELECT * FROM `" . $table . "`" . OrmManagerGenerator::getWhereSql($whereVars) . " + (_order != null ? ' ORDER BY ' + _order : ''));", null, null);
 		$GLOBALS['%s']->pop();
 	}
 	static function getOrderDefVal($vars) {
