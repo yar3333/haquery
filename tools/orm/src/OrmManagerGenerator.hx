@@ -58,7 +58,7 @@ class OrmManagerGenerator
 		if (getVars.length > 0)
 		{
 			model.addMethod('get', getVars, modelFullClassName,
-				"return getObjectBySql('SELECT * FROM `" + table + "`" + getWhereSql(getVars) + ");"
+				"return getBySql('SELECT * FROM `" + table + "`" + getWhereSql(getVars) + ");"
 			);
 		}
 		
@@ -92,16 +92,16 @@ class OrmManagerGenerator
 		);
 		
 		model.addMethod('getAll', [ OrmTools.createVar('_order', 'String', getOrderDefVal(vars)) ], 'Array<'+modelFullClassName+'>',
-			 "return getObjectsBySql('SELECT * FROM `" + table + "`' + (_order != null ? ' ORDER BY ' + _order : ''));"
+			 "return getsBySql('SELECT * FROM `" + table + "`' + (_order != null ? ' ORDER BY ' + _order : ''));"
 		);
 		
-		model.addMethod('getObjectBySql', [ OrmTools.createVar('sql', 'String') ], modelFullClassName,
+		model.addMethod('getBySql', [ OrmTools.createVar('sql', 'String') ], modelFullClassName,
 			 "var rows : ResultSet = HaqDb.query(sql + ' LIMIT 1');\n"
 			+"if (rows.length == 0) return null;\n"
 			+"return newModelFromRow(rows.next());"
 		);
 		
-		model.addMethod('getObjectsBySql', [ OrmTools.createVar('sql', 'String') ], 'Array<'+modelFullClassName+'>',
+		model.addMethod('getsBySql', [ OrmTools.createVar('sql', 'String') ], 'Array<'+modelFullClassName+'>',
 			 "var rows : ResultSet = HaqDb.query(sql);\n"
 			+"var list : Array<" + modelFullClassName + "> = [];\n"
 			+"for (row in rows)\n"
@@ -145,7 +145,7 @@ class OrmManagerGenerator
 			whereVars, 
 			modelFullClassName,
 			
-			"return getObjectBySql('SELECT * FROM `" + table + "`" + getWhereSql(whereVars) + ");"
+			"return getBySql('SELECT * FROM `" + table + "`" + getWhereSql(whereVars) + ");"
 		);
 	}
 	
@@ -158,7 +158,7 @@ class OrmManagerGenerator
 			Lambda.concat(whereVars, [ OrmTools.createVar('_order', 'String', getOrderDefVal(vars)) ]), 
 			'Array<' + modelFullClassName + '>',
 			
-			"return getObjectsBySql('SELECT * FROM `" + table + "`" + getWhereSql(whereVars) + " + (_order != null ? ' ORDER BY ' + _order : ''));"
+			"return getsBySql('SELECT * FROM `" + table + "`" + getWhereSql(whereVars) + " + (_order != null ? ' ORDER BY ' + _order : ''));"
 		);
 	}
 	
