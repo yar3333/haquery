@@ -32,5 +32,5 @@ interface HaqDbDriver
 	function getTables() : Array<String>;
     function getFields(table:String) : Array<HaqDbTableFieldData>;
 	function getForeignKeys(table:String) : Array<HaqDbTableForeignKey>;
-	function getUniqueFields(table:String) : Array<String>;
+	function getUniques(table:String) : Hash<Array<String>>;
 }
