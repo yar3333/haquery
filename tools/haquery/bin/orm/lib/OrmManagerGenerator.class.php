@@ -29,7 +29,7 @@ class OrmManagerGenerator {
 		$model->addMethod("newModelFromRow", new _hx_array(array(OrmTools::createVar("d", "Dynamic", null))), $modelFullClassName, "var _obj = new " . $modelFullClassName . "();\x0A" . Lambda::map($vars, array(new _hx_lambda(array(&$baseFullClassName, &$fullClassName, &$model, &$modelFullClassName, &$table, &$vars), "OrmManagerGenerator_1"), 'execute'))->join("\x0A") . "\x0A" . "return _obj;", true, null);
 		$getVars = Lambda::filter($vars, array(new _hx_lambda(array(&$baseFullClassName, &$fullClassName, &$model, &$modelFullClassName, &$table, &$vars), "OrmManagerGenerator_2"), 'execute'));
 		if($getVars->length > 0) {
-			$model->addMethod("get", $getVars, $modelFullClassName, "return getBySql('SELECT * FROM `" . $table . "`" . OrmManagerGenerator::getWhereSql($getVars) . ");", null, null);
+			$model->addMethod("get", $getVars, $modelFullClassName, "return getBySqlOne('SELECT * FROM `" . $table . "`" . OrmManagerGenerator::getWhereSql($getVars) . ");", null, null);
 		}
 		$createVars = Lambda::filter($vars, array(new _hx_lambda(array(&$baseFullClassName, &$fullClassName, &$getVars, &$model, &$modelFullClassName, &$table, &$vars), "OrmManagerGenerator_3"), 'execute'));
 		$foreignKeys = haquery_server_db_HaqDb::$connection->getForeignKeys($table);
@@ -40,9 +40,9 @@ class OrmManagerGenerator {
 			$deleteVars = $vars;
 		}
 		$model->addMethod("delete", $deleteVars, "Void", "HaqDb.query('DELETE FROM `" . $table . "`" . OrmManagerGenerator::getWhereSql($deleteVars) . " + ' LIMIT 1');", null, null);
-		$model->addMethod("getsAll", new _hx_array(array(OrmTools::createVar("_order", "String", OrmManagerGenerator::getOrderDefVal($vars)))), "Array<" . $modelFullClassName . ">", "return getsBySql('SELECT * FROM `" . $table . "`' + (_order != null ? ' ORDER BY ' + _order : ''));", null, null);
-		$model->addMethod("getBySql", new _hx_array(array(OrmTools::createVar("sql", "String", null))), $modelFullClassName, "var rows : ResultSet = HaqDb.query(sql + ' LIMIT 1');\x0A" . "if (rows.length == 0) return null;\x0A" . "return newModelFromRow(rows.next());", null, null);
-		$model->addMethod("getsBySql", new _hx_array(array(OrmTools::createVar("sql", "String", null))), "Array<" . $modelFullClassName . ">", "var rows : ResultSet = HaqDb.query(sql);\x0A" . "var list : Array<" . $modelFullClassName . "> = [];\x0A" . "for (row in rows)\x0A" . "{\x0A" . "\x09list.push(newModelFromRow(row));\x0A" . "}\x0A" . "return list;", null, null);
+		$model->addMethod("getAll", new _hx_array(array(OrmTools::createVar("_order", "String", OrmManagerGenerator::getOrderDefVal($vars)))), "Array<" . $modelFullClassName . ">", "return getBySqlMany('SELECT * FROM `" . $table . "`' + (_order != null ? ' ORDER BY ' + _order : ''));", null, null);
+		$model->addMethod("getBySqlOne", new _hx_array(array(OrmTools::createVar("sql", "String", null))), $modelFullClassName, "var rows : ResultSet = HaqDb.query(sql + ' LIMIT 1');\x0A" . "if (rows.length == 0) return null;\x0A" . "return newModelFromRow(rows.next());", null, null);
+		$model->addMethod("getBySqlMany", new _hx_array(array(OrmTools::createVar("sql", "String", null))), "Array<" . $modelFullClassName . ">", "var rows : ResultSet = HaqDb.query(sql);\x0A" . "var list : Array<" . $modelFullClassName . "> = [];\x0A" . "for (row in rows)\x0A" . "{\x0A" . "\x09list.push(newModelFromRow(row));\x0A" . "}\x0A" . "return list;", null, null);
 		$uniques = haquery_server_db_HaqDb::$connection->getUniques($table);
 		if(null == $uniques) throw new HException('null iterable');
 		$蜴t = $uniques->keys();
@@ -50,14 +50,14 @@ class OrmManagerGenerator {
 			$uniqueName = $蜴t->next();
 			$uniqueFields = $uniques->get($uniqueName);
 			$vs = Lambda::filter($vars, array(new _hx_lambda(array(&$baseFullClassName, &$createVars, &$deleteVars, &$foreignKeyVars, &$foreignKeys, &$fullClassName, &$getVars, &$model, &$modelFullClassName, &$table, &$uniqueFields, &$uniqueName, &$uniques, &$vars), "OrmManagerGenerator_10"), 'execute'));
-			OrmManagerGenerator::createGetByMethod($table, $vars, $modelFullClassName, $vs, $model);
+			OrmManagerGenerator::createGetByMethodOne($table, $vars, $modelFullClassName, $vs, $model);
 			unset($vs,$uniqueFields);
 		}
 		if(null == OrmManagerGenerator::getForeignKeyVars($table, $vars)) throw new HException('null iterable');
 		$蜴t = OrmManagerGenerator::getForeignKeyVars($table, $vars)->iterator();
 		while($蜴t->hasNext()) {
 			$v = $蜴t->next();
-			OrmManagerGenerator::createGetsByMethod($table, $vars, $modelFullClassName, new _hx_array(array($v)), $model);
+			OrmManagerGenerator::createGetByMethodMany($table, $vars, $modelFullClassName, new _hx_array(array($v)), $model);
 		}
 		{
 			$GLOBALS['%s']->pop();
@@ -78,24 +78,24 @@ class OrmManagerGenerator {
 		}
 		$GLOBALS['%s']->pop();
 	}
-	static function createGetByMethod($table, $vars, $modelFullClassName, $whereVars, $model) {
-		$GLOBALS['%s']->push("OrmManagerGenerator::createGetByMethod");
+	static function createGetByMethodOne($table, $vars, $modelFullClassName, $whereVars, $model) {
+		$GLOBALS['%s']->push("OrmManagerGenerator::createGetByMethodOne");
 		$製pos = $GLOBALS['%s']->length;
 		if($whereVars === null || $whereVars->length === 0) {
 			$GLOBALS['%s']->pop();
 			return;
 		}
-		$model->addMethod("getBy" . Lambda::map($whereVars, array(new _hx_lambda(array(&$model, &$modelFullClassName, &$table, &$vars, &$whereVars), "OrmManagerGenerator_11"), 'execute'))->join("And"), $whereVars, $modelFullClassName, "return getBySql('SELECT * FROM `" . $table . "`" . OrmManagerGenerator::getWhereSql($whereVars) . ");", null, null);
+		$model->addMethod("getBy" . Lambda::map($whereVars, array(new _hx_lambda(array(&$model, &$modelFullClassName, &$table, &$vars, &$whereVars), "OrmManagerGenerator_11"), 'execute'))->join("And"), $whereVars, $modelFullClassName, "return getBySqlOne('SELECT * FROM `" . $table . "`" . OrmManagerGenerator::getWhereSql($whereVars) . ");", null, null);
 		$GLOBALS['%s']->pop();
 	}
-	static function createGetsByMethod($table, $vars, $modelFullClassName, $whereVars, $model) {
-		$GLOBALS['%s']->push("OrmManagerGenerator::createGetsByMethod");
+	static function createGetByMethodMany($table, $vars, $modelFullClassName, $whereVars, $model) {
+		$GLOBALS['%s']->push("OrmManagerGenerator::createGetByMethodMany");
 		$製pos = $GLOBALS['%s']->length;
 		if($whereVars === null || !$whereVars->iterator()->hasNext()) {
 			$GLOBALS['%s']->pop();
 			return;
 		}
-		$model->addMethod("getsBy" . Lambda::map($whereVars, array(new _hx_lambda(array(&$model, &$modelFullClassName, &$table, &$vars, &$whereVars), "OrmManagerGenerator_12"), 'execute'))->join("And"), Lambda::concat($whereVars, new _hx_array(array(OrmTools::createVar("_order", "String", OrmManagerGenerator::getOrderDefVal($vars))))), "Array<" . $modelFullClassName . ">", "return getsBySql('SELECT * FROM `" . $table . "`" . OrmManagerGenerator::getWhereSql($whereVars) . " + (_order != null ? ' ORDER BY ' + _order : ''));", null, null);
+		$model->addMethod("getBy" . Lambda::map($whereVars, array(new _hx_lambda(array(&$model, &$modelFullClassName, &$table, &$vars, &$whereVars), "OrmManagerGenerator_12"), 'execute'))->join("And"), Lambda::concat($whereVars, new _hx_array(array(OrmTools::createVar("_order", "String", OrmManagerGenerator::getOrderDefVal($vars))))), "Array<" . $modelFullClassName . ">", "return getBySqlMany('SELECT * FROM `" . $table . "`" . OrmManagerGenerator::getWhereSql($whereVars) . " + (_order != null ? ' ORDER BY ' + _order : ''));", null, null);
 		$GLOBALS['%s']->pop();
 	}
 	static function getOrderDefVal($vars) {
@@ -273,7 +273,7 @@ function OrmManagerGenerator_10(&$baseFullClassName, &$createVars, &$deleteVars,
 function OrmManagerGenerator_11(&$model, &$modelFullClassName, &$table, &$vars, &$whereVars, $v) {
 	$製pos = $GLOBALS['%s']->length;
 	{
-		$GLOBALS['%s']->push("OrmManagerGenerator::createGetByMethod@147");
+		$GLOBALS['%s']->push("OrmManagerGenerator::createGetByMethodOne@147");
 		$製pos2 = $GLOBALS['%s']->length;
 		{
 			$裨mp = OrmTools::capitalize($v->haxeName);
@@ -286,7 +286,7 @@ function OrmManagerGenerator_11(&$model, &$modelFullClassName, &$table, &$vars, 
 function OrmManagerGenerator_12(&$model, &$modelFullClassName, &$table, &$vars, &$whereVars, $v) {
 	$製pos = $GLOBALS['%s']->length;
 	{
-		$GLOBALS['%s']->push("OrmManagerGenerator::createGetsByMethod@160");
+		$GLOBALS['%s']->push("OrmManagerGenerator::createGetByMethodMany@160");
 		$製pos2 = $GLOBALS['%s']->length;
 		{
 			$裨mp = OrmTools::capitalize($v->haxeName);
