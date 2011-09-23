@@ -142,7 +142,6 @@ class HaqDbDriver_mysql implements HaqDbDriver
     AND u.table_name = '" + table + "'
   ORDER BY u.table_schema, u.table_name, u.column_name;
 ";
-        
 		var rows : ResultSet = query(sql);
 		var r = new Array<HaqDbTableForeignKey>();
 		for (row in rows)
@@ -152,13 +151,18 @@ class HaqDbDriver_mysql implements HaqDbDriver
 		return r;
     }
 	
-	public function getUniqueFields(table:String) : Array<String>
+	public function getUniques(table:String) : Hash<Array<String>>
 	{
 		var rows : ResultSet = query("SHOW INDEX FROM `" + table + "` WHERE Non_unique=0 AND Key_name<>'PRIMARY'");
-		var r = new Array<String>();
+		var r = new Hash<Array<String>>();
 		for (row in rows)
 		{
-			r.push(row.Column_name);
+			var key = row.Key_name;
+            if (!r.exists(key))
+            {
+                r.set(key, new Array<String>());
+            }
+            r.get(key).push(row.Column_name);
 		}
 		return r;
 	}

@@ -9,5 +9,5 @@ interface haquery_server_db_HaqDbDriver {
 	function getTables();
 	function getFields($table);
 	function getForeignKeys($table);
-	function getUniqueFields($table);
+	function getUniques($table);
 }

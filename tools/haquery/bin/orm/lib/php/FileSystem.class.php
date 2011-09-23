@@ -126,15 +126,5 @@ class php_FileSystem {
 		}
 		$GLOBALS['%s']->pop();
 	}
-	static function setCurrentDirectory($path) {
-		$GLOBALS['%s']->push("php.FileSystem::setCurrentDirectory");
-		$»spos = $GLOBALS['%s']->length;
-		{
-			$»tmp = @chdir ($path);
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
-	}
 	function __toString() { return 'php.FileSystem'; }
 }

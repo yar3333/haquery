@@ -46,10 +46,15 @@ class haquery_server_HaqComponentManager {
 		$GLOBALS['%s']->push("haquery.server.HaqComponentManager::createPage");
 		$製pos = $GLOBALS['%s']->length;
 		$className = str_replace("/", ".", $path) . ".Server";
-		if(Type::resolveClass($className) === null) {
-			$className = "haquery.server.HaqPage";
-		}
+		$standardPageClass = Type::resolveClass("haquery.server.HaqPage");
 		$pageClass = Type::resolveClass($className);
+		if($pageClass === null) {
+			$pageClass = $standardPageClass;
+		} else {
+			if(!haquery_base_HaqTools::isClassHasSuperClass($pageClass, $standardPageClass)) {
+				throw new HException("Class '" . $className . "' must be inherited from '" . Type::getClassName($standardPageClass) . "'.");
+			}
+		}
 		$doc = $this->templates->getPageTemplateDoc($path);
 		$page = $this->newComponent(null, $pageClass, "", "", $doc, $attr, null);
 		{
@@ -169,7 +174,7 @@ class haquery_server_HaqComponentManager {
 function haquery_server_HaqComponentManager_0(&$components, &$path, &$s, &$tag, &$tags, $x) {
 	$製pos = $GLOBALS['%s']->length;
 	{
-		$GLOBALS['%s']->push("haquery.server.HaqComponentManager::getInternalDataForPageHtml@97");
+		$GLOBALS['%s']->push("haquery.server.HaqComponentManager::getInternalDataForPageHtml@109");
 		$製pos2 = $GLOBALS['%s']->length;
 		while($x !== null) {
 			if(!$x->visible) {
@@ -188,7 +193,7 @@ function haquery_server_HaqComponentManager_0(&$components, &$path, &$s, &$tag, 
 function haquery_server_HaqComponentManager_1(&$components, &$path, &$s, &$tag, &$tags, &$visibledComponents, $x) {
 	$製pos = $GLOBALS['%s']->length;
 	{
-		$GLOBALS['%s']->push("haquery.server.HaqComponentManager::getInternalDataForPageHtml@105");
+		$GLOBALS['%s']->push("haquery.server.HaqComponentManager::getInternalDataForPageHtml@117");
 		$製pos2 = $GLOBALS['%s']->length;
 		{
 			$裨mp = $x->fullID;

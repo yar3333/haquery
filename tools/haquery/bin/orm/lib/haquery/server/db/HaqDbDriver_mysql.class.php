@@ -175,15 +175,20 @@ class haquery_server_db_HaqDbDriver_mysql implements haquery_server_db_HaqDbDriv
 		}
 		$GLOBALS['%s']->pop();
 	}
-	public function getUniqueFields($table) {
-		$GLOBALS['%s']->push("haquery.server.db.HaqDbDriver_mysql::getUniqueFields");
+	public function getUniques($table) {
+		$GLOBALS['%s']->push("haquery.server.db.HaqDbDriver_mysql::getUniques");
 		$»spos = $GLOBALS['%s']->length;
 		$rows = $this->query("SHOW INDEX FROM `" . $table . "` WHERE Non_unique=0 AND Key_name<>'PRIMARY'");
-		$r = new _hx_array(array());
+		$r = new Hash();
 		$»it = $rows;
 		while($»it->hasNext()) {
 			$row = $»it->next();
-			$r->push($row->Column_name);
+			$key = $row->Key_name;
+			if(!$r->exists($key)) {
+				$r->set($key, new _hx_array(array()));
+			}
+			$r->get($key)->push($row->Column_name);
+			unset($key);
 		}
 		{
 			$GLOBALS['%s']->pop();

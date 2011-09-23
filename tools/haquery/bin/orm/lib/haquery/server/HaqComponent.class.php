@@ -177,7 +177,7 @@ class haquery_server_HaqComponent extends haquery_base_HaqComponent {
 		$GLOBALS['%s']->push("haquery.server.HaqComponent::callClientMethod");
 		$»spos = $GLOBALS['%s']->length;
 		$funcName = haquery_server_HaqComponent_0($this, $method, $params);
-		haquery_server_HaqInternals::addAjaxAnswer(haquery_server_HaqTools::getCallClientFunctionString($funcName, $params) . ";");
+		haquery_server_HaqInternals::addAjaxAnswer(haquery_base_HaqTools::getCallClientFunctionString($funcName, $params) . ";");
 		$GLOBALS['%s']->pop();
 	}
 	public function callElemEventHandler($elemID, $eventName) {

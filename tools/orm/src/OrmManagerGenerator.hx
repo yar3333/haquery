@@ -111,9 +111,12 @@ class OrmManagerGenerator
 			+"return list;"
 		);
 		
-		for (uniqueField in HaqDb.connection.getUniqueFields(table))
+		var uniques = HaqDb.connection.getUniques(table);
+        for (uniqueName in uniques.keys())
 		{
-			var vs = Lambda.filter(vars, function(v) { return v.name == uniqueField; } );
+			var uniqueFields = uniques.get(uniqueName);
+            
+            var vs = Lambda.filter(vars, function(v) { return Lambda.has(uniqueFields, v.name); } );
 			createGetByMethod(table, vars, modelFullClassName, vs, model);
 		}
 		
