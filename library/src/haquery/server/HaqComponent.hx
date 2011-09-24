@@ -140,6 +140,7 @@ class HaqComponent extends haquery.base.HaqComponent
                     else
                     {
                         node.remove();
+                        i--;
                     }
                 }
             }
