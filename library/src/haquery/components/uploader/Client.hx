@@ -6,6 +6,8 @@ import haquery.client.HaqQuery;
 import js.jQuery.JQuery;
 import js.Dom;
 
+using haquery.StringTools;
+
 class Client extends Base
 {
     var event_select : HaqEvent;
@@ -40,6 +42,12 @@ class Client extends Base
     public function file_change() : Bool
     {
         var fileName : String = q('#file').val();
+        fileName = fileName.replace('\\', '/');
+        if (fileName.lastIndexOf('/') > 0)
+        {
+            fileName = fileName.substr(fileName.lastIndexOf('/') + 1);
+        }
+        
         var filter = q('#filter').val();
         if (filter != '')
         {
