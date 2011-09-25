@@ -23,7 +23,7 @@ class Server extends HaqComponent
         customData = null;
     }
     
-    public function init() : Void
+    function init() : Void
     {
         if (!HaQuery.isPostback)
         {
@@ -36,7 +36,7 @@ class Server extends HaqComponent
         }
     }
 
-    public function preRender() : Void
+    function preRender() : Void
     {
         manager.registerScript(tag, 'lib/codemirror.js');
         if (mode == 'htmlmixed')

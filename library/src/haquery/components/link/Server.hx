@@ -8,7 +8,7 @@ class Server extends Base
 	public var style : String;
 	public var hidden : Bool;
 	
-    public function preRender()
+    function preRender()
 	{
         q('#href').val(href);
         link.text = text;

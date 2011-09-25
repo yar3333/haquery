@@ -15,12 +15,12 @@ class Client extends Base
     var event_uploading : HaqEvent;
     var event_complete : HaqEvent;
 
-    public function init()
+    function init()
     {
         q("#file").attr("name", q("#file").get(0).id);
     }
 
-    public function container_mousemove(t, e)
+    function container_mousemove(t, e)
     {
         if (!enabled) return;
         
@@ -34,12 +34,12 @@ class Client extends Base
         });
     }
 
-    public function file_mousemove(t, e)
+    function file_mousemove(t, e)
     {
         container_mousemove(t, e);
     }
     
-    public function file_change() : Bool
+    function file_change() : Bool
     {
         var fileName : String = q('#file').val();
         fileName = fileName.replace('\\', '/');
@@ -91,7 +91,7 @@ class Client extends Base
         return true;
     }
     
-    public function fileUploadComplete(errorCode:Int)
+    function fileUploadComplete(errorCode:Int)
     {
         enabled = true;
         event_complete.call([errorCode]);

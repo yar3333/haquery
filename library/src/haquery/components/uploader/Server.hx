@@ -12,7 +12,7 @@ class Server extends Base
 {
     public var filter : String;
     
-    public var event_upload : HaqEvent;
+    var event_upload : HaqEvent;
     
     override function getHeader() : String 
     {
@@ -32,14 +32,14 @@ class Server extends Base
 ';
     }
 
-    public function preRender() : Void
+    function preRender() : Void
     {
         q('#form').attr('target', prefixID + 'frame');
         q('#frame').attr('name', prefixID + 'frame');
         q('#filter').val(filter);
     }
     
-    public function file_upload()
+    function file_upload()
     {
         var files = Web.getFiles();
         var file = files.get(prefixID + 'file');

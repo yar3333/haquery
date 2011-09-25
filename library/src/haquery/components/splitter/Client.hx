@@ -6,7 +6,7 @@ import haquery.client.HaqComponent;
 
 class Client extends HaqComponent
 {
-    public var event_change : HaqEvent;
+    var event_change : HaqEvent;
 
     var k : Float;
     var size : Int;
@@ -33,7 +33,7 @@ class Client extends HaqComponent
     }
     
     
-    public function init()
+    function init()
     {
         untyped q('#s,#f').disableSelection();
         setK(k);

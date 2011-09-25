@@ -10,7 +10,7 @@ class SplitterComponent extends HaqComponent
     public var firstElementID : String;
     public var secondElementID : String;
 
-    public function preRender()
+    function preRender()
     {
         q('#a').html(firstElementID);
         q('#b').html(secondElementID);
