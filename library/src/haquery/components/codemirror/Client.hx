@@ -10,9 +10,9 @@ class Client extends HaqComponent
 {
     var editor : CodeMirror;
     
-    public var event_save : HaqEvent;
+    var event_save : HaqEvent;
 
-    public function init()
+    function init()
     {
         var text = StringTools.unescape(q('#text').val());
         q('#text').val(text);

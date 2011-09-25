@@ -9,7 +9,7 @@ typedef Container = haquery.components.container.Client;
 
 class Client extends Container
 {
-    public function init()
+    function init()
     {
         /*var elems = q('#m>li');
         elems.each(function(index, elem:HtmlDom) {

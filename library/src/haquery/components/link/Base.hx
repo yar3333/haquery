@@ -16,7 +16,7 @@ class Base extends HaqComponent
     var link : haquery.components.button.Client;
     #end
     
-    public function init()
+    function init()
     {
         link = cast components.get('link');
     }

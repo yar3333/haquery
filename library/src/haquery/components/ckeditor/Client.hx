@@ -4,16 +4,16 @@ import haquery.base.HaqEvent;
 
 class Client extends haquery.client.HaqComponent
 {
-    private var editor : CKEditor;
+    var editor : CKEditor;
     
-	public var event_save : HaqEvent;
-    public var event_close : HaqEvent;
+	var event_save : HaqEvent;
+    var event_close : HaqEvent;
 
     public var text(text_getter, text_setter) : String;
 	function text_getter() : String { return editor.getData(); }
 	function text_setter(t:String) : String { editor.setData(t); return t; }
     
-	public function init()
+	function init()
     {
         var self = this;
 		editor = CKEditor.replace(q('#e')[0].id, {

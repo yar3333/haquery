@@ -6,10 +6,10 @@ import haquery.client.HaqComponent;
 
 class Client extends HaqComponent
 {
-    public var event_selected : HaqEvent;
-    public var event_hided : HaqEvent;
+    var event_selected : HaqEvent;
+    var event_hided : HaqEvent;
 
-    public function init()
+    function init()
     {
         var self = this;
         q('#tabs div').click(function(e) {
