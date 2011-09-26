@@ -261,7 +261,7 @@ class HaqTemplates
 		var templatePath = pageFolder + 'template.html';
 		var pageText = FileSystem.exists(templatePath) ? File.getContent(templatePath) : '';
         var pageDoc = new HaqXml(pageText);
-        if (HaQuery.config.layout == null) return pageDoc;
+        if (HaQuery.config.layout == null || HaQuery.config.layout == "") return pageDoc;
         
         if (!FileSystem.exists(HaQuery.config.layout))
         {
