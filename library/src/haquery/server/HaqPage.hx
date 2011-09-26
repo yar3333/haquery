@@ -37,10 +37,15 @@ class HaqPage extends HaqComponent
             throw "HaqPage.insertStyles(): head tag not found.";
         }
         var head : HaqXmlNodeElement = heads[0];
-        var child : HaqXmlNodeElement = head.children[0];
-        while (child != null && child.name != 'link' && (child.getAttribute('rel') != 'stylesheet' || child.getAttribute('type') != 'text/css'))
+        var child : HaqXmlNodeElement = null;
+        var children = Lib.toHaxeArray(head.children);
+        if (children.length > 0)
         {
-            child = child.getNextSiblingElement();
+            child = head.children[0];
+            while (child != null && child.name != 'link' && (child.getAttribute('rel') != 'stylesheet' || child.getAttribute('type') != 'text/css'))
+            {
+                child = child.getNextSiblingElement();
+            }
         }
         head.addChild(new HaqXmlNodeText(text + '\n        '), child);
     }
@@ -54,10 +59,15 @@ class HaqPage extends HaqComponent
             throw "HaqPage.insertScripts(): head tag not found.";
         }
         var head : HaqXmlNodeElement = heads[0];
-        var child : HaqXmlNodeElement = head.children[0];
-        while (child != null && child.name != 'script')
+        var child : HaqXmlNodeElement = null;
+        var children = Lib.toHaxeArray(head.children);
+        if (children.length > 0)
         {
-            child = child.getNextSiblingElement();
+            child = head.children[0];
+            while (child != null && child.name != 'script')
+            {
+                child = child.getNextSiblingElement();
+            }
         }
         head.addChild(new HaqXmlNodeText('    ' + text + '\n    '), child);
     }
