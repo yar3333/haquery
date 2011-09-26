@@ -198,10 +198,10 @@ class HaQuery
 		 */
 		private static function loadBootstraps(relativePath:String) : Void
 		{
-			var folders = StringTools.trim(relativePath, '/').split('/');
-			for (i in 0...folders.length)
+            var folders = StringTools.trim(relativePath, '/').split('/');
+			for (i in 1...folders.length + 1)
 			{
-				var className = folders.slice(0,i).join('.') + '.Bootstrap';
+				var className = folders.slice(0, i).join('.') + '.Bootstrap';
 				var clas : Class<HaqBootstrap> = untyped Type.resolveClass(className);
 				if (clas != null)
 				{
