@@ -26,25 +26,18 @@ class HaqComponentManager
 		else
 		{
             var standardPageClass : Class<HaqComponent> = untyped Type.resolveClass('haquery.client.HaqPage');
-			
-            var pagePath = Lib.window.location.pathname;
-			if (pagePath.startsWith("/")) pagePath = pagePath.substr(1);
-			if (pagePath.endsWith("/")) pagePath = pagePath.substr(0, pagePath.length - 1);
-			if (pagePath == '') pagePath = 'index';
-			var baseClassName = HaQuery.folders.pages.replace('/\\', '.') + '.' + pagePath.replace('/', '.');
-			pageClass = untyped Type.resolveClass(baseClassName+'.index.Client');
+            var pagePath = HaqInternals.pagePackage;
+			pageClass = untyped Type.resolveClass(pagePath + '.Client');
 			if (pageClass == null) 
             {
-                pageClass = untyped Type.resolveClass(baseClassName + '.Client');
-                if (pageClass == null)
-                {
-                    pageClass = standardPageClass;
-                }
+                pageClass = standardPageClass;
             }
-            
-            if (!HaqTools.isClassHasSuperClass(pageClass, standardPageClass))
+            else
             {
-                throw "Class '" + Type.getClassName(pageClass) + "' must be inherited from '" + Type.getClassName(standardPageClass) + "'.";
+                if (!HaqTools.isClassHasSuperClass(pageClass, standardPageClass))
+                {
+                    throw "Class '" + Type.getClassName(pageClass) + "' must be inherited from '" + Type.getClassName(standardPageClass) + "'.";
+                }
             }
 		}
 		

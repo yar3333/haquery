@@ -41,4 +41,7 @@ class HaqInternals
         }
         return serverHandlers_cached;
     }
+    
+    
+    public static var pagePackage : String;
 }
