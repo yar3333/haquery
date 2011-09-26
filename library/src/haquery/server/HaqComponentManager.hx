@@ -125,7 +125,9 @@ class HaqComponentManager
         {
             serverHandlers.set(tag, templates.get(tag).serverHandlers);
         }
-        s += "haquery.client.HaqInternals.serializedServerHandlers = \"" + Serializer.run(serverHandlers) + "\";";
+        s += "haquery.client.HaqInternals.serializedServerHandlers = \"" + Serializer.run(serverHandlers) + "\";\n";
+        
+        s += "haquery.client.HaqInternals.pagePackage = \"" + path.replace('/', '.') + "\";";
 
         return s;
     }
