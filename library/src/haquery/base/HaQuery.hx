@@ -18,14 +18,15 @@ import haxe.Stack;
 	import haquery.server.HaqBootstrap;
 	import haquery.server.HaqSystem;
 	import haquery.server.db.HaqDb;
-	using haquery.StringTools;
+    import haquery.server.HaqProfiler;
 #else
-	import haxe.Firebug;
 	import js.Lib;
+	import haxe.Firebug;
 	import haquery.client.HaqInternals;
 	import haquery.client.HaqSystem;
-	using haquery.StringTools;
 #end
+
+using haquery.StringTools;
 
 class HaQuery
 {
@@ -39,6 +40,8 @@ class HaQuery
 	
 	#if php
 		public static var config : HaqConfig = new HaqConfig();
+        
+        public static var profiler : HaqProfiler = new HaqProfiler();
 
 		/**
 		 * Признак пришедших через ajax данных.
@@ -54,30 +57,35 @@ class HaQuery
     static public function run() : Void
     {
 		#if php
-			startTime = Date.now().getTime();
-			haxe.Log.trace = HaQuery.trace;
-			
-			var route = new HaqRoute(Web.getParams().get('route'));
-			loadBootstraps(route.path);
-			
-			if (HaQuery.config.autoSessionStart)
-			{
-				Session.start();
-			}
+			profiler.begin("HAQUERY");
+        
+                startTime = Date.now().getTime();
+                haxe.Log.trace = HaQuery.trace;
+                
+                var route = new HaqRoute(Web.getParams().get('route'));
+                loadBootstraps(route.path);
+                
+                if (HaQuery.config.autoSessionStart)
+                {
+                    Session.start();
+                }
 
-			if (config.autoDatabaseConnect && config.db.type!=null)
-			{
-				HaqDb.connect(HaQuery.config.db);
-			}
-			
-			if (route.routeType == HaqRouteType.file)
-			{
-				untyped __call__('require', route.path);
-			}
-			else
-			{
-				var system = new HaqSystem(route);
-			}
+                if (config.autoDatabaseConnect && config.db.type!=null)
+                {
+                    HaqDb.connect(HaQuery.config.db);
+                }
+                
+                if (route.routeType == HaqRouteType.file)
+                {
+                    untyped __call__('require', route.path);
+                }
+                else
+                {
+                    var system = new HaqSystem(route);
+                }
+        
+            profiler.end();
+            profiler.traceResults();
 		#else
 			if (Firebug.detect()) Firebug.redirectTraces();
             else                  haxe.Log.trace = HaQuery.trace;

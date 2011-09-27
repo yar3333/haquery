@@ -47,11 +47,6 @@ class HaqConfig
     public var isTraceComponent : Bool;
 
     /**
-     * Логгировать ли информацию о скорости работы.
-     */
-    public var isTraceProfiler : Bool;
-
-    /**
      * Выводить в лог только если IP пользователя равен данному (пустое поле означает выводить всё).
      */
     public var filterTracesByIP : String;
@@ -91,7 +86,6 @@ class HaqConfig
 		autoDatabaseConnect = true;
 		sqlTraceLevel = 1;
 		isTraceComponent = false;
-		isTraceProfiler = false;
 		filterTracesByIP = '';
 		custom = null;
 		componentsFolders = [ 'haquery/components' ];

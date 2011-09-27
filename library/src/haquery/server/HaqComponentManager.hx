@@ -24,8 +24,10 @@ class HaqComponentManager
 	
 	function newComponent(parent:HaqComponent, clas:Class<HaqComponent>, name:String, id:String, doc:HaqXml, attr:Hash<String>, innerHTML:String) : HaqComponent
 	{
-		var r : HaqComponent = Type.createInstance(clas, []);
-		r.construct(this, parent, name, id, doc, attr, innerHTML);
+        HaQuery.profiler.begin('newComponent');
+            var r : HaqComponent = Type.createInstance(clas, []);
+            r.construct(this, parent, name, id, doc, attr, innerHTML);
+        HaQuery.profiler.end();
 		return r;
 	}
 	
@@ -58,8 +60,8 @@ class HaqComponentManager
         }
 		
 		var doc = templates.getPageTemplateDoc(path);
-		var page : HaqPage = cast(newComponent(null, cast pageClass, '', '', doc, attr, null), HaqPage);
-		return page;
+        var page : HaqPage = cast(newComponent(null, cast pageClass, '', '', doc, attr, null), HaqPage);
+        return page;
 	}
     
 	/**

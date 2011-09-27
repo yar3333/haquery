@@ -22,4 +22,14 @@ class HashTools
             }
         }
     }
+    
+    public static function values<T>(h:Hash<T>) : Array<T>
+    {
+        var r = new Array<T>();
+        for (key in h.keys())
+        {
+            r.push(h.get(key));
+        }
+        return r;
+    }
 }

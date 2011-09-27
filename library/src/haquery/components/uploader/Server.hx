@@ -27,8 +27,6 @@ class Server extends Base
         return '<form id="form" method="post" enctype="multipart/form-data" class="uploader" style="display:block">
     <input type="file" id="file" size="1" class="uploader-file" />
     <div id="container" class="uploader-container">
-    
-
 ';
     }
     
