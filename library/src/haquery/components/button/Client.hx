@@ -10,4 +10,9 @@ class Client extends Base
     {
         return enabled ? event_click.call() : false;
     }
+    
+    public function click()
+    {
+        q('#b').click();
+    }
 }
