@@ -4,6 +4,7 @@ import php.db.Mysql;
 import haquery.server.db.HaqDbDriver;
 import haquery.server.db.HaqDbDriver_mysql;
 import haquery.server.HaqProfiler;
+import haquery.server.HaQuery;
 import php.db.ResultSet;
 
 
@@ -18,12 +19,16 @@ class HaqDb
     static public function connect(params : { type:String, host:String, user:String, pass:String, database:String }) : Bool
     {
 		if (connection != null) return true;
-		connection = Type.createInstance(
-			Type.resolveClass(
-				'haquery.server.db.HaqDbDriver_' + params.type), 
-				[ params.host, params.user, params.pass, params.database ]
-			);
-		return true;
+        
+        HaQuery.profiler.begin("openDatabase");
+            connection = Type.createInstance(
+                Type.resolveClass(
+                    'haquery.server.db.HaqDbDriver_' + params.type), 
+                    [ params.host, params.user, params.pass, params.database ]
+                );
+        HaQuery.profiler.end();
+		
+        return true;
     }
 
     /**
@@ -31,9 +36,9 @@ class HaqDb
      */
     static public function query(sql:String) : ResultSet
     {
-        if (HaQuery.config.isTraceProfiler) HaqProfiler.begin('SQL query');
+        HaQuery.profiler.begin('SQL query');
         var r = connection.query(sql);
-        if (HaQuery.config.isTraceProfiler) HaqProfiler.end();
+        HaQuery.profiler.end();
         return r;
     }
 

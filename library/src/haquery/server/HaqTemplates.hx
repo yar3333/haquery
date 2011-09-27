@@ -132,7 +132,7 @@ class HaqTemplates
 	
 	function parseComponent(componentFolder:String) : { css:String, doc:HaqXml }
 	{
-        HaqProfiler.begin('HaqTemplate::parseComponent(): template file -> doc and css');
+        HaQuery.profiler.begin('parseComponent');
 			var tag = Path.withoutDirectory(componentFolder);
             var doc = getComponentTemplateDoc(tag);
 			var css = '';
@@ -150,7 +150,7 @@ class HaqTemplates
 				}
 				i++;
 			}
-        HaqProfiler.end();
+        HaQuery.profiler.end();
 		
 		return { css:css, doc:doc };
 	}
@@ -159,12 +159,16 @@ class HaqTemplates
 	{
 		componentFolder = componentFolder.rtrim('/') + '/';
         
-        HaqProfiler.begin('HaqTemplate::parseComponent(): component server class -> handlers');
+        HaQuery.profiler.begin('parseServerHandlers');
             var serverMethods = [ 'click','change' ];   // какие серверные обработчики бывают
             var serverHandlers : Hash<Array<String>> = new Hash<Array<String>>();
 			var className = componentFolder.replace('/', '.') + 'Server';
 			var clas = Type.resolveClass(className);
-            if (clas == null) return null;
+            if (clas == null)
+            {
+                HaQuery.profiler.end();
+                return null;
+            }
             var tempObj = Type.createEmptyInstance(clas);
             for (field in Type.getInstanceFields(clas))
             {
@@ -180,7 +184,7 @@ class HaqTemplates
                     }
                 }
             }
-        HaqProfiler.end();
+        HaQuery.profiler.end();
 		
 		return serverHandlers;
 	}
@@ -260,14 +264,18 @@ class HaqTemplates
 		
 		var templatePath = pageFolder + 'template.html';
 		var pageText = FileSystem.exists(templatePath) ? File.getContent(templatePath) : '';
+        
         var pageDoc = new HaqXml(pageText);
+        
         if (HaQuery.config.layout == null || HaQuery.config.layout == "") return pageDoc;
         
         if (!FileSystem.exists(HaQuery.config.layout))
         {
             throw "Layout file '" + HaQuery.config.layout + "' not found.";
         }
+        
         var layoutDoc = new HaqXml(File.getContent(HaQuery.config.layout));
+        
         var placeholders : Array<HaqXmlNodeElement> = untyped Lib.toHaxeArray(layoutDoc.find('haq:placeholder'));
         var contents : Array<HaqXmlNodeElement> = untyped Lib.toHaxeArray(pageDoc.find('>haq:content'));
         for (ph in placeholders)

@@ -16,52 +16,50 @@ class HaqSystem
 {
     public function new(route:HaqRoute) : Void
     {
-		var startTime = Date.now().getTime();
-
         trace(null);
-        trace("HAQUERY START route.pagePath = " + route.path + ", HTTP_HOST = " + Web.getHttpHost() + ", clientIP = " + Web.getClientIP() + ", pageID = " + route.pageID);
+		
+        HaQuery.profiler.begin("system");
 
-        HaqProfiler.begin('HaqSystem::init(): build components');
-            var templates = new HaqTemplates(HaQuery.config.getComponentsFolders());
-        HaqProfiler.end();
+            trace("HAQUERY SYSTEM Start route.pagePath = " + route.path + ", HTTP_HOST = " + Web.getHttpHost() + ", clientIP = " + Web.getClientIP() + ", pageID = " + route.pageID);
+
+            HaQuery.profiler.begin('templates');
+                var templates = new HaqTemplates(HaQuery.config.getComponentsFolders());
+            HaQuery.profiler.end();
+            
+            HaQuery.isPostback = php.Web.getParams().get('HAQUERY_POSTBACK')!=null ? true : false;
+
+            var params = php.Web.getParams();
+            if (route.pageID != null)
+            {
+                params.set('pageID', route.pageID);
+            }
+
+            var manager : HaqComponentManager = new HaqComponentManager(templates);
+            
+            HaQuery.profiler.begin('createPage');
+                var page = manager.createPage(route.path, params);
+            HaQuery.profiler.end();
+
+            var html : String;
+            if (!HaQuery.isPostback)
+            {
+                html = renderPage(page, templates, manager, route.path);
+            }
+            else
+            {
+                html = renderAjax(page);
+            }
+            
+            trace("HAQUERY SYSTEM Finish");
+
+        HaQuery.profiler.end();
         
-        HaQuery.isPostback = php.Web.getParams().get('HAQUERY_POSTBACK')!=null ? true : false;
-
-		var params = php.Web.getParams();
-        if (route.pageID != null)
-		{
-			params.set('pageID', route.pageID);
-		}
-
-        HaqProfiler.begin('HaqSystem::init(): page construct');
-		var manager : HaqComponentManager = new HaqComponentManager(templates);
-		var page = manager.createPage(route.path, params);
-        HaqProfiler.end();
-
-        var html : String;
-        if (!HaQuery.isPostback)
-        {
-            html = renderPage(page, templates, manager, route.path);
-        }
-        else
-        {
-            html = renderAjax(page);
-        }
-        
-        trace(StringTools.format("HAQUERY FINISH %.3f s", (Date.now().getTime()-startTime)/1000.0));
-
-        if (HaQuery.config.isTraceProfiler)
-        {
-            trace("profiler info:\n"+HaqProfiler.getResults());
-            HaqProfiler.saveTotalResults();
-        }
-
         Lib.print(html);
     }
     
     static function renderPage(page:HaqPage, templates:HaqTemplates, manager:HaqComponentManager, path:String) : String
     {
-        HaqProfiler.begin('HaqSystem::init(): page render');
+        HaQuery.profiler.begin('renderPage');
             page.forEachComponent('preRender');
             
             page.insertStyles(templates.getStyleFilePaths().concat(manager.getRegisteredStyles()));
@@ -76,7 +74,7 @@ class HaqSystem
             );
             
             var html : String = page.render();
-        HaqProfiler.end();
+        HaQuery.profiler.end();
 
         php.Web.setHeader('Content-Type', page.contentType);
         
