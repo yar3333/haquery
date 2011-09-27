@@ -223,6 +223,19 @@ class HaqQuery
                 
                 return node.getAttribute('value');
             }
+            else
+            {
+                // case when node physically not exists, but data received on postback
+                if (HaQuery.isPostback)
+                {
+                    var re = new EReg('^\\s*#([^ \\t>]+)\\s*$', '');
+                    if (re.match(query))
+                    {
+                        var fullID = prefixID + re.matched(1);
+                        if (php.Web.getParams().exists(fullID)) return php.Web.getParams().get(fullID);
+                    }
+                }
+            }
             return null;
         }
         
