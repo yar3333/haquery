@@ -1,8 +1,11 @@
 package haquery.components.uploader;
 
+import haquery.server.HaqComponent;
+import haquery.server.HaqComponentManager;
 import haquery.server.HaqEvent;
 import haquery.server.HaqTools;
 import haquery.server.HaQuery;
+import haquery.server.HaqXml;
 import php.FileSystem;
 import php.Session;
 import php.Web;
@@ -14,15 +17,22 @@ class Server extends Base
     
     var event_upload : HaqEvent;
     
-    override function getHeader() : String 
+    override public function construct(manager:HaqComponentManager, parent:HaqComponent, tag:String, id:String, doc:HaqXml, params:Dynamic, innerHTML:String) : Void
+	{
+        super.construct(manager, parent, tag, id, new HaqXml(getHeader() + innerHTML + getFooter()), params, '');
+	}
+    
+    function getHeader() : String 
     {
         return '<form id="form" method="post" enctype="multipart/form-data" class="uploader" style="display:block">
     <input type="file" id="file" size="1" class="uploader-file" />
     <div id="container" class="uploader-container">
+    
+
 ';
     }
     
-    override function getFooter() : String 
+    function getFooter() : String 
     {
         return '
     </div>
