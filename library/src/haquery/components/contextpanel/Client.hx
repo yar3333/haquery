@@ -7,6 +7,12 @@ class Client extends haquery.components.container.Client
     var elem : HaqQuery;
     var timer : haxe.Timer;
     
+    public var dataID(dataID_getter, null) : String;
+    function dataID_getter() : String
+    {
+        return q('#dataID').val();
+    }
+    
     function show()
     {
         q('#p').show();
@@ -17,15 +23,20 @@ class Client extends haquery.components.container.Client
         });
     }
 
-    public function attach(elem:HaqQuery)
+    public function attach(elem:HaqQuery, dataID:String)
     {
         var self = this;
-        elem.mouseover(function() {
+        
+        elem.mouseover(function()
+        {
             self.elem = elem;
+            self.q('#dataID').val(dataID);
             self.show();
             self.p_mouseover();
         });
-        elem.mouseout(function() {
+        
+        elem.mouseout(function()
+        {
             self.p_mouseout();
         });
     }
