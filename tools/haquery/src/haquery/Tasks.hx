@@ -239,11 +239,11 @@ class Tasks
         
         var haxePath = getHaxePath();
         
-        if (!FileSystem.exists(haxePath + 'haxe.exe.official'))
+        /*if (!FileSystem.exists(haxePath + 'haxe.exe.official'))
         {
             hant.rename(haxePath + 'haxe.exe', haxePath + 'haxe.exe.official');
         }
-        File.copy(Path.directory(Sys.executablePath()) + '\\haxemod\\haxe.exe', haxePath + 'haxe.exe');
+        File.copy(Path.directory(Sys.executablePath()) + '\\haxemod\\haxe.exe', haxePath + 'haxe.exe');*/
         
         if (!FileSystem.exists(haxePath + 'std.official'))
         {
@@ -274,11 +274,11 @@ class Tasks
         
         var haxePath = getHaxePath();
         
-        if (!FileSystem.exists(haxePath + 'haxe.exe.official'))
+        /*if (!FileSystem.exists(haxePath + 'haxe.exe.official'))
         {
             log.finishFail("HaxeMod does not installed.");
         }
-        hant.rename(haxePath + 'haxe.exe.official', haxePath + 'haxe.exe');
+        hant.rename(haxePath + 'haxe.exe.official', haxePath + 'haxe.exe');*/
         
         if (FileSystem.exists(haxePath + 'std.official'))
         {
