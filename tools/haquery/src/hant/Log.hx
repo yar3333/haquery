@@ -53,7 +53,7 @@ class Log
         if (level < verboseLevel)
         {
             if (!inBlock) Lib.print(indent(level + 1));
-            Lib.println(['FAIL']);
+            Lib.println("[FAIL]");
             inBlock = false;
         }
         
