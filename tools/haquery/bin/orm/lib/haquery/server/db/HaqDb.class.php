@@ -10,7 +10,9 @@ class haquery_server_db_HaqDb {
 			$GLOBALS['%s']->pop();
 			return true;
 		}
+		null;
 		haquery_server_db_HaqDb::$connection = Type::createInstance(Type::resolveClass("haquery.server.db.HaqDbDriver_" . $params->type), new _hx_array(array($params->host, $params->user, $params->pass, $params->database)));
+		null;
 		{
 			$GLOBALS['%s']->pop();
 			return true;
@@ -20,13 +22,9 @@ class haquery_server_db_HaqDb {
 	static function query($sql) {
 		$GLOBALS['%s']->push("haquery.server.db.HaqDb::query");
 		$»spos = $GLOBALS['%s']->length;
-		if(haquery_base_HaQuery::$config->isTraceProfiler) {
-			HaqProfiler::begin("SQL query");
-		}
+		null;
 		$r = haquery_server_db_HaqDb::$connection->query($sql);
-		if(haquery_base_HaQuery::$config->isTraceProfiler) {
-			HaqProfiler::end();
-		}
+		null;
 		{
 			$GLOBALS['%s']->pop();
 			return $r;

@@ -12,6 +12,13 @@ class StringBuf {
 	public function add($x) {
 		$GLOBALS['%s']->push("StringBuf::add");
 		$»spos = $GLOBALS['%s']->length;
+		if(is_null($x)) {
+			$x = "null";
+		} else {
+			if(is_bool($x)) {
+				$x = (($x) ? "true" : "false");
+			}
+		}
 		$this->b .= $x;
 		$GLOBALS['%s']->pop();
 	}

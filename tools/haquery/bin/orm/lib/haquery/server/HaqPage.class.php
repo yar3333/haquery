@@ -20,9 +20,13 @@ class haquery_server_HaqPage extends haquery_server_HaqComponent {
 			throw new HException("HaqPage.insertStyles(): head tag not found.");
 		}
 		$head = $heads[0];
-		$child = $head->children[0];
-		while($child !== null && $child->name !== "link" && ($child->getAttribute("rel") !== "stylesheet" || $child->getAttribute("type") !== "text/css")) {
-			$child = $child->getNextSiblingElement();
+		$child = null;
+		$children = new _hx_array($head->children);
+		if($children->length > 0) {
+			$child = $head->children[0];
+			while($child !== null && $child->name !== "link" && ($child->getAttribute("rel") !== "stylesheet" || $child->getAttribute("type") !== "text/css")) {
+				$child = $child->getNextSiblingElement();
+			}
 		}
 		$head->addChild(new HaqXmlNodeText($text . "\x0A        "), $child);
 		$GLOBALS['%s']->pop();
@@ -36,9 +40,13 @@ class haquery_server_HaqPage extends haquery_server_HaqComponent {
 			throw new HException("HaqPage.insertScripts(): head tag not found.");
 		}
 		$head = $heads[0];
-		$child = $head->children[0];
-		while($child !== null && $child->name !== "script") {
-			$child = $child->getNextSiblingElement();
+		$child = null;
+		$children = new _hx_array($head->children);
+		if($children->length > 0) {
+			$child = $head->children[0];
+			while($child !== null && $child->name !== "script") {
+				$child = $child->getNextSiblingElement();
+			}
 		}
 		$head->addChild(new HaqXmlNodeText("    " . $text . "\x0A    "), $child);
 		$GLOBALS['%s']->pop();
@@ -104,7 +112,7 @@ function haquery_server_HaqPage_0(&$links, $path) {
 function haquery_server_HaqPage_1(&$links, $path) {
 	$»spos = $GLOBALS['%s']->length;
 	{
-		$GLOBALS['%s']->push("haquery.server.HaqPage::insertScripts@50");
+		$GLOBALS['%s']->push("haquery.server.HaqPage::insertScripts@55");
 		$»spos2 = $GLOBALS['%s']->length;
 		{
 			$»tmp = haquery_server_HaqPage::getScriptLink($path);

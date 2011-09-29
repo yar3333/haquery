@@ -315,6 +315,18 @@ class haquery_server_HaqQuery {
 					$GLOBALS['%s']->pop();
 					return $»tmp;
 				}
+			} else {
+				if(haquery_base_HaQuery::$isPostback) {
+					$re = new haquery_EReg("^\\s*#([^ \\t>]+)\\s*\$", "");
+					if($re->match($this->query)) {
+						$fullID = $this->prefixID . $re->matched(1);
+						if(php_Web::getParams()->exists($fullID)) {
+							$»tmp = php_Web::getParams()->get($fullID);
+							$GLOBALS['%s']->pop();
+							return $»tmp;
+						}
+					}
+				}
 			}
 			{
 				$GLOBALS['%s']->pop();

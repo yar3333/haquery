@@ -113,7 +113,7 @@ class OrmManagerGenerator {
 		$GLOBALS['%s']->push("OrmManagerGenerator::getWhereSql");
 		$製pos = $GLOBALS['%s']->length;
 		{
-			$裨mp = " WHERE " . Lambda::map($vars, array(new _hx_lambda(array(&$vars), "OrmManagerGenerator_15"), 'execute'))->join("+' AND ");
+			$裨mp = OrmManagerGenerator_15($vars);
 			$GLOBALS['%s']->pop();
 			return $裨mp;
 		}
@@ -317,26 +317,21 @@ function OrmManagerGenerator_14(&$positionVar, &$vars) {
 		return "'" . $positionVar->first()->haxeName . "'";
 	}
 }
-function OrmManagerGenerator_15(&$vars, $v) {
+function OrmManagerGenerator_15(&$vars) {
 	$製pos = $GLOBALS['%s']->length;
-	{
-		$GLOBALS['%s']->push("OrmManagerGenerator::getWhereSql@176");
-		$製pos2 = $GLOBALS['%s']->length;
-		{
-			$裨mp = "`" . $v->name . "` = ' + HaqDb.quote(" . $v->haxeName . ")";
-			$GLOBALS['%s']->pop();
-			return $裨mp;
-		}
-		$GLOBALS['%s']->pop();
+	if($vars->iterator()->hasNext()) {
+		return " WHERE " . Lambda::map($vars, array(new _hx_lambda(array(&$vars), "OrmManagerGenerator_19"), 'execute'))->join("+' AND ");
+	} else {
+		return "'";
 	}
 }
 function OrmManagerGenerator_16(&$foreignKeys, &$table, &$vars, $v) {
 	$製pos = $GLOBALS['%s']->length;
 	{
-		$GLOBALS['%s']->push("OrmManagerGenerator::getForeignKeyVars@182");
+		$GLOBALS['%s']->push("OrmManagerGenerator::getForeignKeyVars@184");
 		$製pos2 = $GLOBALS['%s']->length;
 		{
-			$裨mp = Lambda::exists($foreignKeys, array(new _hx_lambda(array(&$foreignKeys, &$table, &$v, &$vars), "OrmManagerGenerator_19"), 'execute'));
+			$裨mp = Lambda::exists($foreignKeys, array(new _hx_lambda(array(&$foreignKeys, &$table, &$v, &$vars), "OrmManagerGenerator_20"), 'execute'));
 			$GLOBALS['%s']->pop();
 			return $裨mp;
 		}
@@ -364,10 +359,23 @@ function OrmManagerGenerator_18(&$baseFullClassName, &$createVars, &$foreignKeyV
 		return $v->haxeName;
 	}
 }
-function OrmManagerGenerator_19(&$foreignKeys, &$table, &$v, &$vars, $fk) {
+function OrmManagerGenerator_19(&$vars, $v) {
 	$製pos = $GLOBALS['%s']->length;
 	{
-		$GLOBALS['%s']->push("OrmManagerGenerator::getForeignKeyVars@183");
+		$GLOBALS['%s']->push("OrmManagerGenerator::getForeignKeyVars@177");
+		$製pos2 = $GLOBALS['%s']->length;
+		{
+			$裨mp = "`" . $v->name . "` = ' + HaqDb.quote(" . $v->haxeName . ")";
+			$GLOBALS['%s']->pop();
+			return $裨mp;
+		}
+		$GLOBALS['%s']->pop();
+	}
+}
+function OrmManagerGenerator_20(&$foreignKeys, &$table, &$v, &$vars, $fk) {
+	$製pos = $GLOBALS['%s']->length;
+	{
+		$GLOBALS['%s']->push("OrmManagerGenerator::getForeignKeyVars@185");
 		$製pos3 = $GLOBALS['%s']->length;
 		{
 			$裨mp = $fk->key === $v->name;

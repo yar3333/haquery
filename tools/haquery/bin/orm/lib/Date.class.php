@@ -124,7 +124,7 @@ class Date {
 		$GLOBALS['%s']->push("Date::now");
 		$»spos = $GLOBALS['%s']->length;
 		{
-			$»tmp = Date::fromPhpTime(microtime(true));
+			$»tmp = Date::fromPhpTime(round(microtime(true), 3));
 			$GLOBALS['%s']->pop();
 			return $»tmp;
 		}

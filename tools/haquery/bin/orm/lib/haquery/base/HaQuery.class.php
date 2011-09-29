@@ -2,14 +2,16 @@
 
 class haquery_base_HaQuery {
 	public function __construct(){}
-	static $VERSION = 2.0;
+	static $VERSION = 2.1;
 	static $folders;
 	static $config;
+	static $profiler;
 	static $isPostback = false;
 	static $startTime;
 	static function run() {
 		$GLOBALS['%s']->push("haquery.base.HaQuery::run");
 		$製pos = $GLOBALS['%s']->length;
+		null;
 		haquery_base_HaQuery::$startTime = Date::now()->getTime();
 		haxe_Log::$trace = (isset(haquery_base_HaQuery::$trace) ? haquery_base_HaQuery::$trace: array("haquery_base_HaQuery", "trace"));
 		$route = new haquery_server_HaqRoute(php_Web::getParams()->get("route"));
@@ -25,6 +27,8 @@ class haquery_base_HaQuery {
 		} else {
 			$system = new haquery_server_HaqSystem($route);
 		}
+		null;
+		null;
 		$GLOBALS['%s']->pop();
 	}
 	static function redirect($url) {
@@ -122,7 +126,7 @@ class haquery_base_HaQuery {
 		$製pos = $GLOBALS['%s']->length;
 		$folders = _hx_explode("/", rtrim($relativePath, "/"));
 		{
-			$_g1 = 0; $_g = $folders->length;
+			$_g1 = 1; $_g = $folders->length + 1;
 			while($_g1 < $_g) {
 				$i = $_g1++;
 				$className = $folders->slice(0, $i)->join(".") . ".Bootstrap";
@@ -140,7 +144,7 @@ class haquery_base_HaQuery {
 	static function path2url($path) {
 		$GLOBALS['%s']->push("haquery.base.HaQuery::path2url");
 		$製pos = $GLOBALS['%s']->length;
-		$realPath = str_replace("\\", "/", php_FileSystem::fullPath("")) . "/" . rtrim($path, "/\\");
+		$realPath = str_replace("\\", "/", haquery_base_HaQuery_1($path)) . "/" . rtrim($path, "/\\");
 		$rootPath = str_replace("\\", "/", $_SERVER['DOCUMENT_ROOT']);
 		if(!StringTools::startsWith($realPath, $rootPath)) {
 			throw new HException("Can't resolve path '" . $path . "' with realPath = '" . $realPath . "' and rootPath = '" . $rootPath . "'.");
@@ -179,7 +183,7 @@ class haquery_base_HaQuery {
 		$製pos = $GLOBALS['%s']->length;
 		$text = "HAXE EXCEPTION: " . Std::string($e) . "\x0A" . "Stack trace:" . str_replace("\x0A", "\x0A\x09", haxe_Stack::toString(haxe_Stack::exceptionStack()));
 		$nativeStack = php_Stack::nativeExceptionStack();
-		haquery_base_HaQuery::assert($nativeStack !== null, null, _hx_anonymous(array("fileName" => "HaQuery.hx", "lineNumber" => 247, "className" => "haquery.base.HaQuery", "methodName" => "traceException")));
+		haquery_base_HaQuery::assert($nativeStack !== null, null, _hx_anonymous(array("fileName" => "HaQuery.hx", "lineNumber" => 255, "className" => "haquery.base.HaQuery", "methodName" => "traceException")));
 		$text .= "\x0A\x0A";
 		$text .= "NATIVE EXCEPTION: " . Std::string($e) . "\x0A";
 		$text .= "Stack trace:\x0A";
@@ -201,18 +205,31 @@ class haquery_base_HaQuery {
 				unset($row);
 			}
 		}
-		haxe_Log::trace($text, _hx_anonymous(array("fileName" => "HaQuery.hx", "lineNumber" => 264, "className" => "haquery.base.HaQuery", "methodName" => "traceException")));
+		haxe_Log::trace($text, _hx_anonymous(array("fileName" => "HaQuery.hx", "lineNumber" => 272, "className" => "haquery.base.HaQuery", "methodName" => "traceException")));
 		$GLOBALS['%s']->pop();
 	}
 	function __toString() { return 'haquery.base.HaQuery'; }
 }
 haquery_base_HaQuery::$folders = _hx_anonymous(array("pages" => "pages", "support" => "support", "temp" => "temp"));
 haquery_base_HaQuery::$config = new haquery_server_HaqConfig();
+haquery_base_HaQuery::$profiler = new haquery_server_HaqProfiler();
 function haquery_base_HaQuery_0(&$f, &$pos, &$text, &$v) {
 	$製pos = $GLOBALS['%s']->length;
 	if($text !== "") {
 		return sprintf("%.3f", (Date::now()->getTime() - haquery_base_HaQuery::$startTime) / 1000.0) . " " . str_replace("\x0A", "\x0A\x09", $text) . "\x0A";
 	} else {
 		return "\x0A";
+	}
+}
+function haquery_base_HaQuery_1(&$path) {
+	$製pos = $GLOBALS['%s']->length;
+	{
+		$p = realpath("");
+		if(($p === false)) {
+			return null;
+		} else {
+			return $p;
+		}
+		unset($p);
 	}
 }

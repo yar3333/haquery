@@ -4,32 +4,29 @@ class haquery_server_HaqSystem {
 	public function __construct($route) { if(!php_Boot::$skip_constructor) {
 		$GLOBALS['%s']->push("haquery.server.HaqSystem::new");
 		$»spos = $GLOBALS['%s']->length;
-		$startTime = Date::now()->getTime();
-		haxe_Log::trace(null, _hx_anonymous(array("fileName" => "HaqSystem.hx", "lineNumber" => 21, "className" => "haquery.server.HaqSystem", "methodName" => "new")));
-		haxe_Log::trace("HAQUERY START route.pagePath = " . $route->path . ", HTTP_HOST = " . $_SERVER['HTTP_HOST'] . ", clientIP = " . $_SERVER['REMOTE_ADDR'] . ", pageID = " . $route->pageID, _hx_anonymous(array("fileName" => "HaqSystem.hx", "lineNumber" => 22, "className" => "haquery.server.HaqSystem", "methodName" => "new")));
-		HaqProfiler::begin("HaqSystem::init(): build components");
+		haxe_Log::trace(null, _hx_anonymous(array("fileName" => "HaqSystem.hx", "lineNumber" => 19, "className" => "haquery.server.HaqSystem", "methodName" => "new")));
+		null;
+		haxe_Log::trace("HAQUERY SYSTEM Start route.pagePath = " . $route->path . ", HTTP_HOST = " . $_SERVER['HTTP_HOST'] . ", clientIP = " . $_SERVER['REMOTE_ADDR'] . ", pageID = " . $route->pageID, _hx_anonymous(array("fileName" => "HaqSystem.hx", "lineNumber" => 23, "className" => "haquery.server.HaqSystem", "methodName" => "new")));
+		null;
 		$templates = new haquery_server_HaqTemplates(haquery_base_HaQuery::$config->getComponentsFolders());
-		HaqProfiler::end();
+		null;
 		haquery_base_HaQuery::$isPostback = ((php_Web::getParams()->get("HAQUERY_POSTBACK") !== null) ? true : false);
 		$params = php_Web::getParams();
 		if($route->pageID !== null) {
 			$params->set("pageID", $route->pageID);
 		}
-		HaqProfiler::begin("HaqSystem::init(): page construct");
 		$manager = new haquery_server_HaqComponentManager($templates);
+		null;
 		$page = $manager->createPage($route->path, $params);
-		HaqProfiler::end();
+		null;
 		$html = null;
 		if(!haquery_base_HaQuery::$isPostback) {
 			$html = haquery_server_HaqSystem::renderPage($page, $templates, $manager, $route->path);
 		} else {
 			$html = $this->renderAjax($page);
 		}
-		haxe_Log::trace(sprintf("HAQUERY FINISH %.3f s", (Date::now()->getTime() - $startTime) / 1000.0), _hx_anonymous(array("fileName" => "HaqSystem.hx", "lineNumber" => 51, "className" => "haquery.server.HaqSystem", "methodName" => "new")));
-		if(haquery_base_HaQuery::$config->isTraceProfiler) {
-			haxe_Log::trace("profiler info:\x0A" . HaqProfiler::getResults(), _hx_anonymous(array("fileName" => "HaqSystem.hx", "lineNumber" => 55, "className" => "haquery.server.HaqSystem", "methodName" => "new")));
-			HaqProfiler::saveTotalResults();
-		}
+		haxe_Log::trace("HAQUERY SYSTEM Finish", _hx_anonymous(array("fileName" => "HaqSystem.hx", "lineNumber" => 53, "className" => "haquery.server.HaqSystem", "methodName" => "new")));
+		null;
 		php_Lib::hprint($html);
 		$GLOBALS['%s']->pop();
 	}}
@@ -57,13 +54,13 @@ class haquery_server_HaqSystem {
 	static function renderPage($page, $templates, $manager, $path) {
 		$GLOBALS['%s']->push("haquery.server.HaqSystem::renderPage");
 		$»spos = $GLOBALS['%s']->length;
-		HaqProfiler::begin("HaqSystem::init(): page render");
+		null;
 		$page->forEachComponent("preRender", null);
 		$page->insertStyles($templates->getStyleFilePaths()->concat($manager->getRegisteredStyles()));
 		$page->insertScripts(_hx_deref(new _hx_array(array("haquery/client/jquery.js", "haquery/client/haquery.js")))->concat($manager->getRegisteredScripts()));
 		$page->insertInitInnerBlock("<script>\x0A" . "    if(typeof haquery=='undefined') alert('haquery.js must be loaded!');\x0A" . "    " . str_replace("\x0A", "\x0A    ", $templates->getInternalDataForPageHtml()) . "\x0A" . "    " . str_replace("\x0A", "\x0A    ", $manager->getInternalDataForPageHtml($path)) . "\x0A" . "    haquery.base.HaQuery.run();\x0A" . "</script>");
 		$html = $page->render();
-		HaqProfiler::end();
+		null;
 		header("Content-Type" . ": " . $page->contentType);
 		{
 			$GLOBALS['%s']->pop();

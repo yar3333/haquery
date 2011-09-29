@@ -2,6 +2,23 @@
 
 class haquery_base_HaqTools {
 	public function __construct(){}
+	static function getNumeral($n, $w1, $w2, $w3) {
+		$GLOBALS['%s']->push("haquery.base.HaqTools::getNumeral");
+		$»spos = $GLOBALS['%s']->length;
+		if($n % 10 === 0 || $n >= 11 && $n <= 19 || $n % 10 > 5) {
+			$GLOBALS['%s']->pop();
+			return $w3;
+		}
+		if($n % 10 >= 2 && $n % 10 <= 4) {
+			$GLOBALS['%s']->pop();
+			return $w2;
+		}
+		{
+			$GLOBALS['%s']->pop();
+			return $w1;
+		}
+		$GLOBALS['%s']->pop();
+	}
 	static function serverVarToClientString($v) {
 		$GLOBALS['%s']->push("haquery.base.HaqTools::serverVarToClientString");
 		$»spos = $GLOBALS['%s']->length;
