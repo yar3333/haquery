@@ -114,6 +114,7 @@ class haquery_server_HaqComponent extends haquery_base_HaqComponent {
 						unset($text,$prev);
 					} else {
 						$node->remove();
+						$i--;
 					}
 				}
 			} else {
@@ -140,7 +141,7 @@ class haquery_server_HaqComponent extends haquery_base_HaqComponent {
 		$GLOBALS['%s']->push("haquery.server.HaqComponent::render");
 		$»spos = $GLOBALS['%s']->length;
 		if(haquery_base_HaQuery::$config->isTraceComponent) {
-			haxe_Log::trace("render " . $this->fullID, _hx_anonymous(array("fileName" => "HaqComponent.hx", "lineNumber" => 170, "className" => "haquery.server.HaqComponent", "methodName" => "render")));
+			haxe_Log::trace("render " . $this->fullID, _hx_anonymous(array("fileName" => "HaqComponent.hx", "lineNumber" => 171, "className" => "haquery.server.HaqComponent", "methodName" => "render")));
 		}
 		$this->prepareDocToRender($this->doc);
 		$r = rtrim($this->doc->toString(), "\x0D\x0A");

@@ -15,11 +15,7 @@ class php_FileSystem {
 	static function rename($path, $newpath) {
 		$GLOBALS['%s']->push("php.FileSystem::rename");
 		$製pos = $GLOBALS['%s']->length;
-		{
-			$裨mp = rename($path, $newpath);
-			$GLOBALS['%s']->pop();
-			return $裨mp;
-		}
+		rename($path, $newpath);
 		$GLOBALS['%s']->pop();
 	}
 	static function stat($path) {
@@ -38,14 +34,13 @@ class php_FileSystem {
 	static function fullPath($relpath) {
 		$GLOBALS['%s']->push("php.FileSystem::fullPath");
 		$製pos = $GLOBALS['%s']->length;
-		$path = realpath($relpath);
-		if(_hx_equal($path, false)) {
+		$p = realpath($relpath);
+		if(($p === false)) {
 			$GLOBALS['%s']->pop();
 			return null;
-		}
-		{
+		} else {
 			$GLOBALS['%s']->pop();
-			return $path;
+			return $p;
 		}
 		$GLOBALS['%s']->pop();
 	}
@@ -85,31 +80,19 @@ class php_FileSystem {
 	static function createDirectory($path) {
 		$GLOBALS['%s']->push("php.FileSystem::createDirectory");
 		$製pos = $GLOBALS['%s']->length;
-		{
-			$裨mp = @mkdir($path, 493);
-			$GLOBALS['%s']->pop();
-			return $裨mp;
-		}
+		@mkdir($path, 493);
 		$GLOBALS['%s']->pop();
 	}
 	static function deleteFile($path) {
 		$GLOBALS['%s']->push("php.FileSystem::deleteFile");
 		$製pos = $GLOBALS['%s']->length;
-		{
-			$裨mp = @unlink($path);
-			$GLOBALS['%s']->pop();
-			return $裨mp;
-		}
+		@unlink($path);
 		$GLOBALS['%s']->pop();
 	}
 	static function deleteDirectory($path) {
 		$GLOBALS['%s']->push("php.FileSystem::deleteDirectory");
 		$製pos = $GLOBALS['%s']->length;
-		{
-			$裨mp = @rmdir($path);
-			$GLOBALS['%s']->pop();
-			return $裨mp;
-		}
+		@rmdir($path);
 		$GLOBALS['%s']->pop();
 	}
 	static function readDirectory($path) {

@@ -489,5 +489,27 @@ class Type {
 		}
 		$GLOBALS['%s']->pop();
 	}
+	static function allEnums($e) {
+		$GLOBALS['%s']->push("Type::allEnums");
+		$»spos = $GLOBALS['%s']->length;
+		$all = new _hx_array(array());
+		{
+			$_g = 0; $_g1 = Type::getEnumConstructs($e);
+			while($_g < $_g1->length) {
+				$c = $_g1[$_g];
+				++$_g;
+				$v = Reflect::field($e, $c);
+				if(!Reflect::isFunction($v)) {
+					$all->push($v);
+				}
+				unset($v,$c);
+			}
+		}
+		{
+			$GLOBALS['%s']->pop();
+			return $all;
+		}
+		$GLOBALS['%s']->pop();
+	}
 	function __toString() { return 'Type'; }
 }

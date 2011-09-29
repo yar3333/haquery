@@ -173,7 +173,9 @@ class OrmManagerGenerator
     
     static function getWhereSql(vars:Iterable<OrmHaxeVar>) : String
     {
-        return " WHERE " + Lambda.map(vars, function(v) { return "`" + v.name + "` = ' + HaqDb.quote(" + v.haxeName + ")"; } ).join("+' AND ");
+        return vars.iterator().hasNext()
+            ? " WHERE " + Lambda.map(vars, function(v) { return "`" + v.name + "` = ' + HaqDb.quote(" + v.haxeName + ")"; } ).join("+' AND ")
+            : "'";
     }
     
     static function getForeignKeyVars(table:String, vars:List<OrmHaxeVar>) : List<OrmHaxeVar>

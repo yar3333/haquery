@@ -145,7 +145,7 @@ class haquery_server_HaqTemplates {
 	public function parseComponent($componentFolder) {
 		$GLOBALS['%s']->push("haquery.server.HaqTemplates::parseComponent");
 		$製pos = $GLOBALS['%s']->length;
-		HaqProfiler::begin("HaqTemplate::parseComponent(): template file -> doc and css");
+		null;
 		$tag = basename($componentFolder);
 		$doc = $this->getComponentTemplateDoc($tag);
 		$css = "";
@@ -162,7 +162,7 @@ class haquery_server_HaqTemplates {
 			$i++;
 			unset($node);
 		}
-		HaqProfiler::end();
+		null;
 		{
 			$裨mp = _hx_anonymous(array("css" => $css, "doc" => $doc));
 			$GLOBALS['%s']->pop();
@@ -174,14 +174,17 @@ class haquery_server_HaqTemplates {
 		$GLOBALS['%s']->push("haquery.server.HaqTemplates::parseServerHandlers");
 		$製pos = $GLOBALS['%s']->length;
 		$componentFolder = rtrim($componentFolder, "/") . "/";
-		HaqProfiler::begin("HaqTemplate::parseComponent(): component server class -> handlers");
+		null;
 		$serverMethods = new _hx_array(array("click", "change"));
 		$serverHandlers = new Hash();
 		$className = str_replace("/", ".", $componentFolder) . "Server";
 		$clas = Type::resolveClass($className);
 		if($clas === null) {
-			$GLOBALS['%s']->pop();
-			return null;
+			null;
+			{
+				$GLOBALS['%s']->pop();
+				return null;
+			}
 		}
 		$tempObj = Type::createEmptyInstance($clas);
 		{
@@ -205,7 +208,7 @@ class haquery_server_HaqTemplates {
 				unset($field);
 			}
 		}
-		HaqProfiler::end();
+		null;
 		{
 			$GLOBALS['%s']->pop();
 			return $serverHandlers;
@@ -308,7 +311,7 @@ class haquery_server_HaqTemplates {
 		$templatePath = $pageFolder . "template.html";
 		$pageText = ((file_exists($templatePath)) ? php_io_File::getContent($templatePath) : "");
 		$pageDoc = new HaqXml($pageText);
-		if(haquery_base_HaQuery::$config->layout === null) {
+		if(haquery_base_HaQuery::$config->layout === null || haquery_base_HaQuery::$config->layout === "") {
 			$GLOBALS['%s']->pop();
 			return $pageDoc;
 		}
@@ -434,7 +437,7 @@ function haquery_server_HaqTemplates_0(&$cacheFileTime, &$componentsFolder, &$da
 function haquery_server_HaqTemplates_1(&$files, &$reSupportFileUrl, &$self, &$tag, &$text, $re) {
 	$製pos = $GLOBALS['%s']->length;
 	{
-		$GLOBALS['%s']->push("haquery.server.HaqTemplates::getComponentTemplateDoc@297");
+		$GLOBALS['%s']->push("haquery.server.HaqTemplates::getComponentTemplateDoc@305");
 		$製pos2 = $GLOBALS['%s']->length;
 		$f = $self->getFileUrl($tag, haquery_base_HaQuery::$folders->support . "/" . $re->matched(1));
 		{

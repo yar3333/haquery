@@ -10,7 +10,6 @@ class haquery_server_HaqConfig {
 		$this->autoDatabaseConnect = true;
 		$this->sqlTraceLevel = 1;
 		$this->isTraceComponent = false;
-		$this->isTraceProfiler = false;
 		$this->filterTracesByIP = "";
 		$this->custom = null;
 		$this->componentsFolders = new _hx_array(array("haquery/components"));
@@ -22,7 +21,6 @@ class haquery_server_HaqConfig {
 	public $autoDatabaseConnect;
 	public $sqlTraceLevel;
 	public $isTraceComponent;
-	public $isTraceProfiler;
 	public $filterTracesByIP;
 	public $custom;
 	public $componentsFolders;

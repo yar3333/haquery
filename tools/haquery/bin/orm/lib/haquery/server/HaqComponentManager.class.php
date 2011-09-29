@@ -18,8 +18,10 @@ class haquery_server_HaqComponentManager {
 	public function newComponent($parent, $clas, $name, $id, $doc, $attr, $innerHTML) {
 		$GLOBALS['%s']->push("haquery.server.HaqComponentManager::newComponent");
 		$製pos = $GLOBALS['%s']->length;
+		null;
 		$r = Type::createInstance($clas, new _hx_array(array()));
 		$r->construct($this, $parent, $name, $id, $doc, $attr, $innerHTML);
+		null;
 		{
 			$GLOBALS['%s']->pop();
 			return $r;
@@ -129,7 +131,8 @@ class haquery_server_HaqComponentManager {
 				unset($tag);
 			}
 		}
-		$s .= "haquery.client.HaqInternals.serializedServerHandlers = \"" . haxe_Serializer::run($serverHandlers) . "\";";
+		$s .= "haquery.client.HaqInternals.serializedServerHandlers = \"" . haxe_Serializer::run($serverHandlers) . "\";\x0A";
+		$s .= "haquery.client.HaqInternals.pagePackage = \"" . str_replace("/", ".", $path) . "\";";
 		{
 			$GLOBALS['%s']->pop();
 			return $s;
@@ -174,7 +177,7 @@ class haquery_server_HaqComponentManager {
 function haquery_server_HaqComponentManager_0(&$components, &$path, &$s, &$tag, &$tags, $x) {
 	$製pos = $GLOBALS['%s']->length;
 	{
-		$GLOBALS['%s']->push("haquery.server.HaqComponentManager::getInternalDataForPageHtml@109");
+		$GLOBALS['%s']->push("haquery.server.HaqComponentManager::getInternalDataForPageHtml@111");
 		$製pos2 = $GLOBALS['%s']->length;
 		while($x !== null) {
 			if(!$x->visible) {
@@ -193,7 +196,7 @@ function haquery_server_HaqComponentManager_0(&$components, &$path, &$s, &$tag, 
 function haquery_server_HaqComponentManager_1(&$components, &$path, &$s, &$tag, &$tags, &$visibledComponents, $x) {
 	$製pos = $GLOBALS['%s']->length;
 	{
-		$GLOBALS['%s']->push("haquery.server.HaqComponentManager::getInternalDataForPageHtml@117");
+		$GLOBALS['%s']->push("haquery.server.HaqComponentManager::getInternalDataForPageHtml@119");
 		$製pos2 = $GLOBALS['%s']->length;
 		{
 			$裨mp = $x->fullID;
