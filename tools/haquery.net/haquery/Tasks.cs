@@ -40,11 +40,11 @@ namespace haquery_net.haquery
             var serverImports = hant.findFiles(srcPath, isServerFile);
             var clientImports = hant.findFiles(srcPath, isClientFile);
             
-            fo.Write("#if php\n");
+            fo.WriteLine("#if php");
             foreach (var file in serverImports) fo.WriteLine(file2import(srcPath, file));
-            fo.Write("\n#else\n");
+            fo.WriteLine("#else");
             foreach (var file in clientImports) fo.WriteLine(file2import(srcPath, file));
-            fo.Write("\n#end\n");
+            fo.WriteLine("#end");
         }
         
         bool isServerFile(string path)
@@ -80,8 +80,8 @@ namespace haquery_net.haquery
             {
                 file = file.Substring(basePath.Length + 1);
             }
-            
-            return "import " + Path.GetFileNameWithoutExtension(file).Replace('\\', '.') + ';';
+
+            return "import " + Path.GetDirectoryName(file).Replace('\\', '.') + "." + Path.GetFileNameWithoutExtension(file) + ';';
         }
         
         bool isNotSvn(string path)
@@ -96,7 +96,7 @@ namespace haquery_net.haquery
         public List<string> getClassPaths()
         {
             var r = new List<String>();
-            var files = Directory.GetFiles("");
+            var files = Directory.GetFiles(".");
             foreach (var file in files)
             {
                 if (file.EndsWith(".hxproj"))
@@ -116,6 +116,21 @@ namespace haquery_net.haquery
         }
         
         // -------------------------------------------------------------------------------
+
+        void run(string fileName, string[] args)
+        {
+            var arguments = "";
+            foreach (var arg in args)
+            {
+                arguments += '"' + arg + '"' + ' ';
+            }
+            arguments = arguments.TrimEnd();
+            
+            System.Diagnostics.ProcessStartInfo psi = new System.Diagnostics.ProcessStartInfo(fileName, arguments);
+            psi.UseShellExecute = false;
+            System.Diagnostics.Process.Start(psi);
+        }
+        
         
         void buildJs()
         {
@@ -132,13 +147,12 @@ namespace haquery_net.haquery
             pars.Add("bin\\haquery\\client\\haquery.js");
             pars.Add("-main"); pars.Add("Main");
             pars.Add("-debug");
-
-            System.Diagnostics.Process.Start("haxe", String.Join(" ", pars.ToArray()));
+            run("haxe", pars.ToArray());
             
             log.finishOk();
         }
 
-        static string getExeDir()
+        string getExeDir()
         {
             System.Reflection.Assembly a = System.Reflection.Assembly.GetEntryAssembly();
             return System.IO.Path.GetDirectoryName(a.Location);
@@ -147,11 +161,8 @@ namespace haquery_net.haquery
         public void genOrm(string databaseConnectionString)
         {
             log.start("Generate ORM classes to 'models'");
-            
-            
-            System.Diagnostics.Process.Start(
-                "php", String.Join(" ", new string[] { getExeDir() + "\\orm\\index.php", databaseConnectionString, "src" })
-            );
+
+            run("php", new string[] { getExeDir() + "\\orm\\index.php", databaseConnectionString, "src" });
             
             log.finishOk();
         }

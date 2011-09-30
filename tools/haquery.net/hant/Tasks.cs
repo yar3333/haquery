@@ -24,17 +24,17 @@ namespace haquery_net.hant
             
             foreach (var file in Directory.GetDirectories(path))
             {
-                if (include(path + '\\' + file))
+                if (include(file))
                 {
-                    r.AddRange(findFiles(path + '\\' + file, include));
+                    r.AddRange(findFiles(file, include));
                 }
             }
 
             foreach (var file in Directory.GetFiles(path))
             {
-                if (include(path + '\\' + file))
+                if (include(file))
                 {
-                    r.Add(path + '\\' + file);
+                    r.Add(file);
                 }
             }
             
@@ -73,21 +73,21 @@ namespace haquery_net.hant
             {
                 foreach (var file in Directory.GetDirectories(fromFolder))
                 {
-                    if (include(fromFolder + '\\' + file))
+                    if (include(file))
                     {
-                        copyFolderContent(fromFolder + '\\' + file, toFolder + '\\' + file, include);
+                        copyFolderContent(file, toFolder + '\\' + Path.GetFileName(file), include);
                     }
                 }
                 
                 foreach (var file in Directory.GetFiles(fromFolder))
                 {
-                    if (include(fromFolder + '\\' + file))
+                    if (include(file))
                     {
                         if (!Directory.Exists(toFolder)) Directory.CreateDirectory(toFolder);
 
                         try
                         {
-                            copyFile(fromFolder + '\\' + file, toFolder + '\\' + file);
+                            copyFile(file, toFolder + '\\' + Path.GetFileName(file));
                         }
                         catch (Exception e)
                         {
@@ -149,12 +149,12 @@ namespace haquery_net.hant
             {
                 foreach (var file in Directory.GetDirectories(path))
                 {
-                    deleteDirectory(path + '\\' + file);
+                    deleteDirectory(file);
                 }
 
                 foreach (var file in Directory.GetFiles(path))
                 {
-                    deleteFile(path + '\\' + file);
+                    deleteFile(file);
                 }
                 
                 Directory.Delete(path);
