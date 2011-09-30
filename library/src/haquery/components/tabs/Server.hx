@@ -1,22 +1,51 @@
 package haquery.components.tabs;
 
 import haquery.server.HaqComponent;
+import haquery.server.HaqQuery;
+import haquery.server.HaQuery;
+import php.Lib;
 
-class Server extends HaqComponent
+class Server extends haquery.components.container.Server
 {
-    function bind(tabs:Array<Tab>)
+    public var activeTab : Int;
+    
+    public function new()
     {
-        var s = '';
-        for (t in tabs)
+        super();
+        activeTab = 0;
+    }
+    
+    function init()
+    {
+        if (!HaQuery.isPostback)
         {
-            var name = t.name!=null ? t.name : t.id;
-            if (name!='')
+            var buttonsAndPanels = q('#tabs>*');
+            trace(buttonsAndPanels.size());
+            var buttons = buttonsAndPanels.nodes[0];
+            var i = 0;
+            for (child in Lib.toHaxeArray(buttons.children))
             {
-                s += "<div id='" + prefixID + t.id + "'";
-                if (t.panelID != null) s += " panelID='" + t.panelID + "'";
-                s += ">" + t.name + "</div>";
+                if (i == activeTab) new HaqQuery(prefixID, "", Lib.toPhpArray([child])).addClass('active');
+                i++;
+            }
+            
+            var panels = q('#tabs>*').nodes[1];
+            var j = 0;
+            for (child in Lib.toHaxeArray(panels.children))
+            {
+                if (j == activeTab) new HaqQuery(prefixID, "", Lib.toPhpArray([child])).addClass('active');
+                j++;
             }
         }
-        q('#tabs').html(s);
+    }
+    
+    override private function getHeader():String 
+    {
+        return '<div id="tabs" class="tabs">\n';
+    }
+    
+    override private function getFooter():String 
+    {
+        return '</div>\n';
     }
 }
