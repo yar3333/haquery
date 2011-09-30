@@ -4,7 +4,7 @@ import haquery.server.HaqComponent;
 import haquery.server.HaqComponentManager;
 import haquery.server.HaqXml;
 
-class Server extends HaqComponent
+class Server extends Base
 {
 	override public function construct(manager:HaqComponentManager, parent:HaqComponent, tag:String, id:String, doc:HaqXml, params:Dynamic, innerHTML:String) : Void
 	{

@@ -1,29 +1,16 @@
 <style>
-    .tabs
+    .tabs>*:nth-child(1)>*
     {
-        float:left;
+        cursor: default;
     }
-    
-    .tabs>div
-    {
-        float:left;
-        padding: 0 5px;
-        margin-right:2px;
-        cursor: pointer;
-        border-top: solid 1px gray;
-        border-left: solid 1px gray;
-        border-right: solid 1px gray;
-        font-weight: bold;
-    }
-    
-    .tabs>div.active
-    {
-        background: yellow;
-    }
-    
-    .tabs-panels { clear:both; }
-    .tabs-panels>* { display: none; }
-    .tabs-panels>*.active { display: block; }
-</style>
 
-<div id="tabs" class="tabs"></div>
+    .tabs>*:nth-child(2)>*
+    {
+        display: none;
+    }
+    
+    .tabs>*:nth-child(2)>*.active
+    {
+        display: block;
+    }
+</style>

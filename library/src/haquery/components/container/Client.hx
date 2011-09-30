@@ -1,9 +1,8 @@
 package haquery.components.container;
 
-import haquery.client.HaqComponent;
 import haquery.client.HaqElemEventManager;
 
-class Client extends HaqComponent
+class Client extends Base
 {
     override function connectElemEventHandlers():Void 
     {

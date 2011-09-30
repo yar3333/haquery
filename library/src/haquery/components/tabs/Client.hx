@@ -4,31 +4,58 @@ import haquery.client.HaqQuery;
 import haquery.client.HaqEvent;
 import haquery.client.HaqComponent;
 
-class Client extends HaqComponent
+class Client extends haquery.components.container.Client
 {
-    var event_selected : HaqEvent;
-    var event_hided : HaqEvent;
+    public var activeTab(activeTab_getter, activeTab_setter) : Int;
 
     function init()
     {
         var self = this;
-        q('#tabs div').click(function(e) {
-            self.select(e.target.id.substr(self.prefixID.length));
-        });
-
-        var divs = q('#tabs>div');
-        if (divs.length > 0)
+        q('#tabs>*:eq(0)>*').each(function(index, elem)
         {
-            select(divs[0].id.substr(this.prefixID.length));
-        }
+            new HaqQuery(elem).click(function(e)
+            {
+                self.activeTab = index;
+            });
+        });
+    }
+    
+    function activeTab_getter() : Int
+    {
+        var r = -1;
+        q('#tabs>*:eq(1)>*').each(function(index, elem)
+        {
+            if (new HaqQuery(elem).hasClass('active'))
+            {
+                r = index;
+            }
+        });
+        return r;
     }
 
-    public function select(tabID)
+    function activeTab_setter(n:Int) : Int
+    {
+        q('#tabs>*:eq(0)>*').each(function(index, elem)
+        {
+            new HaqQuery(elem).removeClass('active');
+        });
+        q('#tabs>*:eq(0)>*:eq(' + n + ')').addClass('active');
+        
+        q('#tabs>*:eq(1)>*').each(function(index, elem)
+        {
+            new HaqQuery(elem).removeClass('active');
+        });
+        q('#tabs>*:eq(1)>*:eq(' + n + ')').addClass('active');
+        
+        return n;
+    }
+    
+/*    public function select()
     {
         var self = this;
         q('#tabs>div').each(function(index,elem) {
             var elemID = elem.id.substr(self.prefixID.length);
-            if (elemID!=tabID)
+            if (elemID != tabID)
             {
                 new HaqQuery(elem).removeClass('active');
                 self.parent.q('#' + new HaqQuery(elem).attr('panelID')).removeClass('active');
@@ -38,5 +65,5 @@ class Client extends HaqComponent
         q('#'+tabID).addClass('active');
         parent.q('#' + q('#' + tabID).attr('panelID')).addClass('active');
         event_selected.call([tabID]);
-    }
+    }*/
 }
