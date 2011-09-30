@@ -182,7 +182,7 @@ namespace haquery_net.haquery
             log.start("Save bin\\lib folder");
 
             hant.deleteDirectory("bin\\lib.old");
-            hant.rename("bin\\lib", "bin\\lib.old");
+            if (Directory.Exists("bin\\lib")) hant.rename("bin\\lib", "bin\\lib.old");
 
             log.finishOk();
         }
@@ -215,6 +215,7 @@ namespace haquery_net.haquery
 
         void restoreFileTimes(string fromFolder, string toFolder)
         {
+            if (!Directory.Exists(fromFolder)) return;
             if (!Directory.Exists(toFolder)) return;
             
             log.start("Restore files time '" + fromFolder + "' => '" + toFolder + "'");
