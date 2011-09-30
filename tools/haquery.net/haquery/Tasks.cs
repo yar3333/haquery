@@ -172,7 +172,28 @@ namespace haquery_net.haquery
             log.start("Do pre-build step");
             
             genImports();
+            saveLibFolder();
             
+            log.finishOk();
+        }
+
+        void saveLibFolder()
+        {
+            log.start("Save bin\\lib folder");
+
+            hant.deleteDirectory("bin\\lib.old");
+            hant.rename("bin\\lib", "bin\\lib.old");
+
+            log.finishOk();
+        }
+
+        void loadLibFolder()
+        {
+            log.start("Load file times to bin\\lib");
+
+            restoreFileTimes("bin\\lib.old", "bin\\lib");
+            hant.deleteDirectory("bin\\lib.old");
+
             log.finishOk();
         }
         
@@ -185,6 +206,41 @@ namespace haquery_net.haquery
             foreach (var path in getClassPaths())
             {
                 hant.copyFolderContent(path, "bin", isSupportFile);
+            }
+
+            loadLibFolder();
+            
+            log.finishOk();
+        }
+
+        void restoreFileTimes(string fromFolder, string toFolder)
+        {
+            if (!Directory.Exists(toFolder)) return;
+            
+            log.start("Restore files time '" + fromFolder + "' => '" + toFolder + "'");
+            
+            foreach (var file in Directory.GetDirectories(fromFolder))
+            {
+                restoreFileTimes(file, toFolder + '\\' + Path.GetFileName(file));
+            }
+
+            foreach (var file in Directory.GetFiles(fromFolder))
+            {
+                if (file.EndsWith(".php") || file.EndsWith(".js"))
+                {
+                    try
+                    {
+                        var toFile = toFolder + '\\' + Path.GetFileName(file);
+                        if (File.ReadAllText(file) == File.ReadAllText(toFile))
+                        {
+                            File.SetLastWriteTime(toFile, File.GetLastWriteTime(file));
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                }
             }
             
             log.finishOk();

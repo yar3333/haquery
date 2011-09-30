@@ -131,6 +131,15 @@ namespace haquery_net.hant
                     File.Move(path, newpath);
                 }
                 else
+                if (Directory.Exists(path))
+                {
+                    if (Directory.Exists(newpath))
+                    {
+                        Directory.Delete(newpath);
+                    }
+                    Directory.Move(path, newpath);
+                }
+                else
                 {
                     throw new Exception("File '" + path + "' not found.");
                 }
@@ -144,6 +153,8 @@ namespace haquery_net.hant
         
         public void deleteDirectory(string path)
         {
+            if (!Directory.Exists(path)) return;
+            
             log.start("Delete directory '" + path + "'");
             try
             {
