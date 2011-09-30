@@ -30,7 +30,7 @@ using haquery.StringTools;
 
 class HaQuery
 {
-	public static inline var VERSION = 2.1; 
+	public static inline var VERSION = 2.2; 
 	
 	public static var folders = {
 		 pages : 'pages'
