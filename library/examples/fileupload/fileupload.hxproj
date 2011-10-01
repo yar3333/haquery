@@ -12,7 +12,6 @@
     <movie minorVersion="0" />
     <movie platform="PHP" />
     <movie background="#FFFFFF" />
-    <movie preferredSDK="HaXe;;d:\MyProg\_tools\motion-twin\haxe\modified\bin" />
   </output>
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
