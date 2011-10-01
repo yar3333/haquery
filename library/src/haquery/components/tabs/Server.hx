@@ -20,7 +20,6 @@ class Server extends haquery.components.container.Server
         if (!HaQuery.isPostback)
         {
             var buttonsAndPanels = q('#tabs>*');
-            trace(buttonsAndPanels.size());
             var buttons = buttonsAndPanels.nodes[0];
             var i = 0;
             for (child in Lib.toHaxeArray(buttons.children))
