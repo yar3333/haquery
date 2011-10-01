@@ -268,26 +268,34 @@ namespace haquery_net.haquery
         
         public void install()
         {
-            installFlashDevelopTemplates();
-            installHaxeMod();
+            try
+            {
+                installFlashDevelopTemplates();
+                installHaxeMod();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Console.WriteLine("HaQuery installation to the system was aborted. Ensure what you run this program under administrator account.");
+            }
         }
         
         void installFlashDevelopTemplates()
         {
             log.start("Install FlashDevelop templates");
-            
+
             var srcPath = getExeDir() + "\\flashdevelop";
             var haxePath = getHaxePath();
-            var userLocalPath = System.Environment.GetEnvironmentVariable("LOCALAPPDATA") != null 
-                ? System.Environment.GetEnvironmentVariable("LOCALAPPDATA") 
+            var userLocalPath = System.Environment.GetEnvironmentVariable("LOCALAPPDATA") != null
+                ? System.Environment.GetEnvironmentVariable("LOCALAPPDATA")
                 : System.Environment.GetEnvironmentVariable("USERPROFILE") + "\\Local Settings\\Application Data";
             var flashDevelopUserDataPath = userLocalPath + "\\FlashDevelop";
             hant.copyFolderContent(srcPath, flashDevelopUserDataPath, isNotSvn);
-            
+
             var projectFilePath = flashDevelopUserDataPath + "\\Projects\\380 HaXe - HaQuery Project\\Project.hxproj";
             var projectFileContent = File.ReadAllText(projectFilePath);
-            File.WriteAllText(projectFilePath, projectFileContent.Replace("{HaQuerySrcPath}",  Path.GetFullPath(getExeDir() + "\\..\\src")));
-            
+            File.WriteAllText(projectFilePath, projectFileContent.Replace("{HaQuerySrcPath}", Path.GetFullPath(getExeDir() + "\\..\\src")));
+
             log.finishOk();
         }
         
