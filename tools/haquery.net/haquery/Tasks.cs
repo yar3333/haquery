@@ -327,8 +327,16 @@ namespace haquery_net.haquery
         
         public void uninstall()
         {
-            //uninstallFlashDevelopTemplates();
-            uninstallHaxeMod();
+            try
+            {
+                //uninstallFlashDevelopTemplates();
+                uninstallHaxeMod();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Console.WriteLine("HaQuery uninstallation was aborted. Ensure what you run this program under administrator account.");
+            }
         }
         
         /*function uninstallFlashDevelopTemplates()
