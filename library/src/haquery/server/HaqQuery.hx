@@ -7,22 +7,21 @@ import php.NativeArray;
 using haquery.StringTools;
 
 /**
- * Серверный (php-шный) аналог jQuery.
+ * Like $ in jQuery.
  */
 class HaqQuery
 {
     public var prefixID : String;
     
     /**
-     * Исходная строка с CSS-селекторами.
-     * @var string 
+     * Original CSS-selector.
      */
     public var query : String;
     
     /**
-     * @var HaqXmlNodeElement[]
+     * Selected XML DOM nodes (elements).
      */
-    public var nodes : Array<HaqXmlNodeElement>;
+    public var nodes(default, null) : Array<HaqXmlNodeElement>;
     
     private function jQueryCall(method)
     {
@@ -41,21 +40,15 @@ class HaqQuery
         return this.nodes.join('');
     }
 
-    /**
-     * Возвращает количество выбранных DOM-элементов.
-     */
     public function size() : Int { return this.nodes.length; }
 
-    /**
-     * Возвращает один из выбранных DOM-элементов.
-     */
     public function get(index:Int) : HaqXmlNodeElement
     {
         return this.nodes[index];
     }
 
     /**
-     * Меняет или возвращает значение атрибута.
+     * Get or set attribute value.
      */
     public function attr(name:String, value:String=null) : Dynamic
     {
@@ -68,11 +61,6 @@ class HaqQuery
         return this;
     }
 
-    /**
-     * Удаляет заданный атрибут из выбранных тегов.
-     * @param string $name Название атрибута.
-     * @return HaqQuery
-     */
     public function removeAttr(name:String) : HaqQuery
     {
         for (node in this.nodes) node.removeAttribute(name);
@@ -80,14 +68,9 @@ class HaqQuery
         return this;
     }
 
-    /**
-     * Добавляет заданные классы в свойство class.
-     * @param string $class
-     * @return HaqQuery
-     */
-    public function addClass(clas:String) : HaqQuery
+    public function addClass(cssClass:String) : HaqQuery
     {
-        var classes = (new EReg('\\s+', '')).split(clas);
+        var classes = (new EReg('\\s+', '')).split(cssClass);
         for (node in this.nodes)
         {
             var s = node.hasAttribute('class') ? node.getAttribute('class') : '';
@@ -99,19 +82,14 @@ class HaqQuery
             node.setAttribute('class', s.ltrim());
         }
 
-        if (HaQuery.isPostback) this.jQueryCall('addClass("'+clas+'")');
+        if (HaQuery.isPostback) this.jQueryCall('addClass("'+cssClass+'")');
 
         return this;
     }
 
-    /**
-     * Проверяет наличие всех заданных классов хотя бы у одного из выбранных элементов.
-     * @param string $class Названия классов, разделённые пробелом.
-     * @return bool
-     */
-    public function hasClass(clas:String) : Bool
+    public function hasClass(cssClass:String) : Bool
     {
-        var classes = (new EReg('\\s+', '')).split(clas);
+        var classes = (new EReg('\\s+', '')).split(cssClass);
         for (node in this.nodes)
         {
             var s = node.hasAttribute('class') ? node.getAttribute('class') : '';
@@ -126,14 +104,9 @@ class HaqQuery
         return false;
     }
 
-    /**
-     * Удаляет заданные классы из атрибута class.
-     * @param string $class Задаёт имена CSS-классов, которые нужно удалить (разделённые пробелом).
-     * @return HaqQuery
-     */
-    public function removeClass(clas:String) : HaqQuery
+    public function removeClass(cssClass:String) : HaqQuery
     {
-        var classes = (new EReg('\\s+', '')).split(clas);
+        var classes = (new EReg('\\s+', '')).split(cssClass);
         for (node in this.nodes)
         {
             var s = node.hasAttribute('class') ? node.getAttribute('class') : '';
@@ -141,16 +114,13 @@ class HaqQuery
             node.setAttribute('class', s.trim());
         }
 
-        if (HaQuery.isPostback) this.jQueryCall('removeClass("'+clas+'")');
+        if (HaQuery.isPostback) this.jQueryCall('removeClass("'+cssClass+'")');
 
         return this;
     }
 
     /**
-     * Меняет или возвращает HTML, вписанный в первый выбранный элемент.
-     * @param string $html Новый html-текст.
-     * @param string $isParse Нужно ли преобразовывать текст в XML-поддерево. По-умолчанию текст запишется просто как узел XmlNodeText.
-     * @return HaqQuery
+     * Get or set inner HTML.
      */
     public function html(html:String=null,isParse=false) : Dynamic
     {
@@ -176,10 +146,6 @@ class HaqQuery
         return this;
     }
 
-    /**
-     * Полностью удаляет элемент.
-     * @return HaqQuery
-     */
     public function remove() : HaqQuery
     {
         for (node in this.nodes) node.remove();
@@ -188,10 +154,7 @@ class HaqQuery
     }
 
     /**
-     * Меняет или возвращает значение первого выбранного элемента
-     * (подразумевается, что это элемент input или textarea).
-     * @param string $val Новое значение.
-     * @return HaqQuery
+     * Get or set element value.
      */
     public function val(val:String=null) : Dynamic
     {
@@ -272,10 +235,7 @@ class HaqQuery
     }
 
     /**
-     * Меняет или возвращает один из CSS-стилей выбранных элементов.
-     * @param string $name Название стиля.
-     * @param string $val Новое значение для стиля.
-     * @return HaqQuery
+     * Get or set element's CSS style.
      */
     public function css(name:String, val:String=null) : Dynamic
     {
@@ -313,9 +273,7 @@ class HaqQuery
     }
 
     /**
-     * Показывает элементы, убирая из их атрибутов style параметр display.
-     * @param string $display Как показывать элемент: "" (автоматически), "inline" (строковым) или "block" (блочным).
-     * @return HaqQuery
+     * Show element by setting display style to specified value.
      */
     public function show(display='') : HaqQuery
     {
@@ -323,14 +281,16 @@ class HaqQuery
     }
 
     /**
-     * Прячет элементы, задавая их атрибутам style параметр display:none.
-     * @return HaqQuery
+     * Set "display" style to "none".
      */
     public function hide() : HaqQuery
     {
         return this.css('display','none');
     }
     
+    /**
+     * Call specified function for each selected element.
+     */
     public function each(f:Int->HaqXmlNodeElement->Void)
     {
         for (i in 0...nodes.length)

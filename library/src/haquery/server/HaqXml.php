@@ -466,7 +466,7 @@ class HaqXmlParser
     }
 
     /**
-     * @param $str string Строка HTML для разбора.
+     * @param $str string
      * @return HaqXmlNode[]
      */
     static function parse($str)

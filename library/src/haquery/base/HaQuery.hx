@@ -44,10 +44,9 @@ class HaQuery
         public static var profiler : HaqProfiler = new HaqProfiler();
 
 		/**
-		 * Признак пришедших через ajax данных.
-		 * Говорит о том, что требуется в данном запросе:
-		 *  - false - выдать HTML (если произошло просто обращение к странице);
-		 *  - true - обработать данные (если происходит вызов серверного обработчика события).
+		 * Ajax?
+		 *   false => rendering HTML;
+		 *   true => calling server event handler.
 		 */
 		public static var isPostback : Bool = false;
 	   
@@ -201,8 +200,7 @@ class HaQuery
     
     #if php
 		/**
-		 * Загружает файлы bootstrap.php, которые ищет в папках начиная от текущей и до $relativePath.
-		 * @param type $relativePath
+		 * Load bootstrap files from current folder to relativePath.
 		 */
 		private static function loadBootstraps(relativePath:String) : Void
 		{
@@ -220,9 +218,7 @@ class HaQuery
 		}
 		
 		/**
-		 * Преобразует дисковый путь (path) в виртуальный (url).
-		 * @param string $path
-		 * @return string
+		 * Disk path to virtual path (url).
 		 */
 		static public function path2url(path:String) : String
 		{   

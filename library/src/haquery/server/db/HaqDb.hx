@@ -7,11 +7,6 @@ import haquery.server.HaqProfiler;
 import haquery.server.HaQuery;
 import php.db.ResultSet;
 
-
-/**
- * Обеспечивает работу с БД.
- * Использует для этого объекты, реализующие интерфейс HaqDbDriverInterface.
- */
 class HaqDb
 {
     static public var connection : HaqDbDriver = null;
@@ -31,9 +26,6 @@ class HaqDb
         return true;
     }
 
-    /**
-     * Выполняет запрос к БД.
-     */
     static public function query(sql:String) : ResultSet
     {
         HaQuery.profiler.begin('SQL query');
@@ -42,32 +34,20 @@ class HaqDb
         return r;
     }
 
-    /**
-     * Возвращает кол-во обработанных записей БД.
-     * @return int Кол-во записей.
-     */
     static public function affectedRows() : Int
     {
         return connection.affectedRows();
     }
 
-    /**
-     * Возвращает строку, безопасную для подстановки в SQL-запрос.
-     */
     static public function quote(v:Dynamic) : String
     {
         return connection.quote(v);
     }
 
-    /**
-     * Возвращает последнее использованное значение автоинкремента.
-     * Эту ф-ию полезно вызывать после выполнения INSERT, чтобы определить id вставленного элемента.
-     */
     static public function lastInsertId() : Int
     {
         return connection.lastInsertId();
     }
-
 }
 
 
