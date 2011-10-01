@@ -160,7 +160,7 @@ class HaqTemplates
 		componentFolder = componentFolder.rtrim('/') + '/';
         
         HaQuery.profiler.begin('parseServerHandlers');
-            var serverMethods = [ 'click','change' ];   // какие серверные обработчики бывают
+            var serverMethods = [ 'click','change' ];   // server events
             var serverHandlers : Hash<Array<String>> = new Hash<Array<String>>();
 			var className = componentFolder.replace('/', '.') + 'Server';
 			var clas = Type.resolveClass(className);

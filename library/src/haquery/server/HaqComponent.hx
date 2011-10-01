@@ -4,25 +4,22 @@ import php.Lib;
 import haquery.server.HaqXml;
 using haquery.StringTools;
 
-/**
- * Базовый класс для компонентов и страниц.
- */
 class HaqComponent extends haquery.base.HaqComponent
 {
     var manager : HaqComponentManager;
     
     /**
-     * То, что было задано между открытием и закрытием тега компонента.
+     * HTML between component's open and close tags (where component inserted).
      */
     private var innerHTML : String;
 
     /**
-     * HTML-документ компонента.
+     * template.html as DOM tree.
      */
     private var doc : HaqXml;
 
     /**
-     * Рендерить ли компонент в HTML.
+     * Need render?
      */
     public var visible : Bool;
     
@@ -61,8 +58,8 @@ class HaqComponent extends haquery.base.HaqComponent
         if (params!=null)
         {
 			var restrictedFields : Array<String> = Reflect.fields(Type.createEmptyInstance(Type.resolveClass('haquery.server.HaqComponent')));
-			var fields : Hash<String> = new Hash<String>(); // названиеполя => НазваниеПоля
-			for (field in Reflect.fields(this) /*Reflect.publicVars(this)*/)
+			var fields : Hash<String> = new Hash<String>(); // fieldname => FieldName
+			for (field in Reflect.fields(this))
 			{
 				if (!Reflect.isFunction(Reflect.field(this, field))
                  && !Lambda.has(restrictedFields, field)
@@ -161,11 +158,6 @@ class HaqComponent extends haquery.base.HaqComponent
         }
     }
 
-    /**
-     * Возвращает конечный HTML-код компонента.
-     * Иногда может перегружаться для хитрых компонентов (например, для компонента list).
-     * @return string 
-     */
     public function render() : String
     {
         if (HaQuery.config.isTraceComponent) trace("render " + this.fullID);
@@ -177,10 +169,8 @@ class HaqComponent extends haquery.base.HaqComponent
     }
 
     /**
-     * Аналог $ в jQuery. Выбирает элементы DOM в документе данного компонента.
-     * @param string $query Строка выбора узлов DOM (как в jQuery).
-     * @param bool $isSystem Этот параметр системный. Если установить в true, то действия над элементами не будут передаваться клиенту при ajax-запросах.
-     * @return HaqQuery
+     * Like $ в jQuery. Select DOM nodes from this component's DOM tree.
+     * @param query CSS selector.
      */
     public function q(?query:Dynamic=null) : HaqQuery
     {

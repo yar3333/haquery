@@ -6,9 +6,6 @@ import haquery.server.HaqComponent;
 import haquery.server.HaqXml;
 using haquery.StringTools;
 
-/**
- * Базовый класс для страниц.
- */
 class HaqPage extends HaqComponent
 {
 	/**
@@ -17,7 +14,9 @@ class HaqPage extends HaqComponent
     public var contentType : String;
     
     /**
-     * Last unexist URL part was placed in that var.
+     * Last unexist URL part was placed in that var. 
+     * For example, if requested URL is "http://site.com/news/123"
+     * then pageID will be "123".
      */
     public var pageID : String;
 	

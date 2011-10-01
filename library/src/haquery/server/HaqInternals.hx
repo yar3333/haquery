@@ -4,14 +4,15 @@ import php.Lib;
 
 class HaqInternals 
 {
-	public static inline var DELIMITER = '-';
+	/**
+	 * Delimiter for IDs in fullID.
+	 */
+    public static inline var DELIMITER = '-';
 	
 	/**
-	 * JavaScript, который будет возвращён в результате ajax-запроса.
-	 * В частности, в эту переменную HaqQuery складывает вызовы ф-й jQuery.
-	 * @var string
+	 * JavaScript code for ajax response.
 	 */
-	static var ajaxAnswer = '';
+	static var ajaxAnswer = "";
 
 	public static function addAjaxAnswer(jsCode:String) 
 	{

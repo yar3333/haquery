@@ -3,61 +3,44 @@ package haquery.server;
 
 using haquery.StringTools;
 
-/**
- * Хранит настройки приложения.
- * Реальные настройки следует прописывать в отдельных файлах в папке /configs сайта.<br />
- * Например, в файле настроек по-умолчанию /configs/default.php:<br />
- * <code>
- * <?php<br />
- * HaQuery.config.db.type = 'mysql';<br />
- * HaQuery.config.isTraceProfiler = true;<br />
- * ?>
- * </code>
- * <br />
- * HaQuery выбирает активный файл настроек по имени домена сайта. Например, если ваш сайт
- * имеет адрес mysite.com, то система будет использовать файл /configs/mysite.com.php, а если
- * его нет - файл /configs/default.php.
- */
 class HaqConfig
 {
     public var db : { type:String, host:String, user:String, pass:String, database:String };
 	
-    /**
-     * Вызывать ли session_start() при старте.
-     */
     public var autoSessionStart : Bool;
 
-    /**
-     * Вызывать ли HaqDb::connetc() при старте.
-     */
     public var autoDatabaseConnect : Bool;
 
     /**
-     * Задаёт насколько подробно выводить в лог информацию о SQL:
-     * 0 - не показывать;
-     * 1 - показывать только ошибки;
-     * 2 - всегда показывать запросы;
-     * 3 - всегда показывать запросы и данные о результатах их выполнения.
+     * Level of tracing SQL:
+     * 0 - do not show anything;
+     * 1 - show errors;
+     * 2 - show queries too;
+     * 3 - show queries too and results statuses.
      */
     public var sqlTraceLevel : Int;
 
     /**
-     * Логгировать ли информацию о загрузке компонентов.
+     * Trace when components renders.
      */
     public var isTraceComponent : Bool;
 
     /**
-     * Выводить в лог только если IP пользователя равен данному (пустое поле означает выводить всё).
+     * Log only for users from IP.
      */
     public var filterTracesByIP : String;
 
     /**
-     * Произвольные данные.
+     * User-defined data.
      */
-    public var custom : Dynamic;
+    public var customData : Hash<Dynamic>;
 
 	var componentsFolders : Array<String>;
     
+    /**
+     * Add components folder path.
+     * @param path Path related to root site directory (without starting '/').
+     */
     public function addComponentsFolder(path:String) : Void
     {
         componentsFolders.push(path.replace('\\', '/').trim('/'));
@@ -69,7 +52,7 @@ class HaqConfig
     }
     
     /**
-     * Path to layout file (null if layout do not need).
+     * Path to layout file (null if layout not need).
      */
     public var layout : String;
 	
@@ -87,7 +70,7 @@ class HaqConfig
 		sqlTraceLevel = 1;
 		isTraceComponent = false;
 		filterTracesByIP = '';
-		custom = null;
+		customData = new Hash<Dynamic>();
 		componentsFolders = [ 'haquery/components' ];
         layout = null;
 	}

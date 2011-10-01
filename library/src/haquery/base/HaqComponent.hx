@@ -17,38 +17,32 @@ private typedef Component = haquery.client.HaqComponent;
 class HaqComponent
 {
     /**
-     * ID компонента; для главной страницы равен пустой строке.
+     * Empty for page.
      */
     public var id(default,null) : String;
 
-    /**
-     * Родительский компонент.
-     */
     public var parent(default,null) : Component;
 
     /**
-     * Тег (название) компонента.
+     * Component name.
      */
     public var tag(default,null)  : String;
 
     /**
-     * Полный ID компонента. Для главной страницы равен пустой строке.
+     * Empty for page.
      */
     public var fullID(default,null) : String;
 
     /**
-     * Префикс ID для DOM-элементов компонента и его подкомпонентов (например: "parentID-compID-").
+     * Prefix for DOM elemets ID.
      */
     public var prefixID(default,null) : String;
 	
     /**
-     * Экземпляры дочерних компонентов.
+     * Children components.
      */
     public var components(default, null) : Hash<Component>;
 	
-    /**
-     * ID для следующего анонимного дочернего компонента.
-     */
     var nextAnonimID : Int;
 	
 	function new() : Void
@@ -121,10 +115,10 @@ class HaqComponent
     }
 	
     /**
-     * Ишет компонент по его составному идентификатору относительно данного компонента.
-     * @param string fullID Составной идентификатор компонента (например: "myID1-myID2-myID3").
+     * Find child by relative ID.
+     * @param fullID Relative ID (for example: "header-menu-items").
      */
-    public function findComponent(fullID) : Component
+    public function findComponent(fullID:String) : Component
     {
         if (fullID == '') return cast this;
         var ids = fullID.split(HaqInternals.DELIMITER);
