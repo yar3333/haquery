@@ -189,7 +189,7 @@ class HaqComponent extends haquery.base.HaqComponent
 			? "haquery.client.HaqSystem.page.findComponent('" + fullID + "')." + method
 			: "haquery.client.HaqSystem.page." + method;
 		
-		HaqInternals.addAjaxAnswer(HaqTools.getCallClientFunctionString(funcName, params) + ';');
+		HaqInternals.addAjaxResponse(HaqTools.getCallClientFunctionString(funcName, params) + ';');
     }
     
     public function callElemEventHandler(elemID:String, eventName:String) : Void

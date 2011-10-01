@@ -95,7 +95,7 @@ class HaQuery
     static public function redirect(url:String) : Void
     {
         #if php
-			if (HaQuery.isPostback) HaqInternals.addAjaxAnswer("window.location.href = '" + HaQuery.jsEscape(url) + "';");
+			if (HaQuery.isPostback) HaqInternals.addAjaxResponse("window.location.href = '" + HaQuery.jsEscape(url) + "';");
 			else                    php.Web.redirect(url);
 		#else
 			if (url == Lib.window.location.href) Lib.window.location.reload(true);
@@ -106,7 +106,7 @@ class HaQuery
 	static public function reload() : Void
 	{
 		#if php
-			if (HaQuery.isPostback) HaqInternals.addAjaxAnswer("window.location.reload(true);");
+			if (HaQuery.isPostback) HaqInternals.addAjaxResponse("window.location.reload(true);");
 			else					redirect(php.Web.getURI());
 		
 		#else
