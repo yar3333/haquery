@@ -25,7 +25,7 @@ class HaqQuery
     
     private function jQueryCall(method)
     {
-        HaqInternals.addAjaxAnswer("$('" + query.replace('#', '#' + prefixID) + "')." + method + ";");
+        HaqInternals.addAjaxResponse("$('" + query.replace('#', '#' + prefixID) + "')." + method + ";");
     }
     
     public function new(prefixID:String, query:String, nodes:NativeArray)
@@ -64,7 +64,7 @@ class HaqQuery
     public function removeAttr(name:String) : HaqQuery
     {
         for (node in this.nodes) node.removeAttribute(name);
-        if (HaQuery.isPostback) HaqInternals.addAjaxAnswer ("$('"+this.query.replace('#', '#'+this.prefixID)+"').removeAttr('" + name + "');");
+        if (HaQuery.isPostback) HaqInternals.addAjaxResponse ("$('"+this.query.replace('#', '#'+this.prefixID)+"').removeAttr('" + name + "');");
         return this;
     }
 

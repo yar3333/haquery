@@ -9,18 +9,15 @@ class HaqInternals
 	 */
     public static inline var DELIMITER = '-';
 	
-	/**
-	 * JavaScript code for ajax response.
-	 */
-	static var ajaxAnswer = "";
+	static var ajaxResponse = "";
 
-	public static function addAjaxAnswer(jsCode:String) 
+	public static function addAjaxResponse(jsCode:String) 
 	{
-		ajaxAnswer += jsCode + "\n";
+		ajaxResponse += jsCode + "\n";
 	}
 	
-	public static function getAjaxAnswer() : String
+	public static function getAjaxResponse() : String
 	{
-		return ajaxAnswer;
+		return ajaxResponse;
 	}
 }

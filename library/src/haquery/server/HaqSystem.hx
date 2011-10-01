@@ -100,6 +100,6 @@ class HaqSystem
         
         php.Web.setHeader('Content-Type', 'text/plain; charset=utf-8');
         
-        return 'HAQUERY_OK' + HaqInternals.getAjaxAnswer();
+        return 'HAQUERY_OK' + HaqInternals.getAjaxResponse();
     }
 }
