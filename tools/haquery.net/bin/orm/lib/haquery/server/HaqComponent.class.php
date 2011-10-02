@@ -80,8 +80,8 @@ class haquery_server_HaqComponent extends haquery_base_HaqComponent {
 		$i = 0;
 		while($i < count($baseNode->children)) {
 			$node = $baseNode->children[$i];
-			haquery_base_HaQuery::assert($node->name !== "haq:placeholder", null, _hx_anonymous(array("fileName" => "HaqComponent.hx", "lineNumber" => 101, "className" => "haquery.server.HaqComponent", "methodName" => "createChildComponents_inner")));
-			haquery_base_HaQuery::assert($node->name !== "haq:content", null, _hx_anonymous(array("fileName" => "HaqComponent.hx", "lineNumber" => 102, "className" => "haquery.server.HaqComponent", "methodName" => "createChildComponents_inner")));
+			haquery_base_HaQuery::assert($node->name !== "haq:placeholder", null, _hx_anonymous(array("fileName" => "HaqComponent.hx", "lineNumber" => 98, "className" => "haquery.server.HaqComponent", "methodName" => "createChildComponents_inner")));
+			haquery_base_HaQuery::assert($node->name !== "haq:content", null, _hx_anonymous(array("fileName" => "HaqComponent.hx", "lineNumber" => 99, "className" => "haquery.server.HaqComponent", "methodName" => "createChildComponents_inner")));
 			if(StringTools::startsWith($node->name, "haq:")) {
 				$node->component = $this->manager->createComponent($this, $node->name, $node->getAttribute("id"), php_Lib::hashOfAssociativeArray($node->getAttributesAssoc()), $node->innerHTML);
 			} else {
@@ -141,7 +141,7 @@ class haquery_server_HaqComponent extends haquery_base_HaqComponent {
 		$GLOBALS['%s']->push("haquery.server.HaqComponent::render");
 		$»spos = $GLOBALS['%s']->length;
 		if(haquery_base_HaQuery::$config->isTraceComponent) {
-			haxe_Log::trace("render " . $this->fullID, _hx_anonymous(array("fileName" => "HaqComponent.hx", "lineNumber" => 171, "className" => "haquery.server.HaqComponent", "methodName" => "render")));
+			haxe_Log::trace("render " . $this->fullID, _hx_anonymous(array("fileName" => "HaqComponent.hx", "lineNumber" => 163, "className" => "haquery.server.HaqComponent", "methodName" => "render")));
 		}
 		$this->prepareDocToRender($this->doc);
 		$r = rtrim($this->doc->toString(), "\x0D\x0A");
@@ -178,7 +178,7 @@ class haquery_server_HaqComponent extends haquery_base_HaqComponent {
 		$GLOBALS['%s']->push("haquery.server.HaqComponent::callClientMethod");
 		$»spos = $GLOBALS['%s']->length;
 		$funcName = haquery_server_HaqComponent_0($this, $method, $params);
-		haquery_server_HaqInternals::addAjaxAnswer(haquery_base_HaqTools::getCallClientFunctionString($funcName, $params) . ";");
+		haquery_server_HaqInternals::addAjaxResponse(haquery_base_HaqTools::getCallClientFunctionString($funcName, $params) . ";");
 		$GLOBALS['%s']->pop();
 	}
 	public function callElemEventHandler($elemID, $eventName) {

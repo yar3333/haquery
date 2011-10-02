@@ -11,7 +11,7 @@ class haquery_server_HaqConfig {
 		$this->sqlTraceLevel = 1;
 		$this->isTraceComponent = false;
 		$this->filterTracesByIP = "";
-		$this->custom = null;
+		$this->customData = new Hash();
 		$this->componentsFolders = new _hx_array(array("haquery/components"));
 		$this->layout = null;
 		$GLOBALS['%s']->pop();
@@ -22,7 +22,7 @@ class haquery_server_HaqConfig {
 	public $sqlTraceLevel;
 	public $isTraceComponent;
 	public $filterTracesByIP;
-	public $custom;
+	public $customData;
 	public $componentsFolders;
 	public function addComponentsFolder($path) {
 		$GLOBALS['%s']->push("haquery.server.HaqConfig::addComponentsFolder");

@@ -28,7 +28,7 @@ class haquery_base_HaqComponent {
 		$this->fullID = (haquery_base_HaqComponent_0($this, $id, $parent, $tag)) . $id;
 		$this->prefixID = haquery_base_HaqComponent_1($this, $id, $parent, $tag);
 		if($parent !== null) {
-			haquery_base_HaQuery::assert(!$parent->components->exists($id), "Component with same id '" . $id . "' already exist.", _hx_anonymous(array("fileName" => "HaqComponent.hx", "lineNumber" => 73, "className" => "haquery.base.HaqComponent", "methodName" => "commonConstruct")));
+			haquery_base_HaQuery::assert(!$parent->components->exists($id), "Component with same id '" . $id . "' already exist.", _hx_anonymous(array("fileName" => "HaqComponent.hx", "lineNumber" => 67, "className" => "haquery.base.HaqComponent", "methodName" => "commonConstruct")));
 			$parent->components->set($id, $this);
 		}
 		$GLOBALS['%s']->pop();
