@@ -45,7 +45,7 @@ class haquery_server_HaqSystem {
 		$component->callElemEventHandler($elemID, php_Web::getParams()->get("HAQUERY_EVENT"));
 		header("Content-Type" . ": " . "text/plain; charset=utf-8");
 		{
-			$»tmp = "HAQUERY_OK" . haquery_server_HaqInternals::getAjaxAnswer();
+			$»tmp = "HAQUERY_OK" . haquery_server_HaqInternals::getAjaxResponse();
 			$GLOBALS['%s']->pop();
 			return $»tmp;
 		}

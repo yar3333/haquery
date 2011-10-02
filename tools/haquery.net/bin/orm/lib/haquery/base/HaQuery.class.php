@@ -2,7 +2,7 @@
 
 class haquery_base_HaQuery {
 	public function __construct(){}
-	static $VERSION = 2.1;
+	static $VERSION = 2.2;
 	static $folders;
 	static $config;
 	static $profiler;
@@ -35,7 +35,7 @@ class haquery_base_HaQuery {
 		$GLOBALS['%s']->push("haquery.base.HaQuery::redirect");
 		$»spos = $GLOBALS['%s']->length;
 		if(haquery_base_HaQuery::$isPostback) {
-			haquery_server_HaqInternals::addAjaxAnswer("window.location.href = '" . haquery_base_HaQuery::jsEscape($url) . "';");
+			haquery_server_HaqInternals::addAjaxResponse("window.location.href = '" . haquery_base_HaQuery::jsEscape($url) . "';");
 		} else {
 			php_Web::redirect($url);
 		}
@@ -45,7 +45,7 @@ class haquery_base_HaQuery {
 		$GLOBALS['%s']->push("haquery.base.HaQuery::reload");
 		$»spos = $GLOBALS['%s']->length;
 		if(haquery_base_HaQuery::$isPostback) {
-			haquery_server_HaqInternals::addAjaxAnswer("window.location.reload(true);");
+			haquery_server_HaqInternals::addAjaxResponse("window.location.reload(true);");
 		} else {
 			haquery_base_HaQuery::redirect(php_Web::getURI());
 		}
@@ -183,7 +183,7 @@ class haquery_base_HaQuery {
 		$»spos = $GLOBALS['%s']->length;
 		$text = "HAXE EXCEPTION: " . Std::string($e) . "\x0A" . "Stack trace:" . str_replace("\x0A", "\x0A\x09", haxe_Stack::toString(haxe_Stack::exceptionStack()));
 		$nativeStack = php_Stack::nativeExceptionStack();
-		haquery_base_HaQuery::assert($nativeStack !== null, null, _hx_anonymous(array("fileName" => "HaQuery.hx", "lineNumber" => 255, "className" => "haquery.base.HaQuery", "methodName" => "traceException")));
+		haquery_base_HaQuery::assert($nativeStack !== null, null, _hx_anonymous(array("fileName" => "HaQuery.hx", "lineNumber" => 251, "className" => "haquery.base.HaQuery", "methodName" => "traceException")));
 		$text .= "\x0A\x0A";
 		$text .= "NATIVE EXCEPTION: " . Std::string($e) . "\x0A";
 		$text .= "Stack trace:\x0A";
@@ -205,7 +205,7 @@ class haquery_base_HaQuery {
 				unset($row);
 			}
 		}
-		haxe_Log::trace($text, _hx_anonymous(array("fileName" => "HaQuery.hx", "lineNumber" => 272, "className" => "haquery.base.HaQuery", "methodName" => "traceException")));
+		haxe_Log::trace($text, _hx_anonymous(array("fileName" => "HaQuery.hx", "lineNumber" => 268, "className" => "haquery.base.HaQuery", "methodName" => "traceException")));
 		$GLOBALS['%s']->pop();
 	}
 	function __toString() { return 'haquery.base.HaQuery'; }

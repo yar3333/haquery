@@ -128,9 +128,9 @@ namespace haquery_net.haquery
             
             System.Diagnostics.ProcessStartInfo psi = new System.Diagnostics.ProcessStartInfo(fileName, arguments);
             psi.UseShellExecute = false;
-            System.Diagnostics.Process.Start(psi);
+            var p = System.Diagnostics.Process.Start(psi);
+            p.WaitForExit();
         }
-        
         
         void buildJs()
         {

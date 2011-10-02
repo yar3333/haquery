@@ -16,7 +16,7 @@ class haquery_server_HaqQuery {
 	public function jQueryCall($method) {
 		$GLOBALS['%s']->push("haquery.server.HaqQuery::jQueryCall");
 		$製pos = $GLOBALS['%s']->length;
-		haquery_server_HaqInternals::addAjaxAnswer("\$('" . str_replace("#", "#" . $this->prefixID, $this->query) . "')." . $method . ";");
+		haquery_server_HaqInternals::addAjaxResponse("\$('" . str_replace("#", "#" . $this->prefixID, $this->query) . "')." . $method . ";");
 		$GLOBALS['%s']->pop();
 	}
 	public function __toString() {
@@ -88,7 +88,7 @@ class haquery_server_HaqQuery {
 			}
 		}
 		if(haquery_base_HaQuery::$isPostback) {
-			haquery_server_HaqInternals::addAjaxAnswer("\$('" . str_replace("#", "#" . $this->prefixID, $this->query) . "').removeAttr('" . $name . "');");
+			haquery_server_HaqInternals::addAjaxResponse("\$('" . str_replace("#", "#" . $this->prefixID, $this->query) . "').removeAttr('" . $name . "');");
 		}
 		{
 			$GLOBALS['%s']->pop();
@@ -96,10 +96,10 @@ class haquery_server_HaqQuery {
 		}
 		$GLOBALS['%s']->pop();
 	}
-	public function addClass($clas) {
+	public function addClass($cssClass) {
 		$GLOBALS['%s']->push("haquery.server.HaqQuery::addClass");
 		$製pos = $GLOBALS['%s']->length;
-		$classes = _hx_deref(new haquery_EReg("\\s+", ""))->split($clas);
+		$classes = _hx_deref(new haquery_EReg("\\s+", ""))->split($cssClass);
 		{
 			$_g = 0; $_g1 = $this->nodes;
 			while($_g < $_g1->length) {
@@ -123,7 +123,7 @@ class haquery_server_HaqQuery {
 			}
 		}
 		if(haquery_base_HaQuery::$isPostback) {
-			$this->jQueryCall("addClass(\"" . $clas . "\")");
+			$this->jQueryCall("addClass(\"" . $cssClass . "\")");
 		}
 		{
 			$GLOBALS['%s']->pop();
@@ -131,10 +131,10 @@ class haquery_server_HaqQuery {
 		}
 		$GLOBALS['%s']->pop();
 	}
-	public function hasClass($clas) {
+	public function hasClass($cssClass) {
 		$GLOBALS['%s']->push("haquery.server.HaqQuery::hasClass");
 		$製pos = $GLOBALS['%s']->length;
-		$classes = _hx_deref(new haquery_EReg("\\s+", ""))->split($clas);
+		$classes = _hx_deref(new haquery_EReg("\\s+", ""))->split($cssClass);
 		{
 			$_g = 0; $_g1 = $this->nodes;
 			while($_g < $_g1->length) {
@@ -168,10 +168,10 @@ class haquery_server_HaqQuery {
 		}
 		$GLOBALS['%s']->pop();
 	}
-	public function removeClass($clas) {
+	public function removeClass($cssClass) {
 		$GLOBALS['%s']->push("haquery.server.HaqQuery::removeClass");
 		$製pos = $GLOBALS['%s']->length;
-		$classes = _hx_deref(new haquery_EReg("\\s+", ""))->split($clas);
+		$classes = _hx_deref(new haquery_EReg("\\s+", ""))->split($cssClass);
 		{
 			$_g = 0; $_g1 = $this->nodes;
 			while($_g < $_g1->length) {
@@ -193,7 +193,7 @@ class haquery_server_HaqQuery {
 			}
 		}
 		if(haquery_base_HaQuery::$isPostback) {
-			$this->jQueryCall("removeClass(\"" . $clas . "\")");
+			$this->jQueryCall("removeClass(\"" . $cssClass . "\")");
 		}
 		{
 			$GLOBALS['%s']->pop();

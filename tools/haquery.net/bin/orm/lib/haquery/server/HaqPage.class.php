@@ -99,7 +99,7 @@ class haquery_server_HaqPage extends haquery_server_HaqComponent {
 function haquery_server_HaqPage_0(&$links, $path) {
 	$製pos = $GLOBALS['%s']->length;
 	{
-		$GLOBALS['%s']->push("haquery.server.HaqPage::insertStyles@33");
+		$GLOBALS['%s']->push("haquery.server.HaqPage::insertStyles@32");
 		$製pos2 = $GLOBALS['%s']->length;
 		{
 			$裨mp = haquery_server_HaqPage::getStyleLink($path);
@@ -112,7 +112,7 @@ function haquery_server_HaqPage_0(&$links, $path) {
 function haquery_server_HaqPage_1(&$links, $path) {
 	$製pos = $GLOBALS['%s']->length;
 	{
-		$GLOBALS['%s']->push("haquery.server.HaqPage::insertScripts@55");
+		$GLOBALS['%s']->push("haquery.server.HaqPage::insertScripts@54");
 		$製pos2 = $GLOBALS['%s']->length;
 		{
 			$裨mp = haquery_server_HaqPage::getScriptLink($path);
