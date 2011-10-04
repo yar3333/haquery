@@ -18,6 +18,8 @@ class Client extends haquery.components.container.Client
                 self.activeTab = index;
             });
         });
+        
+        activeTab = 0;
     }
     
     function activeTab_getter() : Int
@@ -43,9 +45,9 @@ class Client extends haquery.components.container.Client
         
         q('#tabs>*:eq(1)>*').each(function(index, elem)
         {
-            new HaqQuery(elem).removeClass('active');
+            new HaqQuery(elem).removeClass('active').hide();
         });
-        q('#tabs>*:eq(1)>*:eq(' + n + ')').addClass('active');
+        q('#tabs>*:eq(1)>*:eq(' + n + ')').addClass('active').show();
         
         return n;
     }
