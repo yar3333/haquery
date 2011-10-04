@@ -2,6 +2,7 @@ package haquery.server;
 
 import php.Lib;
 import haquery.server.HaqXml;
+import Type;
 using haquery.StringTools;
 
 class HaqComponent extends haquery.base.HaqComponent
@@ -53,7 +54,7 @@ class HaqComponent extends haquery.base.HaqComponent
         }
     }
 	
-	private function loadParamsToObjectFields() : Void
+	function loadParamsToObjectFields() : Void
 	{
         if (params!=null)
         {
@@ -64,7 +65,9 @@ class HaqComponent extends haquery.base.HaqComponent
 				if (!Reflect.isFunction(Reflect.field(this, field))
                  && !Lambda.has(restrictedFields, field)
 				 && !field.startsWith('event_')
-				) fields.set(field.toLowerCase(), field);
+				) {
+                    fields.set(field.toLowerCase(), field);
+                }
 			}
             
 			if (Type.getClassName(Type.getClass(params)) == 'Hash')
@@ -72,11 +75,18 @@ class HaqComponent extends haquery.base.HaqComponent
                 var paramsAsHash : Hash<String> = cast params;
                 for (k in paramsAsHash.keys())
                 {
-                    var v = paramsAsHash.get(k);
+                    var v : Dynamic = paramsAsHash.get(k);
                     k = k.toLowerCase();
                     if (fields.exists(k))
                     {
                         var field = fields.get(k);
+                        switch (Type.typeof(Reflect.field(this, field)))
+                        {
+                            case ValueType.TInt:    v = Std.parseInt(v);
+                            case ValueType.TFloat:  v = Std.parseFloat(v);
+                            case ValueType.TBool:   v = (v=="1" || v=="true");
+                            default:                // nothing to do
+                        }
                         Reflect.setField(this, field, v);
                     }
                 }
