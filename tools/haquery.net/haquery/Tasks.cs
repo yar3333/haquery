@@ -181,8 +181,11 @@ namespace haquery_net.haquery
         {
             log.start("Save bin\\lib folder");
 
-            hant.deleteDirectory("bin\\lib.old");
-            if (Directory.Exists("bin\\lib")) hant.rename("bin\\lib", "bin\\lib.old");
+            if (Directory.Exists("bin\\lib"))
+            {
+                hant.deleteDirectory("bin\\lib.old");
+                hant.rename("bin\\lib", "bin\\lib.old");
+            }
 
             log.finishOk();
         }
