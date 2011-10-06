@@ -6,6 +6,8 @@ import php.io.Path;
 import php.Lib;
 import haquery.server.HaqXml;
 import haquery.server.HaQuery;
+import php.Lessc;
+
 using haquery.StringTools;
 
 typedef HaqTemplate =
@@ -133,6 +135,8 @@ class HaqTemplates
 	function parseComponent(componentFolder:String) : { css:String, doc:HaqXml }
 	{
         HaQuery.profiler.begin('parseComponent');
+      		var lessc = new Lessc();
+
 			var tag = Path.withoutDirectory(componentFolder);
             var doc = getComponentTemplateDoc(tag);
 			var css = '';
@@ -143,8 +147,16 @@ class HaqTemplates
 				var node : HaqXmlNodeElement = children[i];
 				if (node.name=='style' && !node.hasAttribute('id'))
 				{
-					css += node.innerHTML;
-					node.remove();
+					if (node.getAttribute('type') == "text/less")
+                    {
+                        css += lessc.parse(node.innerHTML);
+                    }
+                    else
+                    {
+                        css += node.innerHTML;
+                    }
+					
+                    node.remove();
 					children.splice(i, 1);
 					i--;
 				}
@@ -152,7 +164,8 @@ class HaqTemplates
 			}
         HaQuery.profiler.end();
 		
-		return { css:css, doc:doc };
+        
+        return { css: css, doc:doc };
 	}
 	
 	public function parseServerHandlers(componentFolder:String) : Hash<Array<String>>
@@ -194,11 +207,22 @@ class HaqTemplates
 		var r = new Array<String>();
 		for (folder in componentsFolders)
 		{
-			var path = HaQuery.folders.temp + '/' + folder + 'styles.css';
-			if (FileSystem.exists(path))
+            var lessPath = HaQuery.folders.temp + '/' + folder + 'styles.less';
+            var cssPath = HaQuery.folders.temp + '/' + folder + 'styles.css';
+            if (FileSystem.exists(lessPath))
+            {
+                if (!FileSystem.exists(cssPath) 
+                 || FileSystem.stat(lessPath).mtime.getTime() > FileSystem.stat(cssPath).mtime.getTime()
+                ) {
+                    Lessc.ccompile(lessPath, cssPath);
+                }
+            }
+			
+			if (FileSystem.exists(cssPath))
 			{
-				r.push(path);
+				r.push(cssPath);
 			}
+            
 		}
 		return r;
 	}
