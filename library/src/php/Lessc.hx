@@ -1,10 +1,10 @@
 package php;
 
-@:native("lessc") extern class Lessc
+@:native("Lessc") extern class Lessc
 {
     static function __init__() : Void
     {
-		untyped __php__("require_once 'php/lessc.php';");
+		untyped __php__("require_once 'php/Lessc.php';");
     }
 
 	public function new(?fname:String) : Void;
