@@ -51,6 +51,14 @@ class HaQuery
 		public static var isPostback : Bool = false;
 	   
 		static var startTime : Float;
+        
+        public static function getParamsString()
+        {
+            var s = Web.getParamsString();
+            var re = ~/route=[^&]*/g;
+            s = re.replace(s, '');
+            return haquery.StringTools.trim(s, '&');
+        }
 	#end
 
     static public function run() : Void
@@ -95,7 +103,7 @@ class HaQuery
     static public function redirect(url:String) : Void
     {
         #if php
-			if (HaQuery.isPostback) HaqInternals.addAjaxResponse("window.location.href = '" + HaQuery.jsEscape(url) + "';");
+			if (HaQuery.isPostback) HaqInternals.addAjaxResponse("haquery.base.HaQuery.redirect('" + HaQuery.jsEscape(url) + "');");
 			else                    php.Web.redirect(url);
 		#else
 			if (url == Lib.window.location.href) Lib.window.location.reload(true);
