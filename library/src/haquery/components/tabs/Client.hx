@@ -6,7 +6,7 @@ import haquery.client.HaqComponent;
 
 class Client extends haquery.components.container.Client
 {
-    public var activeTab(activeTab_getter, activeTab_setter) : Int;
+    public var active(active_getter, active_setter) : Int;
 
     function init()
     {
@@ -15,14 +15,14 @@ class Client extends haquery.components.container.Client
         {
             new HaqQuery(elem).click(function(e)
             {
-                self.activeTab = index;
+                self.active = index;
             });
         });
         
-        activeTab = 0;
+        active = 0;
     }
     
-    function activeTab_getter() : Int
+    function active_getter() : Int
     {
         var r = -1;
         q('#tabs>*:eq(1)>*').each(function(index, elem)
@@ -35,7 +35,7 @@ class Client extends haquery.components.container.Client
         return r;
     }
 
-    function activeTab_setter(n:Int) : Int
+    function active_setter(n:Int) : Int
     {
         q('#tabs>*:eq(0)>*').each(function(index, elem)
         {

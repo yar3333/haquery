@@ -7,12 +7,12 @@ import php.Lib;
 
 class Server extends haquery.components.container.Server
 {
-    public var activeTab : Int;
+    public var active : Int;
     
     public function new()
     {
         super();
-        activeTab = 0;
+        active = 0;
     }
     
     function init()
@@ -24,7 +24,7 @@ class Server extends haquery.components.container.Server
             var i = 0;
             for (child in Lib.toHaxeArray(buttons.children))
             {
-                if (i == activeTab) new HaqQuery(prefixID, "", Lib.toPhpArray([child])).addClass('active');
+                if (i == active) new HaqQuery(prefixID, "", Lib.toPhpArray([child])).addClass('active');
                 i++;
             }
             
@@ -32,7 +32,7 @@ class Server extends haquery.components.container.Server
             var j = 0;
             for (child in Lib.toHaxeArray(panels.children))
             {
-                if (j == activeTab) new HaqQuery(prefixID, "", Lib.toPhpArray([child])).addClass('active');
+                if (j == active) new HaqQuery(prefixID, "", Lib.toPhpArray([child])).addClass('active');
                 j++;
             }
         }
