@@ -40,6 +40,12 @@ class Client extends haquery.components.container.Client
             self.p_mouseout();
         });
     }
+    
+    public function detach(elem:HaqQuery)
+    {
+        elem.unbind("mouseover");
+        elem.unbind("mouseout");
+    }
 
     function p_mouseover()
     {
