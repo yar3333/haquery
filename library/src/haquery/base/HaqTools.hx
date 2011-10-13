@@ -92,7 +92,7 @@ class HaqTools
     
     public static function bool(v:Dynamic) : Bool
     {
-		return v != false && v != null && v != 0 && v != '0' && v != 'false' && v != 'off';
+		return v != false && v != null && v != 0 && v != "" && v != "0" && v != "false" && v != "off";
     }
     
     public static function object2hash(obj:Dynamic) : Hash<Dynamic>
