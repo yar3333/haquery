@@ -34,7 +34,7 @@ class HaqTools
         return r;
     }
     
-    static  public function getNumeral(n, w1, w2, w3)
+    public static function getNumeral(n, w1, w2, w3)
     {
         // $w1,$w2,$w3: голос, голоса, голосов
         if (n%10==0 || (n>=11 && n<=19) || n%10>5) return w3;
