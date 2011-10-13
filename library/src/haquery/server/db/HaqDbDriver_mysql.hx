@@ -4,7 +4,7 @@ import Type;
 import php.db.Connection;
 import php.db.Mysql;
 import haquery.server.db.HaqDbDriver;
-import haquery.server.HaQuery;
+import haquery.server.Lib;
 import php.db.ResultSet;
 
 class HaqDbDriver_mysql implements HaqDbDriver
@@ -24,7 +24,7 @@ class HaqDbDriver_mysql implements HaqDbDriver
 
     public function query(sql:String) : ResultSet
     {
-        if (HaQuery.config.sqlTraceLevel>=2) trace("SQL QUERY: " + sql);
+        if (Lib.config.sqlTraceLevel>=2) trace("SQL QUERY: " + sql);
         var r = connection.request(sql);
         var errno:Int = untyped __call__('mysql_errno');
         if (errno != 0)
@@ -33,10 +33,10 @@ class HaqDbDriver_mysql implements HaqDbDriver
 				+ "SQL QUERY: " + sql + "\n"
 				+ "SQL RESULT: " + affectedRows() + " rows affected, error code = " + errno + " (" + getLastErrorMessage() + ").";
         }
-        if (HaQuery.config.sqlTraceLevel>0)
+        if (Lib.config.sqlTraceLevel>0)
         {
-            if (HaQuery.config.sqlTraceLevel == 1 && errno != 0) trace("SQL QUERY: " + sql);
-            if (HaQuery.config.sqlTraceLevel >= 3 || errno != 0)
+            if (Lib.config.sqlTraceLevel == 1 && errno != 0) trace("SQL QUERY: " + sql);
+            if (Lib.config.sqlTraceLevel >= 3 || errno != 0)
 			{
                 trace("SQL RESULT: " + affectedRows() + " rows affected, error code = " + errno + " (" + getLastErrorMessage() + ').');
 			}

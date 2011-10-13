@@ -4,7 +4,7 @@ import haquery.server.HaqComponent;
 import haquery.server.HaqComponentManager;
 import haquery.server.HaqEvent;
 import haquery.server.HaqTools;
-import haquery.server.HaQuery;
+import haquery.server.Lib;
 import haquery.server.HaqXml;
 import php.FileSystem;
 import php.Session;

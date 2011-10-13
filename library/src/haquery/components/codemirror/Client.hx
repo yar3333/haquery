@@ -1,7 +1,7 @@
 package haquery.components.codemirror;
 
 import js.Lib;
-import haquery.client.HaQuery;
+import haquery.client.Lib;
 import haquery.client.HaqQuery;
 import haquery.client.HaqEvent;
 import haquery.client.HaqComponent;

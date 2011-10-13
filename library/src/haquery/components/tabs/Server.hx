@@ -2,7 +2,7 @@ package haquery.components.tabs;
 
 import haquery.server.HaqComponent;
 import haquery.server.HaqQuery;
-import haquery.server.HaQuery;
+import haquery.server.Lib;
 import php.Lib;
 
 class Server extends haquery.components.container.Server

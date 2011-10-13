@@ -1,6 +1,6 @@
 package haquery.server;
 
-import haquery.server.HaQuery;
+import haquery.server.Lib;
 import haquery.server.HaqXml;
 import php.Lib;
 import php.NativeArray;

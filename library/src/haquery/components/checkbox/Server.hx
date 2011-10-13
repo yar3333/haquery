@@ -2,7 +2,7 @@ package haquery.components.checkbox;
 
 import haquery.server.HaqComponent;
 import haquery.server.HaqTools;
-import haquery.server.HaQuery;
+import haquery.server.Lib;
 
 class Server extends HaqComponent
 {

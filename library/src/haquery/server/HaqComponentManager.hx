@@ -2,8 +2,9 @@ package haquery.server;
 
 import haquery.server.HaqComponent;
 import haquery.server.HaqXml;
+import haquery.server.Lib;
 import haxe.Serializer;
-import php.Lib;
+
 using haquery.StringTools;
 
 class HaqComponentManager 
@@ -24,10 +25,10 @@ class HaqComponentManager
 	
 	function newComponent(parent:HaqComponent, clas:Class<HaqComponent>, name:String, id:String, doc:HaqXml, attr:Hash<String>, innerHTML:String) : HaqComponent
 	{
-        HaQuery.profiler.begin('newComponent');
+        Lib.profiler.begin('newComponent');
             var r : HaqComponent = Type.createInstance(clas, []);
             r.construct(this, parent, name, id, doc, attr, innerHTML);
-        HaQuery.profiler.end();
+        Lib.profiler.end();
 		return r;
 	}
 	
