@@ -16,7 +16,7 @@ class Server extends HaqComponent
     
     function init()
     {
-        if (HaQuery.isPostback)
+        if (isPostback)
         {
             value = HaqTools.bool(q('#value').val());
         }

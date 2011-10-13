@@ -2,7 +2,9 @@ package haquery.server;
 
 import php.Lib;
 import haquery.server.HaqXml;
+import haquery.server.HaQuery;
 import Type;
+
 using haquery.StringTools;
 
 class HaqComponent extends haquery.base.HaqComponent
@@ -19,18 +21,24 @@ class HaqComponent extends haquery.base.HaqComponent
      */
     private var doc : HaqXml;
 
+	/**
+	 * Equivalent to HaqSystem.isPostback.
+	 */
+    public var isPostback : Bool;
+    
     /**
      * Need render?
      */
     public var visible : Bool;
-    
-	public function new() : Void
+	
+    public function new() : Void
 	{
 		super();
+        isPostback = HaqSystem.isPostback;
 		visible = true;
 	}
-
-	public function construct(manager:HaqComponentManager, parent: HaqComponent, tag:String, id:String, doc: HaqXml, params:Hash<String>, innerHTML:String) : Void
+    
+    public function construct(manager:HaqComponentManager, parent: HaqComponent, tag:String, id:String, doc: HaqXml, params:Hash<String>, innerHTML:String) : Void
     {
 		super.commonConstruct(parent, tag, id);
         

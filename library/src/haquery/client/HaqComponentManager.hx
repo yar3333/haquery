@@ -78,6 +78,6 @@ class HaqComponentManager
     {
         var className = Type.getClassName(templates.get(tag).clas);
         var n = className.lastIndexOf('.');
-        return '/' + className.substr(0, n).replace('.', '/') + '/' + HaQuery.folders.support + '/';
+        return '/' + className.substr(0, n).replace('.', '/') + '/' + HaqCommon.folders.support + '/';
     }
 }

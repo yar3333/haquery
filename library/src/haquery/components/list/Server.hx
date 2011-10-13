@@ -9,7 +9,7 @@ class Server extends HaqComponent
 {
 	override private function createChildComponents():Void 
 	{
-        if (HaQuery.isPostback)
+        if (isPostback)
         {
 			var length = Std.parseInt(q('#length').val());
 			for (i in 0...length)
@@ -21,7 +21,7 @@ class Server extends HaqComponent
 
     public function bind(constsList:Iterable<Dynamic>)
     {
-        HaQuery.assert(!HaQuery.isPostback, 'List binding on postback is not allowed.');
+        HaQuery.assert(!isPostback, 'List binding on postback is not allowed.');
 	
 		var i = 0;
         for (consts in constsList)

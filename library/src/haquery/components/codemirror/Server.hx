@@ -25,7 +25,7 @@ class Server extends HaqComponent
     
     function init() : Void
     {
-        if (!HaQuery.isPostback)
+        if (!isPostback)
         {
             if (text==null) text = StringTools.htmlUnescape(innerHTML);
         }

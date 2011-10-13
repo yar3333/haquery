@@ -14,6 +14,13 @@ using haquery.StringTools;
 
 class HaqSystem
 {
+    /**
+     * Ajax?
+     *   false => rendering HTML;
+     *   true => calling server event handler.
+     */
+    static public var isPostback(default, null) : Bool;
+    
     public function new(route:HaqRoute) : Void
     {
         trace(null);
@@ -22,11 +29,11 @@ class HaqSystem
 
             trace("HAQUERY SYSTEM Start route.pagePath = " + route.path + ", HTTP_HOST = " + Web.getHttpHost() + ", clientIP = " + Web.getClientIP() + ", pageID = " + route.pageID);
 
+            isPostback = php.Web.getParams().get('HAQUERY_POSTBACK')!=null ? true : false;
+            
             HaQuery.profiler.begin('templates');
                 var templates = new HaqTemplates(HaQuery.config.getComponentsFolders());
             HaQuery.profiler.end();
-            
-            HaQuery.isPostback = php.Web.getParams().get('HAQUERY_POSTBACK')!=null ? true : false;
 
             var params = php.Web.getParams();
             if (route.pageID != null)
@@ -41,7 +48,7 @@ class HaqSystem
             HaQuery.profiler.end();
 
             var html : String;
-            if (!HaQuery.isPostback)
+            if (!isPostback)
             {
                 html = renderPage(page, templates, manager, route.path);
             }
@@ -69,7 +76,7 @@ class HaqSystem
                 + "    if(typeof haquery=='undefined') alert('haquery.js must be loaded!');\n"
                 + "    " + templates.getInternalDataForPageHtml().replace('\n','\n    ') + '\n'
                 + "    " + manager.getInternalDataForPageHtml(path).replace('\n', '\n    ') + '\n'
-                + "    haquery.base.HaQuery.run();\n"
+                + "    haquery.client.HaQuery.run();\n"
                 + "</script>"
             );
             
