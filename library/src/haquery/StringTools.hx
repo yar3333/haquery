@@ -125,6 +125,10 @@ class StringTools
 	{
 		return untyped __call__('hexdec', s);
 	}
+    
+    public static function addcslashes(s:String) : String
+    {
+        return untyped __call__('addcslashes', s, "\'\"\t\r\n\\");
+    }
     #end
-
 }

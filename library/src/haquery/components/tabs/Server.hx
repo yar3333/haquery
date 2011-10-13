@@ -17,7 +17,7 @@ class Server extends haquery.components.container.Server
     
     function init()
     {
-        if (!HaQuery.isPostback)
+        if (!isPostback)
         {
             var buttonsAndPanels = q('#tabs>*');
             var buttons = buttonsAndPanels.nodes[0];
