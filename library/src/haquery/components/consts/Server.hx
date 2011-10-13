@@ -9,7 +9,7 @@ class Server extends HaqComponent
 {
     public static var consts : Hash<String> = new Hash<String>();
     
-	override public function construct(manager:HaqComponentManager, parent:HaqComponent, tag:String, id:String, doc:HaqXml, params:Dynamic, innerHTML:String):Void 
+	override public function construct(manager:HaqComponentManager, parent:HaqComponent, tag:String, id:String, doc:HaqXml, params:Hash<String>, innerHTML:String):Void 
 	{
         for (const in consts.keys())
         {

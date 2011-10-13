@@ -1,5 +1,6 @@
 package haquery.components.list;
 
+import haquery.server.HaqTools;
 import haquery.server.HaQuery;
 import haquery.server.HaqComponent;
 using haquery.StringTools;
@@ -25,7 +26,7 @@ class Server extends HaqComponent
 		var i = 0;
         for (consts in constsList)
         {
-			manager.createComponent(this, 'haq:listitem', Std.string(i), consts, innerHTML);
+            manager.createComponent(this, 'haq:listitem', Std.string(i), cast HaqTools.object2hash(consts), innerHTML);
             i++;
         }
 		q('#length').val(Std.string(i));

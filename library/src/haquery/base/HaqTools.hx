@@ -89,4 +89,19 @@ class HaqTools
         }
         return false;
     }
+    
+    public static function bool(v:Dynamic) : Bool
+    {
+		return v != false && v != null && v != 0 && v != '0' && v != 'false' && v != 'off';
+    }
+    
+    public static function object2hash(obj:Dynamic) : Hash<Dynamic>
+    {
+        var r = new Hash<Dynamic>();
+        for (field in Reflect.fields(obj))
+        {
+            r.set(field, Reflect.field(obj, field));
+        }
+        return r;
+    }
 }
