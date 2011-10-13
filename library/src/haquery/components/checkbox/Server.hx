@@ -1,4 +1,4 @@
-package components.checkbox;
+package haquery.components.checkbox;
 
 import haquery.server.HaqComponent;
 import haquery.server.HaqTools;
@@ -25,5 +25,13 @@ class Server extends HaqComponent
     function preRender()
     {
         q('#value').val(value ? '1' : '0');
+        if (value)
+        {
+            q('#check').attr("checked", "checked");
+        }
+        else
+        {
+            q('#check').removeAttr("checked");
+        }
     }
 }
