@@ -1,4 +1,4 @@
-package components.checkbox;
+package haquery.components.checkbox;
 
 import haquery.client.HaqComponent;
 
