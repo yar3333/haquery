@@ -24,28 +24,22 @@ class HaqComponent extends haquery.base.HaqComponent
      */
     public var visible : Bool;
     
-	/**
-	 * Params, which must be loaded to object variables.
-	 */
-    private var params : Dynamic;
-
 	public function new() : Void
 	{
 		super();
 		visible = true;
 	}
 
-	public function construct(manager:HaqComponentManager, parent: HaqComponent, tag:String, id:String, doc: HaqXml, params:Dynamic, innerHTML:String) : Void
+	public function construct(manager:HaqComponentManager, parent: HaqComponent, tag:String, id:String, doc: HaqXml, params:Hash<String>, innerHTML:String) : Void
     {
 		super.commonConstruct(parent, tag, id);
         
 		this.manager = manager;
         this.doc = doc;
-		this.params = params;
         this.innerHTML = innerHTML;
 		
-		loadParamsToObjectFields();
-		createEvents();
+		loadParamsToObjectFields(params, getFieldsToLoadParams());
+        createEvents();
         createChildComponents();
 		
         if (Reflect.isFunction(Reflect.field(this, 'init')))
@@ -53,42 +47,42 @@ class HaqComponent extends haquery.base.HaqComponent
             Reflect.callMethod(this, Reflect.field(this, 'init'), []);
         }
     }
+    
+    function getFieldsToLoadParams() :  Hash<String>
+    {
+        var restrictedFields : Array<String> = Reflect.fields(Type.createEmptyInstance(Type.resolveClass('haquery.server.HaqComponent')));
+        var r : Hash<String> = new Hash<String>(); // fieldname => FieldName
+        for (field in Reflect.fields(this))
+        {
+            if (!Reflect.isFunction(Reflect.field(this, field))
+             && !Lambda.has(restrictedFields, field)
+             && !field.startsWith('event_')
+            ) {
+                r.set(field.toLowerCase(), field);
+            }
+        }
+        return r;
+    }
 	
-	function loadParamsToObjectFields() : Void
+	function loadParamsToObjectFields(params:Hash<String>, fields:Hash<String>) : Void
 	{
         if (params!=null)
         {
-			var restrictedFields : Array<String> = Reflect.fields(Type.createEmptyInstance(Type.resolveClass('haquery.server.HaqComponent')));
-			var fields : Hash<String> = new Hash<String>(); // fieldname => FieldName
-			for (field in Reflect.fields(this))
-			{
-				if (!Reflect.isFunction(Reflect.field(this, field))
-                 && !Lambda.has(restrictedFields, field)
-				 && !field.startsWith('event_')
-				) {
-                    fields.set(field.toLowerCase(), field);
-                }
-			}
-            
-			if (Type.getClassName(Type.getClass(params)) == 'Hash')
+            for (k in params.keys())
             {
-                var paramsAsHash : Hash<String> = cast params;
-                for (k in paramsAsHash.keys())
+                var v : Dynamic = params.get(k);
+                k = k.toLowerCase();
+                if (fields.exists(k))
                 {
-                    var v : Dynamic = paramsAsHash.get(k);
-                    k = k.toLowerCase();
-                    if (fields.exists(k))
+                    var field = fields.get(k);
+                    switch (Type.typeof(Reflect.field(this, field)))
                     {
-                        var field = fields.get(k);
-                        switch (Type.typeof(Reflect.field(this, field)))
-                        {
-                            case ValueType.TInt:    v = Std.parseInt(v);
-                            case ValueType.TFloat:  v = Std.parseFloat(v);
-                            case ValueType.TBool:   v = (v=="1" || v=="true");
-                            default:                // nothing to do
-                        }
-                        Reflect.setField(this, field, v);
+                        case ValueType.TInt:    v = Std.parseInt(v);
+                        case ValueType.TFloat:  v = Std.parseFloat(v);
+                        case ValueType.TBool:   v = HaqTools.bool(v);
+                        default:                // nothing to do
                     }
+                    Reflect.setField(this, field, v);
                 }
             }
         }

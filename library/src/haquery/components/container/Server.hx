@@ -6,7 +6,7 @@ import haquery.server.HaqXml;
 
 class Server extends Base
 {
-	override public function construct(manager:HaqComponentManager, parent:HaqComponent, tag:String, id:String, doc:HaqXml, params:Dynamic, innerHTML:String) : Void
+	override public function construct(manager:HaqComponentManager, parent:HaqComponent, tag:String, id:String, doc:HaqXml, params:Hash<String>, innerHTML:String) : Void
 	{
         super.construct(manager, parent, tag, id, new HaqXml(getHeader() + innerHTML + getFooter()), params, '');
 	}

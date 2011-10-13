@@ -156,7 +156,7 @@ class HaqQuery
     /**
      * Get or set element value.
      */
-    public function val(val:String=null) : Dynamic
+    public function val(val:Dynamic=null) : Dynamic
     {
         // getting
         if (untyped __physeq__(val, null))
@@ -182,6 +182,11 @@ class HaqQuery
                         if (option.hasAttribute('selected')) return option.getAttribute ('value');
                     }
                     return null;
+                }
+                
+                if (node.name=='input' && node.getAttribute('type')=='checkbox')
+                {
+                    return node.hasAttribute('checked');
                 }
                 
                 return node.getAttribute('value');
@@ -213,7 +218,10 @@ class HaqQuery
 				");
             }
             
-            if (node.name=='textarea') node.innerHTML = val;
+            if (node.name == 'textarea')
+            {
+                node.innerHTML = val;
+            }
             else 
 			if (node.name=='select')
             {
@@ -226,7 +234,22 @@ class HaqQuery
                         option.removeAttribute('selected');
                 }
             }
-            else node.setAttribute('value',val);
+            else 
+			if (node.name == 'input' && node.getAttribute('type') == 'checkbox')
+            {
+                if (HaqTools.bool(val))
+                {
+                    node.setAttribute('checked', 'checked');
+                }
+                else
+                {
+                    node.removeAttribute('checked');
+                }
+            }
+            else
+            {
+                node.setAttribute('value',val);
+            }
         }
         
         if (HaQuery.isPostback) this.jQueryCall('val("' + val + '")');
