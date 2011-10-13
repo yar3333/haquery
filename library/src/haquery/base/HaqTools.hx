@@ -9,7 +9,32 @@ import haquery.StringTools;
 
 class HaqTools 
 {
-	static  public function getNumeral(n, w1, w2, w3)
+    public static function isClassHasSuperClass(c:Class<Dynamic>, superClass:Class<Dynamic>)
+    {
+        while (c != null)
+        {
+            if (c == superClass) return true;
+            c = Type.getSuperClass(c);
+        }
+        return false;
+    }
+    
+    public static function bool(v:Dynamic) : Bool
+    {
+		return v != false && v != null && v != 0 && v != "" && v != "0" && v != "false" && v != "off";
+    }
+    
+    public static function object2hash(obj:Dynamic) : Hash<Dynamic>
+    {
+        var r = new Hash<Dynamic>();
+        for (field in Reflect.fields(obj))
+        {
+            r.set(field, Reflect.field(obj, field));
+        }
+        return r;
+    }
+    
+    static  public function getNumeral(n, w1, w2, w3)
     {
         // $w1,$w2,$w3: голос, голоса, голосов
         if (n%10==0 || (n>=11 && n<=19) || n%10>5) return w3;
@@ -17,7 +42,7 @@ class HaqTools
         return w1;
     }
 	
-	#if php
+    #if php
     static function serverVarToClientString(v:Dynamic) : String
 	{
 		switch (Type.typeof(v))
@@ -79,29 +104,4 @@ class HaqTools
               +StringTools.format("%04x", Math.floor(Math.random() * 65536));
     }
     #end
-    
-    public static function isClassHasSuperClass(c:Class<Dynamic>, superClass:Class<Dynamic>)
-    {
-        while (c != null)
-        {
-            if (c == superClass) return true;
-            c = Type.getSuperClass(c);
-        }
-        return false;
-    }
-    
-    public static function bool(v:Dynamic) : Bool
-    {
-		return v != false && v != null && v != 0 && v != "" && v != "0" && v != "false" && v != "off";
-    }
-    
-    public static function object2hash(obj:Dynamic) : Hash<Dynamic>
-    {
-        var r = new Hash<Dynamic>();
-        for (field in Reflect.fields(obj))
-        {
-            r.set(field, Reflect.field(obj, field));
-        }
-        return r;
-    }
 }

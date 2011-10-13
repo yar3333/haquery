@@ -105,7 +105,7 @@ class Lib
 	
     static function trace(v:Dynamic, ?pos : haxe.PosInfos) : Void
     {
-        if (Lib.config.filterTracesByIP!='')
+        if (Lib.config.filterTracesByIP != '')
         {
             if (Lib.config.filterTracesByIP!=Web.getClientIP()) return;
         }
@@ -113,7 +113,7 @@ class Lib
         var text = '';
         if (Type.getClassName(Type.getClass(v)) == 'String') text += v;
         else
-        if (!isNull(v))
+        if (v!=null)
         {
             text += "DUMP\n";
             var dump = ''; untyped __php__("ob_start(); var_dump($v); $dump = ob_get_clean();");
@@ -197,11 +197,6 @@ class Lib
         var n = rootPath.length;
         var s = realPath.substr(n);
         return '/' + s.ltrim('/');
-    }
-    
-    static function isNull(e:Dynamic) : Bool
-    {
-        return untyped __physeq__(e, null);
     }
     
     static function traceException(e:Dynamic) : Void
