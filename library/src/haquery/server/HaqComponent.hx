@@ -1,8 +1,7 @@
 package haquery.server;
 
-import php.Lib;
 import haquery.server.HaqXml;
-import haquery.server.HaQuery;
+import haquery.server.Lib;
 import Type;
 
 using haquery.StringTools;
@@ -107,8 +106,8 @@ class HaqComponent extends haquery.base.HaqComponent
 		while (i < untyped __call__('count', baseNode.children))
         {
 			var node : HaqXmlNodeElement = baseNode.children[i];
-			HaQuery.assert(node.name!='haq:placeholder');
-			HaQuery.assert(node.name!='haq:content');
+			Lib.assert(node.name!='haq:placeholder');
+			Lib.assert(node.name!='haq:content');
             if (node.name.startsWith('haq:'))
             {
                 node.component = manager.createComponent(this, node.name, node.getAttribute('id'), Lib.hashOfAssociativeArray(node.getAttributesAssoc()), node.innerHTML);
@@ -172,7 +171,7 @@ class HaqComponent extends haquery.base.HaqComponent
 
     public function render() : String
     {
-        if (HaQuery.config.isTraceComponent) trace("render " + this.fullID);
+        if (Lib.config.isTraceComponent) trace("render " + this.fullID);
 		
 		prepareDocToRender(doc);
 

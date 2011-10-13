@@ -3,14 +3,14 @@ package haquery.server;
 import php.FileSystem;
 import php.io.File;
 import php.io.Path;
-import php.Lib;
 import php.Sys;
 import php.Web;
-import haquery.server.HaQuery;
+import haquery.server.Lib;
 import haquery.server.HaqComponent;
 import haquery.server.HaqProfiler;
 import haquery.server.HaqRoute;
 using haquery.StringTools;
+
 
 class HaqSystem
 {
@@ -25,15 +25,15 @@ class HaqSystem
     {
         trace(null);
 		
-        HaQuery.profiler.begin("system");
+        Lib.profiler.begin("system");
 
             trace("HAQUERY SYSTEM Start route.pagePath = " + route.path + ", HTTP_HOST = " + Web.getHttpHost() + ", clientIP = " + Web.getClientIP() + ", pageID = " + route.pageID);
 
             isPostback = php.Web.getParams().get('HAQUERY_POSTBACK')!=null ? true : false;
             
-            HaQuery.profiler.begin('templates');
-                var templates = new HaqTemplates(HaQuery.config.getComponentsFolders());
-            HaQuery.profiler.end();
+            Lib.profiler.begin('templates');
+                var templates = new HaqTemplates(Lib.config.getComponentsFolders());
+            Lib.profiler.end();
 
             var params = php.Web.getParams();
             if (route.pageID != null)
@@ -43,9 +43,9 @@ class HaqSystem
 
             var manager : HaqComponentManager = new HaqComponentManager(templates);
             
-            HaQuery.profiler.begin('createPage');
+            Lib.profiler.begin('createPage');
                 var page = manager.createPage(route.path, params);
-            HaQuery.profiler.end();
+            Lib.profiler.end();
 
             var html : String;
             if (!isPostback)
@@ -59,14 +59,14 @@ class HaqSystem
             
             trace("HAQUERY SYSTEM Finish");
 
-        HaQuery.profiler.end();
+        Lib.profiler.end();
         
         Lib.print(html);
     }
     
     static function renderPage(page:HaqPage, templates:HaqTemplates, manager:HaqComponentManager, path:String) : String
     {
-        HaQuery.profiler.begin('renderPage');
+        Lib.profiler.begin('renderPage');
             page.forEachComponent('preRender');
             
             page.insertStyles(templates.getStyleFilePaths().concat(manager.getRegisteredStyles()));
@@ -76,12 +76,12 @@ class HaqSystem
                 + "    if(typeof haquery=='undefined') alert('haquery.js must be loaded!');\n"
                 + "    " + templates.getInternalDataForPageHtml().replace('\n','\n    ') + '\n'
                 + "    " + manager.getInternalDataForPageHtml(path).replace('\n', '\n    ') + '\n'
-                + "    haquery.client.HaQuery.run();\n"
+                + "    haquery.client.Lib.run();\n"
                 + "</script>"
             );
             
             var html : String = page.render();
-        HaQuery.profiler.end();
+        Lib.profiler.end();
 
         php.Web.setHeader('Content-Type', page.contentType);
         

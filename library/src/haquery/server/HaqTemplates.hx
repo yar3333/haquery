@@ -3,9 +3,8 @@ package haquery.server;
 import php.FileSystem;
 import php.io.File;
 import php.io.Path;
-import php.Lib;
 import haquery.server.HaqXml;
-import haquery.server.HaQuery;
+import haquery.server.Lib;
 import php.Lessc;
 
 using haquery.StringTools;
@@ -134,7 +133,7 @@ class HaqTemplates
 	
 	function parseComponent(componentFolder:String) : { css:String, doc:HaqXml }
 	{
-        HaQuery.profiler.begin('parseComponent');
+        Lib.profiler.begin('parseComponent');
       		var lessc = new Lessc();
 
 			var tag = Path.withoutDirectory(componentFolder);
@@ -162,7 +161,7 @@ class HaqTemplates
 				}
 				i++;
 			}
-        HaQuery.profiler.end();
+        Lib.profiler.end();
 		
         
         return { css: css, doc:doc };
@@ -172,14 +171,14 @@ class HaqTemplates
 	{
 		componentFolder = componentFolder.rtrim('/') + '/';
         
-        HaQuery.profiler.begin('parseServerHandlers');
+        Lib.profiler.begin('parseServerHandlers');
             var serverMethods = [ 'click','change' ];   // server events
             var serverHandlers : Hash<Array<String>> = new Hash<Array<String>>();
 			var className = componentFolder.replace('/', '.') + 'Server';
 			var clas = Type.resolveClass(className);
             if (clas == null)
             {
-                HaQuery.profiler.end();
+                Lib.profiler.end();
                 return null;
             }
             var tempObj = Type.createEmptyInstance(clas);
@@ -197,7 +196,7 @@ class HaqTemplates
                     }
                 }
             }
-        HaQuery.profiler.end();
+        Lib.profiler.end();
 		
 		return serverHandlers;
 	}
@@ -291,14 +290,14 @@ class HaqTemplates
         
         var pageDoc = new HaqXml(pageText);
         
-        if (HaQuery.config.layout == null || HaQuery.config.layout == "") return pageDoc;
+        if (Lib.config.layout == null || Lib.config.layout == "") return pageDoc;
         
-        if (!FileSystem.exists(HaQuery.config.layout))
+        if (!FileSystem.exists(Lib.config.layout))
         {
-            throw "Layout file '" + HaQuery.config.layout + "' not found.";
+            throw "Layout file '" + Lib.config.layout + "' not found.";
         }
         
-        var layoutDoc = new HaqXml(File.getContent(HaQuery.config.layout));
+        var layoutDoc = new HaqXml(File.getContent(Lib.config.layout));
         
         var placeholders : Array<HaqXmlNodeElement> = untyped Lib.toHaxeArray(layoutDoc.find('haq:placeholder'));
         var contents : Array<HaqXmlNodeElement> = untyped Lib.toHaxeArray(pageDoc.find('>haq:content'));

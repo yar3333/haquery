@@ -3,13 +3,13 @@ package haquery.base;
 #if php
 import haquery.server.HaqInternals;
 import haquery.server.HaqEvent;
-import haquery.server.HaQuery;
+import haquery.server.Lib;
 using haquery.StringTools;
 private typedef Component = haquery.server.HaqComponent;
 #else
 import haquery.client.HaqInternals;
 import haquery.client.HaqEvent;
-import haquery.client.HaQuery;
+import haquery.client.Lib;
 using haquery.StringTools;
 private typedef Component = haquery.client.HaqComponent;
 #end
@@ -64,7 +64,7 @@ class HaqComponent
 		
 		if (parent != null) 
 		{
-			HaQuery.assert(!parent.components.exists(id), "Component with same id '" + id + "' already exist.");
+			Lib.assert(!parent.components.exists(id), "Component with same id '" + id + "' already exist.");
 			parent.components.set(id, cast this);
 		}
 	}

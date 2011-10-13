@@ -1,7 +1,7 @@
 package haquery.components.list;
 
 import haquery.server.HaqTools;
-import haquery.server.HaQuery;
+import haquery.server.Lib;
 import haquery.server.HaqComponent;
 using haquery.StringTools;
 
@@ -21,7 +21,7 @@ class Server extends HaqComponent
 
     public function bind(constsList:Iterable<Dynamic>)
     {
-        HaQuery.assert(!isPostback, 'List binding on postback is not allowed.');
+        Lib.assert(!isPostback, 'List binding on postback is not allowed.');
 	
 		var i = 0;
         for (consts in constsList)

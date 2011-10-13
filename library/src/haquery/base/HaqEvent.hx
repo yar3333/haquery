@@ -2,11 +2,11 @@ package haquery.base;
 
 #if php
 	import haquery.server.HaqComponent;
-    import haquery.server.HaQuery;
+    import haquery.server.Lib;
     import haquery.server.HaqQuery;
 #else
 	import haquery.client.HaqComponent;
-    import haquery.client.HaQuery;
+    import haquery.client.Lib;
     import haquery.client.HaqQuery;
 #end
 
