@@ -1,18 +1,16 @@
 package haquery.base;
 
 #if php
-import haquery.server.HaqInternals;
 import haquery.server.HaqEvent;
 import haquery.server.Lib;
-using haquery.StringTools;
 private typedef Component = haquery.server.HaqComponent;
 #else
-import haquery.client.HaqInternals;
 import haquery.client.HaqEvent;
 import haquery.client.Lib;
-using haquery.StringTools;
 private typedef Component = haquery.client.HaqComponent;
 #end
+
+using haquery.StringTools;
 
 class HaqComponent
 {
@@ -60,7 +58,7 @@ class HaqComponent
 		this.id = id;
 		
 		this.fullID = (parent!=null ? parent.prefixID : '') + id;
-		this.prefixID = this.fullID != '' ? this.fullID + HaqInternals.DELIMITER : '';
+		this.prefixID = this.fullID != '' ? this.fullID + HaqCommon.DELIMITER : '';
 		
 		if (parent != null) 
 		{
@@ -121,7 +119,7 @@ class HaqComponent
     public function findComponent(fullID:String) : Component
     {
         if (fullID == '') return cast this;
-        var ids = fullID.split(HaqInternals.DELIMITER);
+        var ids = fullID.split(HaqCommon.DELIMITER);
         var r = this;
         for (id in ids)
         {

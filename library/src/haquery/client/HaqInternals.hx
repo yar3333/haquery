@@ -6,8 +6,6 @@ import js.Dom;
 
 class HaqInternals 
 {
-	public static inline var DELIMITER = '-';
-	
     public static var componentsFolders : Array<String>;
 	
     private static var tags : Array<Array<String>>;

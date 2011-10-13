@@ -15,7 +15,7 @@ class Client extends Container
         elems.each(function(index, elem:HtmlDom) {
             //js.Lib.alert(elem.id);
             (new HaqQuery(elem)).click(function() {
-                var id = elem.id.substr(elem.id.lastIndexOf(HaqInternals.DELIMITER) + 1);
+                var id = elem.id.substr(elem.id.lastIndexOf(HaqCommon.DELIMITER) + 1);
                 js.Lib.alert(id);  
                 Lib.redirect(id); 
             } );
