@@ -93,7 +93,7 @@ class HaqSystem
         page.forEachComponent('preEventHandlers');
 
         var fullElemID : String = php.Web.getParams().get('HAQUERY_ID');
-        var n = fullElemID.lastIndexOf(HaqInternals.DELIMITER);
+        var n = fullElemID.lastIndexOf(HaqCommon.DELIMITER);
         var componentID = n > 0 ? fullElemID.substr(0, n) : '';
         var elemID = n > 0 ? fullElemID.substr(n+1) : fullElemID;
         

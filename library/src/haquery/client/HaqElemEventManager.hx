@@ -27,7 +27,7 @@ class HaqElemEventManager
     
     public static function getComponentElems(component:HaqComponent) : Array<HtmlDom>
     {
-        var re = new EReg('^' + component.prefixID + '[^' + HaqInternals.DELIMITER + ']+$', '');
+        var re = new EReg('^' + component.prefixID + '[^' + HaqCommon.DELIMITER + ']+$', '');
         
         var r = new Array<HtmlDom>();
         for (elem in elems)
@@ -47,7 +47,7 @@ class HaqElemEventManager
         
         for (elem in elems)
         {
-            var n = elem.id.lastIndexOf(HaqInternals.DELIMITER);
+            var n = elem.id.lastIndexOf(HaqCommon.DELIMITER);
             var elemID = n != -1 ? elem.id.substr(n + 1) : elem.id;
             for (eventName in elemEventNames)
             {
@@ -82,7 +82,7 @@ class HaqElemEventManager
 	
 	static function callClientElemEventHandlers(componentWithHandlers:HaqComponent, componentWithEvents:HaqComponent, elem:HtmlDom, e:js.Dom.Event) : Bool
 	{
-		var n = elem.id.lastIndexOf(HaqInternals.DELIMITER);
+		var n = elem.id.lastIndexOf(HaqCommon.DELIMITER);
 		var elemID = n > 0 ? elem.id.substr(n + 1) : elem.id;
 		var methodName = elemID + "_" + e.type;
 		if (Reflect.isFunction(Reflect.field(componentWithHandlers, methodName)))
@@ -95,7 +95,7 @@ class HaqElemEventManager
 	
 	static function callServerElemEventHandlers(elem:HtmlDom, e:js.Dom.Event, serverHandlers:Hash<Array<String>>) : Bool
 	{
-		var n = elem.id.lastIndexOf(HaqInternals.DELIMITER);
+		var n = elem.id.lastIndexOf(HaqCommon.DELIMITER);
 		var elemID = n > 0 ? elem.id.substr(n + 1) : elem.id;
         
         if (serverHandlers != null && serverHandlers.get(elemID) != null)

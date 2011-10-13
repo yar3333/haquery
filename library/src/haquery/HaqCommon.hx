@@ -9,4 +9,9 @@ class HaqCommon
 		,support : 'support'
 		,temp : 'temp'
 	};
+	
+	/**
+	 * Delimiter for IDs in fullID.
+	 */
+    public static inline var DELIMITER = '-';
 }
