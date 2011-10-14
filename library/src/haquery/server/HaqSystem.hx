@@ -14,22 +14,13 @@ using haquery.StringTools;
 
 class HaqSystem
 {
-    /**
-     * Ajax?
-     *   false => rendering HTML;
-     *   true => calling server event handler.
-     */
-    static public var isPostback(default, null) : Bool;
-    
-    public function new(route:HaqRoute) : Void
+    public function new(route:HaqRoute, isPostback:Bool) : Void
     {
         trace(null);
 		
         Lib.profiler.begin("system");
 
             trace("HAQUERY SYSTEM Start route.pagePath = " + route.path + ", HTTP_HOST = " + Web.getHttpHost() + ", clientIP = " + Web.getClientIP() + ", pageID = " + route.pageID);
-
-            isPostback = php.Web.getParams().get('HAQUERY_POSTBACK')!=null ? true : false;
             
             Lib.profiler.begin('templates');
                 var templates = new HaqTemplates(Lib.config.getComponentsFolders());

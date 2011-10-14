@@ -57,14 +57,14 @@ class HaqQuery
 			return this.nodes.length>0 ? this.nodes[0].getAttribute(name) : null;
 		}
         for (node in this.nodes) node.setAttribute(name, value);
-        if (HaqSystem.isPostback) this.jQueryCall('attr("'+name+'","'+value+'")');
+        if (Lib.isPostback) this.jQueryCall('attr("'+name+'","'+value+'")');
         return this;
     }
 
     public function removeAttr(name:String) : HaqQuery
     {
         for (node in this.nodes) node.removeAttribute(name);
-        if (HaqSystem.isPostback) HaqInternals.addAjaxResponse ("$('"+this.query.replace('#', '#'+this.prefixID)+"').removeAttr('" + name + "');");
+        if (Lib.isPostback) HaqInternals.addAjaxResponse ("$('"+this.query.replace('#', '#'+this.prefixID)+"').removeAttr('" + name + "');");
         return this;
     }
 
@@ -82,7 +82,7 @@ class HaqQuery
             node.setAttribute('class', s.ltrim());
         }
 
-        if (HaqSystem.isPostback) this.jQueryCall('addClass("'+cssClass+'")');
+        if (Lib.isPostback) this.jQueryCall('addClass("'+cssClass+'")');
 
         return this;
     }
@@ -114,7 +114,7 @@ class HaqQuery
             node.setAttribute('class', s.trim());
         }
 
-        if (HaqSystem.isPostback) this.jQueryCall('removeClass("'+cssClass+'")');
+        if (Lib.isPostback) this.jQueryCall('removeClass("'+cssClass+'")');
 
         return this;
     }
@@ -128,7 +128,7 @@ class HaqQuery
         {
             if (this.nodes.length == 0) return null;
             var node = this.nodes[0];
-            if (HaqSystem.isPostback && node.name == 'textarea' && node.hasAttribute('id'))
+            if (Lib.isPostback && node.name == 'textarea' && node.hasAttribute('id'))
             {
                 var fullID = prefixID + node.getAttribute('id');
                 if (php.Web.getParams().exists(fullID)) return php.Web.getParams().get(fullID);
@@ -141,7 +141,7 @@ class HaqQuery
             else         node.setInnerText(html);
         }
         
-        if (HaqSystem.isPostback) this.jQueryCall('html("' + StringTools.addcslashes(html) + '")');
+        if (Lib.isPostback) this.jQueryCall('html("' + StringTools.addcslashes(html) + '")');
         
         return this;
     }
@@ -149,7 +149,7 @@ class HaqQuery
     public function remove() : HaqQuery
     {
         for (node in this.nodes) node.remove();
-        if (HaqSystem.isPostback) this.jQueryCall('remove()');
+        if (Lib.isPostback) this.jQueryCall('remove()');
         return this;
     }
 
@@ -166,7 +166,7 @@ class HaqQuery
                 /* @var $node HaqXmlNodeElement */
                 var node : HaqXmlNodeElement = this.nodes[0];
                 
-                if (HaqSystem.isPostback && node.hasAttribute('id'))
+                if (Lib.isPostback && node.hasAttribute('id'))
                 {
                     var fullID = prefixID + node.getAttribute('id');
                     if (php.Web.getParams().exists(fullID)) return php.Web.getParams().get(fullID);
@@ -194,7 +194,7 @@ class HaqQuery
             else
             {
                 // case when node physically not exists, but data received on postback
-                if (HaqSystem.isPostback)
+                if (Lib.isPostback)
                 {
                     var re = new EReg('^\\s*#([^ \\t>]+)\\s*$', '');
                     if (re.match(query))
@@ -210,7 +210,7 @@ class HaqQuery
         // setting
         for (node in this.nodes)
         {
-            if (HaqSystem.isPostback && node.hasAttribute('id'))
+            if (Lib.isPostback && node.hasAttribute('id'))
             {
                 var fullID = this.prefixID + node.getAttribute('id');
 				untyped __php__("
@@ -252,7 +252,7 @@ class HaqQuery
             }
         }
         
-        if (HaqSystem.isPostback) this.jQueryCall('val("' + val + '")');
+        if (Lib.isPostback) this.jQueryCall('val("' + val + '")');
 
         return this;
     }
@@ -290,7 +290,7 @@ class HaqQuery
             this.nodes[0].setAttribute('style', sStyles);
         }
 
-        if (HaqSystem.isPostback) this.jQueryCall('css("' + name + '","' + StringTools.addcslashes(val) +'")');
+        if (Lib.isPostback) this.jQueryCall('css("' + name + '","' + StringTools.addcslashes(val) +'")');
 
         return this;
     }

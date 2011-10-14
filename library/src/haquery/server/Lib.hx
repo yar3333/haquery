@@ -25,7 +25,14 @@ class Lib
     public static var config : HaqConfig = new HaqConfig();
     
     public static var profiler : HaqProfiler = new HaqProfiler();
-
+    
+    /**
+     * Ajax?
+     *   false => rendering HTML;
+     *   true => calling server event handler.
+     */
+    public static var isPostback(default, null) : Bool;
+    
     static var startTime : Float;
     
     public static function getParamsString()
@@ -44,6 +51,8 @@ class Lib
         
                 startTime = Date.now().getTime();
                 haxe.Log.trace = Lib.trace;
+                
+                isPostback = php.Web.getParams().get('HAQUERY_POSTBACK')!=null ? true : false;
                 
                 var route = new HaqRoute(Web.getParams().get('route'));
                 loadBootstraps(route.path);
@@ -64,7 +73,7 @@ class Lib
                 }
                 else
                 {
-                    var system = new HaqSystem(route);
+                    var system = new HaqSystem(route, isPostback);
                 }
         
             profiler.end();
@@ -78,13 +87,13 @@ class Lib
 	
     static public function redirect(url:String) : Void
     {
-        if (HaqSystem.isPostback) HaqInternals.addAjaxResponse("haquery.client.Lib.redirect('" + StringTools.addcslashes(url) + "');");
+        if (Lib.isPostback) HaqInternals.addAjaxResponse("haquery.client.Lib.redirect('" + StringTools.addcslashes(url) + "');");
         else                      php.Web.redirect(url);
     }
 
 	static public function reload() : Void
 	{
-        if (HaqSystem.isPostback) HaqInternals.addAjaxResponse("window.location.reload(true);");
+        if (Lib.isPostback) HaqInternals.addAjaxResponse("window.location.reload(true);");
         else					  redirect(php.Web.getURI());
 	}
 
