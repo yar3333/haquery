@@ -2,7 +2,6 @@ package pages;
 
 import haquery.server.HaqBootstrap;
 import haquery.server.HaqConfig;
-import haquery.server.HaQuery;
 
 class Bootstrap implements HaqBootstrap
 {
