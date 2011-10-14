@@ -52,7 +52,7 @@ class HaqQuery
      */
     public function attr(name:String, value:String=null) : Dynamic
     {
-        if (untyped __physeq__(value, null))
+        if (value == null)
 		{
 			return this.nodes.length>0 ? this.nodes[0].getAttribute(name) : null;
 		}
@@ -159,7 +159,7 @@ class HaqQuery
     public function val(val:Dynamic=null) : Dynamic
     {
         // getting
-        if (untyped __physeq__(val, null))
+        if (val == null)
         {
             if (this.nodes.length > 0)
             {
@@ -262,7 +262,7 @@ class HaqQuery
      */
     public function css(name:String, val:String=null) : Dynamic
     {
-        if (untyped __physeq__(val, null))
+        if (val == null)
         {
             if (this.nodes.length > 0)
             {
@@ -281,7 +281,7 @@ class HaqQuery
             var sStyles = this.nodes[0].getAttribute('style');
 			if (re.match(sStyles))
 			{
-				sStyles = re.replace(untyped !__physeq__(val, '') && !__physeq__(val, null) ? name + ": " + val + ";" : '', sStyles);
+				sStyles = re.replace((val != '' && val != null) ? name + ": " + val + ";" : '', sStyles);
 			}
 			else
 			{
