@@ -78,7 +78,7 @@ class Lib
 	
     static public function redirect(url:String) : Void
     {
-        if (HaqSystem.isPostback) HaqInternals.addAjaxResponse("haquery.server.Lib.redirect('" + StringTools.addcslashes(url) + "');");
+        if (HaqSystem.isPostback) HaqInternals.addAjaxResponse("haquery.client.Lib.redirect('" + StringTools.addcslashes(url) + "');");
         else                      php.Web.redirect(url);
     }
 
