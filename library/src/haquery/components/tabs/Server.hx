@@ -4,6 +4,7 @@ import haquery.server.HaqComponent;
 import haquery.server.HaqQuery;
 import haquery.server.Lib;
 import php.Lib;
+import haquery.server.HaqXml;
 
 class Server extends haquery.components.container.Server
 {
@@ -19,32 +20,24 @@ class Server extends haquery.components.container.Server
     {
         if (!isPostback)
         {
-            var buttonsAndPanels = q('#tabs>*');
-            var buttons = buttonsAndPanels.nodes[0];
+            var buttonsAndPanels : Array<HaqXmlNodeElement> = cast Lib.toHaxeArray(parentNode.children);
+            Lib.assert(buttonsAndPanels.length == 2, "tabs component must contain exactly two subelements.");
+            
+            var buttons = buttonsAndPanels[0].children;
             var i = 0;
-            for (child in Lib.toHaxeArray(buttons.children))
+            for (child in Lib.toHaxeArray(buttons))
             {
                 if (i == active) new HaqQuery(prefixID, "", Lib.toPhpArray([child])).addClass('active');
                 i++;
             }
             
-            var panels = q('#tabs>*').nodes[1];
+            var panels = buttonsAndPanels[1].children;
             var j = 0;
-            for (child in Lib.toHaxeArray(panels.children))
+            for (child in Lib.toHaxeArray(panels))
             {
                 if (j == active) new HaqQuery(prefixID, "", Lib.toPhpArray([child])).addClass('active');
                 j++;
             }
         }
-    }
-    
-    override private function getHeader():String 
-    {
-        return '<div id="tabs" class="tabs">\n';
-    }
-    
-    override private function getFooter():String 
-    {
-        return '</div>\n';
     }
 }

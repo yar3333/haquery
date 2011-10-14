@@ -27,7 +27,7 @@ class Server extends HaqComponent
     {
         if (!isPostback)
         {
-            if (text==null) text = StringTools.htmlUnescape(innerHTML);
+            if (text==null) text = StringTools.htmlUnescape(parentNode.innerHTML);
         }
         else
         {

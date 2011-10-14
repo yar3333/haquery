@@ -124,7 +124,7 @@ class HaqQuery
      */
     public function html(html:String=null,isParse=false) : Dynamic
     {
-        if (untyped __physeq__(html, null))
+        if (html == null)
         {
             if (this.nodes.length == 0) return null;
             var node = this.nodes[0];

@@ -1,12 +1,12 @@
 package haquery.components.uploader;
 
 #if php
-import haquery.server.HaqComponent;
+typedef Container = haquery.components.container.Server;
 #else
-import haquery.client.HaqComponent;
+typedef Container = haquery.components.container.Client;
 #end
 
-class Base extends HaqComponent
+class Base extends Container
 {
     public var enabled(enabled_getter, enabled_setter) : Bool;
     

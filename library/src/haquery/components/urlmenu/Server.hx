@@ -3,25 +3,14 @@ package haquery.components.urlmenu;
 import haquery.server.HaqComponent;
 import php.Web;
 import haquery.server.HaqXml;
+import haquery.server.Lib;
 
 using haquery.StringTools;
 
-typedef Container = haquery.components.container.Server;
-
-class Server extends Container
+class Server extends haquery.components.container.Server
 {
     public var base : String;
     public var cssClass : String;
-    
-    override function getHeader() : String 
-    {
-        return '<div id="m" class="urlmenu">\n';
-    }
-    
-    override function getFooter() : String 
-    {
-        return '\n</div>';
-    }
     
     function preRender()
     {
@@ -33,7 +22,11 @@ class Server extends Container
         var bestLink : HaqXmlNodeElement = null;
         var bestDeep = 0;
         var self = this;
-        q('#m>a').each(function(index, elem) {
+        
+        for (node in Lib.toHaxeArray(parentNode.children))
+        {
+            var elem : HaqXmlNodeElement = cast node;
+            
             var href = elem.getAttribute('href').trim('/');
             if (href == 'index') href = '';
             href = self.base + (href != '' ? '/' + href : '');
@@ -55,7 +48,7 @@ class Server extends Container
                 }
                 
             }
-        });
+        }
         
         if (bestLink != null)
         {
