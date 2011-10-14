@@ -4,35 +4,23 @@ import haquery.server.HaqComponent;
 import haquery.server.HaqComponentManager;
 import haquery.server.HaqXml;
 
+using haquery.StringTools;
+
 class Server extends Base
 {
-	override public function construct(manager:HaqComponentManager, parent:HaqComponent, tag:String, id:String, doc:HaqXml, params:Hash<String>, innerHTML:String) : Void
-	{
-        super.construct(manager, parent, tag, id, new HaqXml(getHeader() + innerHTML + getFooter()), params, '');
-	}
-    
-    /**
-     * Override in the child class to specify header
-     */
-    function getHeader() : String
+    override public function render():String 
     {
-        return '';
+        prepareDocToRender(doc);
+        
+        return doc.toString().trim("\r\n").replace("{content}", parentNode.innerHTML);
     }
     
-    /**
-     * Override in the child class to specify footer
-     */
-    function getFooter() : String
-    {
-        return '';
-    }
-    
-    override function callElemEventHandler(elemID:String, eventName:String) : Void
+/*  override function callElemEventHandler(elemID:String, eventName:String) : Void
     {
         if (parent != null)
         {
             var handler = elemID + '_' + eventName;
             Reflect.callMethod(parent, handler, [ this ]);
         }
-    }
+    }*/
 }

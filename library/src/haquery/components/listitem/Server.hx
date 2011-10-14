@@ -6,9 +6,11 @@ import haquery.server.HaqXml;
 
 class Server extends Base
 {
-	override public function construct(manager:HaqComponentManager, parent:HaqComponent, tag:String, id:String, doc:HaqXml, params:Hash<String>, innerHTML:String):Void 
+	override public function construct(manager:HaqComponentManager, parent:HaqComponent, tag:String, id:String, doc:HaqXml, params:Hash<String>, parentNode:HaqXmlNodeElement):Void 
 	{
-		if (params != null)
+		var innerHTML = parentNode.innerHTML;
+        
+        if (params != null)
 		{
             var reConsts = new EReg("[{]([_a-zA-Z][_a-zA-Z0-9]*)[}]", "");
             
@@ -23,9 +25,7 @@ class Server extends Base
             });
         }
         
-        var doc = new HaqXml(innerHTML);
-        
-        super.construct(manager, parent, tag, id, doc , params, '');
+        super.construct(manager, parent, tag, id, new HaqXml(innerHTML), params, null);
 	}
     
     override function callElemEventHandler(elemID:String, eventName:String) : Void

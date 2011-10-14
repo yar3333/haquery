@@ -10,7 +10,7 @@ import haquery.client.HaqEvent;
 
 class Base extends HaqComponent
 {
-	override function connectEventHandlers(event:HaqEvent) : Void
+	/*override function connectEventHandlers(event:HaqEvent) : Void
 	{
         if (parent != null)
         {
@@ -20,5 +20,5 @@ class Base extends HaqComponent
                 event.bind(parent, Reflect.field(parent, handlerName));
             }
         }
-	}
+	}*/
 }

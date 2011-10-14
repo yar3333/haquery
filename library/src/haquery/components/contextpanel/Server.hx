@@ -7,14 +7,4 @@ class Server extends haquery.components.container.Server
     {
         return q('#dataID').val();
     }
-    
-    override function getHeader() : String 
-    {
-        return '<div id="p" class="contextpanel" style="display:none">\n<input type="hidden" id="dataID" />';
-    }
-    
-    override function getFooter() : String 
-    {
-        return '\n</div>';
-    }
 }

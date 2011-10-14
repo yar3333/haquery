@@ -14,7 +14,7 @@ class Server extends HaqComponent
 			var length = Std.parseInt(q('#length').val());
 			for (i in 0...length)
 			{
-				manager.createComponent(this, 'haq:listitem', Std.string(i), null, innerHTML);
+				manager.createComponent(this, 'haq:listitem', Std.string(i), null, parentNode);
 			}
         }
 	}
@@ -26,7 +26,7 @@ class Server extends HaqComponent
 		var i = 0;
         for (consts in constsList)
         {
-            manager.createComponent(this, 'haq:listitem', Std.string(i), cast HaqTools.object2hash(consts), innerHTML);
+            manager.createComponent(this, 'haq:listitem', Std.string(i), cast HaqTools.object2hash(consts), parentNode);
             i++;
         }
 		q('#length').val(Std.string(i));

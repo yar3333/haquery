@@ -14,31 +14,7 @@ import php.Lib;
 class Server extends Base
 {
     public var filter : String;
-    
     var event_upload : HaqEvent;
-    
-    override public function construct(manager:HaqComponentManager, parent:HaqComponent, tag:String, id:String, doc:HaqXml, params:Hash<String>, innerHTML:String) : Void
-	{
-        super.construct(manager, parent, tag, id, new HaqXml(getHeader() + innerHTML + getFooter()), params, '');
-	}
-    
-    function getHeader() : String 
-    {
-        return '<form id="form" method="post" enctype="multipart/form-data" class="uploader" style="display:block">
-    <input type="file" id="file" size="1" class="uploader-file" />
-    <div id="container" class="uploader-container">
-';
-    }
-    
-    function getFooter() : String 
-    {
-        return '
-    </div>
-</form>
-<input type="hidden" id="filter" />
-<iframe id="frame" src="about:blank" style="display:none;"></iframe>
-';
-    }
 
     function preRender() : Void
     {

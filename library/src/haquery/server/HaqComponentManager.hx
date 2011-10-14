@@ -23,20 +23,20 @@ class HaqComponentManager
 		registeredStyles = [];
 	}
 	
-	function newComponent(parent:HaqComponent, clas:Class<HaqComponent>, name:String, id:String, doc:HaqXml, attr:Hash<String>, innerHTML:String) : HaqComponent
+	function newComponent(parent:HaqComponent, clas:Class<HaqComponent>, name:String, id:String, doc:HaqXml, attr:Hash<String>, parentNode:HaqXmlNodeElement) : HaqComponent
 	{
         Lib.profiler.begin('newComponent');
             var r : HaqComponent = Type.createInstance(clas, []);
-            r.construct(this, parent, name, id, doc, attr, innerHTML);
+            r.construct(this, parent, name, id, doc, attr, parentNode);
         Lib.profiler.end();
 		return r;
 	}
 	
-	public function createComponent(parent:HaqComponent, tagOrName:String, id:String, attr:Hash<String>, innerHTML:String) : HaqComponent
+	public function createComponent(parent:HaqComponent, tagOrName:String, id:String, attr:Hash<String>, parentNode:HaqXmlNodeElement) : HaqComponent
 	{
         var name : String = tagOrName.startsWith('haq:') ? getNameByTag(tagOrName) : tagOrName;
 		var template = templates.get(name);
-		var component : HaqComponent = newComponent(parent, template.serverClass, name, id, template.doc, attr, innerHTML);
+		var component : HaqComponent = newComponent(parent, template.serverClass, name, id, template.doc, attr, parentNode);
 		if (!tag_id_component.exists(name)) tag_id_component.set(name, new Array<HaqComponent>());
 		tag_id_component.get(name).push(component);
 		return component;

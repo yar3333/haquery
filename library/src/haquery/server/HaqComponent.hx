@@ -13,7 +13,7 @@ class HaqComponent extends haquery.base.HaqComponent
     /**
      * HTML between component's open and close tags (where component inserted).
      */
-    private var innerHTML : String;
+    private var parentNode : HaqXmlNodeElement;
 
     /**
      * template.html as DOM tree.
@@ -37,13 +37,13 @@ class HaqComponent extends haquery.base.HaqComponent
 		visible = true;
 	}
     
-    public function construct(manager:HaqComponentManager, parent: HaqComponent, tag:String, id:String, doc: HaqXml, params:Hash<String>, innerHTML:String) : Void
+    public function construct(manager:HaqComponentManager, parent: HaqComponent, tag:String, id:String, doc: HaqXml, params:Hash<String>, parentNode:HaqXmlNodeElement) : Void
     {
 		super.commonConstruct(parent, tag, id);
         
 		this.manager = manager;
         this.doc = doc;
-        this.innerHTML = innerHTML;
+        this.parentNode = parentNode;
 		
 		loadParamsToObjectFields(params, getFieldsToLoadParams());
         createEvents();
@@ -108,14 +108,13 @@ class HaqComponent extends haquery.base.HaqComponent
 			var node : HaqXmlNodeElement = baseNode.children[i];
 			Lib.assert(node.name!='haq:placeholder');
 			Lib.assert(node.name!='haq:content');
+            
+            createChildComponents_inner(node);
+            
             if (node.name.startsWith('haq:'))
             {
-                node.component = manager.createComponent(this, node.name, node.getAttribute('id'), Lib.hashOfAssociativeArray(node.getAttributesAssoc()), node.innerHTML);
+                node.component = manager.createComponent(this, node.name, node.getAttribute('id'), Lib.hashOfAssociativeArray(node.getAttributesAssoc()), node);
             }
-            else
-			{
-                createChildComponents_inner(node);
-			}
 			i++;
         }
     }
@@ -128,28 +127,33 @@ class HaqComponent extends haquery.base.HaqComponent
             var node : HaqXmlNodeElement = baseNode.children[i];
             if (node.name.startsWith('haq:'))
             {
-                if (node.component!=null)
+                if (node.component == null)
                 {
-                    if (node.component.visible)
+                    trace("Component is null: " + node.name);
+                    Lib.assert(false);
+                }
+                
+                if (node.component.visible)
+                {
+                    prepareDocToRender(node);
+                    
+                    var text = node.component.render().trim();
+                    var prev = node.getPrevSiblingNode();
+                    
+                    if (untyped __php__("$prev instanceof HaqXmlNodeText"))
                     {
-                        var text = node.component.render().trim();
-                        var prev = node.getPrevSiblingNode();
-                        
-                        if (untyped __php__("$prev instanceof HaqXmlNodeText"))
+                        var re : EReg = new EReg('(?:^|\n)([ ]+)$', 's');
+                        if (re.match(cast(prev, HaqXmlNodeText).text))
                         {
-                            var re : EReg = new EReg('(?:^|\n)([ ]+)$', 's');
-                            if (re.match(cast(prev, HaqXmlNodeText).text))
-                            {
-                                text = text.replace("\n", "\n"+re.matched(1));
-                            }
+                            text = text.replace("\n", "\n"+re.matched(1));
                         }
-                        node.parent.replaceChild(node, new HaqXmlNodeText(text));
                     }
-                    else
-                    {
-                        node.remove();
-                        i--;
-                    }
+                    node.parent.replaceChild(node, new HaqXmlNodeText(text));
+                }
+                else
+                {
+                    node.remove();
+                    i--;
                 }
             }
             else

@@ -5,9 +5,8 @@ import haquery.client.HaqQuery;
 import haquery.client.Lib;
 import js.Dom;
 import haquery.client.HaqComponent;
-typedef Container = haquery.components.container.Client;
 
-class Client extends Container
+class Client extends haquery.components.container.Client
 {
     function init()
     {
