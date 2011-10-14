@@ -21,7 +21,7 @@ class HaqComponent extends haquery.base.HaqComponent
     private var doc : HaqXml;
 
 	/**
-	 * Equivalent to HaqSystem.isPostback.
+	 * Equivalent to Lib.isPostback.
 	 */
     public var isPostback : Bool;
     
@@ -33,7 +33,7 @@ class HaqComponent extends haquery.base.HaqComponent
     public function new() : Void
 	{
 		super();
-        isPostback = HaqSystem.isPostback;
+        isPostback = Lib.isPostback;
 		visible = true;
 	}
     
