@@ -1,14 +1,7 @@
 package haquery.components.container;
 
-import haquery.client.HaqElemEventManager;
+import haquery.client.HaqComponent;
 
-class Client extends Base
+class Client extends HaqComponent
 {
-    /*override function connectElemEventHandlers():Void 
-    {
-        if (parent != null)
-        {
-            HaqElemEventManager.connect(parent, this, manager.templates);
-        }
-    }*/
 }
