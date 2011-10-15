@@ -41,9 +41,9 @@
     <hidden path="build.xml" />
   </hiddenPaths>
   <!-- Executed before build -->
-  <preBuildCommand>haquery pre-build</preBuildCommand>
+  <preBuildCommand>haxelib run haquery pre-build</preBuildCommand>
   <!-- Executed after build -->
-  <postBuildCommand alwaysRun="False">haquery post-build</postBuildCommand>
+  <postBuildCommand alwaysRun="False">haxelib run haquery post-build</postBuildCommand>
   <!-- Other project options -->
   <options>
     <option showHiddenPaths="False" />
