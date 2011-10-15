@@ -4,7 +4,7 @@
   <output>
     <movie outputType="Application" />
     <movie input="" />
-    <movie path="../haquery/bin/orm" />
+    <movie path="..\..\library\tools\orm" />
     <movie fps="0" />
     <movie width="0" />
     <movie height="0" />
@@ -16,7 +16,7 @@
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
     <class path="src" />
-    <class path="..\..\library\src" />
+    <class path="..\..\library" />
   </classpaths>
   <!-- Build options -->
   <build>

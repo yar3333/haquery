@@ -1,11 +1,8 @@
 package ;
 
 import php.FileSystem;
-import php.io.File;
-import php.io.Path;
 import php.Lib;
 import php.Sys;
-import haquery.server.HaQuery;
 import haquery.server.db.HaqDb;
 
 class Main 
