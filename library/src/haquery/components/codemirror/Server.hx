@@ -25,13 +25,13 @@ class Server extends HaqComponent
     
     function init() : Void
     {
-        if (!isPostback)
+        if (!Lib.isPostback)
         {
             if (text==null) text = StringTools.htmlUnescape(parentNode.innerHTML);
         }
         else
         {
-            text = this.q('#text').val();
+            text = q('#text').val();
             customData = StringTools.jsonDecode(StringTools.unescape(q('#customData').val()));
         }
     }
@@ -67,8 +67,8 @@ class Server extends HaqComponent
         q('#customData').val(StringTools.escape(StringTools.jsonEncode(customData)));
 
         q('#editor').attr('mode', mode);
-        if (this.editable) q('#editor').attr('editable', 'true');
-        else               q('#editor').removeAttr('editable');
+        if (editable) q('#editor').attr('editable', 'true');
+        else          q('#editor').removeAttr('editable');
         q('#text').val(StringTools.escape(text.trim()));
 
         if (cssClass!='') q('#editor').addClass(cssClass);

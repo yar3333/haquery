@@ -18,7 +18,7 @@ class Server extends haquery.components.container.Server
     
     function init()
     {
-        if (!isPostback)
+        if (!Lib.isPostback)
         {
             var buttonsAndPanels : Array<HaqXmlNodeElement> = cast Lib.toHaxeArray(parentNode.children);
             Lib.assert(buttonsAndPanels.length == 2, "tabs component must contain exactly two subelements.");

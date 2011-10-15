@@ -19,11 +19,6 @@ class HaqComponent extends haquery.base.HaqComponent
      * template.html as DOM tree.
      */
     private var doc : HaqXml;
-
-	/**
-	 * Equivalent to Lib.isPostback.
-	 */
-    public var isPostback : Bool;
     
     /**
      * Need render?
@@ -33,7 +28,6 @@ class HaqComponent extends haquery.base.HaqComponent
     public function new() : Void
 	{
 		super();
-        isPostback = Lib.isPostback;
 		visible = true;
 	}
     
