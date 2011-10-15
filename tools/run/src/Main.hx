@@ -21,7 +21,7 @@ class Main
         
         var p = new Process(pathToHaqueryExe, args) ;
         var s = Std.string(p.stdout.readAll());
-        Lib.print(s);
+        Lib.print(StringTools.replace(s, "\r\n", "\n"));
         return p.exitCode();
 	}
 }
