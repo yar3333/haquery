@@ -37,11 +37,11 @@ namespace haquery_net
                     Console.WriteLine("HaQuery building support and deploying tool.");
                     Console.WriteLine("Usage: haquery <command>");
                     Console.WriteLine("\t where <command> may be:");
-                    Console.WriteLine("\t\tgen-orm <databaseConnectionString>    Generate tables-related classes to model folder.");
-                    Console.WriteLine("\t\tpre-build                             Do pre-build step.");
-                    Console.WriteLine("\t\tpost-build                            Do post-build step.");
-                    Console.WriteLine("\t\tinstall                               Replace official haxe.exe and librarires to HaxeMod.");
-                    Console.WriteLine("\t\tuninstall                             Restore official haxe.exe and libraries.");
+                    Console.WriteLine("\t\tgen-orm <databaseConnectionString>    Generate tables-related classes to manager and model folders");
+                    Console.WriteLine("\t\tpre-build                             Do pre-build step");
+                    Console.WriteLine("\t\tpost-build                            Do post-build step");
+                    Console.WriteLine("\t\tinstall                               Patch haXe librarires to HaxeMod");
+                    Console.WriteLine("\t\tuninstall                             Restore original haXe libraries");
                     return 1;
             }
             
