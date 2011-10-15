@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace haquery_net.hant
+namespace run_exe.hant
 {
     class Log 
     {

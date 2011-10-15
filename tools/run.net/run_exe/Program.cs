@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace haquery_net
+namespace run_exe
 {
     class Program
     {
