@@ -9,19 +9,19 @@ class Main
 	{
         var args = Sys.args();
         
-        Lib.println("Run.n start");
-        
-        var pathToHaqueryExe = FileSystem.fullPath(".\\bin\\haquery.exe");
-        if (!FileSystem.exists(pathToHaqueryExe))
+        var runExePath = FileSystem.fullPath("run.exe");
+        if (!FileSystem.exists(runExePath))
         {
-            Lib.println("File not found: " + pathToHaqueryExe);
+            Lib.println("File not found: " + runExePath);
             return 1;
         }
+        
         Sys.setCwd(args.pop());
         
-        var p = new Process(pathToHaqueryExe, args) ;
+        var p = new Process(runExePath, args) ;
         var s = Std.string(p.stdout.readAll());
         Lib.print(StringTools.replace(s, "\r\n", "\n"));
+        
         return p.exitCode();
 	}
 }
