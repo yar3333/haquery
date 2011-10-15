@@ -9,7 +9,7 @@ class Server extends HaqComponent
 {
 	override private function createChildComponents():Void 
 	{
-        if (isPostback)
+        if (Lib.isPostback)
         {
 			var length = Std.parseInt(q('#length').val());
 			for (i in 0...length)
@@ -21,7 +21,7 @@ class Server extends HaqComponent
 
     public function bind(constsList:Iterable<Dynamic>)
     {
-        Lib.assert(!isPostback, 'List binding on postback is not allowed.');
+        Lib.assert(!Lib.isPostback, 'List binding on postback is not allowed.');
 	
 		var i = 0;
         for (consts in constsList)
