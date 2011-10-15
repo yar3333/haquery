@@ -58,7 +58,7 @@ class HaqComponent
 		this.id = id;
 		
 		this.fullID = (parent!=null ? parent.prefixID : '') + id;
-		this.prefixID = this.fullID != '' ? this.fullID + HaqCommon.DELIMITER : '';
+		this.prefixID = this.fullID != '' ? this.fullID + HaqDefines.DELIMITER : '';
 		
 		if (parent != null) 
 		{
@@ -119,7 +119,7 @@ class HaqComponent
     public function findComponent(fullID:String) : Component
     {
         if (fullID == '') return cast this;
-        var ids = fullID.split(HaqCommon.DELIMITER);
+        var ids = fullID.split(HaqDefines.DELIMITER);
         var r = this;
         for (id in ids)
         {

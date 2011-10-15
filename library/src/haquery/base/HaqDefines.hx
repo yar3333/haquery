@@ -1,6 +1,6 @@
 package haquery.base;
 
-class HaqCommon 
+class HaqDefines 
 {
 	public static inline var VERSION = 2.3; 
 	

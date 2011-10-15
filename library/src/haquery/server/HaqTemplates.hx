@@ -95,8 +95,8 @@ class HaqTemplates
 	
 	private function build(componentsFolder : String) : Hash<HaqCachedTemplate>
 	{
-        var dataFilePath = HaqCommon.folders.temp + '/' + componentsFolder + 'components.data';
-		var stylesFilePath = HaqCommon.folders.temp + '/' + componentsFolder + 'styles.css';
+        var dataFilePath = HaqDefines.folders.temp + '/' + componentsFolder + 'components.data';
+		var stylesFilePath = HaqDefines.folders.temp + '/' + componentsFolder + 'styles.css';
 		
 		var templatePaths : Array<String> = getComponentTemplatePaths(componentsFolder);
 		var cacheFileTime = FileSystem.exists(dataFilePath)  ? FileSystem.stat(dataFilePath).mtime.getTime() : 0.0;
@@ -206,8 +206,8 @@ class HaqTemplates
 		var r = new Array<String>();
 		for (folder in componentsFolders)
 		{
-            var lessPath = HaqCommon.folders.temp + '/' + folder + 'styles.less';
-            var cssPath = HaqCommon.folders.temp + '/' + folder + 'styles.css';
+            var lessPath = HaqDefines.folders.temp + '/' + folder + 'styles.less';
+            var cssPath = HaqDefines.folders.temp + '/' + folder + 'styles.css';
             if (FileSystem.exists(lessPath))
             {
                 if (!FileSystem.exists(cssPath) 
@@ -327,7 +327,7 @@ class HaqTemplates
         var reSupportFileUrl = new EReg("~/([-_/\\.a-zA-Z0-9]*)", "");
         text = reSupportFileUrl.customReplace(text, function(re)
         {
-            var f = self.getFileUrl(tag, HaqCommon.folders.support + '/' + re.matched(1));
+            var f = self.getFileUrl(tag, HaqDefines.folders.support + '/' + re.matched(1));
             return f != null ? '/' + f : re.matched(0);
         });
         
@@ -354,6 +354,6 @@ class HaqTemplates
     
     public function getSupportPath(tag:String) : String
     {
-        return getFileUrl(tag, HaqCommon.folders.support) + '/';
+        return getFileUrl(tag, HaqDefines.folders.support) + '/';
     }
 }
