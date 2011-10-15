@@ -1,17 +1,18 @@
 package $(Package);
 
+import haquery.server.Lib;
 import haquery.server.HaqPage;
-import haquery.server.HaQuery;
 
 class $(FileName) extends HaqPage
 {
 	function init()
     {
-        if (!HaQuery.isPostback)
+        if (!Lib.isPostback)
         {
             $(EntryPoint)
         }
-        else $(CSLB){
+        else
+        {
             
         }
 	}

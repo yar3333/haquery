@@ -1,13 +1,13 @@
 package $(Package);
 
+import haquery.server.Lib;
 import haquery.server.HaqComponent;
-import haquery.server.HaQuery;
 
 class $(FileName) extends HaqComponent
 {
 	function init()
     {
-        if (!HaQuery.isPostback)
+        if (!Lib.isPostback)
         {
             $(EntryPoint)
         }
