@@ -5,7 +5,7 @@ using System.IO;
 
 //using hant.Log;
 
-namespace haquery_net.hant
+namespace run_exe.hant
 {
     class Tasks 
     {

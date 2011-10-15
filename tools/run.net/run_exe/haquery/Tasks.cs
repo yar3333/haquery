@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 
-namespace haquery_net.haquery
+namespace run_exe.haquery
 {
     class Tasks 
     {
