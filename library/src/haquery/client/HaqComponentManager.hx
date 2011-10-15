@@ -63,7 +63,7 @@ class HaqComponentManager
 	public function getChildComponents(parent:HaqComponent) : Array<{ id:String, tag:String }>
 	{
 		var r : Array<{ id:String, tag:String }> = new Array<{ id:String, tag:String }>();
-		var re = new EReg('^' + parent.prefixID + '[^' + HaqCommon.DELIMITER + ']+$', '');
+		var re = new EReg('^' + parent.prefixID + '[^' + HaqDefines.DELIMITER + ']+$', '');
 		for (fullID in id_tag.keys())
 		{
 			if (re.match(fullID))
@@ -78,6 +78,6 @@ class HaqComponentManager
     {
         var className = Type.getClassName(templates.get(tag).clas);
         var n = className.lastIndexOf('.');
-        return '/' + className.substr(0, n).replace('.', '/') + '/' + HaqCommon.folders.support + '/';
+        return '/' + className.substr(0, n).replace('.', '/') + '/' + HaqDefines.folders.support + '/';
     }
 }

@@ -161,12 +161,12 @@ class Lib
             }
         }
         
-        if (!FileSystem.exists(HaqCommon.folders.temp))
+        if (!FileSystem.exists(HaqDefines.folders.temp))
         {
-            FileSystem.createDirectory(HaqCommon.folders.temp);
+            FileSystem.createDirectory(HaqDefines.folders.temp);
         }
         
-        var f : FileOutput = php.io.File.append(HaqCommon.folders.temp + "/haquery.log", false);
+        var f : FileOutput = php.io.File.append(HaqDefines.folders.temp + "/haquery.log", false);
         if (f != null)
         {
             f.writeString(text != '' ? StringTools.format('%.3f', (Date.now().getTime() - startTime) / 1000.0) + " " + StringTools.replace(text, "\n", "\n\t") + "\n" : "\n");

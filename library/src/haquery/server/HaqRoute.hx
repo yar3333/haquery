@@ -43,7 +43,7 @@ class HaqRoute
 		{
 			url = url.trim('/');
 			if (url == '') url = 'index';
-			path = HaqCommon.folders.pages + '/' + url;
+			path = HaqDefines.folders.pages + '/' + url;
             
             if (isPageExist(path + '/index'))
             {
