@@ -64,12 +64,18 @@ namespace run_exe.haquery
             }
             return path.EndsWith("\\Client.hx");
         }
+
+        bool isHaQuerySupportFile(string path)
+        {
+            if (Directory.Exists(path) && path == "tools") return false;
+            return isSupportFile(path);
+        }
         
         bool isSupportFile(string path)
         {
             if (Directory.Exists(path))
             {
-                return !path.EndsWith(".svn");
+                return !path.EndsWith(".svn") && path != "tools";
             }
             return !path.EndsWith(".hx") && !path.EndsWith(".hxproj");
         }
@@ -143,6 +149,7 @@ namespace run_exe.haquery
             {
                 pars.Add("-cp"); pars.Add(path);
             }
+            pars.Add("-lib"); pars.Add("HaQuery");
             pars.Add("-js");
             pars.Add("bin\\haquery\\client\\haquery.js");
             pars.Add("-main"); pars.Add("Main");
@@ -205,6 +212,8 @@ namespace run_exe.haquery
             log.start("Do post-build step");
             
             buildJs();
+
+            hant.copyFolderContent(getExeDir(), "bin", isHaQuerySupportFile);
             
             foreach (var path in getClassPaths())
             {
