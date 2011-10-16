@@ -162,7 +162,7 @@ namespace run_exe.haquery
         {
             log.start("Generate ORM classes to 'models'");
 
-            run("php", new string[] { getExeDir() + "\\orm\\index.php", databaseConnectionString, "src" });
+            run("php", new string[] { getExeDir() + "\\tools\\orm\\index.php", databaseConnectionString, "src" });
             
             log.finishOk();
         }
@@ -287,7 +287,7 @@ namespace run_exe.haquery
         {
             log.start("Install FlashDevelop templates");
 
-            var srcPath = getExeDir() + "\\flashdevelop";
+            var srcPath = getExeDir() + "\\tools\\flashdevelop";
             var haxePath = getHaxePath();
             var userLocalPath = System.Environment.GetEnvironmentVariable("LOCALAPPDATA") != null
                 ? System.Environment.GetEnvironmentVariable("LOCALAPPDATA")
@@ -295,9 +295,9 @@ namespace run_exe.haquery
             var flashDevelopUserDataPath = userLocalPath + "\\FlashDevelop";
             hant.copyFolderContent(srcPath, flashDevelopUserDataPath, isNotSvn);
 
-            var projectFilePath = flashDevelopUserDataPath + "\\Projects\\380 HaXe - HaQuery Project\\Project.hxproj";
+            /*var projectFilePath = flashDevelopUserDataPath + "\\Projects\\380 HaXe - HaQuery Project\\Project.hxproj";
             var projectFileContent = File.ReadAllText(projectFilePath);
-            File.WriteAllText(projectFilePath, projectFileContent.Replace("{HaQuerySrcPath}", Path.GetFullPath(getExeDir() + "\\..\\src")));
+            File.WriteAllText(projectFilePath, projectFileContent.Replace("{HaQuerySrcPath}", Path.GetFullPath(getExeDir() + "\\..\\src")));*/
 
             log.finishOk();
         }
@@ -307,17 +307,17 @@ namespace run_exe.haquery
             log.start("Install HaxeMod");
             
             var haxePath = getHaxePath();
-            
-            /*if (!Directory.Exists(haxePath + 'haxe.exe.official'))
+
+            /*if (!Directory.Exists(haxePath + 'haxe.exe.original'))
             {
-                hant.rename(haxePath + 'haxe.exe', haxePath + 'haxe.exe.official');
+                hant.rename(haxePath + 'haxe.exe', haxePath + 'haxe.exe.original');
             }
-            File.Copy(getExeDir() + '\\haxemod\\haxe.exe', haxePath + 'haxe.exe');*/
-            
-            if (!Directory.Exists(haxePath + "std.official"))
+            File.Copy(getExeDir() + '\\tools\\haxemod\\haxe.exe', haxePath + 'haxe.exe');*/
+
+            if (!Directory.Exists(haxePath + "std.original"))
             {
-                hant.rename(haxePath + "std", haxePath + "std.official");
-                hant.copyFolderContent(getExeDir() + "\\haxemod\\std", haxePath + "std", new hant.Tasks.IncludeDelegate(getTrue));
+                hant.rename(haxePath + "std", haxePath + "std.original");
+                hant.copyFolderContent(getExeDir() + "\\tools\\haxemod\\std", haxePath + "std", new hant.Tasks.IncludeDelegate(getTrue));
             }
             
             log.finishOk();
@@ -355,16 +355,16 @@ namespace run_exe.haquery
             
             var haxePath = getHaxePath();
 
-            /*if (!Directory.Exists(haxePath + 'haxe.exe.official'))
+            /*if (!Directory.Exists(haxePath + 'haxe.exe.original'))
             {
                 log.finishFail("HaxeMod does not installed.");
             }
-            hant.rename(haxePath + 'haxe.exe.official', haxePath + 'haxe.exe');*/
+            hant.rename(haxePath + 'haxe.exe.original', haxePath + 'haxe.exe');*/
             
-            if (Directory.Exists(haxePath + "std.official"))
+            if (Directory.Exists(haxePath + "std.original"))
             {
                 hant.deleteDirectory(haxePath + "std");
-                hant.rename(haxePath + "std.official", haxePath + "std");
+                hant.rename(haxePath + "std.original", haxePath + "std");
             }
             
             log.finishOk();
