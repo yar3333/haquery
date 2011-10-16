@@ -4,7 +4,7 @@
   <output>
     <movie outputType="Application" />
     <movie input="" />
-    <movie path="..\..\library\tools\haquery.n" />
+    <movie path="..\..\library\run.n" />
     <movie fps="0" />
     <movie width="0" />
     <movie height="0" />
@@ -40,12 +40,12 @@
   <!-- Executed before build -->
   <preBuildCommand />
   <!-- Executed after build -->
-  <postBuildCommand alwaysRun="False">nekotools boot $(OutputDir)\$(OutputName)</postBuildCommand>
+  <postBuildCommand alwaysRun="False" />
   <!-- Other project options -->
   <options>
     <option showHiddenPaths="False" />
     <option testMovie="Custom" />
-    <option testMovieCommand="bin\haquery.exe" />
+    <option testMovieCommand="" />
   </options>
   <!-- Plugin storage -->
   <storage />
