@@ -19,8 +19,12 @@ class Main
         Sys.setCwd(args.pop());
         
         var p = new Process(runExePath, args) ;
-        var s = Std.string(p.stdout.readAll());
-        Lib.print(StringTools.replace(s, "\r\n", "\n"));
+        
+        var stdOut = Std.string(p.stdout.readAll());
+        Lib.print(StringTools.replace(stdOut, "\r\n", "\n"));
+        
+        var stdErr = Std.string(p.stderr.readAll());
+        Lib.print(StringTools.replace(stdErr, "\r\n", "\n"));
         
         return p.exitCode();
 	}

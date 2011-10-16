@@ -22,7 +22,7 @@ namespace run_exe.haquery
             
             
             var fo = new StreamWriter(new System.IO.FileStream("src\\Imports.hx", System.IO.FileMode.Create));
-            
+
             foreach (var path in getClassPaths())
             {
                 fo.Write("// " + path + "\n");
@@ -49,6 +49,8 @@ namespace run_exe.haquery
         
         bool isServerFile(string path)
         {
+            if (path == getExeDir() + "\\tools") return false;
+            
             if (Directory.Exists(path))
             {
                 return !path.EndsWith(".svn");
@@ -58,6 +60,8 @@ namespace run_exe.haquery
         
         bool isClientFile(string path)
         {
+            if (path == getExeDir() + "\\tools") return false;
+            
             if (Directory.Exists(path))
             {
                 return !path.EndsWith(".svn");
@@ -65,17 +69,17 @@ namespace run_exe.haquery
             return path.EndsWith("\\Client.hx");
         }
 
-        bool isHaQuerySupportFile(string path)
-        {
-            if (Directory.Exists(path) && path == "tools") return false;
-            return isSupportFile(path);
-        }
-        
         bool isSupportFile(string path)
         {
+            if (path == getExeDir() + "\\tools"
+             || path == getExeDir() + "\\run.n"
+             || path == getExeDir() + "\\run.exe"
+             || path == getExeDir() + "\\run.pdb"
+            ) return false;
+            
             if (Directory.Exists(path))
             {
-                return !path.EndsWith(".svn") && path != "tools";
+                return !path.EndsWith(".svn");
             }
             return !path.EndsWith(".hx") && !path.EndsWith(".hxproj");
         }
@@ -102,6 +106,9 @@ namespace run_exe.haquery
         public List<string> getClassPaths()
         {
             var r = new List<String>();
+
+            r.Add(getExeDir());
+
             var files = Directory.GetFiles(".");
             foreach (var file in files)
             {
@@ -179,7 +186,7 @@ namespace run_exe.haquery
             log.start("Do pre-build step");
             
             genImports();
-            saveLibFolder();
+            try { saveLibFolder(); } catch { }
             
             log.finishOk();
         }
@@ -213,8 +220,6 @@ namespace run_exe.haquery
             
             buildJs();
 
-            hant.copyFolderContent(getExeDir(), "bin", isHaQuerySupportFile);
-            
             foreach (var path in getClassPaths())
             {
                 hant.copyFolderContent(path, "bin", isSupportFile);
