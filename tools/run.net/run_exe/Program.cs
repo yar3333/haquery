@@ -12,8 +12,16 @@ namespace run_exe
             
             switch (args.Length > 0 ? args[0] : "")
             {
-                case "gen-orm": 
-                    haquery.genOrm(args[1]);
+                case "gen-orm":
+                    if (args.Length > 1)
+                    {
+                        haquery.genOrm(args[1]);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Database connection string must be specified (mysql://USER:PASSWORD@HOST/DATABASE).");
+                        return 1;
+                    }
                     break;
                 
                 case "pre-build": 
@@ -36,7 +44,7 @@ namespace run_exe
                     
                     Console.WriteLine("HaQuery building support and deploying tool.");
                     Console.WriteLine("Usage: haquery <command>");
-                    Console.WriteLine("\t where <command> may be:");
+                    Console.WriteLine("\twhere <command> may be:");
                     Console.WriteLine("\t\tgen-orm <databaseConnectionString>    Generate tables-related classes to manager and model folders");
                     Console.WriteLine("\t\tpre-build                             Do pre-build step");
                     Console.WriteLine("\t\tpost-build                            Do post-build step");
