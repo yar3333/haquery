@@ -1,7 +1,5 @@
 package haquery.components.alternative;
 
-typedef Container = haquery.components.container.Client;
-
-class Client extends Container
+class Client extends haquery.components.container.Client
 {
 }
