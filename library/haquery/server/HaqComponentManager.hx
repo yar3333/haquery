@@ -66,27 +66,30 @@ class HaqComponentManager
 	}
     
 	/**
-	 * Tells HaQuery to add html code to load file from support component folder.
+	 * Tells HaQuery to load JS file from support component folder.
 	 * @param	tag Component name.
-	 * @param	url Url to js file related to component support folder.
+	 * @param	supportRelatedPath Path to js file.
 	 */
-    public function registerScript(tag:String, url:String) : Void
+    public function registerScript(tag:String, supportRelatedPath:String) : Void
 	{
-		url = templates.getSupportPath(tag) + url;
-		
-		if (!Lambda.has(registeredScripts, url))
+		var path = templates.getSupportPath(tag) + supportRelatedPath;
+		if (!Lambda.has(registeredScripts, path))
 		{
-			registeredScripts.push(url);
+			registeredScripts.push(path);
 		}
 	}
 	
-	public function registerStyle(tag:String, url:String) : Void
+	/**
+	 * Tells HaQuery to load CSS file from support component folder.
+	 * @param	tag Component name.
+	 * @param	supportRelatedPath Path to js file.
+	 */
+	public function registerStyle(tag:String, supportRelatedPath:String) : Void
 	{
-        url = templates.getSupportPath(tag) + url;
-		
-		if (!Lambda.has(registeredStyles, url))
+        var path = templates.getSupportPath(tag) + supportRelatedPath;
+		if (!Lambda.has(registeredStyles, path))
 		{
-			registeredStyles.push(url);
+			registeredStyles.push(path);
 		}
 	}
 	
