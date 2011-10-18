@@ -51,7 +51,7 @@ class Client extends Base
         var filter = q('#filter').val();
         if (filter != '')
         {
-            var re = new EReg(filter, "");
+            var re = new EReg(filter, "i");
             if (!re.match(fileName))
             {
                 event_filterNotMatch.call([fileName]);
