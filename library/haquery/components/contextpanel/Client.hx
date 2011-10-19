@@ -24,7 +24,6 @@ class Client extends haquery.components.container.Client
         {
             elem = new HaqQuery(e.currentTarget);
             var dataID = elem.data(prefixID + "dataID");
-            trace("mouseOver " + dataID);
             q('#dataID').val(dataID);
             show();
             elem.addClass('contextpanel-active');
@@ -65,8 +64,6 @@ class Client extends haquery.components.container.Client
     
     public function attach(elem:HaqQuery, dataID:String)
     {
-        trace("attach " + dataID);
-        
         elem.data(prefixID + "dataID", dataID);
         elem.mouseover(mouseOver);
         elem.mouseout(mouseOut);
