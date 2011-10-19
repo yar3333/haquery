@@ -13,14 +13,14 @@ class Client extends haquery.components.container.Client
         return q('#dataID').val();
     }
     
-    var mouseOver : js.JQuery.JqEvent->Void;
-    var mouseOut : js.JQuery.JqEvent->Void;
+    var mouseOver : js.jQuery.JQuery.Event->Void;
+    var mouseOut : js.jQuery.JQuery.Event->Void;
     
     public function new()
     {
         super();
         
-        mouseOver = function(e:js.JQuery.JqEvent)
+        mouseOver = function(e:js.jQuery.JQuery.Event)
         {
             elem = new HaqQuery(e.currentTarget);
             var dataID = elem.data(prefixID + "dataID");
@@ -35,7 +35,7 @@ class Client extends haquery.components.container.Client
             }
         };
         
-        mouseOut = function(e:js.JQuery.JqEvent)
+        mouseOut = function(e:js.jQuery.JQuery.Event)
         {
             if (elem != null)
             {
