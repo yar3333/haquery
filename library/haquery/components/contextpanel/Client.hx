@@ -13,6 +13,46 @@ class Client extends haquery.components.container.Client
         return q('#dataID').val();
     }
     
+    var mouseOver : js.JQuery.JqEvent->Void;
+    var mouseOut : js.JQuery.JqEvent->Void;
+    
+    public function new()
+    {
+        super();
+        
+        mouseOver = function(e:js.JQuery.JqEvent)
+        {
+            elem = new HaqQuery(e.currentTarget);
+            var dataID = elem.data(prefixID + "dataID");
+            trace("mouseOver " + dataID);
+            q('#dataID').val(dataID);
+            show();
+            elem.addClass('contextpanel-active');
+            if (timer!=null)
+            {
+                timer.stop();
+                timer = null;
+            }
+        };
+        
+        mouseOut = function(e:js.JQuery.JqEvent)
+        {
+            if (elem != null)
+            {
+                elem.removeClass('contextpanel-active');
+                if (timer != null) timer.stop();
+                var self = this;
+                timer = haxe.Timer.delay(
+                    function() { 
+                        self.q('#p').hide(); 
+                        self.timer = null; 
+                    },
+                    1000
+                );
+            }
+        };
+    }
+    
     function show()
     {
         q('#p').show();
@@ -22,52 +62,19 @@ class Client extends haquery.components.container.Client
             ,top:  Math.round(pos.top)
         });
     }
-
+    
     public function attach(elem:HaqQuery, dataID:String)
     {
-        var self = this;
+        trace("attach " + dataID);
         
-        elem.mouseover(function()
-        {
-            self.elem = elem;
-            self.q('#dataID').val(dataID);
-            self.show();
-            self.p_mouseover();
-        });
-        
-        elem.mouseout(function()
-        {
-            self.p_mouseout();
-        });
+        elem.data(prefixID + "dataID", dataID);
+        elem.mouseover(mouseOver);
+        elem.mouseout(mouseOut);
     }
     
     public function detach(elem:HaqQuery)
     {
-        elem.unbind("mouseover");
-        elem.unbind("mouseout");
-    }
-
-    function p_mouseover()
-    {
-        if (elem!=null) elem.addClass('contextpanel-active');
-        if (timer!=null)
-        {
-            timer.stop();
-            timer = null;
-        }
-    }
-
-    function p_mouseout()
-    {
-        if (elem!=null) elem.removeClass('contextpanel-active');
-        if (timer != null) timer.stop();
-        var self = this;
-        timer = haxe.Timer.delay(
-            function() { 
-                self.q('#p').hide(); 
-                self.timer = null; 
-            },
-            1000
-        );
+        elem.unbind("mouseover", mouseOver);
+        elem.unbind("mouseout", mouseOut);
     }
 }
