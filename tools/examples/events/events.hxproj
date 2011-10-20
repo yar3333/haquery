@@ -37,7 +37,6 @@
   <hiddenPaths>
     <hidden path="nbproject" />
     <hidden path="bin" />
-    <hidden path="build.xml" />
   </hiddenPaths>
   <!-- Executed before build -->
   <preBuildCommand>haxelib run HaQuery pre-build</preBuildCommand>
