@@ -561,7 +561,7 @@ class HaqXmlParser
             $i++;
             $nodes = self::parseInner($str, $matches, $i);
             foreach ($nodes as $node) $elem->addChild($node);
-            if ($matches[$i]['close'][0]=='' || $matches[$i]['tagClose'][0]!=$tag)
+            if (!isset($matches[$i]['close'][0]) || $matches[$i]['close'][0]=='' || $matches[$i]['tagClose'][0]!=$tag)
                 throw new Exception ("XML parse error: tag <$tag> not closed. ParsedText = \n<pre>".$str."</pre>\n");
         }
 
