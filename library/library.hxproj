@@ -15,7 +15,7 @@
   </output>
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
-    <class path="library" />
+    <class path="." />
   </classpaths>
   <!-- Build options -->
   <build>
@@ -40,6 +40,9 @@
     <hidden path="library\run.pdb" />
     <hidden path="tools" />
     <hidden path="library\tools" />
+    <hidden path="run.pdb" />
+    <hidden path="run.exe" />
+    <hidden path="run.n" />
   </hiddenPaths>
   <!-- Executed before build -->
   <preBuildCommand />
