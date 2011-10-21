@@ -309,10 +309,6 @@ namespace run_exe.haquery
             var flashDevelopUserDataPath = userLocalPath + "\\FlashDevelop";
             hant.copyFolderContent(srcPath, flashDevelopUserDataPath, isNotSvn);
 
-            /*var projectFilePath = flashDevelopUserDataPath + "\\Projects\\380 HaXe - HaQuery Project\\Project.hxproj";
-            var projectFileContent = File.ReadAllText(projectFilePath);
-            File.WriteAllText(projectFilePath, projectFileContent.Replace("{HaQuerySrcPath}", Path.GetFullPath(getExeDir() + "\\..\\src")));*/
-
             log.finishOk();
         }
         
@@ -321,13 +317,6 @@ namespace run_exe.haquery
             log.start("Install HaxeMod");
             
             var haxePath = getHaxePath();
-
-            /*if (!Directory.Exists(haxePath + 'haxe.exe.original'))
-            {
-                hant.rename(haxePath + 'haxe.exe', haxePath + 'haxe.exe.original');
-            }
-            File.Copy(getExeDir() + '\\tools\\haxemod\\haxe.exe', haxePath + 'haxe.exe');*/
-
             if (!Directory.Exists(haxePath + "std.original"))
             {
                 hant.rename(haxePath + "std", haxePath + "std.original");
@@ -346,7 +335,7 @@ namespace run_exe.haquery
         {
             try
             {
-                //uninstallFlashDevelopTemplates();
+                uninstallFlashDevelopTemplates();
                 uninstallHaxeMod();
             }
             catch (Exception e)
@@ -356,24 +345,18 @@ namespace run_exe.haquery
             }
         }
         
-        /*function uninstallFlashDevelopTemplates()
+        function uninstallFlashDevelopTemplates()
         {
-            log.start('Uninstall FlashDevelop templates');
+            //log.start('Uninstall FlashDevelop templates');
             
-            log.finishOk();
-        }*/
+            //log.finishOk();
+        }
         
         void uninstallHaxeMod()
         {
             log.start("Uninstall HaxeMod");
             
             var haxePath = getHaxePath();
-
-            /*if (!Directory.Exists(haxePath + 'haxe.exe.original'))
-            {
-                log.finishFail("HaxeMod does not installed.");
-            }
-            hant.rename(haxePath + 'haxe.exe.original', haxePath + 'haxe.exe');*/
             
             if (Directory.Exists(haxePath + "std.original"))
             {
