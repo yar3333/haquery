@@ -1,0 +1,9 @@
+package $(Package);
+
+class $(FileName) $(CSLB){
+
+	public function new() $(CSLB){
+		$(EntryPoint)
+	}
+	
+}
