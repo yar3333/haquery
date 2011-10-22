@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using ICSharpCode.SharpZipLib.Zip;
 
 namespace run_exe.haquery
 {
@@ -9,11 +10,13 @@ namespace run_exe.haquery
     {
         hant.Log log;
         hant.Tasks hant;
+        FastZip fastZip;
         
         public Tasks()
         {
             log = new hant.Log(2);
             hant = new hant.Tasks(log);
+            fastZip = new FastZip();
         }
         
         void genImports()
@@ -301,13 +304,13 @@ namespace run_exe.haquery
         {
             log.start("Install FlashDevelop templates");
 
-            var srcPath = getExeDir() + "\\tools\\flashdevelop";
-            var haxePath = getHaxePath();
+            var srcPath = getExeDir() + "\\tools\\flashdevelop.zip";
             var userLocalPath = System.Environment.GetEnvironmentVariable("LOCALAPPDATA") != null
                 ? System.Environment.GetEnvironmentVariable("LOCALAPPDATA")
                 : System.Environment.GetEnvironmentVariable("USERPROFILE") + "\\Local Settings\\Application Data";
             var flashDevelopUserDataPath = userLocalPath + "\\FlashDevelop";
-            hant.copyFolderContent(srcPath, flashDevelopUserDataPath, isNotSvn);
+
+            fastZip.ExtractZip(srcPath, flashDevelopUserDataPath, null);
 
             log.finishOk();
         }
@@ -320,7 +323,10 @@ namespace run_exe.haquery
             if (!Directory.Exists(haxePath + "std.original"))
             {
                 hant.rename(haxePath + "std", haxePath + "std.original");
-                hant.copyFolderContent(getExeDir() + "\\tools\\haxemod\\std", haxePath + "std", new hant.Tasks.IncludeDelegate(getTrue));
+                
+                var destPath = haxePath + "std";
+                Directory.CreateDirectory(destPath);
+                fastZip.ExtractZip(getExeDir() + "\\tools\\haxemod.zip", destPath, null);
             }
             
             log.finishOk();
@@ -345,7 +351,7 @@ namespace run_exe.haquery
             }
         }
         
-        function uninstallFlashDevelopTemplates()
+        void uninstallFlashDevelopTemplates()
         {
             //log.start('Uninstall FlashDevelop templates');
             
