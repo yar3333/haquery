@@ -152,6 +152,11 @@ namespace run_exe.haquery
         void buildJs()
         {
             log.start("Build client to 'bin\\haquery\\client\\haquery.js'");
+
+            if (File.Exists("bin\\haquery\\client\\haquery.js"))
+            {
+                hant.rename("bin\\haquery\\client\\haquery.js", "bin\\haquery\\client\\haquery.js.old");
+            }
             
             hant.createDirectory("bin\\haquery\\client");
             
@@ -166,6 +171,13 @@ namespace run_exe.haquery
             pars.Add("-main"); pars.Add("Main");
             pars.Add("-debug");
             run("haxe", pars.ToArray());
+
+            if (File.Exists("bin\\haquery\\client\\haquery.js")
+             && File.Exists("bin\\haquery\\client\\haquery.js.old"))
+            {
+                restoreFileTimes("bin\\haquery\\client\\haquery.js.old", "bin\\haquery\\client\\haquery.js");
+                hant.deleteFile("bin\\haquery\\client\\haquery.js.old");
+            }
             
             log.finishOk();
         }
@@ -212,8 +224,11 @@ namespace run_exe.haquery
         {
             log.start("Load file times to bin\\lib");
 
-            restoreFileTimes("bin\\lib.old", "bin\\lib");
-            hant.deleteDirectory("bin\\lib.old");
+            if (Directory.Exists("bin\\lib"))
+            {
+                restoreFileTimes("bin\\lib.old", "bin\\lib");
+                hant.deleteDirectory("bin\\lib.old");
+            }
 
             log.finishOk();
         }
@@ -234,38 +249,42 @@ namespace run_exe.haquery
             log.finishOk();
         }
 
-        void restoreFileTimes(string fromFolder, string toFolder)
+        void restoreFileTimes(string fromPath, string toPath)
         {
-            if (!Directory.Exists(fromFolder)) return;
-            if (!Directory.Exists(toFolder)) return;
-            
-            log.start("Restore files time '" + fromFolder + "' => '" + toFolder + "'");
-            
-            foreach (var file in Directory.GetDirectories(fromFolder))
+            if (File.Exists(fromPath) && File.Exists(toPath))
             {
-                restoreFileTimes(file, toFolder + '\\' + Path.GetFileName(file));
-            }
-
-            foreach (var file in Directory.GetFiles(fromFolder))
-            {
-                if (file.EndsWith(".php") || file.EndsWith(".js"))
+                log.start("Restore file time '" + fromPath + "' => '" + toPath + "'");
+                try
                 {
-                    try
+                    if (File.ReadAllText(fromPath) == File.ReadAllText(toPath))
                     {
-                        var toFile = toFolder + '\\' + Path.GetFileName(file);
-                        if (File.ReadAllText(file) == File.ReadAllText(toFile))
-                        {
-                            File.SetLastWriteTime(toFile, File.GetLastWriteTime(file));
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e.Message);
+                        File.SetLastWriteTime(toPath, File.GetLastWriteTime(fromPath));
                     }
                 }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+                log.finishOk();
             }
-            
-            log.finishOk();
+            else
+            if (Directory.Exists(fromPath) && Directory.Exists(toPath))
+            {
+                log.start("Restore files time '" + fromPath + "' => '" + toPath + "'");
+                foreach (var file in Directory.GetDirectories(fromPath))
+                {
+                    restoreFileTimes(file, toPath + '\\' + Path.GetFileName(file));
+                }
+
+                foreach (var file in Directory.GetFiles(fromPath))
+                {
+                    if (file.EndsWith(".php") || file.EndsWith(".js"))
+                    {
+                        restoreFileTimes(file, toPath + '\\' + Path.GetFileName(file));
+                    }
+                }
+                log.finishOk();
+            }
         }
         
         public string getHaxePath()
