@@ -5,7 +5,7 @@ class Main
     static function main()
     {
         #if php
-            haquery.server.HaQuery.run();
+            haquery.server.Lib.run();
         #end
     }
 }
