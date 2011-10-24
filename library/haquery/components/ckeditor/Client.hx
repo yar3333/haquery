@@ -1,6 +1,6 @@
 package haquery.components.ckeditor;
 
-import haquery.base.HaqEvent;
+import haquery.client.HaqEvent;
 
 class Client extends haquery.client.HaqComponent
 {
@@ -27,10 +27,14 @@ class Client extends haquery.client.HaqComponent
             extraPlugins: "ajaxsave",
             saveFunction: function(text:String):Void 
             {
+                if (self.event_save.call([text]) == false) return;
                 self.q('#t').val(text);
-                self.event_save.call([text]); 
+                self.q('#b').click();
             },
-            closeFunction: function() { self.event_close.call(); },
+            closeFunction: function() 
+            { 
+                self.event_close.call([text]);
+            },
             resize_enabled: false
         });
     }

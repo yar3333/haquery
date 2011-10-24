@@ -2,12 +2,15 @@ package haquery.components.ckeditor;
 
 import haquery.server.Lib;
 import haquery.server.HaqComponent;
+import haquery.server.HaqEvent;
 
 class Server extends HaqComponent
 {
     public var text : String;
     
-	function init()
+	var event_save : HaqEvent;
+	
+    function init()
     {
         if (Lib.isPostback)
         {
@@ -19,5 +22,10 @@ class Server extends HaqComponent
     {
 		manager.registerScript(tag, 'ckeditor.js');
         q('#e').html(text);
+    }
+    
+    function b_click()
+    {
+        event_save.call([text]);
     }
 }
