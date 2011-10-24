@@ -25,7 +25,11 @@ class Client extends haquery.client.HaqComponent
             skin: 'office2003',
             scayt_autoStartup: false,
             extraPlugins: "ajaxsave",
-            saveFunction: function(text:String):Void { self.event_save.call([text]); },
+            saveFunction: function(text:String):Void 
+            {
+                self.q('#t').val(text);
+                self.event_save.call([text]); 
+            },
             closeFunction: function() { self.event_close.call(); },
             resize_enabled: false
         });
