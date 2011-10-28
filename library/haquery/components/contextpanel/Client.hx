@@ -1,10 +1,13 @@
 package haquery.components.contextpanel;
 
 import haquery.client.HaqQuery;
+import haquery.client.HaqEvent;
 
 class Client extends haquery.components.container.Client
 {
     public var position : ContextPanelPosition;
+    
+    var event_show : HaqEvent;
     
     var elem : HaqQuery;
     var timer : haxe.Timer;
@@ -50,7 +53,7 @@ class Client extends haquery.components.container.Client
                         self.q('#p').hide(); 
                         self.timer = null; 
                     },
-                    1000
+                    500
                 );
             }
         };
@@ -82,9 +85,11 @@ class Client extends haquery.components.container.Client
                     ,top:  Math.round(pos.top)
                 });
         }
+        
+        event_show.call([ q('#p'), elem ]);
     }
     
-    public function attach(elem:HaqQuery, dataID:String)
+    public function attach(elem:HaqQuery, ?dataID:String)
     {
         elem.data(prefixID + "dataID", dataID);
         elem.mouseover(mouseOver);
