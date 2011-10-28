@@ -16,9 +16,10 @@ class Server extends HaqComponent
     
     function preRender()
     {
-        if (selector != null)
-        {
-            doc.addChild(new HaqXmlNodeText("\n<input type='hidden' id='" + prefixID + "selector' value='" + selector + "' />"));
-        }
+        doc.addChild(new HaqXmlNodeText(
+			 "\n<input type='hidden'"
+			+" id='" + prefixID + "selector'"
+			+" value='" + (selector!=null ? selector : '') + "' />"
+		));
     }
 }
