@@ -23,7 +23,7 @@ class Client extends HaqComponent
         apply(new HaqQuery(selector, rootNode));
     }
     
-    public function apply(elems:HaqQuery)
+    public function apply(elems:HaqQuery) : Void
     {
         Lib.assert(false, "Need to overload the 'apply' method.");
     }
