@@ -6,8 +6,8 @@ class Server extends HaqComponent
 {
     public var text : String;
 	
-    function render()
+    override function render()
 	{
-        return text;
+        return text != null ? text : "";
 	}
 }
