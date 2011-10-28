@@ -4,6 +4,8 @@ import haquery.client.HaqQuery;
 
 class Client extends haquery.components.container.Client
 {
+    public var position : ContextPanelPosition;
+    
     var elem : HaqQuery;
     var timer : haxe.Timer;
     
@@ -19,6 +21,8 @@ class Client extends haquery.components.container.Client
     public function new()
     {
         super();
+        
+        position = ContextPanelPosition.rightTopInner;
         
         mouseOver = function(e:js.jQuery.JQuery.Event)
         {
@@ -52,14 +56,32 @@ class Client extends haquery.components.container.Client
         };
     }
     
+    function init()
+    {
+        if (q('#p').attr('position') != null)
+        {
+            position = Type.createEnumIndex(ContextPanelPosition, q('#p').attr('position'));
+        }
+    }
+    
     function show()
     {
         q('#p').show();
         var pos = elem.offset();
-        q('#p').offset({
-             left: Math.round(pos.left + elem.width() - q('#p').width())
-            ,top:  Math.round(pos.top)
-        });
+        
+        switch (position)
+        {
+            case ContextPanelPosition.rightTopInner:
+                q('#p').offset({
+                     left: Math.round(pos.left + elem.width() - q('#p').width())
+                    ,top:  Math.round(pos.top)
+                });
+            case ContextPanelPosition.rightOuter:
+                q('#p').offset({
+                     left: Math.round(pos.left + elem.width())
+                    ,top:  Math.round(pos.top)
+                });
+        }
     }
     
     public function attach(elem:HaqQuery, dataID:String)

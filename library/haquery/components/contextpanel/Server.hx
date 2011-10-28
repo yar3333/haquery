@@ -7,4 +7,20 @@ class Server extends haquery.components.container.Server
     {
         return q('#dataID').val();
     }
+    
+    public var position : String;
+    
+    function preRender()
+    {
+        if (position != null)
+        {
+            var positionEnum = switch (position)
+            {
+                case "rightOuter": ContextPanelPosition.rightOuter;
+                case "rightTopInner": ContextPanelPosition.rightTopInner;
+            };
+            
+            q('#p').attr('position', Std.string(Type.enumIndex(positionEnum)));
+        }
+    }
 }
