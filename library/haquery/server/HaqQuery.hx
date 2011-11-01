@@ -135,6 +135,8 @@ class HaqQuery
             }
             return node.innerHTML;
         }
+        
+        html = Std.string(html);
         for (node in this.nodes)
         {
             if (isParse) node.innerHTML = html;
