@@ -10,7 +10,6 @@ using haquery.StringTools;
 class HaqComponentManager 
 {
 	var templates : HaqTemplates;
-	var tag_id_component : Hash<Array<HaqComponent>>;
 	
 	var registeredScripts(default,null) : Array<String>;
 	var registeredStyles(default,null) : Array<String>;
@@ -18,7 +17,6 @@ class HaqComponentManager
 	public function new(templates:HaqTemplates) : Void
 	{
 		this.templates = templates;
-		tag_id_component = new Hash<Array<HaqComponent>>();
 		registeredScripts = [];
 		registeredStyles = [];
 	}
@@ -37,8 +35,6 @@ class HaqComponentManager
         var name : String = tagOrName.startsWith('haq:') ? getNameByTag(tagOrName) : tagOrName;
 		var template = templates.get(name);
 		var component : HaqComponent = newComponent(parent, template.serverClass, name, id, template.doc, attr, parentNode);
-		if (!tag_id_component.exists(name)) tag_id_component.set(name, new Array<HaqComponent>());
-		tag_id_component.get(name).push(component);
 		return component;
 	}
 	
@@ -103,15 +99,16 @@ class HaqComponentManager
 		return registeredStyles;
 	}
 	
-	public function getInternalDataForPageHtml(path:String) : String
+	public function getInternalDataForPageHtml(page:HaqPage, path:String) : String
     {
 		var s = '';
         
         var tags = templates.getTags();
         s += "haquery.client.HaqInternals.tags = [\n";
-        for (tag in tag_id_component.keys())
+        var tagComponents = getTagComponents(page);
+        for (tag in tagComponents.keys())
         {
-            var components = tag_id_component.get(tag);
+            var components = tagComponents.get(tag);
             var visibledComponents =  Lambda.filter(components, function (x) {
                 while (x != null)
                 {
@@ -136,6 +133,24 @@ class HaqComponentManager
         s += "haquery.client.HaqInternals.pagePackage = \"" + path.replace('/', '.') + "\";";
 
         return s;
+    }
+    
+    function getTagComponents(page:HaqPage) : Hash<Array<HaqComponent>>
+    {
+        var r = new Hash<Array<HaqComponent>>();
+        getTagComponents_fill(page, r);
+        return r;
+    }
+    
+    function getTagComponents_fill(component:HaqComponent, r:Hash<Array<HaqComponent>>)
+    {
+        for (child in component.components)
+        {
+            var tag = child.tag;
+            if (!r.exists(tag)) r.set(tag, new Array<HaqComponent>());
+            r.get(child.tag).push(child);
+            getTagComponents_fill(child, r);
+        }
     }
 	
     public function getSupportPath(tag:String) : String

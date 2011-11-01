@@ -66,7 +66,7 @@ class HaqSystem
                   "<script>\n"
                 + "    if(typeof haquery=='undefined') alert('haquery.js must be loaded!');\n"
                 + "    " + templates.getInternalDataForPageHtml().replace('\n','\n    ') + '\n'
-                + "    " + manager.getInternalDataForPageHtml(path).replace('\n', '\n    ') + '\n'
+                + "    " + manager.getInternalDataForPageHtml(page, path).replace('\n', '\n    ') + '\n'
                 + "    haquery.client.Lib.run();\n"
                 + "</script>"
             );
