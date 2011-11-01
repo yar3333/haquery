@@ -148,7 +148,10 @@ class HaqQuery
 
     public function remove() : HaqQuery
     {
-        for (node in this.nodes) node.remove();
+        for (node in this.nodes)
+        {
+            node.remove();
+        }
         if (Lib.isPostback) this.jQueryCall('remove()');
         return this;
     }
