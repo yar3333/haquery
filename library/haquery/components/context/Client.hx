@@ -1,4 +1,4 @@
-package haquery.components.contextpanel;
+package haquery.components.context;
 
 import haquery.client.HaqQuery;
 import haquery.client.HaqEvent;
