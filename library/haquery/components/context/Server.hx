@@ -1,4 +1,4 @@
-package haquery.components.contextpanel;
+package haquery.components.context;
 
 class Server extends haquery.components.container.Server
 {
