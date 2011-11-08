@@ -2,16 +2,15 @@ package haquery.components.list;
 
 import haquery.server.HaqTools;
 import haquery.server.Lib;
-import haquery.server.HaqComponent;
+
 using haquery.StringTools;
 
-class Server extends HaqComponent
+class Server extends Base
 {
-	override private function createChildComponents():Void 
+    override function createChildComponents():Void 
 	{
         if (Lib.isPostback)
         {
-			var length = Std.parseInt(q('#length').val());
 			for (i in 0...length)
 			{
 				manager.createComponent(this, 'haq:listitem', Std.string(i), null, parentNode);
