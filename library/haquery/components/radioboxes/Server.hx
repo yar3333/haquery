@@ -1,5 +1,6 @@
 package haquery.components.radioboxes;
 
+import haquery.server.HaqDefines;
 import models.Users;
 import haquery.server.HaqXml;
 import haquery.server.Lib;
@@ -64,7 +65,7 @@ class Server extends haquery.components.container.Server
         var index = 0;
         for (elem in getInputElements())
         {
-            elem.setAttribute("id", prefixID + index);
+            elem.setAttribute("id", id + HaqDefines.DELIMITER + index);
             elem.setAttribute("name", prefixID + "v");
             index++;
         }

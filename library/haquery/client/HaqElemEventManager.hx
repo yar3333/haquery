@@ -131,16 +131,38 @@ class HaqElemEventManager
     
     public static function getDataObjectForSendToServer(fullElemID:String, eventType:String) : Dynamic
     {
-        var sendData : Dynamic = {};
-        sendData[untyped 'HAQUERY_POSTBACK'] = 1;
-        sendData[untyped 'HAQUERY_ID'] = fullElemID;
-        sendData[untyped 'HAQUERY_EVENT'] = eventType;
+        var sendData : Dynamic = {
+             HAQUERY_POSTBACK   : 1
+            ,HAQUERY_ID         : fullElemID
+            ,HAQUERY_EVENT      : eventType
+        };
 
-        for (sendElem in getElemsForSendToServer(fullElemID))
+        var sendedElements = getElemsForSendToServer(fullElemID);
+        for (sendElem in sendedElements)
         {
-            sendData[untyped sendElem.id] = sendElem.nodeName.toUpperCase() == 'INPUT' && sendElem.getAttribute('type').toUpperCase() == "CHECKBOX"
-                ? (Reflect.field(sendElem, 'checked') ? new HaqQuery(sendElem).val() : '')
-                : new HaqQuery(sendElem).val();
+            var nodeName = sendElem.nodeName.toUpperCase();
+            if (nodeName == 'INPUT' && sendElem.getAttribute('type').toUpperCase() == "CHECKBOX")
+            {
+                sendData[untyped sendElem.id] = Reflect.field(sendElem, 'checked') 
+                    ? new HaqQuery(sendElem).val() 
+                    : '';
+            }
+            else
+            if (nodeName == 'INPUT' && sendElem.getAttribute('type').toUpperCase() == "RADIO")
+            {
+                if (Reflect.field(sendElem, 'checked'))
+                {
+                    var name = sendElem.getAttribute('name');
+                    if (name != null && name != '')
+                    {
+                        sendData[untyped name] = sendElem.getAttribute('value');
+                    }
+                }
+            }
+            else
+            {
+                sendData[untyped sendElem.id] = new HaqQuery(sendElem).val();
+            }
         }
         
         return sendData;
@@ -150,7 +172,8 @@ class HaqElemEventManager
 	{
 		var jqAllElemsWithID = new HaqQuery("[id]");
 		var allElemsWithID : Array<HtmlDom> = untyped jqAllElemsWithID.toArray();
-		var elems = Lambda.filter(allElemsWithID, function(elem:HtmlDom):Bool {
+		var elems = Lambda.filter(allElemsWithID, function(elem)
+        {
             var elemTag = elem.nodeName.toUpperCase();
             var elemType = elemTag=="INPUT" ? elem.getAttribute('type').toUpperCase() : '';
             return elemTag == "INPUT" && Lambda.has(["TEXT", "PASSWORD", "HIDDEN", "CHECKBOX", "RADIO"], elemType)
