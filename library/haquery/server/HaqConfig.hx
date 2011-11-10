@@ -55,6 +55,11 @@ class HaqConfig
      * Path to layout file (null if layout not need).
      */
     public var layout : String;
+    
+    /**
+     * Disable special CSS and JS inserts to your HTML pages.
+     */
+    public var noPageMetaData : Bool;
 	
 	public function new() : Void
 	{
@@ -73,6 +78,7 @@ class HaqConfig
 		customData = new Hash<Dynamic>();
 		componentsFolders = [ 'haquery/components' ];
         layout = null;
+        noPageMetaData = false;
 	}
 }
 #end
