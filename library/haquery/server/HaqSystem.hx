@@ -60,16 +60,19 @@ class HaqSystem
         Lib.profiler.begin('renderPage');
             page.forEachComponent('preRender');
             
-            page.insertStyles(templates.getStyleFilePaths().concat(manager.getRegisteredStyles()));
-            page.insertScripts([ 'haquery/client/jquery.js', 'haquery/client/haquery.js' ].concat(manager.getRegisteredScripts()));
-            page.insertInitInnerBlock(
-                  "<script>\n"
-                + "    if(typeof haquery=='undefined') alert('haquery.js must be loaded!');\n"
-                + "    " + templates.getInternalDataForPageHtml().replace('\n','\n    ') + '\n'
-                + "    " + manager.getInternalDataForPageHtml(page, path).replace('\n', '\n    ') + '\n'
-                + "    haquery.client.Lib.run();\n"
-                + "</script>"
-            );
+            if (!Lib.config.noPageMetaData)
+            {
+                page.insertStyles(templates.getStyleFilePaths().concat(manager.getRegisteredStyles()));
+                page.insertScripts([ 'haquery/client/jquery.js', 'haquery/client/haquery.js' ].concat(manager.getRegisteredScripts()));
+                page.insertInitInnerBlock(
+                      "<script>\n"
+                    + "    if(typeof haquery=='undefined') alert('haquery.js must be loaded!');\n"
+                    + "    " + templates.getInternalDataForPageHtml().replace('\n','\n    ') + '\n'
+                    + "    " + manager.getInternalDataForPageHtml(page, path).replace('\n', '\n    ') + '\n'
+                    + "    haquery.client.Lib.run();\n"
+                    + "</script>"
+                );
+            }
             
             var html : String = page.render();
         Lib.profiler.end();
