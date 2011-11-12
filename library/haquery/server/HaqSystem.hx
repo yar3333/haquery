@@ -60,7 +60,7 @@ class HaqSystem
         Lib.profiler.begin('renderPage');
             page.forEachComponent('preRender');
             
-            if (!Lib.config.noPageMetaData)
+            if (!Lib.config.disablePageMetaData)
             {
                 page.insertStyles(templates.getStyleFilePaths().concat(manager.getRegisteredStyles()));
                 page.insertScripts([ 'haquery/client/jquery.js', 'haquery/client/haquery.js' ].concat(manager.getRegisteredScripts()));

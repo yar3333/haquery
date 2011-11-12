@@ -59,7 +59,7 @@ class HaqConfig
     /**
      * Disable special CSS and JS inserts to your HTML pages.
      */
-    public var noPageMetaData : Bool;
+    public var disablePageMetaData : Bool;
 	
 	public function new() : Void
 	{
@@ -78,7 +78,7 @@ class HaqConfig
 		customData = new Hash<Dynamic>();
 		componentsFolders = [ 'haquery/components' ];
         layout = null;
-        noPageMetaData = false;
+        disablePageMetaData = false;
 	}
 }
 #end
