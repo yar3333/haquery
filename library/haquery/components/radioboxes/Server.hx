@@ -1,7 +1,6 @@
 package haquery.components.radioboxes;
 
 import haquery.server.HaqDefines;
-import models.Users;
 import haquery.server.HaqXml;
 import haquery.server.Lib;
 import php.Web;
