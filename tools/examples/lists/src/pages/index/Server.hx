@@ -2,6 +2,7 @@ package pages.index;
 
 import haquery.server.HaqPage;
 import haquery.server.HaqComponent;
+import haquery.server.Lib;
 
 typedef User = {
     var login : String;
@@ -11,7 +12,7 @@ class Server extends HaqPage
 {
 	public function init()
 	{
-		if (!isPostback)
+		if (!Lib.isPostback)
         {
             var users : Array<User> = [
                  { login : "admin" }

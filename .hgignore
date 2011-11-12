@@ -1,3 +1,11 @@
 syntax: glob
 tools/tests/bin
 tools/tests/src/Imports.hx
+tools/examples/calculator/bin
+tools/examples/events/bin
+tools/examples/fileupload/bin
+tools/examples/lists/bin
+tools/examples/lists/src/Imports.hx
+tools/examples/fileupload/src/Imports.hx
+tools/examples/events/src/Imports.hx
+tools/examples/calculator/src/Imports.hx
