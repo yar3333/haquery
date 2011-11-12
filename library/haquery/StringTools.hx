@@ -37,7 +37,7 @@ class StringTools
 	public static inline function trim( s : String #if php , chars : String = null #end ) : String
     { 
         #if php
-		return untyped __call__("rtrim", s, chars);
+		return untyped __call__("trim", s, chars);
         #else
         return HaxeStringTools.trim(s);
         #end
