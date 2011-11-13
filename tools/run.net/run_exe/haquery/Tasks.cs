@@ -79,6 +79,8 @@ namespace run_exe.haquery
              || path == getExeDir() + "\\run.exe"
              || path == getExeDir() + "\\run.pdb"
              || path == getExeDir() + "\\ICSharpCode.SharpZipLib.dll"
+             || path == getExeDir() + "\\readme.txt"
+             || path == getExeDir() + "\\haxelib.xml"
             ) return false;
             
             if (Directory.Exists(path))
