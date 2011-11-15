@@ -194,11 +194,13 @@ class HaqComponent extends haquery.base.HaqComponent
 
     function callClientMethod(method:String, ?params:Array<Dynamic>) : Void
     {
-		var funcName = this.fullID.length != 0
-			? "haquery.client.HaqSystem.page.findComponent('" + fullID + "')." + method
-			: "haquery.client.HaqSystem.page." + method;
-		
-		HaqInternals.addAjaxResponse(HaqTools.getCallClientFunctionString(funcName, params) + ';');
+		Lib.assert(Lib.isPostback, "HaqComponent.callClientMethod() allowed on the postback only.");
+        
+        var funcName = this.fullID.length != 0
+            ? "haquery.client.HaqSystem.page.findComponent('" + fullID + "')." + method
+            : "haquery.client.HaqSystem.page." + method;
+        
+        HaqInternals.addAjaxResponse(HaqTools.getCallClientFunctionString(funcName, params) + ';');
     }
     
     public function callElemEventHandler(elemID:String, eventName:String) : Void
