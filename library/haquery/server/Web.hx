@@ -179,7 +179,7 @@ class Web {
 	public static inline function getMethod() : String { return php.Web.getMethod(); }
 
 	public static var isModNeko(isModNeko_getter, null) : Bool; 
-    static function isModNeko_getter() : Bool  { return php.Web.isModNeko; }
+    static inline function isModNeko_getter() : Bool  { return php.Web.isModNeko; }
 
 	public static function getDocumentRoot() : String {
         return untyped __php__("$_SERVER['DOCUMENT_ROOT']");
