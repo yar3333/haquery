@@ -77,14 +77,14 @@ class Web {
 	/**
 		Returns the GET and POST parameters.
 	**/
-	public static function getParams() { return php.Web.getParams(); }
+	public static inline function getParams() { return php.Web.getParams(); }
 
 	/**
 		Returns an Array of Strings built using GET / POST values.
 		If you have in your URL the parameters [a[]=foo;a[]=hello;a[5]=bar;a[3]=baz] then
 		[php.Web.getParamValues("a")] will return [["foo","hello",null,"baz",null,"bar"]]
 	**/
-	public static function getParamValues( param : String ) : Array<String> { return php.Web.getParamValues(param); }
+	public static inline function getParamValues( param : String ) : Array<String> { return php.Web.getParamValues(param); }
 
 	/**
 		Returns the local server host name
@@ -99,12 +99,12 @@ class Web {
 	/**
 		Returns the original request URL (before any server internal redirections)
 	**/
-	public static function getURI() : String { return php.Web.getURI(); }
+	public static inline function getURI() : String { return php.Web.getURI(); }
 
 	/**
 		Tell the client to redirect to the given url ("Location" header)
 	**/
-	public static function redirect( url : String ) { return php.Web.redirect(url); }
+	public static inline function redirect( url : String ) { return php.Web.redirect(url); }
 
 	/**
 		Set an output header value. If some data have been printed, the headers have
@@ -116,22 +116,22 @@ class Web {
 		Set the HTTP return code. Same remark as setHeader.
 		See status code explanation here: http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
 	**/
-	public static function setReturnCode( r : Int ) { return php.Web.setReturnCode(r); }
+	public static inline function setReturnCode( r : Int ) { return php.Web.setReturnCode(r); }
 
 	/**
 		Retrieve a client header value sent with the request.
 	**/
-	public static function getClientHeader( k : String ) : String { return php.Web.getClientHeader(k); }
+	public static inline function getClientHeader( k : String ) : String { return php.Web.getClientHeader(k); }
 	
 	/**
 		Retrieve all the client headers.
 	**/
-	public static function getClientHeaders() { return php.Web.getClientHeaders(); }
+	public static inline function getClientHeaders() { return php.Web.getClientHeaders(); }
 
 	/**
 		Returns all the GET parameters String
 	**/
-	public static function getParamsString() : String { return php.Web.getParamsString(); }
+	public static inline function getParamsString() : String { return php.Web.getParamsString(); }
 
 	/**
 		Returns all the POST data. POST Data is always parsed as
@@ -141,12 +141,12 @@ class Web {
 		case, you will have to use [getMultipart] or [parseMultipart]
 		methods.
 	**/
-	public static function getPostData() { return php.Web.getPostData(); }
+	public static inline function getPostData() { return php.Web.getPostData(); }
 
 	/**
 		Returns an object with the authorization sent by the client (Basic scheme only).
 	**/
-	public static function getAuthorization() : { user : String, pass : String } { return php.Web.getAuthorization(); }
+	public static inline function getAuthorization() : { user : String, pass : String } { return php.Web.getAuthorization(); }
 
 	/**
 		Get the current script directory in the local filesystem.
@@ -157,7 +157,7 @@ class Web {
 		Get the multipart parameters as an hashtable. The data
 		cannot exceed the maximum size specified.
 	**/
-	public static function getMultipart( maxSize : Int ) : Hash<String> { return php.Web.getMultipart(maxSize); }
+	public static inline function getMultipart( maxSize : Int ) : Hash<String> { return php.Web.getMultipart(maxSize); }
 
 	/**
 		Parse the multipart data. Call [onPart] when a new part is found
@@ -165,7 +165,7 @@ class Web {
 		and [onData] when some part data is readed. You can this way
 		directly save the data on hard drive in the case of a file upload.
 	**/
-	public static function parseMultipart( onPart : String -> String -> Void, onData : Bytes -> Int -> Int -> Void ) : Void { return php.Web.parseMultipart(onPart, onData); }
+	public static inline function parseMultipart( onPart : String -> String -> Void, onData : Bytes -> Int -> Int -> Void ) : Void { return php.Web.parseMultipart(onPart, onData); }
 
 	/**
 		Flush the data sent to the client. By default on Apache, outgoing data is buffered so
@@ -176,16 +176,16 @@ class Web {
 	/**
 		Get the HTTP method used by the client.
 	**/
-	public static function getMethod() : String { return php.Web.getMethod(); }
+	public static inline function getMethod() : String { return php.Web.getMethod(); }
 
 	public static var isModNeko(isModNeko_getter, null) : Bool; 
     static function isModNeko_getter() : Bool  { return php.Web.isModNeko; }
 
-	public static inline function getDocumentRoot() : String {
+	public static function getDocumentRoot() : String {
         return untyped __php__("$_SERVER['DOCUMENT_ROOT']");
     }
 
-	public static inline function getHttpHost() : String {
+	public static function getHttpHost() : String {
         return untyped __php__("$_SERVER['HTTP_HOST']"); 
     }
 
