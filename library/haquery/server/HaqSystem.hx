@@ -4,13 +4,13 @@ import php.FileSystem;
 import php.io.File;
 import php.io.Path;
 import php.Sys;
-import php.Web;
+import haquery.server.Web;
 import haquery.server.Lib;
 import haquery.server.HaqComponent;
 import haquery.server.HaqProfiler;
 import haquery.server.HaqRoute;
-using haquery.StringTools;
 
+using haquery.StringTools;
 
 class HaqSystem
 {
@@ -89,7 +89,7 @@ class HaqSystem
         var fullElemID : String = php.Web.getParams().get('HAQUERY_ID');
         var n = fullElemID.lastIndexOf(HaqDefines.DELIMITER);
         var componentID = n > 0 ? fullElemID.substr(0, n) : '';
-        var elemID = n > 0 ? fullElemID.substr(n+1) : fullElemID;
+        var elemID = n > 0 ? fullElemID.substr(n + 1) : fullElemID;
         
         var component : HaqComponent = page.findComponent(componentID);
         if (component == null)

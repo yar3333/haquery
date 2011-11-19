@@ -2,7 +2,6 @@ package haquery.server;
 
 import haxe.Stack;
 
-import php.Web;
 import php.Sys;
 import php.NativeArray;
 import php.Session;
@@ -17,6 +16,7 @@ import haquery.server.HaqBootstrap;
 import haquery.server.HaqSystem;
 import haquery.server.db.HaqDb;
 import haquery.server.HaqProfiler;
+import haquery.server.Web;
 
 using haquery.StringTools;
 
