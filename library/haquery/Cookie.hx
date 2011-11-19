@@ -1,4 +1,4 @@
-package haxe.web;
+package haquery;
 
 class Cookie 
 {
