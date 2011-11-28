@@ -2,7 +2,7 @@ package haquery.base;
 
 class HaqDefines 
 {
-	public static inline var VERSION = 2.5;
+	public static inline var VERSION = 2.6;
 	
 	public static var folders = {
 		 pages : 'pages'
