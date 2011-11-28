@@ -27,36 +27,38 @@ class Client extends haquery.components.container.Client
         
         position = ContextPanelPosition.rightTopInner;
         
-        mouseOver = function(e:js.jQuery.JQuery.Event)
+        mouseOver = function(e:js.jQuery.JQuery.Event) { elem = new HaqQuery(e.currentTarget);  innerMouseOver(); };
+        mouseOut = function(e:js.jQuery.JQuery.Event) { innerMouseOut(); };
+    }
+
+    function innerMouseOver()
+    {
+        var dataID = elem.data(prefixID + "dataID");
+        q('#dataID').val(dataID);
+        show();
+        elem.addClass('contextpanel-active');
+        if (timer!=null)
         {
-            elem = new HaqQuery(e.currentTarget);
-            var dataID = elem.data(prefixID + "dataID");
-            q('#dataID').val(dataID);
-            show();
-            elem.addClass('contextpanel-active');
-            if (timer!=null)
-            {
-                timer.stop();
-                timer = null;
-            }
-        };
-        
-        mouseOut = function(e:js.jQuery.JQuery.Event)
+            timer.stop();
+            timer = null;
+        }
+    }
+    
+    function innerMouseOut()
+    {
+        if (elem != null)
         {
-            if (elem != null)
-            {
-                elem.removeClass('contextpanel-active');
-                if (timer != null) timer.stop();
-                var self = this;
-                timer = haxe.Timer.delay(
-                    function() { 
-                        self.q('#p').hide(); 
-                        self.timer = null; 
-                    },
-                    500
-                );
-            }
-        };
+            elem.removeClass('contextpanel-active');
+            if (timer != null) timer.stop();
+            var self = this;
+            timer = haxe.Timer.delay(
+                function() { 
+                    self.q('#p').hide(); 
+                    self.timer = null; 
+                },
+                500
+            );
+        }
     }
     
     function init()
@@ -100,5 +102,16 @@ class Client extends haquery.components.container.Client
     {
         elem.unbind("mouseover", mouseOver);
         elem.unbind("mouseout", mouseOut);
+        innerMouseOut();
+    }
+    
+    function p_mouseover(t, e:js.jQuery.JQuery.Event)
+    {
+        innerMouseOver();
+    }
+    
+    function p_mouseout(t, e:js.jQuery.JQuery.Event)
+    {
+        innerMouseOut();
     }
 }
