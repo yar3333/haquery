@@ -144,11 +144,19 @@ namespace run_exe.haquery
                 arguments += '"' + arg + '"' + ' ';
             }
             arguments = arguments.TrimEnd();
-            
-            System.Diagnostics.ProcessStartInfo psi = new System.Diagnostics.ProcessStartInfo(fileName, arguments);
-            psi.UseShellExecute = false;
-            var p = System.Diagnostics.Process.Start(psi);
-            p.WaitForExit();
+
+            try
+            {
+                System.Diagnostics.ProcessStartInfo psi = new System.Diagnostics.ProcessStartInfo(fileName, arguments);
+                psi.UseShellExecute = false;
+                var p = System.Diagnostics.Process.Start(psi);
+                p.WaitForExit();
+            }
+            catch (System.ComponentModel.Win32Exception e)
+            {
+                Console.WriteLine("Error: file '" + fileName + "' not found. Maybe you need to add directory to the PATH system environment variable.");
+                throw e;
+            }
         }
         
         void buildJs()
