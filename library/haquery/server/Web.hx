@@ -104,7 +104,7 @@ class Web {
 	/**
 		Tell the client to redirect to the given url ("Location" header)
 	**/
-	public static inline function redirect( url : String ) { return php.Web.redirect(url); }
+	public static inline function redirect( url : String ) { return haquery.server.Lib.redirect(url); }
 
 	/**
 		Set an output header value. If some data have been printed, the headers have
