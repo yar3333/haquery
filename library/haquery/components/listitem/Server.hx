@@ -25,7 +25,18 @@ class Server extends Base
             });
         }
         
-        super.construct(manager, parent, tag, id, new HaqXml(innerHTML), params, null);
+        var xml = null;
+        try
+        {
+            xml = new HaqXml(innerHTML);
+        }
+        catch (e:Dynamic)
+        {
+            trace("XML parse error:\n" + innerHTML);
+            xml = new HaqXml('XML parse error.');
+        }
+        
+        super.construct(manager, parent, tag, id, xml, params, null);
 	}
     
     override function callElemEventHandler(elemID:String, eventName:String) : Void
