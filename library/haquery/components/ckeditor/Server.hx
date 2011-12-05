@@ -4,29 +4,23 @@ import haquery.server.Lib;
 import haquery.server.HaqComponent;
 import haquery.server.HaqEvent;
 
-class Server extends HaqComponent
+class Server extends haquery.components.container.Server
 {
-    public var text : String;
-	
-    function init()
+    public var text(text_getter, text_setter) : String;
+    
+    function text_getter()
     {
-        if (!Lib.isPostback)
-        {
-			if (text == null)
-			{
-				text = parentNode.innerHTML;
-				parentNode.innerHTML = '';
-			}
-        }
-        else
-        {
-            text = q('#e').val();
-        }
+        return q('#e').html();
+    }
+    
+    function text_setter(v:String)
+    {
+        q('#e').html(v);
+        return v;
     }
     
     function preRender()
     {
 		manager.registerScript(tag, 'ckeditor.js');
-        q('#e').html(text);
     }
 }

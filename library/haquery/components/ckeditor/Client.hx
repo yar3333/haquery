@@ -4,7 +4,7 @@ import haquery.client.HaqEvent;
 import haquery.client.Lib;
 import haxe.Timer;
 
-class Client extends haquery.client.HaqComponent
+class Client extends haquery.components.container.Client
 {
     var editor : CKEditor;
 
@@ -14,27 +14,30 @@ class Client extends haquery.client.HaqComponent
     
 	function init()
     {
-        var self = this;
-		editor = CKEditor.replace(q('#e')[0].id, {
-            toolbar: [
-                ['Source'], ['Undo','Redo','-','Cut','Copy','Paste','PasteText','PasteFromWord'], ['Find','Replace'], ['Styles'], ['Print'], ['Maximize'], '/',
-                ['Font','FontSize'], ['NumberedList','BulletedList'], ['Outdent','Indent','Blockquote'], ['Format'], ['BGColor'], '/',
-                ['Bold','Italic','Underline','Strike','-','Subscript','Superscript','-','RemoveFormat','-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'], ['Link','Unlink','Anchor'], ['Image','Flash','Table','HorizontalRule','Smiley','SpecialChar','PageBreak'], ['TextColor']
-            ],
-            skin: 'office2003',
-            scayt_autoStartup: false,
-            resize_enabled: false,
-            extraPlugins: ""
-        });
-        
-        var time = new Timer(100);
-        time.run = function()
+		var ta = q('#e');
+        if (ta.length > 0)
         {
-            if (editor.checkDirty())
+            editor = CKEditor.replace(ta[0].id, {
+                toolbar: [
+                    ['Source'], ['Undo','Redo','-','Cut','Copy','Paste','PasteText','PasteFromWord'], ['Find','Replace'], ['Styles'], ['Print'], ['Maximize'], '/',
+                    ['Font','FontSize'], ['NumberedList','BulletedList'], ['Outdent','Indent','Blockquote'], ['Format'], ['BGColor'], '/',
+                    ['Bold','Italic','Underline','Strike','-','Subscript','Superscript','-','RemoveFormat','-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'], ['Link','Unlink','Anchor'], ['Image','Flash','Table','HorizontalRule','Smiley','SpecialChar','PageBreak'], ['TextColor']
+                ],
+                skin: 'office2003',
+                scayt_autoStartup: false,
+                resize_enabled: false,
+                extraPlugins: ""
+            });
+            
+            var time = new Timer(100);
+            time.run = function()
             {
-                q('#e').html(editor.getData());
-                editor.resetDirty();
-            }
-        };
+                if (editor.checkDirty())
+                {
+                    q('#e').html(editor.getData());
+                    editor.resetDirty();
+                }
+            };
+        }
     }
 }
