@@ -7,14 +7,20 @@ import haquery.server.HaqEvent;
 class Server extends HaqComponent
 {
     public var text : String;
-    
-	var event_save : HaqEvent;
 	
     function init()
     {
-        if (Lib.isPostback)
+        if (!Lib.isPostback)
         {
-            text = q('#t').val();
+			if (text == null)
+			{
+				text = parentNode.innerHTML;
+				parentNode.innerHTML = '';
+			}
+        }
+        else
+        {
+            text = q('#e').val();
         }
     }
     
@@ -22,10 +28,5 @@ class Server extends HaqComponent
     {
 		manager.registerScript(tag, 'ckeditor.js');
         q('#e').html(text);
-    }
-    
-    function b_click()
-    {
-        event_save.call([text]);
     }
 }

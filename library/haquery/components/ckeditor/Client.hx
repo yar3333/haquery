@@ -1,13 +1,12 @@
 package haquery.components.ckeditor;
 
 import haquery.client.HaqEvent;
+import haquery.client.Lib;
+import haxe.Timer;
 
 class Client extends haquery.client.HaqComponent
 {
     var editor : CKEditor;
-    
-	var event_save : HaqEvent;
-    var event_close : HaqEvent;
 
     public var text(text_getter, text_setter) : String;
 	function text_getter() : String { return editor.getData(); }
@@ -18,24 +17,24 @@ class Client extends haquery.client.HaqComponent
         var self = this;
 		editor = CKEditor.replace(q('#e')[0].id, {
             toolbar: [
-                ['Source'], ['AjaxSave'], ['Undo','Redo','-','Cut','Copy','Paste','PasteText','PasteFromWord'], ['Find','Replace'], ['Styles'], ['Print'], ['Maximize','Close'], '/',
+                ['Source'], ['Undo','Redo','-','Cut','Copy','Paste','PasteText','PasteFromWord'], ['Find','Replace'], ['Styles'], ['Print'], ['Maximize'], '/',
                 ['Font','FontSize'], ['NumberedList','BulletedList'], ['Outdent','Indent','Blockquote'], ['Format'], ['BGColor'], '/',
                 ['Bold','Italic','Underline','Strike','-','Subscript','Superscript','-','RemoveFormat','-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'], ['Link','Unlink','Anchor'], ['Image','Flash','Table','HorizontalRule','Smiley','SpecialChar','PageBreak'], ['TextColor']
             ],
             skin: 'office2003',
             scayt_autoStartup: false,
-            extraPlugins: "ajaxsave",
-            saveFunction: function(text:String):Void 
-            {
-                if (self.event_save.call([text]) == false) return;
-                self.q('#t').val(text);
-                self.q('#b').click();
-            },
-            closeFunction: function() 
-            { 
-                self.event_close.call([text]);
-            },
-            resize_enabled: false
+            resize_enabled: false,
+            extraPlugins: ""
         });
+        
+        var time = new Timer(100);
+        time.run = function()
+        {
+            if (editor.checkDirty())
+            {
+                q('#e').html(editor.getData());
+                editor.resetDirty();
+            }
+        };
     }
 }

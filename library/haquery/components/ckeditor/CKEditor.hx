@@ -4,10 +4,8 @@ typedef CKEditorOptions = {
 	var toolbar : Array<Array<String>>;
 	var skin : String;
 	var scayt_autoStartup : Bool;
-	var extraPlugins : String;
-	var saveFunction : String -> Void;
-	var closeFunction : Void -> Void;
     var resize_enabled: Bool;
+	var extraPlugins : String;
 }
 
 @:native("CKEDITOR") extern class CKEditor
@@ -18,4 +16,9 @@ typedef CKEditorOptions = {
 	
 	public function getData() : String;
 	public function setData(text:String) : Void;
+	
+    public function checkDirty() : Bool;
+    public function resetDirty() : Void;
+    
+    public function on(event:String, f:Dynamic->Void) : Void;
 }
