@@ -234,7 +234,16 @@ class Lib
         }
         trace(text);
     }
-    
+	
+	static public function mail(email:String, fromEmail:String, subject:String, message:String) : Bool
+	{
+		var headers : String = "MIME-Version: 1.0\r\n";
+		headers += "Content-Type: text/plain; charset=utf-8\r\n";
+		headers += "Date: " + Date.now() + "\r\n";
+		headers += "From: " + fromEmail + "\r\n";
+		headers += "X-Mailer: My Send E-mail\r\n";
+		return untyped __call__("mail", email, subject, message, headers);
+	}
 	
     ////////////////////////////////////////////////
     // official methods
