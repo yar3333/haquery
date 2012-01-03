@@ -35,21 +35,11 @@ class HaqConfig
      */
     public var customData : Hash<Dynamic>;
 
-	var componentsFolders : Array<String>;
-    
-    /**
-     * Add components folder path.
-     * @param path Path related to root site directory (without starting '/').
-     */
-    public function addComponentsFolder(path:String) : Void
-    {
-        componentsFolders.push(path.replace('\\', '/').trim('/'));
-    }
-    
-    public function getComponentsFolders() : Array<String>
-    {
-        return componentsFolders;
-    }
+	/**
+	 * Project-specific components package.
+	 * Parent components package must be specified in config.xml file.
+	 */
+	public var componentsPackage : String;
     
     /**
      * Path to layout file (null if layout not need).
@@ -76,7 +66,7 @@ class HaqConfig
 		isTraceComponent = false;
 		filterTracesByIP = '';
 		customData = new Hash<Dynamic>();
-		componentsFolders = [ 'haquery/components' ];
+		componentsPackage = 'haquery.components';
         layout = null;
         disablePageMetaData = false;
 	}
