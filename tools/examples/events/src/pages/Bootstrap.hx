@@ -7,6 +7,6 @@ class Bootstrap implements HaqBootstrap
 {
     public function init(config:HaqConfig) : Void 
     {
-        config.addComponentsFolder('components');
+        config.componentsPackage = 'components';
     }
 }
