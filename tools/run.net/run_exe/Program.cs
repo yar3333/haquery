@@ -19,7 +19,19 @@ namespace run_exe
                     }
                     else
                     {
-                        Console.WriteLine("Database connection string must be specified (mysql://USER:PASSWORD@HOST/DATABASE).");
+                        Console.WriteLine("Database connection string must be specified (format: 'mysql://USER:PASSWORD@HOST/DATABASE').");
+                        return 1;
+                    }
+                    break;
+                
+                case "gen-trm":
+                    if (args.Length > 1)
+                    {
+                        haquery.genTrm(args[1]);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Components package must be specified.");
                         return 1;
                     }
                     break;
@@ -45,7 +57,8 @@ namespace run_exe
                     Console.WriteLine("HaQuery building support and deploying tool.");
                     Console.WriteLine("Usage: haquery <command>");
                     Console.WriteLine("\twhere <command> may be:");
-                    Console.WriteLine("\t\tgen-orm <databaseConnectionString>    Generate tables-related classes to manager and model folders");
+                    Console.WriteLine("\t\tgen-orm <databaseConnectionString>    Generate object-related classes (managers and models)");
+                    Console.WriteLine("\t\tgen-trm <componentsPackage>           Generate template-related classes");
                     Console.WriteLine("\t\tpre-build                             Do pre-build step");
                     Console.WriteLine("\t\tpost-build                            Do post-build step");
                     Console.WriteLine("\t\tinstall                               Patch haXe librarires to HaxeMod");

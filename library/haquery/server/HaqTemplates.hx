@@ -27,57 +27,9 @@ class HaqTemplates
 	var componentsFolders : Array<String>;
 	var templates : Hash<Hash<HaqCachedTemplate>>; // templates.get(relativePathToComponentsFolder).get(tag)
 	
-	public static function getComponentsConfig(componentsPackage:String) : { extendsPackage : String }
+	public function new(componentsFolders : Array<String>)
 	{
-		var r = { extendsPackage : "" };
-		var configFilePath = componentsPackage.replace(".", "/") + "/config.xml";
-		if (FileSystem.exists(configFilePath))
-		{
-			var text = File.getContent(configFilePath);
-			var xml = new HaqXml(text);
-			var nativeNodes : NativeArray = xml.find(">components>extends");
-			if (nativeNodes != null)
-			{
-				var nodes : Array<HaqXmlNodeElement> = cast Lib.toHaxeArray(nativeNodes);
-				if (nodes.length > 0)
-				{
-					if (nodes[0].hasAttribute("package"))
-					{
-						r.extendsPackage = nodes[0].getAttribute("package");
-					}
-				}
-			}
-		}
-		return r;
-	}
-	
-	public static function getComponentsFolders(componentsPackage:String) : Array<String>
-	{
-		var r : Array<String> = [];
-		
-		if (componentsPackage != null && componentsPackage != "")
-		{
-			var path = componentsPackage.replace(".", "/");
-			if (!FileSystem.isDirectory(path))
-			{
-				throw "Components directory '" + path + "' do not exists.";
-			}
-			r.unshift(path + '/');
-			
-			var config = getComponentsConfig(componentsPackage);
-			for (path in getComponentsFolders(config.extendsPackage))
-			{
-				r.unshift(path);
-			}
-		}
-		
-		return r;
-	}
-	
-	public function new(componentsPackage : String)
-	{
-		trace("componentsPackage = " + componentsPackage);
-		componentsFolders = getComponentsFolders(componentsPackage);
+		this.componentsFolders = componentsFolders;
 		
 		templates = new Hash<Hash<HaqCachedTemplate>>();
 		for (folder in componentsFolders)
