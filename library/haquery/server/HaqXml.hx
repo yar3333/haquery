@@ -58,7 +58,7 @@ import haquery.server.HaqComponent;
 {
     static function __init__() : Void
 	{
-		untyped __php__("require_once 'haquery/server/HaqXml.php';");
+		untyped __php__("require_once dirname(__FILE__).'/../haquery/server/HaqXml.php';");
 	}
     
 	public function new(str:String = '') : Void;

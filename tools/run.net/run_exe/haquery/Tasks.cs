@@ -23,7 +23,6 @@ namespace run_exe.haquery
         {
             log.start("Generate imports to 'src\\Imports.hx'");
             
-            
             var fo = new StreamWriter(new System.IO.FileStream("src\\Imports.hx", System.IO.FileMode.Create));
 
             foreach (var path in getClassPaths())
@@ -200,9 +199,18 @@ namespace run_exe.haquery
         
         public void genOrm(string databaseConnectionString)
         {
-            log.start("Generate ORM classes to 'models'");
+            log.start("Generate object related mapping classes");
 
             run("php", new string[] { getExeDir() + "\\tools\\orm\\index.php", databaseConnectionString, "src" });
+            
+            log.finishOk();
+        }
+
+        public void genTrm(string componentsPackage)
+        {
+            log.start("Generate template related mapping classes");
+
+            run("php", new string[] { getExeDir() + "\\tools\\trm\\index.php", componentsPackage });
             
             log.finishOk();
         }
