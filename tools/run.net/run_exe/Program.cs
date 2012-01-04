@@ -40,8 +40,22 @@ namespace run_exe
                     haquery.preBuild();
                     break;
                 
-                case "post-build": 
-                    haquery.postBuild();
+                case "post-build":
+                    var skipJS = false;
+                    if (args.Length > 1)
+                    {
+                        if (args[1] == "skipjs")
+                        {
+                            skipJS = true;
+                        }
+                        else
+                        {
+                            Console.WriteLine("'skipjs' addition key is only supported on post-build.");
+                            return 1;
+                        }
+                    }
+
+                    haquery.postBuild(skipJS);
                     break;
                     
                 case "install":
@@ -60,7 +74,7 @@ namespace run_exe
                     Console.WriteLine("\t\tgen-orm <databaseConnectionString>    Generate object-related classes (managers and models)");
                     Console.WriteLine("\t\tgen-trm <componentsPackage>           Generate template-related classes");
                     Console.WriteLine("\t\tpre-build                             Do pre-build step");
-                    Console.WriteLine("\t\tpost-build                            Do post-build step");
+                    Console.WriteLine("\t\tpost-build [skipjs]                   Do post-build step");
                     Console.WriteLine("\t\tinstall                               Patch haXe librarires to HaxeMod");
                     Console.WriteLine("\t\tuninstall                             Restore original haXe libraries");
                     return 1;
