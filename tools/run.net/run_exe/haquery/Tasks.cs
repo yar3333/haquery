@@ -114,8 +114,7 @@ namespace run_exe.haquery
 
             r.Add(getExeDir());
 
-            var files = Directory.GetFiles(".");
-            foreach (var file in files)
+            foreach (var file in Directory.GetFiles("."))
             {
                 if (file.EndsWith(".hxproj"))
                 {
@@ -123,14 +122,36 @@ namespace run_exe.haquery
                     xml.Load(file);
                     foreach (System.Xml.XmlElement elem in xml.SelectNodes("/project/classpaths/class"))
                     {
-                        if (elem.GetAttribute("path") != null)
+                        if (elem.HasAttribute("path"))
                         {
                             r.Add(elem.GetAttribute("path"));
                         }
                     }
                 }
             }
+            
             return r;
+        }
+
+        string getBinPath()
+        {
+            foreach (var file in Directory.GetFiles("."))
+            {
+                if (file.EndsWith(".hxproj"))
+                {
+                    var xml = new System.Xml.XmlDocument();
+                    xml.Load(file);
+                    foreach (System.Xml.XmlElement elem in xml.SelectNodes("/project/output/movie"))
+                    {
+                        if (elem.HasAttribute("path"))
+                        {
+                            return elem.GetAttribute("path").TrimEnd("\\/".ToCharArray());
+                        }
+                    }
+                }
+            }
+            
+            return "bin";
         }
         
         // -------------------------------------------------------------------------------
@@ -160,14 +181,16 @@ namespace run_exe.haquery
         
         void buildJs()
         {
-            log.start("Build client to 'bin\\haquery\\client\\haquery.js'");
+            var binPath = getBinPath();
 
-            if (File.Exists("bin\\haquery\\client\\haquery.js"))
+            log.start("Build client to '" + binPath + "\\haquery\\client\\haquery.js'");
+
+            if (File.Exists(binPath + "\\haquery\\client\\haquery.js"))
             {
-                hant.rename("bin\\haquery\\client\\haquery.js", "bin\\haquery\\client\\haquery.js.old");
+                hant.rename(binPath + "\\haquery\\client\\haquery.js", binPath + "\\haquery\\client\\haquery.js.old");
             }
-            
-            hant.createDirectory("bin\\haquery\\client");
+
+            hant.createDirectory(binPath + "\\haquery\\client");
             
             var pars = new List<String>();
             foreach (var path in getClassPaths())
@@ -176,16 +199,16 @@ namespace run_exe.haquery
             }
             pars.Add("-lib"); pars.Add("HaQuery");
             pars.Add("-js");
-            pars.Add("bin\\haquery\\client\\haquery.js");
+            pars.Add(binPath + "\\haquery\\client\\haquery.js");
             pars.Add("-main"); pars.Add("Main");
             pars.Add("-debug");
             run("haxe", pars.ToArray());
 
-            if (File.Exists("bin\\haquery\\client\\haquery.js")
-             && File.Exists("bin\\haquery\\client\\haquery.js.old"))
+            if (File.Exists(binPath + "\\haquery\\client\\haquery.js")
+             && File.Exists(binPath + "\\haquery\\client\\haquery.js.old"))
             {
-                restoreFileTimes("bin\\haquery\\client\\haquery.js.old", "bin\\haquery\\client\\haquery.js");
-                hant.deleteFile("bin\\haquery\\client\\haquery.js.old");
+                restoreFileTimes(binPath + "\\haquery\\client\\haquery.js.old", "" + binPath + "\\haquery\\client\\haquery.js");
+                hant.deleteFile(binPath + "\\haquery\\client\\haquery.js.old");
             }
             
             log.finishOk();
@@ -227,12 +250,14 @@ namespace run_exe.haquery
 
         void saveLibFolder()
         {
-            log.start("Save bin\\lib folder");
+            var binPath = getBinPath();
 
-            if (Directory.Exists("bin\\lib"))
+            log.start("Save " + binPath + "\\lib folder");
+
+            if (Directory.Exists(binPath + "\\lib"))
             {
-                hant.deleteDirectory("bin\\lib.old");
-                hant.rename("bin\\lib", "bin\\lib.old");
+                hant.deleteDirectory(binPath + "\\lib.old");
+                hant.rename(binPath + "\\lib", binPath + "\\lib.old");
             }
 
             log.finishOk();
@@ -240,26 +265,31 @@ namespace run_exe.haquery
 
         void loadLibFolder()
         {
-            log.start("Load file times to bin\\lib");
+            var binPath = getBinPath();
+            
+            log.start("Load file times to " + binPath + "\\lib");
 
-            if (Directory.Exists("bin\\lib"))
+            if (Directory.Exists(binPath + "\\lib"))
             {
-                restoreFileTimes("bin\\lib.old", "bin\\lib");
-                hant.deleteDirectory("bin\\lib.old");
+                restoreFileTimes(binPath + "\\lib.old", binPath + "\\lib");
+                hant.deleteDirectory(binPath + "\\lib.old");
             }
 
             log.finishOk();
         }
-        
-        public void postBuild()
+
+        public void postBuild(bool skipJS)
         {
             log.start("Do post-build step");
-            
-            buildJs();
+
+            if (!skipJS)
+            {
+                buildJs();
+            }
 
             foreach (var path in getClassPaths())
             {
-                hant.copyFolderContent(path, "bin", isSupportFile);
+                hant.copyFolderContent(path, getBinPath(), isSupportFile);
             }
 
             loadLibFolder();
