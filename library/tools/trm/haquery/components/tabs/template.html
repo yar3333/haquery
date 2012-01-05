@@ -1,0 +1,20 @@
+<style>
+    .tabs>*:first-child>*
+    {
+        cursor: pointer;
+    }
+
+    .tabs>*:last-child>*
+    {
+        display: none;
+    }
+    
+    .tabs>*:last-child>*.active
+    {
+        display: block;
+    }
+</style>
+
+<div id="tabs" class="tabs">
+{content}
+</div>

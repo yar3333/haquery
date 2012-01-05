@@ -10,6 +10,7 @@ class TrmHaxeClass {
 		$this->imports = new _hx_array(array());
 		$this->vars = new _hx_array(array());
 		$this->methods = new _hx_array(array());
+		$this->customs = new _hx_array(array());
 		$GLOBALS['%s']->pop();
 	}}
 	public $fullClassName;
@@ -17,6 +18,7 @@ class TrmHaxeClass {
 	public $imports;
 	public $vars;
 	public $methods;
+	public $customs;
 	public function addImport($packageName) {
 		$GLOBALS['%s']->push("TrmHaxeClass::addImport");
 		$製pos = $GLOBALS['%s']->length;
@@ -51,11 +53,17 @@ class TrmHaxeClass {
 		$this->methods->push($s);
 		$GLOBALS['%s']->pop();
 	}
+	public function addCustom($code) {
+		$GLOBALS['%s']->push("TrmHaxeClass::addCustom");
+		$製pos = $GLOBALS['%s']->length;
+		$this->customs->push($code);
+		$GLOBALS['%s']->pop();
+	}
 	public function toString() {
 		$GLOBALS['%s']->push("TrmHaxeClass::toString");
 		$製pos = $GLOBALS['%s']->length;
 		$clas = TrmTools::splitFullClassName($this->fullClassName);
-		$s = "package " . $clas->packageName . ";\x0A" . "\x0A" . $this->imports->join("\x0A") . ((($this->imports->length > 0) ? "\x0A\x0A" : "")) . "class " . $clas->className . (TrmHaxeClass_2($this, $clas)) . "\x0A" . "{\x0A" . (TrmHaxeClass_3($this, $clas)) . (TrmHaxeClass_4($this, $clas)) . "}";
+		$s = "package " . $clas->packageName . ";\x0A" . "\x0A" . $this->imports->join("\x0A") . ((($this->imports->length > 0) ? "\x0A\x0A" : "")) . "class " . $clas->className . (TrmHaxeClass_2($this, $clas)) . "\x0A" . "{\x0A" . (TrmHaxeClass_3($this, $clas)) . (TrmHaxeClass_4($this, $clas)) . (TrmHaxeClass_5($this, $clas)) . "}";
 		{
 			$GLOBALS['%s']->pop();
 			return $s;
@@ -85,10 +93,10 @@ function TrmHaxeClass_0(&$裨his, &$isPrivate, &$isStatic, &$v) {
 function TrmHaxeClass_1(&$body, &$isPrivate, &$isStatic, &$name, &$retType, &$vars, $v) {
 	$製pos = $GLOBALS['%s']->length;
 	{
-		$GLOBALS['%s']->push("TrmHaxeClass::addMethod@51");
+		$GLOBALS['%s']->push("TrmHaxeClass::addMethod@53");
 		$製pos2 = $GLOBALS['%s']->length;
 		{
-			$裨mp = $v->name . ":" . $v->type . (TrmHaxeClass_5($裨his, $body, $isPrivate, $isStatic, $name, $retType, $v, $vars));
+			$裨mp = $v->name . ":" . $v->type . (TrmHaxeClass_6($裨his, $body, $isPrivate, $isStatic, $name, $retType, $v, $vars));
 			$GLOBALS['%s']->pop();
 			return $裨mp;
 		}
@@ -119,7 +127,15 @@ function TrmHaxeClass_4(&$裨his, &$clas) {
 		return "";
 	}
 }
-function TrmHaxeClass_5(&$裨his, &$body, &$isPrivate, &$isStatic, &$name, &$retType, &$v, &$vars) {
+function TrmHaxeClass_5(&$裨his, &$clas) {
+	$製pos = $GLOBALS['%s']->length;
+	if($裨his->customs->length > 0) {
+		return "\x09" . $裨his->customs->join("\x0A\x0A\x09") . "\x0A";
+	} else {
+		return "";
+	}
+}
+function TrmHaxeClass_6(&$裨his, &$body, &$isPrivate, &$isStatic, &$name, &$retType, &$v, &$vars) {
 	$製pos = $GLOBALS['%s']->length;
 	if($v->defVal !== null) {
 		return "=" . $v->defVal;

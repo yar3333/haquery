@@ -1,4 +1,5 @@
 <?php
+require_once dirname(__FILE__).'/../../HaqXml.extern.php';
 
 class haquery_server_HaqConfig {
 	public function __construct() {
@@ -37,26 +38,31 @@ class haquery_server_HaqConfig {
 		else
 			throw new HException('Unable to call «'.$m.'»');
 	}
-	static function getComponentsConfig($basePath, $componentsPackage) {
+	static function getComponentsConfig($classPaths, $componentsPackage) {
 		$GLOBALS['%s']->push("haquery.server.HaqConfig::getComponentsConfig");
 		$»spos = $GLOBALS['%s']->length;
 		$r = _hx_anonymous(array("extendsPackage" => (($componentsPackage !== "haquery.components") ? "haquery.components" : null)));
 		$configFilePath = str_replace(".", "/", $componentsPackage) . "/config.xml";
-		if(file_exists($basePath . $configFilePath)) {
-			$text = php_io_File::getContent($basePath . $configFilePath);
-			$xml = Xml::parse($text);
-			if($xml->firstElement()->getNodeName() === "components") {
-				if(null == $xml->firstElement()) throw new HException('null iterable');
-				$»it = $xml->firstElement()->elements();
-				while($»it->hasNext()) {
-					$elem = $»it->next();
-					if($elem->getNodeName() === "extends") {
-						if($elem->exists("package")) {
-							$r->extendsPackage = $elem->get("package");
+		$i = $classPaths->length - 1;
+		while($i >= 0) {
+			$basePath = $classPaths[$i];
+			if(file_exists(rtrim($basePath, "/") . "/" . $configFilePath)) {
+				$text = php_io_File::getContent($basePath . $configFilePath);
+				$xml = new HaqXml($text);
+				$nativeNodes = $xml->find(">components>extends");
+				if($nativeNodes !== null) {
+					$nodes = new _hx_array($nativeNodes);
+					if($nodes->length > 0) {
+						if(_hx_array_get($nodes, 0)->hasAttribute("package")) {
+							$r->extendsPackage = _hx_array_get($nodes, 0)->getAttribute("package");
 						}
 					}
+					unset($nodes);
 				}
+				unset($xml,$text,$nativeNodes);
 			}
+			$i--;
+			unset($basePath);
 		}
 		{
 			$GLOBALS['%s']->pop();
@@ -77,7 +83,7 @@ class haquery_server_HaqConfig {
 				throw new HException("Components directory '" . $path . "' do not exists.");
 			}
 			$r->unshift($path . "/");
-			$config = haquery_server_HaqConfig::getComponentsConfig($basePath, $componentsPackage);
+			$config = haquery_server_HaqConfig::getComponentsConfig(new _hx_array(array($basePath)), $componentsPackage);
 			{
 				$_g = 0; $_g1 = haquery_server_HaqConfig::getComponentsFolders($basePath, $config->extendsPackage);
 				while($_g < $_g1->length) {
