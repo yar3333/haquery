@@ -18,6 +18,7 @@ class TrmHaxeClass
 	var imports : Array<String>;
 	var vars : Array<String>;
 	var methods : Array<String>;
+	var customs : Array<String>;
 	
 	public function new(fullClassName:String, baseFullClassName:String=null) : Void
 	{
@@ -26,6 +27,7 @@ class TrmHaxeClass
 		this.imports = new Array<String>();
 		this.vars = new Array<String>();
 		this.methods = new Array<String>();
+		this.customs = new Array<String>();
 	}
 	
 	public function addImport(packageName:String) : Void
@@ -58,6 +60,11 @@ class TrmHaxeClass
 		methods.push(s);
  	}
 	
+	public function addCustom(code:String) : Void
+	{
+		customs.push(code);
+	}
+	
 	public function toString() : String
 	{
 		var clas = TrmTools.splitFullClassName(fullClassName);
@@ -69,6 +76,7 @@ class TrmHaxeClass
 			  + '{\n'
 			  + (vars.length > 0 ? '\t' + vars.join(';\n\t') + ';\n\n' : '')
 			  + (methods.length > 0 ? '\t' + methods.join('\n\n\t') + '\n' : '')
+			  + (customs.length > 0 ? '\t' + customs.join('\n\n\t') + '\n' : '')
 			  + '}';
 		return s;
 	}

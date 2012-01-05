@@ -1,0 +1,34 @@
+<style>
+    .button
+    {
+        border-collapse: collapse;
+        border: 0;
+        padding: 0;
+        margin: 0 auto;
+        cursor: pointer;
+        background: url(~/bt_r.png) no-repeat top right;
+    }
+
+    .button td
+    {
+        background: url(~/bt_l.png) no-repeat;
+    }
+
+    .button span
+    {
+        line-height: 21px;
+        display: block;
+        text-align: center;
+        padding: 0 8px;
+        font-size: 13px;
+        color: #fff;
+        cursor: pointer;
+    }
+    
+    .button.disabled span
+    {
+        color: #777;
+    }
+</style>
+
+<table id="b" class="button"><tr><td><span>OK</span></td></tr></table>

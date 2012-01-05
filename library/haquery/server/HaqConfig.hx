@@ -4,6 +4,7 @@ package haquery.server;
 import php.FileSystem;
 import php.io.File;
 import php.NativeArray;
+import haquery.server.HaqXml;
 
 using haquery.StringTools;
 
@@ -75,42 +76,34 @@ class HaqConfig
         disablePageMetaData = false;
 	}
 	
-	static function getComponentsConfig(basePath:String, componentsPackage:String) : { extendsPackage : String }
+	public static function getComponentsConfig(classPaths:Array<String>, componentsPackage:String) : { extendsPackage : String }
 	{
 		var r = { extendsPackage : componentsPackage != "haquery.components" ? "haquery.components" : null };
 		
 		var configFilePath = componentsPackage.replace(".", "/") + "/config.xml";
-		if (FileSystem.exists(basePath + configFilePath))
+		
+		var i = classPaths.length - 1;
+		while (i >= 0)
 		{
-			var text = File.getContent(basePath + configFilePath);
-			var xml = Xml.parse(text);
-			if (xml.firstElement().nodeName == "components")
+			var basePath = classPaths[i];
+			if (FileSystem.exists(basePath.rtrim("/") + "/" + configFilePath))
 			{
-				for (elem in xml.firstElement().elements())
+				var text = File.getContent(basePath + configFilePath);
+				var xml = new HaqXml(text);
+				var nativeNodes : NativeArray = xml.find(">components>extends");
+				if (nativeNodes != null)
 				{
-					if (elem.nodeName == "extends")
+					var nodes : Array<HaqXmlNodeElement> = cast Lib.toHaxeArray(nativeNodes);
+					if (nodes.length > 0)
 					{
-						if (elem.exists("package"))
+						if (nodes[0].hasAttribute("package"))
 						{
-							r.extendsPackage = elem.get("package");
+							r.extendsPackage = nodes[0].getAttribute("package");
 						}
 					}
 				}
 			}
-			
-			/*var xml = new HaqXml(text);
-			var nativeNodes : NativeArray = xml.find(">components>extends");
-			if (nativeNodes != null)
-			{
-				var nodes : Array<HaqXmlNodeElement> = cast Lib.toHaxeArray(nativeNodes);
-				if (nodes.length > 0)
-				{
-					if (nodes[0].hasAttribute("package"))
-					{
-						r.extendsPackage = nodes[0].getAttribute("package");
-					}
-				}
-			}*/
+			i--;
 		}
 		return r;
 	}
@@ -130,7 +123,7 @@ class HaqConfig
 			}
 			r.unshift(path + '/');
 			
-			var config = getComponentsConfig(basePath, componentsPackage);
+			var config = getComponentsConfig([ basePath ], componentsPackage);
 			for (path in getComponentsFolders(basePath, config.extendsPackage))
 			{
 				r.unshift(path);
