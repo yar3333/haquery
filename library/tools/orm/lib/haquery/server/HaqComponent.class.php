@@ -125,7 +125,7 @@ class haquery_server_HaqComponent extends haquery_base_HaqComponent {
 				}
 				if($node->component->visible) {
 					$this->prepareDocToRender($node);
-					$text = rtrim($node->component->render(), null);
+					$text = trim($node->component->render(), null);
 					$prev = $node->getPrevSiblingNode();
 					if($prev instanceof HaqXmlNodeText) {
 						$re = new haquery_EReg("(?:^|\x0A)([ ]+)\$", "s");
@@ -167,7 +167,7 @@ class haquery_server_HaqComponent extends haquery_base_HaqComponent {
 			haxe_Log::trace("render " . $this->fullID, _hx_anonymous(array("fileName" => "HaqComponent.hx", "lineNumber" => 172, "className" => "haquery.server.HaqComponent", "methodName" => "render")));
 		}
 		$this->prepareDocToRender($this->doc);
-		$r = rtrim($this->doc->toString(), "\x0D\x0A");
+		$r = trim($this->doc->toString(), "\x0D\x0A");
 		{
 			$GLOBALS['%s']->pop();
 			return $r;
@@ -200,6 +200,7 @@ class haquery_server_HaqComponent extends haquery_base_HaqComponent {
 	public function callClientMethod($method, $params) {
 		$GLOBALS['%s']->push("haquery.server.HaqComponent::callClientMethod");
 		$»spos = $GLOBALS['%s']->length;
+		haquery_server_Lib::assert(haquery_server_Lib::$isPostback, "HaqComponent.callClientMethod() allowed on the postback only.", _hx_anonymous(array("fileName" => "HaqComponent.hx", "lineNumber" => 197, "className" => "haquery.server.HaqComponent", "methodName" => "callClientMethod")));
 		$funcName = haquery_server_HaqComponent_0($this, $method, $params);
 		haquery_server_HaqInternals::addAjaxResponse(haquery_base_HaqTools::getCallClientFunctionString($funcName, $params) . ";");
 		$GLOBALS['%s']->pop();

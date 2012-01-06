@@ -10,6 +10,13 @@ typedef TrmHaxeVar = {
 	var defVal : String;
 }
 
+typedef TrmHaxeVarGetter = {
+	var name : String;
+	var type : String;
+	var body:String;
+}
+
+
 class TrmHaxeClass
 {
 	var fullClassName : String;
@@ -43,6 +50,23 @@ class TrmHaxeClass
 			  + (isStatic && v.defVal!=null ? ' = ' + v.defVal : '');
 		vars.push(s);
  	}
+	
+	public function addVarGetter(v:TrmHaxeVarGetter, isPrivate = false, isStatic = false, isInline = false) : Void
+	{
+		var s = "\n\t"
+		      + (isPrivate ? '' : 'public ')
+			  + (isStatic ? 'static ' : '')
+			  + 'var ' + v.name + '(' + v.name + '_getter, null)' + ' : ' + v.type
+			  + ";\n";
+		
+		s += (isInline ? '\tinline ' : '\t')
+		   + "function " + v.name + "_getter() : " + v.type + "\n"
+		   + "\t{\n"
+		   + TrmTools.indent(v.body.trim(), '\t\t') + '\n'
+		   + "\t}";
+		
+		vars.push(s);
+	}
 	
 	public function addMethod(name:String, vars:Iterable<TrmHaxeVar>, retType:String, body:String, isPrivate=false, isStatic=false) : Void
 	{

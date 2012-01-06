@@ -469,52 +469,13 @@ class php_Web {
 		$GLOBALS['%s']->pop();
 	}
 	static $isModNeko;
-	static function getDocumentRoot() {
-		$GLOBALS['%s']->push("php.Web::getDocumentRoot");
-		$製pos = $GLOBALS['%s']->length;
-		{
-			$裨mp = $_SERVER['DOCUMENT_ROOT'];
-			$GLOBALS['%s']->pop();
-			return $裨mp;
-		}
-		$GLOBALS['%s']->pop();
-	}
-	static function getHttpHost() {
-		$GLOBALS['%s']->push("php.Web::getHttpHost");
-		$製pos = $GLOBALS['%s']->length;
-		{
-			$裨mp = $_SERVER['HTTP_HOST'];
-			$GLOBALS['%s']->pop();
-			return $裨mp;
-		}
-		$GLOBALS['%s']->pop();
-	}
-	static function getFiles() {
-		$GLOBALS['%s']->push("php.Web::getFiles");
-		$製pos = $GLOBALS['%s']->length;
-		$files = php_Lib::hashOfAssociativeArray($_FILES);
-		$r = new Hash();
-		if(null == $files) throw new HException('null iterable');
-		$蜴t = $files->keys();
-		while($蜴t->hasNext()) {
-			$id = $蜴t->next();
-			$file = $files->get($id);
-			$r->set($id, new php_UploadedFile($file["name"], $file["type"], $file["tmp_name"], Type::createEnumIndex(_hx_qtype("php.UploadError"), $file["error"], null), $file["size"]));
-			unset($file);
-		}
-		{
-			$GLOBALS['%s']->pop();
-			return $r;
-		}
-		$GLOBALS['%s']->pop();
-	}
 	function __toString() { return 'php.Web'; }
 }
 php_Web::$isModNeko = !php_Lib::isCli();
 function php_Web_0(&$param, &$reg, &$res, $data) {
 	$製pos = $GLOBALS['%s']->length;
 	{
-		$GLOBALS['%s']->push("php.Web::getParamValues@111");
+		$GLOBALS['%s']->push("php.Web::getParamValues@45");
 		$製pos2 = $GLOBALS['%s']->length;
 		if($data === null || strlen($data) === 0) {
 			$GLOBALS['%s']->pop();
@@ -544,7 +505,7 @@ function php_Web_0(&$param, &$reg, &$res, $data) {
 function php_Web_1(&$buf, &$curname, &$h, &$maxSize, $p, $_) {
 	$製pos = $GLOBALS['%s']->length;
 	{
-		$GLOBALS['%s']->push("php.Web::getMultipart@345");
+		$GLOBALS['%s']->push("php.Web::getMultipart@279");
 		$製pos2 = $GLOBALS['%s']->length;
 		if($curname !== null) {
 			$h->set($curname, $buf->b);
@@ -561,7 +522,7 @@ function php_Web_1(&$buf, &$curname, &$h, &$maxSize, $p, $_) {
 function php_Web_2(&$buf, &$curname, &$h, &$maxSize, $str, $pos, $len) {
 	$製pos = $GLOBALS['%s']->length;
 	{
-		$GLOBALS['%s']->push("php.Web::getMultipart@353");
+		$GLOBALS['%s']->push("php.Web::getMultipart@287");
 		$製pos2 = $GLOBALS['%s']->length;
 		$maxSize -= $len;
 		if($maxSize < 0) {

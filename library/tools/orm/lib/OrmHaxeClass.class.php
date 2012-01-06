@@ -47,7 +47,7 @@ class OrmHaxeClass {
 		}
 		$header = ((($isPrivate) ? "" : "public ")) . ((($isStatic) ? "static  " : "")) . "function " . $name . "(" . Lambda::map($vars, array(new _hx_lambda(array(&$body, &$isPrivate, &$isStatic, &$name, &$retType, &$vars), "OrmHaxeClass_1"), 'execute'))->join(", ") . ") : " . $retType;
 		php_Lib::println("\x09" . $header);
-		$s = $header . "\x0A" . "\x09{\x0A" . OrmTools::indent(rtrim($body, null), "\x09\x09") . "\x0A" . "\x09}";
+		$s = $header . "\x0A" . "\x09{\x0A" . OrmTools::indent(trim($body, null), "\x09\x09") . "\x0A" . "\x09}";
 		$this->methods->push($s);
 		$GLOBALS['%s']->pop();
 	}

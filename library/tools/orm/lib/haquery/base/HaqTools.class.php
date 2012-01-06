@@ -50,7 +50,7 @@ class haquery_base_HaqTools {
 	static function getNumeral($n, $w1, $w2, $w3) {
 		$GLOBALS['%s']->push("haquery.base.HaqTools::getNumeral");
 		$»spos = $GLOBALS['%s']->length;
-		if($n % 10 === 0 || $n >= 11 && $n <= 19 || $n % 10 > 5) {
+		if($n % 10 === 0 || $n >= 11 && $n <= 19 || $n % 10 >= 5) {
 			$GLOBALS['%s']->pop();
 			return $w3;
 		}

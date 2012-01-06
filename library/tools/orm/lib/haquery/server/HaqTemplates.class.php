@@ -7,26 +7,14 @@ class haquery_server_HaqTemplates {
 		if(!php_Boot::$skip_constructor) {
 		$GLOBALS['%s']->push("haquery.server.HaqTemplates::new");
 		$製pos = $GLOBALS['%s']->length;
-		$this->componentsFolders = new _hx_array(array());
+		$this->componentsFolders = $componentsFolders;
+		$this->templates = new Hash();
 		{
 			$_g = 0;
 			while($_g < $componentsFolders->length) {
 				$folder = $componentsFolders[$_g];
 				++$_g;
-				$path = rtrim(str_replace("\\", "/", $folder), "/") . "/";
-				if(!is_dir($path)) {
-					throw new HException("Components directory '" . $folder . "' do not exists.");
-				}
-				$this->componentsFolders->push($path);
-				unset($path,$folder);
-			}
-		}
-		$this->templates = new Hash();
-		{
-			$_g = 0; $_g1 = $this->componentsFolders;
-			while($_g < $_g1->length) {
-				$folder = $_g1[$_g];
-				++$_g;
+				haxe_Log::trace("components folder = " . $folder, _hx_anonymous(array("fileName" => "HaqTemplates.hx", "lineNumber" => 37, "className" => "haquery.server.HaqTemplates", "methodName" => "new")));
 				$this->templates->set($folder, $this->build($folder));
 				unset($folder);
 			}
@@ -110,7 +98,7 @@ class haquery_server_HaqTemplates {
 		$templatePaths = $this->getComponentTemplatePaths($componentsFolder);
 		$cacheFileTime = ((file_exists($dataFilePath)) ? php_FileSystem::stat($dataFilePath)->mtime->getTime() : 0.0);
 		if(!file_exists($dataFilePath) || Lambda::exists($templatePaths, array(new _hx_lambda(array(&$cacheFileTime, &$componentsFolder, &$dataFilePath, &$stylesFilePath, &$templatePaths), "haquery_server_HaqTemplates_0"), 'execute'))) {
-			haxe_Log::trace("HAQUERY rebuilding components", _hx_anonymous(array("fileName" => "HaqTemplates.hx", "lineNumber" => 106, "className" => "haquery.server.HaqTemplates", "methodName" => "build")));
+			haxe_Log::trace("HAQUERY rebuilding components", _hx_anonymous(array("fileName" => "HaqTemplates.hx", "lineNumber" => 99, "className" => "haquery.server.HaqTemplates", "methodName" => "build")));
 			$css = "";
 			$data = new Hash();
 			{
@@ -252,7 +240,7 @@ class haquery_server_HaqTemplates {
 	public function getFileUrl($tag, $filePathRelativeToComponentFolder) {
 		$GLOBALS['%s']->push("haquery.server.HaqTemplates::getFileUrl");
 		$製pos = $GLOBALS['%s']->length;
-		$filePathRelativeToComponentFolder = rtrim($filePathRelativeToComponentFolder, "/");
+		$filePathRelativeToComponentFolder = trim($filePathRelativeToComponentFolder, "/");
 		$i = $this->componentsFolders->length - 1;
 		while($i >= 0) {
 			$path = $this->componentsFolders[$i] . $tag . "/" . $filePathRelativeToComponentFolder;
@@ -273,7 +261,7 @@ class haquery_server_HaqTemplates {
 		$GLOBALS['%s']->push("haquery.server.HaqTemplates::getFileUrls");
 		$製pos = $GLOBALS['%s']->length;
 		$urls = new _hx_array(array());
-		$filePathRelativeToComponentFolder = rtrim($filePathRelativeToComponentFolder, "/");
+		$filePathRelativeToComponentFolder = trim($filePathRelativeToComponentFolder, "/");
 		{
 			$_g = 0; $_g1 = $this->componentsFolders;
 			while($_g < $_g1->length) {
@@ -436,7 +424,7 @@ class haquery_server_HaqTemplates {
 function haquery_server_HaqTemplates_0(&$cacheFileTime, &$componentsFolder, &$dataFilePath, &$stylesFilePath, &$templatePaths, $path) {
 	$製pos = $GLOBALS['%s']->length;
 	{
-		$GLOBALS['%s']->push("haquery.server.HaqTemplates::build@104");
+		$GLOBALS['%s']->push("haquery.server.HaqTemplates::build@97");
 		$製pos2 = $GLOBALS['%s']->length;
 		{
 			$裨mp = php_FileSystem::stat($path)->mtime->getTime() > $cacheFileTime;
@@ -449,7 +437,7 @@ function haquery_server_HaqTemplates_0(&$cacheFileTime, &$componentsFolder, &$da
 function haquery_server_HaqTemplates_1(&$files, &$reSupportFileUrl, &$self, &$tag, &$text, $re) {
 	$製pos = $GLOBALS['%s']->length;
 	{
-		$GLOBALS['%s']->push("haquery.server.HaqTemplates::getComponentTemplateDoc@328");
+		$GLOBALS['%s']->push("haquery.server.HaqTemplates::getComponentTemplateDoc@321");
 		$製pos2 = $GLOBALS['%s']->length;
 		$f = $self->getFileUrl($tag, haquery_base_HaqDefines::$folders->support . "/" . $re->matched(1));
 		{

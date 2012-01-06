@@ -38,6 +38,23 @@ class TrmHaxeClass {
 		$this->vars->push($s);
 		$GLOBALS['%s']->pop();
 	}
+	public function addVarGetter($v, $isPrivate, $isStatic, $isInline) {
+		$GLOBALS['%s']->push("TrmHaxeClass::addVarGetter");
+		$製pos = $GLOBALS['%s']->length;
+		if($isInline === null) {
+			$isInline = false;
+		}
+		if($isStatic === null) {
+			$isStatic = false;
+		}
+		if($isPrivate === null) {
+			$isPrivate = false;
+		}
+		$s = "\x0A\x09" . ((($isPrivate) ? "" : "public ")) . ((($isStatic) ? "static " : "")) . "var " . $v->name . "(" . $v->name . "_getter, null)" . " : " . $v->type . ";\x0A";
+		$s .= ((($isInline) ? "\x09inline " : "\x09")) . "function " . $v->name . "_getter() : " . $v->type . "\x0A" . "\x09{\x0A" . TrmTools::indent(trim($v->body, null), "\x09\x09") . "\x0A" . "\x09}";
+		$this->vars->push($s);
+		$GLOBALS['%s']->pop();
+	}
 	public function addMethod($name, $vars, $retType, $body, $isPrivate, $isStatic) {
 		$GLOBALS['%s']->push("TrmHaxeClass::addMethod");
 		$製pos = $GLOBALS['%s']->length;
@@ -93,7 +110,7 @@ function TrmHaxeClass_0(&$裨his, &$isPrivate, &$isStatic, &$v) {
 function TrmHaxeClass_1(&$body, &$isPrivate, &$isStatic, &$name, &$retType, &$vars, $v) {
 	$製pos = $GLOBALS['%s']->length;
 	{
-		$GLOBALS['%s']->push("TrmHaxeClass::addMethod@53");
+		$GLOBALS['%s']->push("TrmHaxeClass::addMethod@77");
 		$製pos2 = $GLOBALS['%s']->length;
 		{
 			$裨mp = $v->name . ":" . $v->type . (TrmHaxeClass_6($裨his, $body, $isPrivate, $isStatic, $name, $retType, $v, $vars));
