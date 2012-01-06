@@ -16,19 +16,20 @@ class haquery_server_HaqPage extends haquery_server_HaqComponent {
 		$製pos = $GLOBALS['%s']->length;
 		$text = Lambda::map($links, array(new _hx_lambda(array(&$links), "haquery_server_HaqPage_0"), 'execute'))->join("\x0A        ");
 		$heads = new _hx_array($this->doc->find(">html>head"));
-		if($heads->length === 0) {
-			throw new HException("HaqPage.insertStyles(): head tag not found.");
-		}
-		$head = $heads[0];
-		$child = null;
-		$children = new _hx_array($head->children);
-		if($children->length > 0) {
-			$child = $head->children[0];
-			while($child !== null && $child->name !== "link" && ($child->getAttribute("rel") !== "stylesheet" || $child->getAttribute("type") !== "text/css")) {
-				$child = $child->getNextSiblingElement();
+		if($heads->length > 0) {
+			$head = $heads[0];
+			$child = null;
+			$children = new _hx_array($head->children);
+			if($children->length > 0) {
+				$child = $head->children[0];
+				while($child !== null && $child->name !== "link" && ($child->getAttribute("rel") !== "stylesheet" || $child->getAttribute("type") !== "text/css")) {
+					$child = $child->getNextSiblingElement();
+				}
 			}
+			$head->addChild(new HaqXmlNodeText($text . "\x0A        "), $child);
+		} else {
+			$this->doc->addChild(new HaqXmlNodeText($text . "\x0A"), null);
 		}
-		$head->addChild(new HaqXmlNodeText($text . "\x0A        "), $child);
 		$GLOBALS['%s']->pop();
 	}
 	public function insertScripts($links) {
@@ -36,30 +37,32 @@ class haquery_server_HaqPage extends haquery_server_HaqComponent {
 		$製pos = $GLOBALS['%s']->length;
 		$text = Lambda::map($links, array(new _hx_lambda(array(&$links), "haquery_server_HaqPage_1"), 'execute'))->join("\x0A        ");
 		$heads = new _hx_array($this->doc->find(">html>head"));
-		if($heads->length === 0) {
-			throw new HException("HaqPage.insertScripts(): head tag not found.");
-		}
-		$head = $heads[0];
-		$child = null;
-		$children = new _hx_array($head->children);
-		if($children->length > 0) {
-			$child = $head->children[0];
-			while($child !== null && $child->name !== "script") {
-				$child = $child->getNextSiblingElement();
+		if($heads->length > 0) {
+			$head = $heads[0];
+			$child = null;
+			$children = new _hx_array($head->children);
+			if($children->length > 0) {
+				$child = $head->children[0];
+				while($child !== null && $child->name !== "script") {
+					$child = $child->getNextSiblingElement();
+				}
 			}
+			$head->addChild(new HaqXmlNodeText("    " . $text . "\x0A    "), $child);
+		} else {
+			$this->doc->addChild(new HaqXmlNodeText($text . "\x0A"), null);
 		}
-		$head->addChild(new HaqXmlNodeText("    " . $text . "\x0A    "), $child);
 		$GLOBALS['%s']->pop();
 	}
 	public function insertInitInnerBlock($text) {
 		$GLOBALS['%s']->push("haquery.server.HaqPage::insertInitInnerBlock");
 		$製pos = $GLOBALS['%s']->length;
 		$bodyes = new _hx_array($this->doc->find(">html>body"));
-		if($bodyes->length === 0) {
-			throw new HException("HaqPage.insertInitInnerBlock(): body tag not found.");
+		if($bodyes->length > 0) {
+			$body = $bodyes[0];
+			$body->addChild(new HaqXmlNodeText("\x0A        " . str_replace("\x0A", "\x0A        ", $text) . "\x0A    "), null);
+		} else {
+			$this->doc->addChild(new HaqXmlNodeText("\x0A" . $text . "\x0A"), null);
 		}
-		$body = $bodyes[0];
-		$body->addChild(new HaqXmlNodeText("\x0A        " . str_replace("\x0A", "\x0A        ", $text) . "\x0A    "), null);
 		$GLOBALS['%s']->pop();
 	}
 	public function __call($m, $a) {
@@ -112,7 +115,7 @@ function haquery_server_HaqPage_0(&$links, $path) {
 function haquery_server_HaqPage_1(&$links, $path) {
 	$製pos = $GLOBALS['%s']->length;
 	{
-		$GLOBALS['%s']->push("haquery.server.HaqPage::insertScripts@54");
+		$GLOBALS['%s']->push("haquery.server.HaqPage::insertScripts@57");
 		$製pos2 = $GLOBALS['%s']->length;
 		{
 			$裨mp = haquery_server_HaqPage::getScriptLink($path);

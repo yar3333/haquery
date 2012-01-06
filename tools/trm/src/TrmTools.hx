@@ -47,7 +47,12 @@ class TrmTools
 	{
 		if (classPaths == null)
 		{
-			classPaths = [ FileSystem.fullPath("../..") + "/" ];
+			var haqueryPath = untyped __php__("dirname(__FILE__)");
+			haqueryPath += "/../../..";
+			haqueryPath = FileSystem.fullPath(haqueryPath);
+			haqueryPath = haqueryPath.replace("\\", "/") + "/";
+			
+			classPaths = [ haqueryPath ];
 			
 			var files = FileSystem.readDirectory('.');
 			for (file in files)

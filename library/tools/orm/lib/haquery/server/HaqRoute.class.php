@@ -17,7 +17,7 @@ class haquery_server_HaqRoute {
 			$this->routeType = haquery_server_HaqRouteType::$file;
 			$this->path = $url;
 		} else {
-			$url = rtrim($url, "/");
+			$url = trim($url, "/");
 			if($url === "") {
 				$url = "index";
 			}
@@ -29,6 +29,9 @@ class haquery_server_HaqRoute {
 				$p = _hx_explode("/", $this->path);
 				$this->pageID = $p->pop();
 				$this->path = $p->join("/");
+			}
+			if(!haquery_server_HaqRoute::isPageExist($this->path)) {
+				$this->path .= "/index";
 			}
 			if(!haquery_server_HaqRoute::isPageExist($this->path)) {
 				php_Web::setReturnCode(404);
@@ -59,7 +62,7 @@ class haquery_server_HaqRoute {
 	static function isPageExist($path) {
 		$GLOBALS['%s']->push("haquery.server.HaqRoute::isPageExist");
 		$»spos = $GLOBALS['%s']->length;
-		$path = rtrim($path, "/") . "/";
+		$path = trim($path, "/") . "/";
 		{
 			$»tmp = file_exists($path . "template.html") || Type::resolveClass(str_replace("/", ".", $path) . "Server") !== null;
 			$GLOBALS['%s']->pop();

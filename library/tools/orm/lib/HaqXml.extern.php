@@ -1,3 +1,3 @@
 <?php
 
-require_once 'haquery/server/HaqXml.php';;
+require_once dirname(__FILE__).'/../haquery/server/HaqXml.php';;

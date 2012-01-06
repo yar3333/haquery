@@ -60,7 +60,11 @@ class TrmTools {
 		$GLOBALS['%s']->push("TrmTools::getClassPaths");
 		$»spos = $GLOBALS['%s']->length;
 		if(TrmTools::$classPaths === null) {
-			TrmTools::$classPaths = new _hx_array(array(TrmTools_1() . "/"));
+			$haqueryPath = dirname(__FILE__);
+			$haqueryPath .= "/../../..";
+			$haqueryPath = TrmTools_1($haqueryPath);
+			$haqueryPath = str_replace("\\", "/", $haqueryPath) . "/";
+			TrmTools::$classPaths = new _hx_array(array($haqueryPath));
 			$files = php_FileSystem::readDirectory(".");
 			{
 				$_g = 0;
@@ -107,10 +111,10 @@ function TrmTools_0(&$s) {
 		return strtoupper(_hx_substr($s, 0, 1)) . _hx_substr($s, 1, null);
 	}
 }
-function TrmTools_1() {
+function TrmTools_1(&$haqueryPath) {
 	$»spos = $GLOBALS['%s']->length;
 	{
-		$p = realpath("../..");
+		$p = realpath($haqueryPath);
 		if(($p === false)) {
 			return null;
 		} else {

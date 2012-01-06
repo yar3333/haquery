@@ -188,7 +188,7 @@ class haquery_server_HaqQuery {
 					}
 					unset($_g2);
 				}
-				$node->setAttribute("class", rtrim($s, null));
+				$node->setAttribute("class", trim($s, null));
 				unset($s,$node);
 			}
 		}
@@ -227,6 +227,7 @@ class haquery_server_HaqQuery {
 				return $»tmp;
 			}
 		}
+		$html = Std::string($html);
 		{
 			$_g = 0; $_g1 = $this->nodes;
 			while($_g < $_g1->length) {

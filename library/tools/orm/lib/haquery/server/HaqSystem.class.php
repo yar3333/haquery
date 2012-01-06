@@ -6,9 +6,9 @@ class haquery_server_HaqSystem {
 		$»spos = $GLOBALS['%s']->length;
 		haxe_Log::trace(null, _hx_anonymous(array("fileName" => "HaqSystem.hx", "lineNumber" => 19, "className" => "haquery.server.HaqSystem", "methodName" => "new")));
 		null;
-		haxe_Log::trace("HAQUERY SYSTEM Start route.pagePath = " . $route->path . ", HTTP_HOST = " . $_SERVER['HTTP_HOST'] . ", clientIP = " . $_SERVER['REMOTE_ADDR'] . ", pageID = " . $route->pageID, _hx_anonymous(array("fileName" => "HaqSystem.hx", "lineNumber" => 23, "className" => "haquery.server.HaqSystem", "methodName" => "new")));
+		haxe_Log::trace("HAQUERY SYSTEM Start route.pagePath = " . $route->path . ", HTTP_HOST = " . haquery_server_Web::getHttpHost() . ", clientIP = " . $_SERVER['REMOTE_ADDR'] . ", pageID = " . $route->pageID, _hx_anonymous(array("fileName" => "HaqSystem.hx", "lineNumber" => 23, "className" => "haquery.server.HaqSystem", "methodName" => "new")));
 		null;
-		$templates = new haquery_server_HaqTemplates(haquery_server_Lib::$config->getComponentsFolders());
+		$templates = new haquery_server_HaqTemplates(haquery_server_HaqConfig::getComponentsFolders("", haquery_server_Lib::$config->componentsPackage));
 		null;
 		$params = php_Web::getParams();
 		if($route->pageID !== null) {
@@ -55,9 +55,11 @@ class haquery_server_HaqSystem {
 		$»spos = $GLOBALS['%s']->length;
 		null;
 		$page->forEachComponent("preRender", null);
-		$page->insertStyles($templates->getStyleFilePaths()->concat($manager->getRegisteredStyles()));
-		$page->insertScripts(_hx_deref(new _hx_array(array("haquery/client/jquery.js", "haquery/client/haquery.js")))->concat($manager->getRegisteredScripts()));
-		$page->insertInitInnerBlock("<script>\x0A" . "    if(typeof haquery=='undefined') alert('haquery.js must be loaded!');\x0A" . "    " . str_replace("\x0A", "\x0A    ", $templates->getInternalDataForPageHtml()) . "\x0A" . "    " . str_replace("\x0A", "\x0A    ", $manager->getInternalDataForPageHtml($path)) . "\x0A" . "    haquery.client.Lib.run();\x0A" . "</script>");
+		if(!haquery_server_Lib::$config->disablePageMetaData) {
+			$page->insertStyles($templates->getStyleFilePaths()->concat($manager->getRegisteredStyles()));
+			$page->insertScripts(_hx_deref(new _hx_array(array("haquery/client/jquery.js", "haquery/client/haquery.js")))->concat($manager->getRegisteredScripts()));
+			$page->insertInitInnerBlock("<script>\x0A" . "    if(typeof haquery=='undefined') alert('haquery.js must be loaded!');\x0A" . "    " . str_replace("\x0A", "\x0A    ", $templates->getInternalDataForPageHtml()) . "\x0A" . "    " . str_replace("\x0A", "\x0A    ", $manager->getInternalDataForPageHtml($page, $path)) . "\x0A" . "    haquery.client.Lib.run();\x0A" . "</script>");
+		}
 		$html = $page->render();
 		null;
 		header("Content-Type" . ": " . $page->contentType);

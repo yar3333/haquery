@@ -13,7 +13,7 @@ class haquery_server_Lib {
 		$re = new haquery_EReg("route=[^&]*", "g");
 		$s = $re->replace($s, "");
 		{
-			$»tmp = rtrim($s, "&");
+			$»tmp = trim($s, "&");
 			$GLOBALS['%s']->pop();
 			return $»tmp;
 		}
@@ -149,7 +149,7 @@ class haquery_server_Lib {
 	static function loadBootstraps($relativePath) {
 		$GLOBALS['%s']->push("haquery.server.Lib::loadBootstraps");
 		$»spos = $GLOBALS['%s']->length;
-		$folders = _hx_explode("/", rtrim($relativePath, "/"));
+		$folders = _hx_explode("/", trim($relativePath, "/"));
 		{
 			$_g1 = 1; $_g = $folders->length + 1;
 			while($_g1 < $_g) {
@@ -169,8 +169,8 @@ class haquery_server_Lib {
 	static function path2url($path) {
 		$GLOBALS['%s']->push("haquery.server.Lib::path2url");
 		$»spos = $GLOBALS['%s']->length;
-		$realPath = str_replace("\\", "/", haquery_server_Lib_1($path)) . "/" . rtrim($path, "/\\");
-		$rootPath = str_replace("\\", "/", $_SERVER['DOCUMENT_ROOT']);
+		$realPath = str_replace("\\", "/", haquery_server_Lib_1($path)) . "/" . trim($path, "/\\");
+		$rootPath = str_replace("\\", "/", haquery_server_Web::getDocumentRoot());
 		if(!StringTools::startsWith($realPath, $rootPath)) {
 			throw new HException("Can't resolve path '" . $path . "' with realPath = '" . $realPath . "' and rootPath = '" . $rootPath . "'.");
 		}
@@ -211,6 +211,21 @@ class haquery_server_Lib {
 			}
 		}
 		haxe_Log::trace($text, _hx_anonymous(array("fileName" => "Lib.hx", "lineNumber" => 235, "className" => "haquery.server.Lib", "methodName" => "traceException")));
+		$GLOBALS['%s']->pop();
+	}
+	static function mail($email, $fromEmail, $subject, $message) {
+		$GLOBALS['%s']->push("haquery.server.Lib::mail");
+		$»spos = $GLOBALS['%s']->length;
+		$headers = "MIME-Version: 1.0\x0D\x0A";
+		$headers .= "Content-Type: text/plain; charset=utf-8\x0D\x0A";
+		$headers .= "Date: " . Date::now() . "\x0D\x0A";
+		$headers .= "From: " . $fromEmail . "\x0D\x0A";
+		$headers .= "X-Mailer: My Send E-mail\x0D\x0A";
+		{
+			$»tmp = mail($email, $subject, $message, $headers);
+			$GLOBALS['%s']->pop();
+			return $»tmp;
+		}
 		$GLOBALS['%s']->pop();
 	}
 	static function hprint($v) {

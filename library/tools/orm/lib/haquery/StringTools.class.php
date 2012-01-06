@@ -96,7 +96,7 @@ class haquery_StringTools {
 		$GLOBALS['%s']->push("haquery.StringTools::trim");
 		$»spos = $GLOBALS['%s']->length;
 		{
-			$»tmp = rtrim($s, $chars);
+			$»tmp = trim($s, $chars);
 			$GLOBALS['%s']->pop();
 			return $»tmp;
 		}
