@@ -38,9 +38,16 @@ class haquery_server_HaqConfig {
 		else
 			throw new HException('Unable to call «'.$m.'»');
 	}
+	static $componentsConfigCache;
 	static function getComponentsConfig($classPaths, $componentsPackage) {
 		$GLOBALS['%s']->push("haquery.server.HaqConfig::getComponentsConfig");
 		$»spos = $GLOBALS['%s']->length;
+		$cacheKey = $classPaths->join(";") . "|" . $componentsPackage;
+		if(haquery_server_HaqConfig::$componentsConfigCache->exists($cacheKey)) {
+			$»tmp = haquery_server_HaqConfig::$componentsConfigCache->get($cacheKey);
+			$GLOBALS['%s']->pop();
+			return $»tmp;
+		}
 		$r = _hx_anonymous(array("extendsPackage" => (($componentsPackage !== "haquery.components") ? "haquery.components" : null)));
 		$configFilePath = str_replace(".", "/", $componentsPackage) . "/config.xml";
 		$i = $classPaths->length - 1;
@@ -64,6 +71,7 @@ class haquery_server_HaqConfig {
 			$i--;
 			unset($basePath);
 		}
+		haquery_server_HaqConfig::$componentsConfigCache->set($cacheKey, $r);
 		{
 			$GLOBALS['%s']->pop();
 			return $r;
@@ -102,3 +110,4 @@ class haquery_server_HaqConfig {
 	}
 	function __toString() { return 'haquery.server.HaqConfig'; }
 }
+haquery_server_HaqConfig::$componentsConfigCache = new Hash();

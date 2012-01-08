@@ -47,6 +47,26 @@ class HaqComponent
 	{
 		components = new Hash<Component>();
 		nextAnonimID = 0;
+		
+		switch (Type.typeof(this))
+		{
+			case ValueType.TClass(cls):
+				if (Lambda.has(Type.getInstanceFields(cls), "template"))
+				{
+					var className : String = Type.getClassName(cls);
+					var lastPointPos = className.lastIndexOf(".");
+					if (lastPointPos > 0)
+					{
+						var templateClassName = className.substr(0, lastPointPos) + ".Template";
+						var templateClass = Type.resolveClass(templateClassName);
+						if (templateClass != null)
+						{
+							Reflect.setField(this, "template", Type.createInstance(templateClass, [this]));
+						}
+					}
+				}
+			default:
+		}
 	}
 	
 	function commonConstruct(parent:Component, tag:String,  id:String) 
