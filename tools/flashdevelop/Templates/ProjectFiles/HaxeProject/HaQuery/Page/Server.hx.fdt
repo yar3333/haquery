@@ -1,3 +1,5 @@
+#if php
+
 package $(Package);
 
 import haquery.server.Lib;
@@ -22,3 +24,5 @@ class $(FileName) extends HaqPage
         
     }
 }
+
+#end
