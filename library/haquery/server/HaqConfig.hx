@@ -76,8 +76,16 @@ class HaqConfig
         disablePageMetaData = false;
 	}
 	
+	static var componentsConfigCache = new Hash<{ extendsPackage : String }>();
+	
 	public static function getComponentsConfig(classPaths:Array<String>, componentsPackage:String) : { extendsPackage : String }
 	{
+		var cacheKey = classPaths.join(";") + "|" + componentsPackage;
+		if (componentsConfigCache.exists(cacheKey))
+		{
+			return componentsConfigCache.get(cacheKey);
+		}
+		
 		var r = { extendsPackage : componentsPackage != "haquery.components" ? "haquery.components" : null };
 		
 		var configFilePath = componentsPackage.replace(".", "/") + "/config.xml";
@@ -105,6 +113,9 @@ class HaqConfig
 			}
 			i--;
 		}
+		
+		componentsConfigCache.set(cacheKey, r);
+		
 		return r;
 	}
 	

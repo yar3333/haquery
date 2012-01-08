@@ -34,7 +34,7 @@ class TrmHaxeClass {
 		if($isPrivate === null) {
 			$isPrivate = false;
 		}
-		$s = ((($isPrivate) ? "" : "public ")) . ((($isStatic) ? "static " : "")) . "var " . $v->name . " : " . $v->type . (TrmHaxeClass_0($this, $isPrivate, $isStatic, $v));
+		$s = ((($isPrivate) ? "" : "public ")) . ((($isStatic) ? "static " : "")) . "var " . $v->name . " : " . $v->type . (TrmHaxeClass_0($this, $isPrivate, $isStatic, $v)) . ";";
 		$this->vars->push($s);
 		$GLOBALS['%s']->pop();
 	}
@@ -65,7 +65,6 @@ class TrmHaxeClass {
 			$isPrivate = false;
 		}
 		$header = ((($isPrivate) ? "" : "public ")) . ((($isStatic) ? "static  " : "")) . "function " . $name . "(" . Lambda::map($vars, array(new _hx_lambda(array(&$body, &$isPrivate, &$isStatic, &$name, &$retType, &$vars), "TrmHaxeClass_1"), 'execute'))->join(", ") . ") : " . $retType;
-		php_Lib::println("\x09" . $header);
 		$s = $header . "\x0A" . "\x09{\x0A" . TrmTools::indent(trim($body, null), "\x09\x09") . "\x0A" . "\x09}";
 		$this->methods->push($s);
 		$GLOBALS['%s']->pop();
@@ -110,7 +109,7 @@ function TrmHaxeClass_0(&$»this, &$isPrivate, &$isStatic, &$v) {
 function TrmHaxeClass_1(&$body, &$isPrivate, &$isStatic, &$name, &$retType, &$vars, $v) {
 	$»spos = $GLOBALS['%s']->length;
 	{
-		$GLOBALS['%s']->push("TrmHaxeClass::addMethod@77");
+		$GLOBALS['%s']->push("TrmHaxeClass::addMethod@78");
 		$»spos2 = $GLOBALS['%s']->length;
 		{
 			$»tmp = $v->name . ":" . $v->type . (TrmHaxeClass_6($»this, $body, $isPrivate, $isStatic, $name, $retType, $v, $vars));
@@ -131,7 +130,7 @@ function TrmHaxeClass_2(&$»this, &$clas) {
 function TrmHaxeClass_3(&$»this, &$clas) {
 	$»spos = $GLOBALS['%s']->length;
 	if($»this->vars->length > 0) {
-		return "\x09" . $»this->vars->join(";\x0A\x09") . ";\x0A\x0A";
+		return "\x09" . $»this->vars->join("\x0A\x09") . "\x0A\x0A";
 	} else {
 		return "";
 	}
