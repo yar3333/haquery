@@ -47,7 +47,8 @@ class TrmHaxeClass
 		var s = (isPrivate ? '' : 'public ')
 			  + (isStatic ? 'static ' : '')
 			  + 'var ' + v.name + ' : ' + v.type
-			  + (isStatic && v.defVal!=null ? ' = ' + v.defVal : '');
+			  + (isStatic && v.defVal != null ? ' = ' + v.defVal : '')
+			  + ";";
 		vars.push(s);
  	}
 	
@@ -76,7 +77,7 @@ class TrmHaxeClass
 			  + 'function ' + name + '('
 			  + Lambda.map(vars, function(v:TrmHaxeVar) { return v.name + ":" + v.type + (v.defVal != null ? '=' + v.defVal : ''); } ).join(', ')
 			  + ') : ' + retType;
-		Lib.println("\t" + header);
+		//Lib.println("\t" + header);
 		var s = header + '\n'
 			  + '\t{\n'
 			  + TrmTools.indent(body.trim(), '\t\t') + '\n'
@@ -98,7 +99,7 @@ class TrmHaxeClass
 			  + imports.join('\n') + (imports.length > 0 ? '\n\n' : '')
 			  + 'class ' + clas.className + (baseFullClassName != null ? ' extends ' + baseFullClassName : '') + '\n'
 			  + '{\n'
-			  + (vars.length > 0 ? '\t' + vars.join(';\n\t') + ';\n\n' : '')
+			  + (vars.length > 0 ? '\t' + vars.join('\n\t') + '\n\n' : '')
 			  + (methods.length > 0 ? '\t' + methods.join('\n\n\t') + '\n' : '')
 			  + (customs.length > 0 ? '\t' + customs.join('\n\n\t') + '\n' : '')
 			  + '}';
