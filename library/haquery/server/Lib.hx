@@ -169,7 +169,7 @@ class Lib
         var f : FileOutput = php.io.File.append(HaqDefines.folders.temp + "/haquery.log", false);
         if (f != null)
         {
-            f.writeString(text != '' ? StringTools.format('%.3f', (Date.now().getTime() - startTime) / 1000.0) + " " + StringTools.replace(text, "\n", "\n\t") + "\n" : "\n");
+            f.writeString(text != '' ? StringTools.format('%.3f', (Date.now().getTime() - startTime) / 1000.0) + " " + StringTools.replace(text, "\n", "\r\n\t") + "\r\n" : "\r\n");
             f.close();
         }
     }
