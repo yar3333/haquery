@@ -183,9 +183,17 @@ class HaqComponent extends haquery.base.HaqComponent
      */
     public function q(?query:Dynamic=null) : HaqQuery
     {
-        if (query==null) return new HaqQuery(this.prefixID, '', null);
-        if (Type.getClassName(Type.getClass(query))=='HaqQuery') return query;
-        if (Type.getClassName(Type.getClass(query))!='String') throw "HaqComponent.q() error - 'query' parameter must be a string or HaqQuery.";
+        if (query == null) return new HaqQuery(this.prefixID, '', null);
+        if (Type.getClass(query) == haquery.server.HaqQuery) return query;
+		if (untyped __php__("$query instanceof HaqXmlNodeElement"))
+		{
+			Lib.assert(!Lib.isPostback, "Calling of the HaqComponent.q() with HaqXmlNodeElement parameter do not possible on the postback.");
+			return new HaqQuery(this.prefixID, "", Lib.toPhpArray([ query ]));
+		}
+        if (Type.getClassName(Type.getClass(query)) != 'String')
+		{
+			throw "HaqComponent.q() error - 'query' parameter must be a string or HaqQuery.";
+		}
         
         var nodes = this.doc.find(query);
         

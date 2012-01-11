@@ -1,6 +1,5 @@
 package components1.randnum;
 
-import php.Lib;
 import haquery.server.HaqComponent;
 
 class Server extends HaqComponent

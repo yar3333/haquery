@@ -24,7 +24,7 @@ class HaqTemplatesTest extends TestCase
 	
 	public function testComponents0()
 	{
-		var templates = new HaqTemplates([ 'components0' ]);
+		var templates = new HaqTemplates([ 'components0/' ]);
 		
 		var tags = templates.getTags();
 		this.assertEquals(1, tags.length);
@@ -38,7 +38,7 @@ class HaqTemplatesTest extends TestCase
 		var stylesFilePath = HaqDefines.folders.temp + '/components1/styles.css';
 		if (FileSystem.exists(stylesFilePath)) FileSystem.deleteFile(stylesFilePath);
 		
-		var templates = new HaqTemplates([ 'components1' ]);
+		var templates = new HaqTemplates([ 'components1/' ]);
 		
 		var tags = templates.getTags();
 		this.assertEquals(1, tags.length);
@@ -52,7 +52,7 @@ class HaqTemplatesTest extends TestCase
 	
 	public function testComponents1CreateRandNum()
 	{
-		var templates = new HaqTemplates([ 'components1' ]);
+		var templates = new HaqTemplates([ 'components1/' ]);
         assertTrue(templates.get('randnum') != null);
         assertEquals('components1.randnum.Server', Type.getClassName(templates.get('randnum').serverClass));
 		
