@@ -1,5 +1,6 @@
 package tests;
 
+import haquery.server.HaqQuery;
 import php.Lib;
 import php.NativeArray;
 import php.NativeString;
@@ -18,11 +19,19 @@ class HaqXmlTest extends haxe.unit.TestCase
 
     public function testTagWithClose()
     {
-        var nodes = Lib.toHaxeArray(HaqXmlParser.parse("<br p=2 />"));
+        var nativeNodes = HaqXmlParser.parse("<br p=2 />");
+		
+		var nodes = Lib.toHaxeArray(nativeNodes);
         this.assertEquals(1, nodes.length);
 
         var node : HaqXmlNodeElement = nodes[0];
         this.assertEquals('br', node.name);
+		
+		this.assertEquals("String", Type.getClassName(Type.getClass("abc")));
+		this.assertEquals(haquery.server.HaqQuery, Type.getClass(new HaqQuery("", "", nativeNodes)));
+		
+		var query = nodes[0];
+		this.assertTrue(untyped __php__("$node instanceof HaqXmlNodeElement"));
     }
 
     public function testTagAndText()

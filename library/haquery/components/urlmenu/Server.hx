@@ -3,6 +3,7 @@ package haquery.components.urlmenu;
 import haquery.server.HaqComponent;
 import php.Web;
 import haquery.server.HaqXml;
+import haquery.server.HaqQuery;
 import haquery.server.Lib;
 
 using haquery.StringTools;
@@ -19,7 +20,7 @@ class Server extends haquery.components.container.Server
             q('#m').addClass(cssClass);
         }
         
-        var bestLink : HaqXmlNodeElement = null;
+        var bestLink : HaqQuery = null;
         var bestDeep = 0;
         var self = this;
         
@@ -43,7 +44,7 @@ class Server extends haquery.components.container.Server
             {
                 if (bestLink == null || href.split('/').length > bestDeep)
                 {
-                    bestLink = elem;
+                    bestLink = q(elem);
                     bestDeep = href.split('/').length;
                 }
                 
@@ -52,7 +53,7 @@ class Server extends haquery.components.container.Server
         
         if (bestLink != null)
         {
-            bestLink.setAttribute('class', 'active');
+            bestLink.addClass('active');
         }
     }
 }

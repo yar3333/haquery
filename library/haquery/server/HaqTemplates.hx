@@ -34,7 +34,7 @@ class HaqTemplates
 		templates = new Hash<Hash<HaqCachedTemplate>>();
 		for (folder in componentsFolders)
 		{
-			trace("components folder = " + folder);
+			Lib.assert(folder.endsWith('/'));
 			templates.set(folder, build(folder));
 		}
 	}

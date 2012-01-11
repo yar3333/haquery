@@ -34,7 +34,7 @@ class HaqQuery
         this.query = query;
         this.nodes = nodes!=null ? untyped Lib.toHaxeArray(nodes) : new Array<HaqXmlNodeElement>();
     }
-
+	
     public function __toString()
     {
         return this.nodes.join('');
