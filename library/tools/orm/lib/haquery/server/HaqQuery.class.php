@@ -3,59 +3,28 @@
 class haquery_server_HaqQuery {
 	public function __construct($prefixID, $query, $nodes) {
 		if(!php_Boot::$skip_constructor) {
-		$GLOBALS['%s']->push("haquery.server.HaqQuery::new");
-		$製pos = $GLOBALS['%s']->length;
 		$this->prefixID = $prefixID;
 		$this->query = $query;
 		$this->nodes = (($nodes !== null) ? new _hx_array($nodes) : new _hx_array(array()));
-		$GLOBALS['%s']->pop();
 	}}
 	public $prefixID;
 	public $query;
 	public $nodes;
 	public function jQueryCall($method) {
-		$GLOBALS['%s']->push("haquery.server.HaqQuery::jQueryCall");
-		$製pos = $GLOBALS['%s']->length;
 		haquery_server_HaqInternals::addAjaxResponse("\$('" . str_replace("#", "#" . $this->prefixID, $this->query) . "')." . $method . ";");
-		$GLOBALS['%s']->pop();
 	}
 	public function __toString() {
-		$GLOBALS['%s']->push("haquery.server.HaqQuery::__toString");
-		$製pos = $GLOBALS['%s']->length;
-		{
-			$裨mp = $this->nodes->join("");
-			$GLOBALS['%s']->pop();
-			return $裨mp;
-		}
-		$GLOBALS['%s']->pop();
+		return $this->nodes->join("");
 	}
 	public function size() {
-		$GLOBALS['%s']->push("haquery.server.HaqQuery::size");
-		$製pos = $GLOBALS['%s']->length;
-		{
-			$裨mp = $this->nodes->length;
-			$GLOBALS['%s']->pop();
-			return $裨mp;
-		}
-		$GLOBALS['%s']->pop();
+		return $this->nodes->length;
 	}
 	public function get($index) {
-		$GLOBALS['%s']->push("haquery.server.HaqQuery::get");
-		$製pos = $GLOBALS['%s']->length;
-		{
-			$裨mp = $this->nodes[$index];
-			$GLOBALS['%s']->pop();
-			return $裨mp;
-		}
-		$GLOBALS['%s']->pop();
+		return $this->nodes[$index];
 	}
 	public function attr($name, $value) {
-		$GLOBALS['%s']->push("haquery.server.HaqQuery::attr");
-		$製pos = $GLOBALS['%s']->length;
 		if($value === null) {
-			$裨mp = (($this->nodes->length > 0) ? _hx_array_get($this->nodes, 0)->getAttribute($name) : null);
-			$GLOBALS['%s']->pop();
-			return $裨mp;
+			return (($this->nodes->length > 0) ? _hx_array_get($this->nodes, 0)->getAttribute($name) : null);
 		}
 		{
 			$_g = 0; $_g1 = $this->nodes;
@@ -69,15 +38,9 @@ class haquery_server_HaqQuery {
 		if(haquery_server_Lib::$isPostback) {
 			$this->jQueryCall("attr(\"" . $name . "\",\"" . $value . "\")");
 		}
-		{
-			$GLOBALS['%s']->pop();
-			return $this;
-		}
-		$GLOBALS['%s']->pop();
+		return $this;
 	}
 	public function removeAttr($name) {
-		$GLOBALS['%s']->push("haquery.server.HaqQuery::removeAttr");
-		$製pos = $GLOBALS['%s']->length;
 		{
 			$_g = 0; $_g1 = $this->nodes;
 			while($_g < $_g1->length) {
@@ -90,15 +53,9 @@ class haquery_server_HaqQuery {
 		if(haquery_server_Lib::$isPostback) {
 			haquery_server_HaqInternals::addAjaxResponse("\$('" . str_replace("#", "#" . $this->prefixID, $this->query) . "').removeAttr('" . $name . "');");
 		}
-		{
-			$GLOBALS['%s']->pop();
-			return $this;
-		}
-		$GLOBALS['%s']->pop();
+		return $this;
 	}
 	public function addClass($cssClass) {
-		$GLOBALS['%s']->push("haquery.server.HaqQuery::addClass");
-		$製pos = $GLOBALS['%s']->length;
 		$classes = _hx_deref(new haquery_EReg("\\s+", ""))->split($cssClass);
 		{
 			$_g = 0; $_g1 = $this->nodes;
@@ -125,15 +82,9 @@ class haquery_server_HaqQuery {
 		if(haquery_server_Lib::$isPostback) {
 			$this->jQueryCall("addClass(\"" . $cssClass . "\")");
 		}
-		{
-			$GLOBALS['%s']->pop();
-			return $this;
-		}
-		$GLOBALS['%s']->pop();
+		return $this;
 	}
 	public function hasClass($cssClass) {
-		$GLOBALS['%s']->push("haquery.server.HaqQuery::hasClass");
-		$製pos = $GLOBALS['%s']->length;
 		$classes = _hx_deref(new haquery_EReg("\\s+", ""))->split($cssClass);
 		{
 			$_g = 0; $_g1 = $this->nodes;
@@ -156,21 +107,14 @@ class haquery_server_HaqQuery {
 					unset($_g2);
 				}
 				if($inAll) {
-					$GLOBALS['%s']->pop();
 					return true;
 				}
 				unset($s,$node,$inAll);
 			}
 		}
-		{
-			$GLOBALS['%s']->pop();
-			return false;
-		}
-		$GLOBALS['%s']->pop();
+		return false;
 	}
 	public function removeClass($cssClass) {
-		$GLOBALS['%s']->push("haquery.server.HaqQuery::removeClass");
-		$製pos = $GLOBALS['%s']->length;
 		$classes = _hx_deref(new haquery_EReg("\\s+", ""))->split($cssClass);
 		{
 			$_g = 0; $_g1 = $this->nodes;
@@ -195,37 +139,24 @@ class haquery_server_HaqQuery {
 		if(haquery_server_Lib::$isPostback) {
 			$this->jQueryCall("removeClass(\"" . $cssClass . "\")");
 		}
-		{
-			$GLOBALS['%s']->pop();
-			return $this;
-		}
-		$GLOBALS['%s']->pop();
+		return $this;
 	}
 	public function html($html, $isParse) {
-		$GLOBALS['%s']->push("haquery.server.HaqQuery::html");
-		$製pos = $GLOBALS['%s']->length;
 		if($isParse === null) {
 			$isParse = false;
 		}
 		if($html === null) {
 			if($this->nodes->length === 0) {
-				$GLOBALS['%s']->pop();
 				return null;
 			}
 			$node = $this->nodes[0];
 			if(haquery_server_Lib::$isPostback && $node->name === "textarea" && $node->hasAttribute("id")) {
 				$fullID = $this->prefixID . $node->getAttribute("id");
 				if(php_Web::getParams()->exists($fullID)) {
-					$裨mp = php_Web::getParams()->get($fullID);
-					$GLOBALS['%s']->pop();
-					return $裨mp;
+					return php_Web::getParams()->get($fullID);
 				}
 			}
-			{
-				$裨mp = $node->innerHTML;
-				$GLOBALS['%s']->pop();
-				return $裨mp;
-			}
+			return $node->innerHTML;
 		}
 		$html = Std::string($html);
 		{
@@ -244,15 +175,9 @@ class haquery_server_HaqQuery {
 		if(haquery_server_Lib::$isPostback) {
 			$this->jQueryCall("html(\"" . haquery_StringTools::addcslashes($html) . "\")");
 		}
-		{
-			$GLOBALS['%s']->pop();
-			return $this;
-		}
-		$GLOBALS['%s']->pop();
+		return $this;
 	}
 	public function remove() {
-		$GLOBALS['%s']->push("haquery.server.HaqQuery::remove");
-		$製pos = $GLOBALS['%s']->length;
 		{
 			$_g = 0; $_g1 = $this->nodes;
 			while($_g < $_g1->length) {
@@ -265,30 +190,20 @@ class haquery_server_HaqQuery {
 		if(haquery_server_Lib::$isPostback) {
 			$this->jQueryCall("remove()");
 		}
-		{
-			$GLOBALS['%s']->pop();
-			return $this;
-		}
-		$GLOBALS['%s']->pop();
+		return $this;
 	}
 	public function val($val) {
-		$GLOBALS['%s']->push("haquery.server.HaqQuery::val");
-		$製pos = $GLOBALS['%s']->length;
 		if($val === null) {
 			if($this->nodes->length > 0) {
 				$node = $this->nodes[0];
 				if(haquery_server_Lib::$isPostback && $node->hasAttribute("id")) {
 					$fullID = $this->prefixID . $node->getAttribute("id");
 					if(php_Web::getParams()->exists($fullID)) {
-						$裨mp = php_Web::getParams()->get($fullID);
-						$GLOBALS['%s']->pop();
-						return $裨mp;
+						return php_Web::getParams()->get($fullID);
 					}
 				}
 				if($node->name === "textarea") {
-					$裨mp = $node->innerHTML;
-					$GLOBALS['%s']->pop();
-					return $裨mp;
+					return $node->innerHTML;
 				}
 				if($node->name === "select") {
 					$options = new _hx_array($node->find(">option"));
@@ -298,46 +213,29 @@ class haquery_server_HaqQuery {
 							$option = $options[$_g];
 							++$_g;
 							if($option->hasAttribute("selected")) {
-								$裨mp = $option->getAttribute("value");
-								$GLOBALS['%s']->pop();
-								return $裨mp;
-								unset($裨mp);
+								return $option->getAttribute("value");
 							}
 							unset($option);
 						}
 					}
-					{
-						$GLOBALS['%s']->pop();
-						return null;
-					}
+					return null;
 				}
 				if($node->name === "input" && $node->getAttribute("type") === "checkbox") {
-					$裨mp = $node->hasAttribute("checked");
-					$GLOBALS['%s']->pop();
-					return $裨mp;
+					return $node->hasAttribute("checked");
 				}
-				{
-					$裨mp = $node->getAttribute("value");
-					$GLOBALS['%s']->pop();
-					return $裨mp;
-				}
+				return $node->getAttribute("value");
 			} else {
 				if(haquery_server_Lib::$isPostback) {
 					$re = new haquery_EReg("^\\s*#([^ \\t>]+)\\s*\$", "");
 					if($re->match($this->query)) {
 						$fullID = $this->prefixID . $re->matched(1);
 						if(php_Web::getParams()->exists($fullID)) {
-							$裨mp = php_Web::getParams()->get($fullID);
-							$GLOBALS['%s']->pop();
-							return $裨mp;
+							return php_Web::getParams()->get($fullID);
 						}
 					}
 				}
 			}
-			{
-				$GLOBALS['%s']->pop();
-				return null;
-			}
+			return null;
 		}
 		{
 			$_g = 0; $_g1 = $this->nodes;
@@ -389,29 +287,18 @@ class haquery_server_HaqQuery {
 		if(haquery_server_Lib::$isPostback) {
 			$this->jQueryCall("val(\"" . $val . "\")");
 		}
-		{
-			$GLOBALS['%s']->pop();
-			return $this;
-		}
-		$GLOBALS['%s']->pop();
+		return $this;
 	}
 	public function css($name, $val) {
-		$GLOBALS['%s']->push("haquery.server.HaqQuery::css");
-		$製pos = $GLOBALS['%s']->length;
 		if($val === null) {
 			if($this->nodes->length > 0) {
 				$sStyles = _hx_array_get($this->nodes, 0)->getAttribute("style");
 				$re = new haquery_EReg("\\b(" . $name . ")\\b\\s*:\\s*(.*?)\\s*;", "");
 				if($re->match($sStyles)) {
-					$裨mp = $re->matched(1);
-					$GLOBALS['%s']->pop();
-					return $裨mp;
+					return $re->matched(1);
 				}
 			}
-			{
-				$GLOBALS['%s']->pop();
-				return null;
-			}
+			return null;
 		}
 		$re = new haquery_EReg("\\b(" . $name . ")\\b\\s*:\\s*(.*?)\\s*(;|\$)", "");
 		{
@@ -434,45 +321,24 @@ class haquery_server_HaqQuery {
 		if(haquery_server_Lib::$isPostback) {
 			$this->jQueryCall("css(\"" . $name . "\",\"" . haquery_StringTools::addcslashes($val) . "\")");
 		}
-		{
-			$GLOBALS['%s']->pop();
-			return $this;
-		}
-		$GLOBALS['%s']->pop();
+		return $this;
 	}
 	public function show($display) {
-		$GLOBALS['%s']->push("haquery.server.HaqQuery::show");
-		$製pos = $GLOBALS['%s']->length;
 		if($display === null) {
 			$display = "";
 		}
-		{
-			$裨mp = $this->css("display", $display);
-			$GLOBALS['%s']->pop();
-			return $裨mp;
-		}
-		$GLOBALS['%s']->pop();
+		return $this->css("display", $display);
 	}
 	public function hide() {
-		$GLOBALS['%s']->push("haquery.server.HaqQuery::hide");
-		$製pos = $GLOBALS['%s']->length;
-		{
-			$裨mp = $this->css("display", "none");
-			$GLOBALS['%s']->pop();
-			return $裨mp;
-		}
-		$GLOBALS['%s']->pop();
+		return $this->css("display", "none");
 	}
 	public function each($f) {
-		$GLOBALS['%s']->push("haquery.server.HaqQuery::each");
-		$製pos = $GLOBALS['%s']->length;
 		$_g1 = 0; $_g = $this->nodes->length;
 		while($_g1 < $_g) {
 			$i = $_g1++;
 			call_user_func_array($f, array($i, $this->get($i)));
 			unset($i);
 		}
-		$GLOBALS['%s']->pop();
 	}
 	public function __call($m, $a) {
 		if(isset($this->$m) && is_callable($this->$m))
@@ -486,7 +352,6 @@ class haquery_server_HaqQuery {
 	}
 }
 function haquery_server_HaqQuery_0(&$裨his, &$_g, &$_g1, &$name, &$node, &$re, &$sStyles, &$val) {
-	$製pos = $GLOBALS['%s']->length;
 	if($val !== "" && $val !== null) {
 		return $name . ": " . $val . ";";
 	} else {

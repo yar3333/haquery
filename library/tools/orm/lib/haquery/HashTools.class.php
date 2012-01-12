@@ -3,8 +3,6 @@
 class haquery_HashTools {
 	public function __construct(){}
 	static function add($dest, $src, $overwrite) {
-		$GLOBALS['%s']->push("haquery.HashTools::add");
-		$»spos = $GLOBALS['%s']->length;
 		if($overwrite === null) {
 			$overwrite = true;
 		}
@@ -25,11 +23,8 @@ class haquery_HashTools {
 				}
 			}
 		}
-		$GLOBALS['%s']->pop();
 	}
 	static function values($h) {
-		$GLOBALS['%s']->push("haquery.HashTools::values");
-		$»spos = $GLOBALS['%s']->length;
 		$r = new _hx_array(array());
 		if(null == $h) throw new HException('null iterable');
 		$»it = $h->keys();
@@ -37,11 +32,7 @@ class haquery_HashTools {
 			$key = $»it->next();
 			$r->push($h->get($key));
 		}
-		{
-			$GLOBALS['%s']->pop();
-			return $r;
-		}
-		$GLOBALS['%s']->pop();
+		return $r;
 	}
 	function __toString() { return 'haquery.HashTools'; }
 }

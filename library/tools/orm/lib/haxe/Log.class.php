@@ -11,19 +11,11 @@ class haxe_Log {
 haxe_Log::$trace = array(new _hx_lambda(array(), "haxe_Log_0"), 'execute');
 haxe_Log::$clear = array(new _hx_lambda(array(), "haxe_Log_1"), 'execute');
 function haxe_Log_0($v, $infos) {
-	$製pos = $GLOBALS['%s']->length;
 	{
-		$GLOBALS['%s']->push("haxe.Log::clear@29");
-		$製pos = $GLOBALS['%s']->length;
 		_hx_trace($v, $infos);
-		$GLOBALS['%s']->pop();
 	}
 }
 function haxe_Log_1() {
-	$製pos = $GLOBALS['%s']->length;
 	{
-		$GLOBALS['%s']->push("haxe.Log::clear@43");
-		$製pos = $GLOBALS['%s']->length;
-		$GLOBALS['%s']->pop();
 	}
 }

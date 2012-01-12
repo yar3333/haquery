@@ -3,71 +3,42 @@
 class php_io_FileOutput extends haxe_io_Output {
 	public function __construct($f) {
 		if(!php_Boot::$skip_constructor) {
-		$GLOBALS['%s']->push("php.io.FileOutput::new");
-		$製pos = $GLOBALS['%s']->length;
 		$this->__f = $f;
-		$GLOBALS['%s']->pop();
 	}}
 	public $__f;
 	public function writeByte($c) {
-		$GLOBALS['%s']->push("php.io.FileOutput::writeByte");
-		$製pos = $GLOBALS['%s']->length;
 		$r = fwrite($this->__f, chr($c));
 		if(($r === false)) {
-			$裨mp = php_io_FileOutput_0($this, $c, $r);
-			$GLOBALS['%s']->pop();
-			$裨mp;
+			php_io_FileOutput_0($this, $c, $r);
 			return;
 		}
-		{
-			$GLOBALS['%s']->pop();
-			$r;
-			return;
-		}
-		$GLOBALS['%s']->pop();
+		$r;
+		return;
 	}
 	public function writeBytes($b, $p, $l) {
-		$GLOBALS['%s']->push("php.io.FileOutput::writeBytes");
-		$製pos = $GLOBALS['%s']->length;
 		$s = $b->readString($p, $l);
 		if(feof($this->__f)) {
-			$裨mp = php_io_FileOutput_1($this, $b, $l, $p, $s);
-			$GLOBALS['%s']->pop();
-			return $裨mp;
+			php_io_FileOutput_1($this, $b, $l, $p, $s);
 		}
 		$r = fwrite($this->__f, $s, $l);
 		if(($r === false)) {
-			$裨mp = php_io_FileOutput_2($this, $b, $l, $p, $r, $s);
-			$GLOBALS['%s']->pop();
-			return $裨mp;
+			php_io_FileOutput_2($this, $b, $l, $p, $r, $s);
 		}
-		{
-			$GLOBALS['%s']->pop();
-			return $r;
-		}
-		$GLOBALS['%s']->pop();
+		return $r;
 	}
 	public function flush() {
-		$GLOBALS['%s']->push("php.io.FileOutput::flush");
-		$製pos = $GLOBALS['%s']->length;
 		$r = fflush($this->__f);
 		if(($r === false)) {
 			throw new HException(haxe_io_Error::Custom("An error occurred"));
 		}
-		$GLOBALS['%s']->pop();
 	}
 	public function close() {
-		$GLOBALS['%s']->push("php.io.FileOutput::close");
-		$製pos = $GLOBALS['%s']->length;
 		parent::close();
 		if($this->__f !== null) {
 			fclose($this->__f);
 		}
-		$GLOBALS['%s']->pop();
 	}
 	public function seek($p, $pos) {
-		$GLOBALS['%s']->push("php.io.FileOutput::seek");
-		$製pos = $GLOBALS['%s']->length;
 		$w = null;
 		$裨 = ($pos);
 		switch($裨->index) {
@@ -88,33 +59,16 @@ class php_io_FileOutput extends haxe_io_Output {
 		if(($r === false)) {
 			throw new HException(haxe_io_Error::Custom("An error occurred"));
 		}
-		$GLOBALS['%s']->pop();
 	}
 	public function tell() {
-		$GLOBALS['%s']->push("php.io.FileOutput::tell");
-		$製pos = $GLOBALS['%s']->length;
 		$r = ftell($this->__f);
 		if(($r === false)) {
-			$裨mp = php_io_FileOutput_3($this, $r);
-			$GLOBALS['%s']->pop();
-			return $裨mp;
+			php_io_FileOutput_3($this, $r);
 		}
-		{
-			$裨mp = $r;
-			$GLOBALS['%s']->pop();
-			return $裨mp;
-		}
-		$GLOBALS['%s']->pop();
+		return $r;
 	}
 	public function eof() {
-		$GLOBALS['%s']->push("php.io.FileOutput::eof");
-		$製pos = $GLOBALS['%s']->length;
-		{
-			$裨mp = feof($this->__f);
-			$GLOBALS['%s']->pop();
-			return $裨mp;
-		}
-		$GLOBALS['%s']->pop();
+		return feof($this->__f);
 	}
 	public function __call($m, $a) {
 		if(isset($this->$m) && is_callable($this->$m))
@@ -129,18 +83,14 @@ class php_io_FileOutput extends haxe_io_Output {
 	function __toString() { return 'php.io.FileOutput'; }
 }
 function php_io_FileOutput_0(&$裨his, &$c, &$r) {
-	$製pos = $GLOBALS['%s']->length;
 	throw new HException(haxe_io_Error::Custom("An error occurred"));
 }
 function php_io_FileOutput_1(&$裨his, &$b, &$l, &$p, &$s) {
-	$製pos = $GLOBALS['%s']->length;
 	throw new HException(new haxe_io_Eof());
 }
 function php_io_FileOutput_2(&$裨his, &$b, &$l, &$p, &$r, &$s) {
-	$製pos = $GLOBALS['%s']->length;
 	throw new HException(haxe_io_Error::Custom("An error occurred"));
 }
 function php_io_FileOutput_3(&$裨his, &$r) {
-	$製pos = $GLOBALS['%s']->length;
 	throw new HException(haxe_io_Error::Custom("An error occurred"));
 }

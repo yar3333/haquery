@@ -4,8 +4,6 @@ require_once dirname(__FILE__).'/../../HaqXml.extern.php';
 class haquery_server_HaqConfig {
 	public function __construct() {
 		if(!php_Boot::$skip_constructor) {
-		$GLOBALS['%s']->push("haquery.server.HaqConfig::new");
-		$»spos = $GLOBALS['%s']->length;
 		$this->db = _hx_anonymous(array("type" => null, "host" => null, "user" => null, "pass" => null, "database" => null));
 		$this->autoSessionStart = true;
 		$this->autoDatabaseConnect = true;
@@ -16,7 +14,6 @@ class haquery_server_HaqConfig {
 		$this->componentsPackage = "haquery.components";
 		$this->layout = null;
 		$this->disablePageMetaData = false;
-		$GLOBALS['%s']->pop();
 	}}
 	public $db;
 	public $autoSessionStart;
@@ -38,9 +35,12 @@ class haquery_server_HaqConfig {
 		else
 			throw new HException('Unable to call «'.$m.'»');
 	}
+	static $componentsConfigCache;
 	static function getComponentsConfig($classPaths, $componentsPackage) {
-		$GLOBALS['%s']->push("haquery.server.HaqConfig::getComponentsConfig");
-		$»spos = $GLOBALS['%s']->length;
+		$cacheKey = $classPaths->join(";") . "|" . $componentsPackage;
+		if(haquery_server_HaqConfig::$componentsConfigCache->exists($cacheKey)) {
+			return haquery_server_HaqConfig::$componentsConfigCache->get($cacheKey);
+		}
 		$r = _hx_anonymous(array("extendsPackage" => (($componentsPackage !== "haquery.components") ? "haquery.components" : null)));
 		$configFilePath = str_replace(".", "/", $componentsPackage) . "/config.xml";
 		$i = $classPaths->length - 1;
@@ -64,15 +64,10 @@ class haquery_server_HaqConfig {
 			$i--;
 			unset($basePath);
 		}
-		{
-			$GLOBALS['%s']->pop();
-			return $r;
-		}
-		$GLOBALS['%s']->pop();
+		haquery_server_HaqConfig::$componentsConfigCache->set($cacheKey, $r);
+		return $r;
 	}
 	static function getComponentsFolders($basePath, $componentsPackage) {
-		$GLOBALS['%s']->push("haquery.server.HaqConfig::getComponentsFolders");
-		$»spos = $GLOBALS['%s']->length;
 		if($basePath !== "") {
 			$basePath = rtrim(str_replace("\\", "/", $basePath), "/") . "/";
 		}
@@ -94,11 +89,8 @@ class haquery_server_HaqConfig {
 				}
 			}
 		}
-		{
-			$GLOBALS['%s']->pop();
-			return $r;
-		}
-		$GLOBALS['%s']->pop();
+		return $r;
 	}
 	function __toString() { return 'haquery.server.HaqConfig'; }
 }
+haquery_server_HaqConfig::$componentsConfigCache = new Hash();

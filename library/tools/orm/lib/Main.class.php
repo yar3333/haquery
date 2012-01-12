@@ -3,8 +3,6 @@
 class Main {
 	public function __construct(){}
 	static function main() {
-		$GLOBALS['%s']->push("Main::main");
-		$»spos = $GLOBALS['%s']->length;
 		$args = php_Sys::args();
 		if($args->length !== 2) {
 			php_Lib::println("You must specify arguments: connection_string path_to_src.");
@@ -21,7 +19,6 @@ class Main {
 		}
 		haquery_server_db_HaqDb::connect(_hx_anonymous(array("type" => $re->matched(1), "user" => $re->matched(2), "pass" => $re->matched(3), "host" => $re->matched(4), "database" => $re->matched(5))));
 		OrmGenerator::make($args[1]);
-		$GLOBALS['%s']->pop();
 	}
 	function __toString() { return 'Main'; }
 }

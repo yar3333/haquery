@@ -2,45 +2,24 @@
 
 class haquery_server_HaqProfiler {
 	public function __construct() {
-		if(!php_Boot::$skip_constructor) {
-		$GLOBALS['%s']->push("haquery.server.HaqProfiler::new");
-		$製pos = $GLOBALS['%s']->length;
-		$GLOBALS['%s']->pop();
-	}}
+		;
+	}
 	public $blocks;
 	public $opened;
 	public function begin($name) {
-		$GLOBALS['%s']->push("haquery.server.HaqProfiler::begin");
-		$製pos = $GLOBALS['%s']->length;
-		$GLOBALS['%s']->pop();
 	}
 	public function end() {
-		$GLOBALS['%s']->push("haquery.server.HaqProfiler::end");
-		$製pos = $GLOBALS['%s']->length;
-		$GLOBALS['%s']->pop();
 	}
 	public function traceResults($levelLimit) {
-		$GLOBALS['%s']->push("haquery.server.HaqProfiler::traceResults");
-		$製pos = $GLOBALS['%s']->length;
 		if($levelLimit === null) {
 			$levelLimit = 4;
 		}
-		$GLOBALS['%s']->pop();
 	}
 	public function traceResultsNested($levelLimit) {
-		$GLOBALS['%s']->push("haquery.server.HaqProfiler::traceResultsNested");
-		$製pos = $GLOBALS['%s']->length;
-		$GLOBALS['%s']->pop();
 	}
 	public function traceResultsSummary() {
-		$GLOBALS['%s']->push("haquery.server.HaqProfiler::traceResultsSummary");
-		$製pos = $GLOBALS['%s']->length;
-		$GLOBALS['%s']->pop();
 	}
 	public function traceGistogram($results) {
-		$GLOBALS['%s']->push("haquery.server.HaqProfiler::traceGistogram");
-		$製pos = $GLOBALS['%s']->length;
-		$GLOBALS['%s']->pop();
 	}
 	public function __call($m, $a) {
 		if(isset($this->$m) && is_callable($this->$m))

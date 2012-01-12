@@ -5,8 +5,6 @@ require_once dirname(__FILE__).'/../../HaqXml.extern.php';
 class haquery_server_HaqTemplates {
 	public function __construct($componentsFolders) {
 		if(!php_Boot::$skip_constructor) {
-		$GLOBALS['%s']->push("haquery.server.HaqTemplates::new");
-		$製pos = $GLOBALS['%s']->length;
 		$this->componentsFolders = $componentsFolders;
 		$this->templates = new Hash();
 		{
@@ -14,18 +12,15 @@ class haquery_server_HaqTemplates {
 			while($_g < $componentsFolders->length) {
 				$folder = $componentsFolders[$_g];
 				++$_g;
-				haxe_Log::trace("components folder = " . $folder, _hx_anonymous(array("fileName" => "HaqTemplates.hx", "lineNumber" => 37, "className" => "haquery.server.HaqTemplates", "methodName" => "new")));
+				null;
 				$this->templates->set($folder, $this->build($folder));
 				unset($folder);
 			}
 		}
-		$GLOBALS['%s']->pop();
 	}}
 	public $componentsFolders;
 	public $templates;
 	public function getTags() {
-		$GLOBALS['%s']->push("haquery.server.HaqTemplates::getTags");
-		$製pos = $GLOBALS['%s']->length;
 		$tags = new _hx_array(array());
 		{
 			$_g = 0; $_g1 = $this->componentsFolders;
@@ -47,15 +42,9 @@ class haquery_server_HaqTemplates {
 				unset($componentsFolder);
 			}
 		}
-		{
-			$GLOBALS['%s']->pop();
-			return $tags;
-		}
-		$GLOBALS['%s']->pop();
+		return $tags;
 	}
 	public function get($tag) {
-		$GLOBALS['%s']->push("haquery.server.HaqTemplates::get");
-		$製pos = $GLOBALS['%s']->length;
 		$r = _hx_anonymous(array("doc" => null, "serverHandlers" => null, "serverClass" => null));
 		$i = $this->componentsFolders->length - 1;
 		while($i >= 0) {
@@ -84,15 +73,9 @@ class haquery_server_HaqTemplates {
 		if($r->serverClass === null) {
 			$r->serverClass = _hx_qtype("haquery.server.HaqComponent");
 		}
-		{
-			$GLOBALS['%s']->pop();
-			return $r;
-		}
-		$GLOBALS['%s']->pop();
+		return $r;
 	}
 	public function build($componentsFolder) {
-		$GLOBALS['%s']->push("haquery.server.HaqTemplates::build");
-		$製pos = $GLOBALS['%s']->length;
 		$dataFilePath = haquery_base_HaqDefines::$folders->temp . "/" . $componentsFolder . "components.data";
 		$stylesFilePath = haquery_base_HaqDefines::$folders->temp . "/" . $componentsFolder . "styles.css";
 		$templatePaths = $this->getComponentTemplatePaths($componentsFolder);
@@ -118,22 +101,13 @@ class haquery_server_HaqTemplates {
 			}
 			php_io_File::putContent($stylesFilePath, $css);
 			php_io_File::putContent($dataFilePath, php_Lib::serialize($data));
-			{
-				$GLOBALS['%s']->pop();
-				return $data;
-			}
+			return $data;
 		} else {
 			$data = php_Lib::unserialize(php_io_File::getContent($dataFilePath));
-			{
-				$GLOBALS['%s']->pop();
-				return $data;
-			}
+			return $data;
 		}
-		$GLOBALS['%s']->pop();
 	}
 	public function parseComponent($componentFolder) {
-		$GLOBALS['%s']->push("haquery.server.HaqTemplates::parseComponent");
-		$製pos = $GLOBALS['%s']->length;
 		null;
 		$lessc = new Lessc(null);
 		$tag = basename($componentFolder);
@@ -157,16 +131,9 @@ class haquery_server_HaqTemplates {
 			unset($node);
 		}
 		null;
-		{
-			$裨mp = _hx_anonymous(array("css" => $css, "doc" => $doc));
-			$GLOBALS['%s']->pop();
-			return $裨mp;
-		}
-		$GLOBALS['%s']->pop();
+		return _hx_anonymous(array("css" => $css, "doc" => $doc));
 	}
 	public function parseServerHandlers($componentFolder) {
-		$GLOBALS['%s']->push("haquery.server.HaqTemplates::parseServerHandlers");
-		$製pos = $GLOBALS['%s']->length;
 		$componentFolder = rtrim($componentFolder, "/") . "/";
 		null;
 		$serverMethods = new _hx_array(array("click", "change"));
@@ -175,10 +142,7 @@ class haquery_server_HaqTemplates {
 		$clas = Type::resolveClass($className);
 		if($clas === null) {
 			null;
-			{
-				$GLOBALS['%s']->pop();
-				return null;
-			}
+			return null;
 		}
 		$tempObj = Type::createEmptyInstance($clas);
 		{
@@ -203,15 +167,9 @@ class haquery_server_HaqTemplates {
 			}
 		}
 		null;
-		{
-			$GLOBALS['%s']->pop();
-			return $serverHandlers;
-		}
-		$GLOBALS['%s']->pop();
+		return $serverHandlers;
 	}
 	public function getStyleFilePaths() {
-		$GLOBALS['%s']->push("haquery.server.HaqTemplates::getStyleFilePaths");
-		$製pos = $GLOBALS['%s']->length;
 		$r = new _hx_array(array());
 		{
 			$_g = 0; $_g1 = $this->componentsFolders;
@@ -231,35 +189,22 @@ class haquery_server_HaqTemplates {
 				unset($lessPath,$folder,$cssPath);
 			}
 		}
-		{
-			$GLOBALS['%s']->pop();
-			return $r;
-		}
-		$GLOBALS['%s']->pop();
+		return $r;
 	}
 	public function getFileUrl($tag, $filePathRelativeToComponentFolder) {
-		$GLOBALS['%s']->push("haquery.server.HaqTemplates::getFileUrl");
-		$製pos = $GLOBALS['%s']->length;
 		$filePathRelativeToComponentFolder = trim($filePathRelativeToComponentFolder, "/");
 		$i = $this->componentsFolders->length - 1;
 		while($i >= 0) {
 			$path = $this->componentsFolders[$i] . $tag . "/" . $filePathRelativeToComponentFolder;
 			if(file_exists($path)) {
-				$GLOBALS['%s']->pop();
 				return $path;
 			}
 			$i--;
 			unset($path);
 		}
-		{
-			$GLOBALS['%s']->pop();
-			return null;
-		}
-		$GLOBALS['%s']->pop();
+		return null;
 	}
 	public function getFileUrls($tag, $filePathRelativeToComponentFolder) {
-		$GLOBALS['%s']->push("haquery.server.HaqTemplates::getFileUrls");
-		$製pos = $GLOBALS['%s']->length;
 		$urls = new _hx_array(array());
 		$filePathRelativeToComponentFolder = trim($filePathRelativeToComponentFolder, "/");
 		{
@@ -274,15 +219,9 @@ class haquery_server_HaqTemplates {
 				unset($path,$componentsFolder);
 			}
 		}
-		{
-			$GLOBALS['%s']->pop();
-			return $urls;
-		}
-		$GLOBALS['%s']->pop();
+		return $urls;
 	}
 	public function getComponentTemplatePaths($componentsFolder) {
-		$GLOBALS['%s']->push("haquery.server.HaqTemplates::getComponentTemplatePaths");
-		$製pos = $GLOBALS['%s']->length;
 		$componentsFolder = rtrim($componentsFolder, "/") . "/";
 		$r = new _hx_array(array());
 		$folders = php_FileSystem::readDirectory($componentsFolder);
@@ -298,21 +237,14 @@ class haquery_server_HaqTemplates {
 				unset($templatePath,$folder);
 			}
 		}
-		{
-			$GLOBALS['%s']->pop();
-			return $r;
-		}
-		$GLOBALS['%s']->pop();
+		return $r;
 	}
 	public function getPageTemplateDoc($pageFolder) {
-		$GLOBALS['%s']->push("haquery.server.HaqTemplates::getPageTemplateDoc");
-		$製pos = $GLOBALS['%s']->length;
 		$pageFolder = rtrim($pageFolder, "/") . "/";
 		$templatePath = $pageFolder . "template.html";
 		$pageText = ((file_exists($templatePath)) ? php_io_File::getContent($templatePath) : "");
 		$pageDoc = new HaqXml($pageText);
 		if(haquery_server_Lib::$config->layout === null || haquery_server_Lib::$config->layout === "") {
-			$GLOBALS['%s']->pop();
 			return $pageDoc;
 		}
 		if(!file_exists(haquery_server_Lib::$config->layout)) {
@@ -348,30 +280,17 @@ class haquery_server_HaqTemplates {
 				unset($ph,$content);
 			}
 		}
-		{
-			$GLOBALS['%s']->pop();
-			return $layoutDoc;
-		}
-		$GLOBALS['%s']->pop();
+		return $layoutDoc;
 	}
 	public function getComponentTemplateDoc($tag) {
-		$GLOBALS['%s']->push("haquery.server.HaqTemplates::getComponentTemplateDoc");
-		$製pos = $GLOBALS['%s']->length;
 		$files = $this->getFileUrls($tag, "template.html");
 		$text = Lambda::map($files, (isset(php_io_File::$getContent) ? php_io_File::$getContent: array("php_io_File", "getContent")))->join("");
 		$self = $this;
 		$reSupportFileUrl = new haquery_EReg("~/([-_/\\.a-zA-Z0-9]*)", "");
 		$text = $reSupportFileUrl->customReplace($text, array(new _hx_lambda(array(&$files, &$reSupportFileUrl, &$self, &$tag, &$text), "haquery_server_HaqTemplates_1"), 'execute'));
-		{
-			$裨mp = new HaqXml($text);
-			$GLOBALS['%s']->pop();
-			return $裨mp;
-		}
-		$GLOBALS['%s']->pop();
+		return new HaqXml($text);
 	}
 	public function getInternalDataForPageHtml() {
-		$GLOBALS['%s']->push("haquery.server.HaqTemplates::getInternalDataForPageHtml");
-		$製pos = $GLOBALS['%s']->length;
 		$s = "haquery.client.HaqInternals.componentsFolders = [\x0A";
 		{
 			$_g = 0; $_g1 = $this->componentsFolders;
@@ -383,31 +302,17 @@ class haquery_server_HaqTemplates {
 			}
 		}
 		$s = rtrim($s, "\x0A,") . "\x0A];";
-		{
-			$GLOBALS['%s']->pop();
-			return $s;
-		}
-		$GLOBALS['%s']->pop();
+		return $s;
 	}
 	public function createDirectory($path) {
-		$GLOBALS['%s']->push("haquery.server.HaqTemplates::createDirectory");
-		$製pos = $GLOBALS['%s']->length;
 		$parentPath = dirname($path);
 		if($parentPath !== null && $parentPath !== "" && !file_exists($parentPath)) {
 			$this->createDirectory($parentPath);
 		}
 		@mkdir($path, 493);
-		$GLOBALS['%s']->pop();
 	}
 	public function getSupportPath($tag) {
-		$GLOBALS['%s']->push("haquery.server.HaqTemplates::getSupportPath");
-		$製pos = $GLOBALS['%s']->length;
-		{
-			$裨mp = $this->getFileUrl($tag, haquery_base_HaqDefines::$folders->support) . "/";
-			$GLOBALS['%s']->pop();
-			return $裨mp;
-		}
-		$GLOBALS['%s']->pop();
+		return $this->getFileUrl($tag, haquery_base_HaqDefines::$folders->support) . "/";
 	}
 	public function __call($m, $a) {
 		if(isset($this->$m) && is_callable($this->$m))
@@ -422,34 +327,17 @@ class haquery_server_HaqTemplates {
 	function __toString() { return 'haquery.server.HaqTemplates'; }
 }
 function haquery_server_HaqTemplates_0(&$cacheFileTime, &$componentsFolder, &$dataFilePath, &$stylesFilePath, &$templatePaths, $path) {
-	$製pos = $GLOBALS['%s']->length;
 	{
-		$GLOBALS['%s']->push("haquery.server.HaqTemplates::build@97");
-		$製pos2 = $GLOBALS['%s']->length;
-		{
-			$裨mp = php_FileSystem::stat($path)->mtime->getTime() > $cacheFileTime;
-			$GLOBALS['%s']->pop();
-			return $裨mp;
-		}
-		$GLOBALS['%s']->pop();
+		return php_FileSystem::stat($path)->mtime->getTime() > $cacheFileTime;
 	}
 }
 function haquery_server_HaqTemplates_1(&$files, &$reSupportFileUrl, &$self, &$tag, &$text, $re) {
-	$製pos = $GLOBALS['%s']->length;
 	{
-		$GLOBALS['%s']->push("haquery.server.HaqTemplates::getComponentTemplateDoc@321");
-		$製pos2 = $GLOBALS['%s']->length;
 		$f = $self->getFileUrl($tag, haquery_base_HaqDefines::$folders->support . "/" . $re->matched(1));
-		{
-			$裨mp = haquery_server_HaqTemplates_2($裨his, $f, $files, $re, $reSupportFileUrl, $self, $tag, $text);
-			$GLOBALS['%s']->pop();
-			return $裨mp;
-		}
-		$GLOBALS['%s']->pop();
+		return haquery_server_HaqTemplates_2($裨his, $f, $files, $re, $reSupportFileUrl, $self, $tag, $text);
 	}
 }
 function haquery_server_HaqTemplates_2(&$裨his, &$f, &$files, &$re, &$reSupportFileUrl, &$self, &$tag, &$text) {
-	$製pos = $GLOBALS['%s']->length;
 	if($f !== null) {
 		return "/" . $f;
 	} else {

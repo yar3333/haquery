@@ -3,18 +3,9 @@
 class OrmGenerator {
 	public function __construct(){}
 	static function getClassName($table) {
-		$GLOBALS['%s']->push("OrmGenerator::getClassName");
-		$製pos = $GLOBALS['%s']->length;
-		{
-			$裨mp = Lambda::map(_hx_explode("_", strtolower($table)), array(new _hx_lambda(array(&$table), "OrmGenerator_0"), 'execute'))->join("");
-			$GLOBALS['%s']->pop();
-			return $裨mp;
-		}
-		$GLOBALS['%s']->pop();
+		return Lambda::map(_hx_explode("_", strtolower($table)), array(new _hx_lambda(array(&$table), "OrmGenerator_0"), 'execute'))->join("");
 	}
 	static function make($basePath) {
-		$GLOBALS['%s']->push("OrmGenerator::make");
-		$製pos = $GLOBALS['%s']->length;
 		$basePath = rtrim(str_replace("\\", "/", $basePath), "/") . "/";
 		$modelFolder = $basePath . "models/";
 		if(!is_dir($modelFolder)) {
@@ -42,20 +33,11 @@ class OrmGenerator {
 				unset($table,$className);
 			}
 		}
-		$GLOBALS['%s']->pop();
 	}
 	function __toString() { return 'OrmGenerator'; }
 }
 function OrmGenerator_0(&$table, $w) {
-	$製pos = $GLOBALS['%s']->length;
 	{
-		$GLOBALS['%s']->push("OrmGenerator::getClassName@15");
-		$製pos2 = $GLOBALS['%s']->length;
-		{
-			$裨mp = OrmTools::capitalize($w);
-			$GLOBALS['%s']->pop();
-			return $裨mp;
-		}
-		$GLOBALS['%s']->pop();
+		return OrmTools::capitalize($w);
 	}
 }

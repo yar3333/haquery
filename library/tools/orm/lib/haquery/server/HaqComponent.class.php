@@ -3,19 +3,14 @@
 class haquery_server_HaqComponent extends haquery_base_HaqComponent {
 	public function __construct() {
 		if(!php_Boot::$skip_constructor) {
-		$GLOBALS['%s']->push("haquery.server.HaqComponent::new");
-		$製pos = $GLOBALS['%s']->length;
 		parent::__construct();
 		$this->visible = true;
-		$GLOBALS['%s']->pop();
 	}}
 	public $manager;
 	public $parentNode;
 	public $doc;
 	public $visible;
 	public function construct($manager, $parent, $tag, $id, $doc, $params, $parentNode) {
-		$GLOBALS['%s']->push("haquery.server.HaqComponent::construct");
-		$製pos = $GLOBALS['%s']->length;
 		parent::commonConstruct($parent,$tag,$id);
 		$this->manager = $manager;
 		$this->doc = $doc;
@@ -26,11 +21,8 @@ class haquery_server_HaqComponent extends haquery_base_HaqComponent {
 		if(Reflect::isFunction(Reflect::field($this, "init"))) {
 			Reflect::callMethod($this, Reflect::field($this, "init"), new _hx_array(array()));
 		}
-		$GLOBALS['%s']->pop();
 	}
 	public function getFieldsToLoadParams() {
-		$GLOBALS['%s']->push("haquery.server.HaqComponent::getFieldsToLoadParams");
-		$製pos = $GLOBALS['%s']->length;
 		$restrictedFields = Reflect::fields(Type::createEmptyInstance(Type::resolveClass("haquery.server.HaqComponent")));
 		$r = new Hash();
 		{
@@ -44,15 +36,9 @@ class haquery_server_HaqComponent extends haquery_base_HaqComponent {
 				unset($field);
 			}
 		}
-		{
-			$GLOBALS['%s']->pop();
-			return $r;
-		}
-		$GLOBALS['%s']->pop();
+		return $r;
 	}
 	public function loadParamsToObjectFields($params, $fields) {
-		$GLOBALS['%s']->push("haquery.server.HaqComponent::loadParamsToObjectFields");
-		$製pos = $GLOBALS['%s']->length;
 		if($params !== null) {
 			if(null == $params) throw new HException('null iterable');
 			$蜴t = $params->keys();
@@ -85,24 +71,18 @@ class haquery_server_HaqComponent extends haquery_base_HaqComponent {
 				unset($v);
 			}
 		}
-		$GLOBALS['%s']->pop();
 	}
 	public function createChildComponents() {
-		$GLOBALS['%s']->push("haquery.server.HaqComponent::createChildComponents");
-		$製pos = $GLOBALS['%s']->length;
 		if($this->doc !== null) {
 			$this->createChildComponents_inner($this->doc);
 		}
-		$GLOBALS['%s']->pop();
 	}
 	public function createChildComponents_inner($baseNode) {
-		$GLOBALS['%s']->push("haquery.server.HaqComponent::createChildComponents_inner");
-		$製pos = $GLOBALS['%s']->length;
 		$i = 0;
 		while($i < count($baseNode->children)) {
 			$node = $baseNode->children[$i];
-			haquery_server_Lib::assert($node->name !== "haq:placeholder", null, _hx_anonymous(array("fileName" => "HaqComponent.hx", "lineNumber" => 103, "className" => "haquery.server.HaqComponent", "methodName" => "createChildComponents_inner")));
-			haquery_server_Lib::assert($node->name !== "haq:content", null, _hx_anonymous(array("fileName" => "HaqComponent.hx", "lineNumber" => 104, "className" => "haquery.server.HaqComponent", "methodName" => "createChildComponents_inner")));
+			null;
+			null;
 			$this->createChildComponents_inner($node);
 			if(StringTools::startsWith($node->name, "haq:")) {
 				$node->component = $this->manager->createComponent($this, $node->name, $node->getAttribute("id"), php_Lib::hashOfAssociativeArray($node->getAttributesAssoc()), $node);
@@ -110,18 +90,15 @@ class haquery_server_HaqComponent extends haquery_base_HaqComponent {
 			$i++;
 			unset($node);
 		}
-		$GLOBALS['%s']->pop();
 	}
 	public function prepareDocToRender($baseNode) {
-		$GLOBALS['%s']->push("haquery.server.HaqComponent::prepareDocToRender");
-		$製pos = $GLOBALS['%s']->length;
 		$i = 0;
 		while($i < count($baseNode->children)) {
 			$node = $baseNode->children[$i];
 			if(StringTools::startsWith($node->name, "haq:")) {
 				if($node->component === null) {
 					haxe_Log::trace("Component is null: " . $node->name, _hx_anonymous(array("fileName" => "HaqComponent.hx", "lineNumber" => 126, "className" => "haquery.server.HaqComponent", "methodName" => "prepareDocToRender")));
-					haquery_server_Lib::assert(false, null, _hx_anonymous(array("fileName" => "HaqComponent.hx", "lineNumber" => 127, "className" => "haquery.server.HaqComponent", "methodName" => "prepareDocToRender")));
+					null;
 				}
 				if($node->component->visible) {
 					$this->prepareDocToRender($node);
@@ -158,69 +135,43 @@ class haquery_server_HaqComponent extends haquery_base_HaqComponent {
 			$i++;
 			unset($node);
 		}
-		$GLOBALS['%s']->pop();
 	}
 	public function render() {
-		$GLOBALS['%s']->push("haquery.server.HaqComponent::render");
-		$製pos = $GLOBALS['%s']->length;
 		if(haquery_server_Lib::$config->isTraceComponent) {
 			haxe_Log::trace("render " . $this->fullID, _hx_anonymous(array("fileName" => "HaqComponent.hx", "lineNumber" => 172, "className" => "haquery.server.HaqComponent", "methodName" => "render")));
 		}
 		$this->prepareDocToRender($this->doc);
 		$r = trim($this->doc->toString(), "\x0D\x0A");
-		{
-			$GLOBALS['%s']->pop();
-			return $r;
-		}
-		$GLOBALS['%s']->pop();
+		return $r;
 	}
 	public function q($query) {
-		$GLOBALS['%s']->push("haquery.server.HaqComponent::q");
-		$製pos = $GLOBALS['%s']->length;
 		if($query === null) {
-			$裨mp = new haquery_server_HaqQuery($this->prefixID, "", null);
-			$GLOBALS['%s']->pop();
-			return $裨mp;
+			return new haquery_server_HaqQuery($this->prefixID, "", null);
 		}
-		if(Type::getClassName(Type::getClass($query)) === "HaqQuery") {
-			$GLOBALS['%s']->pop();
+		if(Type::getClass($query) == _hx_qtype("haquery.server.HaqQuery")) {
 			return $query;
+		}
+		if($query instanceof HaqXmlNodeElement) {
+			null;
+			return new haquery_server_HaqQuery($this->prefixID, "", php_Lib::toPhpArray(new _hx_array(array($query))));
 		}
 		if(Type::getClassName(Type::getClass($query)) !== "String") {
 			throw new HException("HaqComponent.q() error - 'query' parameter must be a string or HaqQuery.");
 		}
 		$nodes = $this->doc->find($query);
-		{
-			$裨mp = new haquery_server_HaqQuery($this->prefixID, $query, $nodes);
-			$GLOBALS['%s']->pop();
-			return $裨mp;
-		}
-		$GLOBALS['%s']->pop();
+		return new haquery_server_HaqQuery($this->prefixID, $query, $nodes);
 	}
 	public function callClientMethod($method, $params) {
-		$GLOBALS['%s']->push("haquery.server.HaqComponent::callClientMethod");
-		$製pos = $GLOBALS['%s']->length;
-		haquery_server_Lib::assert(haquery_server_Lib::$isPostback, "HaqComponent.callClientMethod() allowed on the postback only.", _hx_anonymous(array("fileName" => "HaqComponent.hx", "lineNumber" => 197, "className" => "haquery.server.HaqComponent", "methodName" => "callClientMethod")));
+		null;
 		$funcName = haquery_server_HaqComponent_0($this, $method, $params);
 		haquery_server_HaqInternals::addAjaxResponse(haquery_base_HaqTools::getCallClientFunctionString($funcName, $params) . ";");
-		$GLOBALS['%s']->pop();
 	}
 	public function callElemEventHandler($elemID, $eventName) {
-		$GLOBALS['%s']->push("haquery.server.HaqComponent::callElemEventHandler");
-		$製pos = $GLOBALS['%s']->length;
 		$handler = $elemID . "_" . $eventName;
 		Reflect::callMethod($this, $handler, new _hx_array(array($this)));
-		$GLOBALS['%s']->pop();
 	}
 	public function getSupportPath() {
-		$GLOBALS['%s']->push("haquery.server.HaqComponent::getSupportPath");
-		$製pos = $GLOBALS['%s']->length;
-		{
-			$裨mp = $this->manager->getSupportPath($this->tag);
-			$GLOBALS['%s']->pop();
-			return $裨mp;
-		}
-		$GLOBALS['%s']->pop();
+		return $this->manager->getSupportPath($this->tag);
 	}
 	public function __call($m, $a) {
 		if(isset($this->$m) && is_callable($this->$m))
@@ -235,7 +186,6 @@ class haquery_server_HaqComponent extends haquery_base_HaqComponent {
 	function __toString() { return 'haquery.server.HaqComponent'; }
 }
 function haquery_server_HaqComponent_0(&$裨his, &$method, &$params) {
-	$製pos = $GLOBALS['%s']->length;
 	if(strlen($裨his->fullID) !== 0) {
 		return "haquery.client.HaqSystem.page.findComponent('" . $裨his->fullID . "')." . $method;
 	} else {

@@ -3,8 +3,6 @@
 class php_io_Path {
 	public function __construct($path) {
 		if(!php_Boot::$skip_constructor) {
-		$GLOBALS['%s']->push("php.io.Path::new");
-		$»spos = $GLOBALS['%s']->length;
 		$c1 = _hx_last_index_of($path, "/", null);
 		$c2 = _hx_last_index_of($path, "\\", null);
 		if($c1 < $c2) {
@@ -27,21 +25,13 @@ class php_io_Path {
 			$this->ext = null;
 			$this->file = $path;
 		}
-		$GLOBALS['%s']->pop();
 	}}
 	public $ext;
 	public $dir;
 	public $file;
 	public $backslash;
 	public function toString() {
-		$GLOBALS['%s']->push("php.io.Path::toString");
-		$»spos = $GLOBALS['%s']->length;
-		{
-			$»tmp = (php_io_Path_0($this)) . $this->file . (php_io_Path_1($this));
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
+		return (php_io_Path_0($this)) . $this->file . (php_io_Path_1($this));
 	}
 	public function __call($m, $a) {
 		if(isset($this->$m) && is_callable($this->$m))
@@ -54,68 +44,31 @@ class php_io_Path {
 			throw new HException('Unable to call «'.$m.'»');
 	}
 	static function withoutExtension($path) {
-		$GLOBALS['%s']->push("php.io.Path::withoutExtension");
-		$»spos = $GLOBALS['%s']->length;
 		$s = new php_io_Path($path);
 		$s->ext = null;
-		{
-			$»tmp = $s->toString();
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
+		return $s->toString();
 	}
 	static function withoutDirectory($path) {
-		$GLOBALS['%s']->push("php.io.Path::withoutDirectory");
-		$»spos = $GLOBALS['%s']->length;
-		{
-			$»tmp = basename($path);
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
+		return basename($path);
 	}
 	static function directory($path) {
-		$GLOBALS['%s']->push("php.io.Path::directory");
-		$»spos = $GLOBALS['%s']->length;
-		{
-			$»tmp = dirname($path);
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
+		return dirname($path);
 	}
 	static function extension($path) {
-		$GLOBALS['%s']->push("php.io.Path::extension");
-		$»spos = $GLOBALS['%s']->length;
 		$s = new php_io_Path($path);
 		if($s->ext === null) {
-			$GLOBALS['%s']->pop();
 			return "";
 		}
-		{
-			$»tmp = $s->ext;
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
+		return $s->ext;
 	}
 	static function withExtension($path, $ext) {
-		$GLOBALS['%s']->push("php.io.Path::withExtension");
-		$»spos = $GLOBALS['%s']->length;
 		$s = new php_io_Path($path);
 		$s->ext = $ext;
-		{
-			$»tmp = $s->toString();
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
+		return $s->toString();
 	}
 	function __toString() { return $this->toString(); }
 }
 function php_io_Path_0(&$»this) {
-	$»spos = $GLOBALS['%s']->length;
 	if($»this->dir === null) {
 		return "";
 	} else {
@@ -123,7 +76,6 @@ function php_io_Path_0(&$»this) {
 	}
 }
 function php_io_Path_1(&$»this) {
-	$»spos = $GLOBALS['%s']->length;
 	if($»this->ext === null) {
 		return "";
 	} else {

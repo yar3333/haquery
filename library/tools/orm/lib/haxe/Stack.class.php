@@ -3,28 +3,12 @@
 class haxe_Stack {
 	public function __construct(){}
 	static function callStack() {
-		$GLOBALS['%s']->push("haxe.Stack::callStack");
-		$»spos = $GLOBALS['%s']->length;
-		{
-			$»tmp = haxe_Stack::makeStack("%s");
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
+		return haxe_Stack::makeStack("%s");
 	}
 	static function exceptionStack() {
-		$GLOBALS['%s']->push("haxe.Stack::exceptionStack");
-		$»spos = $GLOBALS['%s']->length;
-		{
-			$»tmp = haxe_Stack::makeStack("%e");
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
+		return haxe_Stack::makeStack("%e");
 	}
 	static function toString($stack) {
-		$GLOBALS['%s']->push("haxe.Stack::toString");
-		$»spos = $GLOBALS['%s']->length;
 		$b = new StringBuf();
 		{
 			$_g = 0;
@@ -47,16 +31,9 @@ class haxe_Stack {
 				unset($s);
 			}
 		}
-		{
-			$»tmp = $b->b;
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
+		return $b->b;
 	}
 	static function itemToString($b, $s) {
-		$GLOBALS['%s']->push("haxe.Stack::itemToString");
-		$»spos = $GLOBALS['%s']->length;
 		$»t = ($s);
 		switch($»t->index) {
 		case 0:
@@ -223,15 +200,10 @@ class haxe_Stack {
 			}
 		}break;
 		}
-		$GLOBALS['%s']->pop();
 	}
 	static function makeStack($s) {
-		$GLOBALS['%s']->push("haxe.Stack::makeStack");
-		$»spos = $GLOBALS['%s']->length;
 		if(!isset($GLOBALS[$s])) {
-			$»tmp = new _hx_array(array());
-			$GLOBALS['%s']->pop();
-			return $»tmp;
+			return new _hx_array(array());
 		}
 		$a = $GLOBALS[$s];
 		$m = new _hx_array(array());
@@ -244,11 +216,7 @@ class haxe_Stack {
 				unset($i,$d);
 			}
 		}
-		{
-			$GLOBALS['%s']->pop();
-			return $m;
-		}
-		$GLOBALS['%s']->pop();
+		return $m;
 	}
 	function __toString() { return 'haxe.Stack'; }
 }
