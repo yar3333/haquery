@@ -3,11 +3,28 @@
 class haquery_base_HaqComponent {
 	public function __construct() {
 		if(!php_Boot::$skip_constructor) {
-		$GLOBALS['%s']->push("haquery.base.HaqComponent::new");
-		$製pos = $GLOBALS['%s']->length;
 		$this->components = new Hash();
 		$this->nextAnonimID = 0;
-		$GLOBALS['%s']->pop();
+		$裨 = (Type::typeof($this));
+		switch($裨->index) {
+		case 6:
+		$cls = $裨->params[0];
+		{
+			if(Lambda::has(Type::getInstanceFields($cls), "template", null)) {
+				$className = Type::getClassName($cls);
+				$lastPointPos = _hx_last_index_of($className, ".", null);
+				if($lastPointPos > 0) {
+					$templateClassName = _hx_substr($className, 0, $lastPointPos) . ".Template";
+					$templateClass = Type::resolveClass($templateClassName);
+					if($templateClass !== null) {
+						$this->{"template"} = Type::createInstance($templateClass, new _hx_array(array($this)));
+					}
+				}
+			}
+		}break;
+		default:{
+		}break;
+		}
 	}}
 	public $id;
 	public $parent;
@@ -17,8 +34,6 @@ class haquery_base_HaqComponent {
 	public $components;
 	public $nextAnonimID;
 	public function commonConstruct($parent, $tag, $id) {
-		$GLOBALS['%s']->push("haquery.base.HaqComponent::commonConstruct");
-		$製pos = $GLOBALS['%s']->length;
 		if($id === null || $id === "") {
 			$id = (($parent !== null) ? $parent->getNextAnonimID() : "");
 		}
@@ -28,14 +43,11 @@ class haquery_base_HaqComponent {
 		$this->fullID = (haquery_base_HaqComponent_0($this, $id, $parent, $tag)) . $id;
 		$this->prefixID = haquery_base_HaqComponent_1($this, $id, $parent, $tag);
 		if($parent !== null) {
-			haquery_server_Lib::assert(!$parent->components->exists($id), "Component with same id '" . $id . "' already exist.", _hx_anonymous(array("fileName" => "HaqComponent.hx", "lineNumber" => 65, "className" => "haquery.base.HaqComponent", "methodName" => "commonConstruct")));
+			null;
 			$parent->components->set($id, $this);
 		}
-		$GLOBALS['%s']->pop();
 	}
 	public function createEvents() {
-		$GLOBALS['%s']->push("haquery.base.HaqComponent::createEvents");
-		$製pos = $GLOBALS['%s']->length;
 		if($this->parent !== null) {
 			$_g = 0; $_g1 = Type::getInstanceFields(Type::getClass($this));
 			while($_g < $_g1->length) {
@@ -53,20 +65,14 @@ class haquery_base_HaqComponent {
 				unset($field);
 			}
 		}
-		$GLOBALS['%s']->pop();
 	}
 	public function connectEventHandlers($event) {
-		$GLOBALS['%s']->push("haquery.base.HaqComponent::connectEventHandlers");
-		$製pos = $GLOBALS['%s']->length;
 		$handlerName = $event->component->id . "_" . $event->name;
 		if(Reflect::isFunction(Reflect::field($this, $handlerName))) {
 			$event->bind($this, Reflect::field($this, $handlerName));
 		}
-		$GLOBALS['%s']->pop();
 	}
 	public function forEachComponent($f, $isFromTopToBottom) {
-		$GLOBALS['%s']->push("haquery.base.HaqComponent::forEachComponent");
-		$製pos = $GLOBALS['%s']->length;
 		if($isFromTopToBottom === null) {
 			$isFromTopToBottom = true;
 		}
@@ -82,15 +88,10 @@ class haquery_base_HaqComponent {
 		if(!$isFromTopToBottom && Reflect::isFunction(Reflect::field($this, $f))) {
 			Reflect::callMethod($this, Reflect::field($this, $f), new _hx_array(array()));
 		}
-		$GLOBALS['%s']->pop();
 	}
 	public function findComponent($fullID) {
-		$GLOBALS['%s']->push("haquery.base.HaqComponent::findComponent");
-		$製pos = $GLOBALS['%s']->length;
 		if($fullID === "") {
-			$裨mp = $this;
-			$GLOBALS['%s']->pop();
-			return $裨mp;
+			return $this;
 		}
 		$ids = _hx_explode("-", $fullID);
 		$r = $this;
@@ -100,30 +101,17 @@ class haquery_base_HaqComponent {
 				$id = $ids[$_g];
 				++$_g;
 				if(!$r->components->exists($id)) {
-					$GLOBALS['%s']->pop();
 					return null;
 				}
 				$r = $r->components->get($id);
 				unset($id);
 			}
 		}
-		{
-			$裨mp = $r;
-			$GLOBALS['%s']->pop();
-			return $裨mp;
-		}
-		$GLOBALS['%s']->pop();
+		return $r;
 	}
 	public function getNextAnonimID() {
-		$GLOBALS['%s']->push("haquery.base.HaqComponent::getNextAnonimID");
-		$製pos = $GLOBALS['%s']->length;
 		$this->nextAnonimID++;
-		{
-			$裨mp = "haqc_" . Std::string($this->nextAnonimID);
-			$GLOBALS['%s']->pop();
-			return $裨mp;
-		}
-		$GLOBALS['%s']->pop();
+		return "haqc_" . Std::string($this->nextAnonimID);
 	}
 	public function __call($m, $a) {
 		if(isset($this->$m) && is_callable($this->$m))
@@ -138,7 +126,6 @@ class haquery_base_HaqComponent {
 	function __toString() { return 'haquery.base.HaqComponent'; }
 }
 function haquery_base_HaqComponent_0(&$裨his, &$id, &$parent, &$tag) {
-	$製pos = $GLOBALS['%s']->length;
 	if($parent !== null) {
 		return $parent->prefixID;
 	} else {
@@ -146,7 +133,6 @@ function haquery_base_HaqComponent_0(&$裨his, &$id, &$parent, &$tag) {
 	}
 }
 function haquery_base_HaqComponent_1(&$裨his, &$id, &$parent, &$tag) {
-	$製pos = $GLOBALS['%s']->length;
 	if($裨his->fullID !== "") {
 		return $裨his->fullID . "-";
 	} else {

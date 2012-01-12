@@ -3,96 +3,39 @@
 class php_Sys {
 	public function __construct(){}
 	static function args() {
-		$GLOBALS['%s']->push("php.Sys::args");
-		$»spos = $GLOBALS['%s']->length;
-		{
-			$»tmp = ((array_key_exists("argv", $_SERVER)) ? new _hx_array(array_slice($_SERVER["argv"], 1)) : new _hx_array(array()));
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
+		return ((array_key_exists("argv", $_SERVER)) ? new _hx_array(array_slice($_SERVER["argv"], 1)) : new _hx_array(array()));
 	}
 	static function getEnv($s) {
-		$GLOBALS['%s']->push("php.Sys::getEnv");
-		$»spos = $GLOBALS['%s']->length;
-		{
-			$»tmp = getenv($s);
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
+		return getenv($s);
 	}
 	static function putEnv($s, $v) {
-		$GLOBALS['%s']->push("php.Sys::putEnv");
-		$»spos = $GLOBALS['%s']->length;
-		{
-			$»tmp = putenv($s . "=" . $v);
-			$GLOBALS['%s']->pop();
-			$»tmp;
-			return;
-		}
-		$GLOBALS['%s']->pop();
+		putenv($s . "=" . $v);
+		return;
 	}
 	static function sleep($seconds) {
-		$GLOBALS['%s']->push("php.Sys::sleep");
-		$»spos = $GLOBALS['%s']->length;
-		{
-			$»tmp = usleep($seconds * 1000000);
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
+		return usleep($seconds * 1000000);
 	}
 	static function setTimeLocale($loc) {
-		$GLOBALS['%s']->push("php.Sys::setTimeLocale");
-		$»spos = $GLOBALS['%s']->length;
-		{
-			$»tmp = setlocale(LC_TIME, $loc) !== false;
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
+		return setlocale(LC_TIME, $loc) !== false;
 	}
 	static function getCwd() {
-		$GLOBALS['%s']->push("php.Sys::getCwd");
-		$»spos = $GLOBALS['%s']->length;
 		$cwd = getcwd();
 		$l = _hx_substr($cwd, -1, null);
-		{
-			$»tmp = $cwd . ((($l === "/" || $l === "\\") ? "" : "/"));
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
+		return $cwd . ((($l === "/" || $l === "\\") ? "" : "/"));
 	}
 	static function setCwd($s) {
-		$GLOBALS['%s']->push("php.Sys::setCwd");
-		$»spos = $GLOBALS['%s']->length;
-		{
-			$»tmp = chdir($s);
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
+		return chdir($s);
 	}
 	static function systemName() {
-		$GLOBALS['%s']->push("php.Sys::systemName");
-		$»spos = $GLOBALS['%s']->length;
 		$s = php_uname("s");
 		$p = null;
 		if(($p = _hx_index_of($s, " ", null)) >= 0) {
-			$»tmp = _hx_substr($s, 0, $p);
-			$GLOBALS['%s']->pop();
-			return $»tmp;
+			return _hx_substr($s, 0, $p);
 		} else {
-			$GLOBALS['%s']->pop();
 			return $s;
 		}
-		$GLOBALS['%s']->pop();
 	}
 	static function escapeArgument($arg) {
-		$GLOBALS['%s']->push("php.Sys::escapeArgument");
-		$»spos = $GLOBALS['%s']->length;
 		$ok = true;
 		{
 			$_g1 = 0; $_g = strlen($arg);
@@ -110,19 +53,11 @@ class php_Sys {
 			}
 		}
 		if($ok) {
-			$GLOBALS['%s']->pop();
 			return $arg;
 		}
-		{
-			$»tmp = "\"" . _hx_explode("\"", $arg)->join("\\\"") . "\"";
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
+		return "\"" . _hx_explode("\"", $arg)->join("\\\"") . "\"";
 	}
 	static function command($cmd, $args) {
-		$GLOBALS['%s']->push("php.Sys::command");
-		$»spos = $GLOBALS['%s']->length;
 		if($args !== null) {
 			$cmd = php_Sys::escapeArgument($cmd);
 			{
@@ -137,61 +72,22 @@ class php_Sys {
 		}
 		$result = 0;
 		system($cmd, $result);
-		{
-			$GLOBALS['%s']->pop();
-			return $result;
-		}
-		$GLOBALS['%s']->pop();
+		return $result;
 	}
 	static function hexit($code) {
-		$GLOBALS['%s']->push("php.Sys::exit");
-		$»spos = $GLOBALS['%s']->length;
-		{
-			$»tmp = exit($code);
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
+		return exit($code);
 	}
 	static function time() {
-		$GLOBALS['%s']->push("php.Sys::time");
-		$»spos = $GLOBALS['%s']->length;
-		{
-			$»tmp = microtime(true);
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
+		return microtime(true);
 	}
 	static function cpuTime() {
-		$GLOBALS['%s']->push("php.Sys::cpuTime");
-		$»spos = $GLOBALS['%s']->length;
-		{
-			$»tmp = microtime(true) - $_SERVER['REQUEST_TIME'];
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
+		return microtime(true) - $_SERVER['REQUEST_TIME'];
 	}
 	static function executablePath() {
-		$GLOBALS['%s']->push("php.Sys::executablePath");
-		$»spos = $GLOBALS['%s']->length;
-		{
-			$»tmp = $_SERVER['SCRIPT_FILENAME'];
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
+		return $_SERVER['SCRIPT_FILENAME'];
 	}
 	static function environment() {
-		$GLOBALS['%s']->push("php.Sys::environment");
-		$»spos = $GLOBALS['%s']->length;
-		{
-			$»tmp = php_Lib::hashOfAssociativeArray($_SERVER);
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
+		return php_Lib::hashOfAssociativeArray($_SERVER);
 	}
 	function __toString() { return 'php.Sys'; }
 }

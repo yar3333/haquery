@@ -3,8 +3,6 @@
 class php_Stack {
 	public function __construct(){}
 	static function nativeExceptionStack() {
-		$GLOBALS['%s']->push("php.Stack::nativeExceptionStack");
-		$»spos = $GLOBALS['%s']->length;
 		$stack = new _hx_array($GLOBALS['%nativeExceptionCallStack']);
 		{
 			$_g1 = 0; $_g = $stack->length;
@@ -22,11 +20,7 @@ class php_Stack {
 				unset($i);
 			}
 		}
-		{
-			$GLOBALS['%s']->pop();
-			return $stack;
-		}
-		$GLOBALS['%s']->pop();
+		return $stack;
 	}
 	function __toString() { return 'php.Stack'; }
 }

@@ -3,8 +3,6 @@
 class haquery_server_HaqRoute {
 	public function __construct($url) {
 		if(!php_Boot::$skip_constructor) {
-		$GLOBALS['%s']->push("haquery.server.HaqRoute::new");
-		$»spos = $GLOBALS['%s']->length;
 		if($url === "index.php" || $url === "index") {
 			php_Web::redirect("/");
 			php_Sys::hexit(0);
@@ -43,7 +41,6 @@ class haquery_server_HaqRoute {
 				$this->className = "haquery.server.HaqPage";
 			}
 		}
-		$GLOBALS['%s']->pop();
 	}}
 	public $routeType;
 	public $path;
@@ -60,15 +57,8 @@ class haquery_server_HaqRoute {
 			throw new HException('Unable to call «'.$m.'»');
 	}
 	static function isPageExist($path) {
-		$GLOBALS['%s']->push("haquery.server.HaqRoute::isPageExist");
-		$»spos = $GLOBALS['%s']->length;
 		$path = trim($path, "/") . "/";
-		{
-			$»tmp = file_exists($path . "template.html") || Type::resolveClass(str_replace("/", ".", $path) . "Server") !== null;
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
+		return file_exists($path . "template.html") || Type::resolveClass(str_replace("/", ".", $path) . "Server") !== null;
 	}
 	function __toString() { return 'haquery.server.HaqRoute'; }
 }

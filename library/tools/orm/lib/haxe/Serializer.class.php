@@ -3,15 +3,12 @@
 class haxe_Serializer {
 	public function __construct() {
 		if(!php_Boot::$skip_constructor) {
-		$GLOBALS['%s']->push("haxe.Serializer::new");
-		$製pos = $GLOBALS['%s']->length;
 		$this->buf = new StringBuf();
 		$this->cache = new _hx_array(array());
 		$this->useCache = haxe_Serializer::$USE_CACHE;
 		$this->useEnumIndex = haxe_Serializer::$USE_ENUM_INDEX;
 		$this->shash = new Hash();
 		$this->scount = 0;
-		$GLOBALS['%s']->pop();
 	}}
 	public $buf;
 	public $cache;
@@ -20,18 +17,9 @@ class haxe_Serializer {
 	public $useCache;
 	public $useEnumIndex;
 	public function toString() {
-		$GLOBALS['%s']->push("haxe.Serializer::toString");
-		$製pos = $GLOBALS['%s']->length;
-		{
-			$裨mp = $this->buf->b;
-			$GLOBALS['%s']->pop();
-			return $裨mp;
-		}
-		$GLOBALS['%s']->pop();
+		return $this->buf->b;
 	}
 	public function serializeString($s) {
-		$GLOBALS['%s']->push("haxe.Serializer::serializeString");
-		$製pos = $GLOBALS['%s']->length;
 		$x = $this->shash->get($s);
 		if($x !== null) {
 			{
@@ -56,10 +44,7 @@ class haxe_Serializer {
 				}
 				$this->buf->b .= $x1;
 			}
-			{
-				$GLOBALS['%s']->pop();
-				return;
-			}
+			return;
 		}
 		$this->shash->set($s, $this->scount++);
 		{
@@ -107,11 +92,8 @@ class haxe_Serializer {
 			}
 			$this->buf->b .= $x1;
 		}
-		$GLOBALS['%s']->pop();
 	}
 	public function serializeRef($v) {
-		$GLOBALS['%s']->push("haxe.Serializer::serializeRef");
-		$製pos = $GLOBALS['%s']->length;
 		{
 			$_g1 = 0; $_g = $this->cache->length;
 			while($_g1 < $_g) {
@@ -141,24 +123,15 @@ class haxe_Serializer {
 						$this->buf->b .= $x;
 						unset($x);
 					}
-					{
-						$GLOBALS['%s']->pop();
-						return true;
-					}
+					return true;
 				}
 				unset($i);
 			}
 		}
 		$this->cache->push($v);
-		{
-			$GLOBALS['%s']->pop();
-			return false;
-		}
-		$GLOBALS['%s']->pop();
+		return false;
 	}
 	public function serializeFields($v) {
-		$GLOBALS['%s']->push("haxe.Serializer::serializeFields");
-		$製pos = $GLOBALS['%s']->length;
 		{
 			$_g = 0; $_g1 = Reflect::fields($v);
 			while($_g < $_g1->length) {
@@ -180,11 +153,8 @@ class haxe_Serializer {
 			}
 			$this->buf->b .= $x;
 		}
-		$GLOBALS['%s']->pop();
 	}
 	public function serialize($v) {
-		$GLOBALS['%s']->push("haxe.Serializer::serialize");
-		$製pos = $GLOBALS['%s']->length;
 		$裨 = (Type::typeof($v));
 		switch($裨->index) {
 		case 0:
@@ -213,10 +183,7 @@ class haxe_Serializer {
 					}
 					$this->buf->b .= $x;
 				}
-				{
-					$GLOBALS['%s']->pop();
-					return;
-				}
+				return;
 			}
 			{
 				$x = "i";
@@ -307,13 +274,9 @@ class haxe_Serializer {
 		{
 			if($c === _hx_qtype("String")) {
 				$this->serializeString($v);
-				{
-					$GLOBALS['%s']->pop();
-					return;
-				}
+				return;
 			}
 			if($this->useCache && $this->serializeRef($v)) {
-				$GLOBALS['%s']->pop();
 				return;
 			}
 			switch($c) {
@@ -692,7 +655,6 @@ class haxe_Serializer {
 		case 4:
 		{
 			if($this->useCache && $this->serializeRef($v)) {
-				$GLOBALS['%s']->pop();
 				return;
 			}
 			{
@@ -712,7 +674,6 @@ class haxe_Serializer {
 		$e = $裨->params[0];
 		{
 			if($this->useCache && $this->serializeRef($v)) {
-				$GLOBALS['%s']->pop();
 				return;
 			}
 			$this->cache->pop();
@@ -807,11 +768,8 @@ class haxe_Serializer {
 			throw new HException("Cannot serialize " . Std::string($v));
 		}break;
 		}
-		$GLOBALS['%s']->pop();
 	}
 	public function serializeException($e) {
-		$GLOBALS['%s']->push("haxe.Serializer::serializeException");
-		$製pos = $GLOBALS['%s']->length;
 		{
 			$x = "x";
 			if(is_null($x)) {
@@ -824,7 +782,6 @@ class haxe_Serializer {
 			$this->buf->b .= $x;
 		}
 		$this->serialize($e);
-		$GLOBALS['%s']->pop();
 	}
 	public function __call($m, $a) {
 		if(isset($this->$m) && is_callable($this->$m))
@@ -840,16 +797,9 @@ class haxe_Serializer {
 	static $USE_ENUM_INDEX = false;
 	static $BASE64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%:";
 	static function run($v) {
-		$GLOBALS['%s']->push("haxe.Serializer::run");
-		$製pos = $GLOBALS['%s']->length;
 		$s = new haxe_Serializer();
 		$s->serialize($v);
-		{
-			$裨mp = $s->toString();
-			$GLOBALS['%s']->pop();
-			return $裨mp;
-		}
-		$GLOBALS['%s']->pop();
+		return $s->toString();
 	}
 	function __toString() { return $this->toString(); }
 }

@@ -3,29 +3,18 @@
 class haquery_base_HaqEvent {
 	public function __construct($component, $name) {
 		if(!php_Boot::$skip_constructor) {
-		$GLOBALS['%s']->push("haquery.base.HaqEvent::new");
-		$»spos = $GLOBALS['%s']->length;
 		$this->handlers = new _hx_array(array());
 		$this->component = $component;
 		$this->name = $name;
-		$GLOBALS['%s']->pop();
 	}}
 	public $handlers;
 	public $component;
 	public $name;
 	public function bind($obj, $func) {
-		$GLOBALS['%s']->push("haquery.base.HaqEvent::bind");
-		$»spos = $GLOBALS['%s']->length;
 		$this->handlers->push(_hx_anonymous(array("o" => $obj, "f" => $func)));
-		{
-			$GLOBALS['%s']->pop();
-			return $this;
-		}
-		$GLOBALS['%s']->pop();
+		return $this;
 	}
 	public function call($params) {
-		$GLOBALS['%s']->push("haquery.base.HaqEvent::call");
-		$»spos = $GLOBALS['%s']->length;
 		if($params === null) {
 			$params = new _hx_array(array());
 		}
@@ -35,17 +24,12 @@ class haquery_base_HaqEvent {
 			$func = (isset(_hx_array_get($this->handlers, $i)->f) ? _hx_array_get($this->handlers, $i)->f: array($this->handlers[$i], "f"));
 			$r = Reflect::callMethod($obj, $func, _hx_deref((new _hx_array(array($this->component->parent))))->concat($params));
 			if($r === false) {
-				$GLOBALS['%s']->pop();
 				return false;
 			}
 			$i--;
 			unset($r,$obj,$func);
 		}
-		{
-			$GLOBALS['%s']->pop();
-			return true;
-		}
-		$GLOBALS['%s']->pop();
+		return true;
 	}
 	public function __call($m, $a) {
 		if(isset($this->$m) && is_callable($this->$m))

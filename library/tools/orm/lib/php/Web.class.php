@@ -3,22 +3,13 @@
 class php_Web {
 	public function __construct(){}
 	static function getParams() {
-		$GLOBALS['%s']->push("php.Web::getParams");
-		$製pos = $GLOBALS['%s']->length;
 		$a = array_merge($_GET, $_POST);
 		if(get_magic_quotes_gpc()) {
 			reset($a); while(list($k, $v) = each($a)) $a[$k] = stripslashes((string)$v);
 		}
-		{
-			$裨mp = php_Lib::hashOfAssociativeArray($a);
-			$GLOBALS['%s']->pop();
-			return $裨mp;
-		}
-		$GLOBALS['%s']->pop();
+		return php_Lib::hashOfAssociativeArray($a);
 	}
 	static function getParamValues($param) {
-		$GLOBALS['%s']->push("php.Web::getParamValues");
-		$製pos = $GLOBALS['%s']->length;
 		$reg = new EReg("^" . $param . "(\\[|%5B)([0-9]*?)(\\]|%5D)=(.*?)\$", "");
 		$res = new _hx_array(array());
 		$explore = array(new _hx_lambda(array(&$param, &$reg, &$res), "php_Web_0"), 'execute');
@@ -35,61 +26,27 @@ class php_Web {
 			}
 		}
 		if($res->length === 0) {
-			$GLOBALS['%s']->pop();
 			return null;
 		}
-		{
-			$GLOBALS['%s']->pop();
-			return $res;
-		}
-		$GLOBALS['%s']->pop();
+		return $res;
 	}
 	static function getHostName() {
-		$GLOBALS['%s']->push("php.Web::getHostName");
-		$製pos = $GLOBALS['%s']->length;
-		{
-			$裨mp = $_SERVER['SERVER_NAME'];
-			$GLOBALS['%s']->pop();
-			return $裨mp;
-		}
-		$GLOBALS['%s']->pop();
+		return $_SERVER['SERVER_NAME'];
 	}
 	static function getClientIP() {
-		$GLOBALS['%s']->push("php.Web::getClientIP");
-		$製pos = $GLOBALS['%s']->length;
-		{
-			$裨mp = $_SERVER['REMOTE_ADDR'];
-			$GLOBALS['%s']->pop();
-			return $裨mp;
-		}
-		$GLOBALS['%s']->pop();
+		return $_SERVER['REMOTE_ADDR'];
 	}
 	static function getURI() {
-		$GLOBALS['%s']->push("php.Web::getURI");
-		$製pos = $GLOBALS['%s']->length;
 		$s = $_SERVER['REQUEST_URI'];
-		{
-			$裨mp = _hx_array_get(_hx_explode("?", $s), 0);
-			$GLOBALS['%s']->pop();
-			return $裨mp;
-		}
-		$GLOBALS['%s']->pop();
+		return _hx_array_get(_hx_explode("?", $s), 0);
 	}
 	static function redirect($url) {
-		$GLOBALS['%s']->push("php.Web::redirect");
-		$製pos = $GLOBALS['%s']->length;
 		header("Location: " . $url);
-		$GLOBALS['%s']->pop();
 	}
 	static function setHeader($h, $v) {
-		$GLOBALS['%s']->push("php.Web::setHeader");
-		$製pos = $GLOBALS['%s']->length;
 		header($h . ": " . $v);
-		$GLOBALS['%s']->pop();
 	}
 	static function setReturnCode($r) {
-		$GLOBALS['%s']->push("php.Web::setReturnCode");
-		$製pos = $GLOBALS['%s']->length;
 		$code = null;
 		switch($r) {
 		case 100:{
@@ -217,33 +174,21 @@ class php_Web {
 		}break;
 		}
 		header("HTTP/1.1 " . $code, true, $r);
-		$GLOBALS['%s']->pop();
 	}
 	static function getClientHeader($k) {
-		$GLOBALS['%s']->push("php.Web::getClientHeader");
-		$製pos = $GLOBALS['%s']->length;
 		$k1 = str_replace("-", "_", strtoupper($k));
 		if(null == php_Web::getClientHeaders()) throw new HException('null iterable');
 		$蜴t = php_Web::getClientHeaders()->iterator();
 		while($蜴t->hasNext()) {
 			$i = $蜴t->next();
 			if($i->header === $k1) {
-				$裨mp = $i->value;
-				$GLOBALS['%s']->pop();
-				return $裨mp;
-				unset($裨mp);
+				return $i->value;
 			}
 		}
-		{
-			$GLOBALS['%s']->pop();
-			return null;
-		}
-		$GLOBALS['%s']->pop();
+		return null;
 	}
 	static $_client_headers;
 	static function getClientHeaders() {
-		$GLOBALS['%s']->push("php.Web::getClientHeaders");
-		$製pos = $GLOBALS['%s']->length;
 		if(php_Web::$_client_headers === null) {
 			php_Web::$_client_headers = new HList();
 			$h = php_Lib::hashOfAssociativeArray($_SERVER);
@@ -256,29 +201,16 @@ class php_Web {
 				}
 			}
 		}
-		{
-			$裨mp = php_Web::$_client_headers;
-			$GLOBALS['%s']->pop();
-			return $裨mp;
-		}
-		$GLOBALS['%s']->pop();
+		return php_Web::$_client_headers;
 	}
 	static function getParamsString() {
-		$GLOBALS['%s']->push("php.Web::getParamsString");
-		$製pos = $GLOBALS['%s']->length;
 		if(isset($_SERVER["QUERY_STRING"])) {
-			$裨mp = $_SERVER["QUERY_STRING"];
-			$GLOBALS['%s']->pop();
-			return $裨mp;
+			return $_SERVER["QUERY_STRING"];
 		} else {
-			$GLOBALS['%s']->pop();
 			return "";
 		}
-		$GLOBALS['%s']->pop();
 	}
 	static function getPostData() {
-		$GLOBALS['%s']->push("php.Web::getPostData");
-		$製pos = $GLOBALS['%s']->length;
 		$h = fopen("php://input", "r");
 		$bsize = 8192;
 		$max = 32;
@@ -289,25 +221,12 @@ class php_Web {
 			$counter++;
 		}
 		fclose($h);
-		{
-			$GLOBALS['%s']->pop();
-			return $data;
-		}
-		$GLOBALS['%s']->pop();
+		return $data;
 	}
 	static function getCookies() {
-		$GLOBALS['%s']->push("php.Web::getCookies");
-		$製pos = $GLOBALS['%s']->length;
-		{
-			$裨mp = php_Lib::hashOfAssociativeArray($_COOKIE);
-			$GLOBALS['%s']->pop();
-			return $裨mp;
-		}
-		$GLOBALS['%s']->pop();
+		return php_Lib::hashOfAssociativeArray($_COOKIE);
 	}
 	static function setCookie($key, $value, $expire, $domain, $path, $secure) {
-		$GLOBALS['%s']->push("php.Web::setCookie");
-		$製pos = $GLOBALS['%s']->length;
 		$t = (($expire === null) ? 0 : intval($expire->getTime() / 1000.0));
 		if($path === null) {
 			$path = "/";
@@ -319,49 +238,23 @@ class php_Web {
 			$secure = false;
 		}
 		setcookie($key, $value, $t, $path, $domain, $secure);
-		$GLOBALS['%s']->pop();
 	}
 	static function addPair($name, $value) {
-		$GLOBALS['%s']->push("php.Web::addPair");
-		$製pos = $GLOBALS['%s']->length;
 		if($value === null) {
-			$GLOBALS['%s']->pop();
 			return "";
 		}
-		{
-			$裨mp = "; " . $name . $value;
-			$GLOBALS['%s']->pop();
-			return $裨mp;
-		}
-		$GLOBALS['%s']->pop();
+		return "; " . $name . $value;
 	}
 	static function getAuthorization() {
-		$GLOBALS['%s']->push("php.Web::getAuthorization");
-		$製pos = $GLOBALS['%s']->length;
 		if(!isset($_SERVER['PHP_AUTH_USER'])) {
-			$GLOBALS['%s']->pop();
 			return null;
 		}
-		{
-			$裨mp = _hx_anonymous(array("user" => $_SERVER['PHP_AUTH_USER'], "pass" => $_SERVER['PHP_AUTH_PW']));
-			$GLOBALS['%s']->pop();
-			return $裨mp;
-		}
-		$GLOBALS['%s']->pop();
+		return _hx_anonymous(array("user" => $_SERVER['PHP_AUTH_USER'], "pass" => $_SERVER['PHP_AUTH_PW']));
 	}
 	static function getCwd() {
-		$GLOBALS['%s']->push("php.Web::getCwd");
-		$製pos = $GLOBALS['%s']->length;
-		{
-			$裨mp = dirname($_SERVER["SCRIPT_FILENAME"]) . "/";
-			$GLOBALS['%s']->pop();
-			return $裨mp;
-		}
-		$GLOBALS['%s']->pop();
+		return dirname($_SERVER["SCRIPT_FILENAME"]) . "/";
 	}
 	static function getMultipart($maxSize) {
-		$GLOBALS['%s']->push("php.Web::getMultipart");
-		$製pos = $GLOBALS['%s']->length;
 		$h = new Hash();
 		$buf = null;
 		$curname = null;
@@ -369,15 +262,9 @@ class php_Web {
 		if($curname !== null) {
 			$h->set($curname, $buf->b);
 		}
-		{
-			$GLOBALS['%s']->pop();
-			return $h;
-		}
-		$GLOBALS['%s']->pop();
+		return $h;
 	}
 	static function parseMultipart($onPart, $onData) {
-		$GLOBALS['%s']->push("php.Web::parseMultipart");
-		$製pos = $GLOBALS['%s']->length;
 		$a = $_POST;
 		if(get_magic_quotes_gpc()) {
 			reset($a); while(list($k, $v) = each($a)) $a[$k] = stripslashes((string)$v);
@@ -393,7 +280,6 @@ class php_Web {
 			unset($v);
 		}
 		if(!isset($_FILES)) {
-			$GLOBALS['%s']->pop();
 			return;
 		}
 		$parts = new _hx_array(array_keys($_FILES));
@@ -447,38 +333,24 @@ class php_Web {
 				unset($tmp,$part,$info,$file,$err);
 			}
 		}
-		$GLOBALS['%s']->pop();
 	}
 	static function flush() {
-		$GLOBALS['%s']->push("php.Web::flush");
-		$製pos = $GLOBALS['%s']->length;
 		flush();
-		$GLOBALS['%s']->pop();
 	}
 	static function getMethod() {
-		$GLOBALS['%s']->push("php.Web::getMethod");
-		$製pos = $GLOBALS['%s']->length;
 		if(isset($_SERVER['REQUEST_METHOD'])) {
-			$裨mp = $_SERVER['REQUEST_METHOD'];
-			$GLOBALS['%s']->pop();
-			return $裨mp;
+			return $_SERVER['REQUEST_METHOD'];
 		} else {
-			$GLOBALS['%s']->pop();
 			return null;
 		}
-		$GLOBALS['%s']->pop();
 	}
 	static $isModNeko;
 	function __toString() { return 'php.Web'; }
 }
 php_Web::$isModNeko = !php_Lib::isCli();
 function php_Web_0(&$param, &$reg, &$res, $data) {
-	$製pos = $GLOBALS['%s']->length;
 	{
-		$GLOBALS['%s']->push("php.Web::getParamValues@45");
-		$製pos2 = $GLOBALS['%s']->length;
 		if($data === null || strlen($data) === 0) {
-			$GLOBALS['%s']->pop();
 			return;
 		}
 		{
@@ -499,14 +371,10 @@ function php_Web_0(&$param, &$reg, &$res, $data) {
 				unset($part);
 			}
 		}
-		$GLOBALS['%s']->pop();
 	}
 }
 function php_Web_1(&$buf, &$curname, &$h, &$maxSize, $p, $_) {
-	$製pos = $GLOBALS['%s']->length;
 	{
-		$GLOBALS['%s']->push("php.Web::getMultipart@279");
-		$製pos2 = $GLOBALS['%s']->length;
 		if($curname !== null) {
 			$h->set($curname, $buf->b);
 		}
@@ -516,19 +384,14 @@ function php_Web_1(&$buf, &$curname, &$h, &$maxSize, $p, $_) {
 		if($maxSize < 0) {
 			throw new HException("Maximum size reached");
 		}
-		$GLOBALS['%s']->pop();
 	}
 }
 function php_Web_2(&$buf, &$curname, &$h, &$maxSize, $str, $pos, $len) {
-	$製pos = $GLOBALS['%s']->length;
 	{
-		$GLOBALS['%s']->push("php.Web::getMultipart@287");
-		$製pos2 = $GLOBALS['%s']->length;
 		$maxSize -= $len;
 		if($maxSize < 0) {
 			throw new HException("Maximum size reached");
 		}
 		$buf->b .= _hx_substr($str->toString(), $pos, $len);
-		$GLOBALS['%s']->pop();
 	}
 }

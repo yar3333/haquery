@@ -7,204 +7,64 @@ class Math {
 	static $POSITIVE_INFINITY;
 	static $NEGATIVE_INFINITY;
 	static function abs($v) {
-		$GLOBALS['%s']->push("Math::abs");
-		$»spos = $GLOBALS['%s']->length;
-		{
-			$»tmp = abs($v);
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
+		return abs($v);
 	}
 	static function min($a, $b) {
-		$GLOBALS['%s']->push("Math::min");
-		$»spos = $GLOBALS['%s']->length;
-		{
-			$»tmp = min($a, $b);
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
+		return min($a, $b);
 	}
 	static function max($a, $b) {
-		$GLOBALS['%s']->push("Math::max");
-		$»spos = $GLOBALS['%s']->length;
-		{
-			$»tmp = max($a, $b);
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
+		return max($a, $b);
 	}
 	static function sin($v) {
-		$GLOBALS['%s']->push("Math::sin");
-		$»spos = $GLOBALS['%s']->length;
-		{
-			$»tmp = sin($v);
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
+		return sin($v);
 	}
 	static function cos($v) {
-		$GLOBALS['%s']->push("Math::cos");
-		$»spos = $GLOBALS['%s']->length;
-		{
-			$»tmp = cos($v);
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
+		return cos($v);
 	}
 	static function atan2($y, $x) {
-		$GLOBALS['%s']->push("Math::atan2");
-		$»spos = $GLOBALS['%s']->length;
-		{
-			$»tmp = atan2($y, $x);
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
+		return atan2($y, $x);
 	}
 	static function tan($v) {
-		$GLOBALS['%s']->push("Math::tan");
-		$»spos = $GLOBALS['%s']->length;
-		{
-			$»tmp = tan($v);
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
+		return tan($v);
 	}
 	static function exp($v) {
-		$GLOBALS['%s']->push("Math::exp");
-		$»spos = $GLOBALS['%s']->length;
-		{
-			$»tmp = exp($v);
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
+		return exp($v);
 	}
 	static function log($v) {
-		$GLOBALS['%s']->push("Math::log");
-		$»spos = $GLOBALS['%s']->length;
-		{
-			$»tmp = log($v);
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
+		return log($v);
 	}
 	static function sqrt($v) {
-		$GLOBALS['%s']->push("Math::sqrt");
-		$»spos = $GLOBALS['%s']->length;
-		{
-			$»tmp = sqrt($v);
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
+		return sqrt($v);
 	}
 	static function round($v) {
-		$GLOBALS['%s']->push("Math::round");
-		$»spos = $GLOBALS['%s']->length;
-		{
-			$»tmp = (int) floor($v + 0.5);
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
+		return (int) floor($v + 0.5);
 	}
 	static function floor($v) {
-		$GLOBALS['%s']->push("Math::floor");
-		$»spos = $GLOBALS['%s']->length;
-		{
-			$»tmp = (int) floor($v);
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
+		return (int) floor($v);
 	}
 	static function ceil($v) {
-		$GLOBALS['%s']->push("Math::ceil");
-		$»spos = $GLOBALS['%s']->length;
-		{
-			$»tmp = (int) ceil($v);
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
+		return (int) ceil($v);
 	}
 	static function atan($v) {
-		$GLOBALS['%s']->push("Math::atan");
-		$»spos = $GLOBALS['%s']->length;
-		{
-			$»tmp = atan($v);
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
+		return atan($v);
 	}
 	static function asin($v) {
-		$GLOBALS['%s']->push("Math::asin");
-		$»spos = $GLOBALS['%s']->length;
-		{
-			$»tmp = asin($v);
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
+		return asin($v);
 	}
 	static function acos($v) {
-		$GLOBALS['%s']->push("Math::acos");
-		$»spos = $GLOBALS['%s']->length;
-		{
-			$»tmp = acos($v);
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
+		return acos($v);
 	}
 	static function pow($v, $exp) {
-		$GLOBALS['%s']->push("Math::pow");
-		$»spos = $GLOBALS['%s']->length;
-		{
-			$»tmp = pow($v, $exp);
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
+		return pow($v, $exp);
 	}
 	static function random() {
-		$GLOBALS['%s']->push("Math::random");
-		$»spos = $GLOBALS['%s']->length;
-		{
-			$»tmp = mt_rand() / mt_getrandmax();
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
+		return mt_rand() / mt_getrandmax();
 	}
 	static function isNaN($f) {
-		$GLOBALS['%s']->push("Math::isNaN");
-		$»spos = $GLOBALS['%s']->length;
-		{
-			$»tmp = is_nan($f);
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
+		return is_nan($f);
 	}
 	static function isFinite($f) {
-		$GLOBALS['%s']->push("Math::isFinite");
-		$»spos = $GLOBALS['%s']->length;
-		{
-			$»tmp = is_finite($f);
-			$GLOBALS['%s']->pop();
-			return $»tmp;
-		}
-		$GLOBALS['%s']->pop();
+		return is_finite($f);
 	}
 	function __toString() { return 'Math'; }
 }
