@@ -91,15 +91,21 @@ class HaqPage extends HaqComponent
         }
     }
     
-    static function getScriptLink(path:String) : String
+    static function getScriptLink(url:String) : String
     {
-        var url = '/' + path + '?' + FileSystem.stat(path).mtime.getTime()/1000;
+		if (!url.startsWith("http://") && !url.startsWith("/"))
+		{
+			url = '/' + url + '?' + FileSystem.stat(url).mtime.getTime() / 1000;
+		}
         return "<script src='" + url + "'></script>";
     }
     
-	static function getStyleLink(path:String) : String
+	static function getStyleLink(url:String) : String
     {
-        var url = '/' + path + '?' + FileSystem.stat(path).mtime.getTime()/1000;
+		if (!url.startsWith("http://") && !url.startsWith("/"))
+		{
+			url = '/' + url + '?' + FileSystem.stat(url).mtime.getTime() / 1000;
+		}
         return "<link rel='stylesheet' type='text/css' href='" + url + "' />";
     }
     
