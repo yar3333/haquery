@@ -15,3 +15,5 @@ tools/run.net/run_exe/obj
 tools/run.net/run_exe/run_exe.suo
 tools/examples/ckeditor/bin
 tools/trm/src/Imports.hx
+tools/examples/trm/bin
+tools/examples/trm/src/Imports.hx
