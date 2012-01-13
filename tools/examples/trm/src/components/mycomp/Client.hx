@@ -1,6 +1,6 @@
 #if js
 
-package components.buttonexample;
+package components.mycomp;
 
 import haquery.client.HaqComponent;
 
@@ -10,7 +10,7 @@ class Client extends HaqComponent
 	
     function init()
     {
-        template.status.html('pressed on client');
+        template.clientStatus.html('mycomp on the client');
     }
 }
 
