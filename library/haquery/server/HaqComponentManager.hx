@@ -61,33 +61,45 @@ class HaqComponentManager
         return page;
 	}
     
+	function getSupportRelatedUrl(tag:String, url:String) : String
+	{
+		if (url.startsWith("~/"))
+		{
+			url = url.substr(2);
+		}
+		else
+		if (!url.startsWith("http://") && !url.startsWith("/"))
+		{
+			url = templates.getSupportPath(tag) + url;
+		}
+		return url;
+	}
+	
 	/**
 	 * Tells HaQuery to load JS file from support component folder.
 	 * @param	tag Component name.
-	 * @param	supportRelatedPath Path to js file.
+	 * @param	url Url to js file (related to support component folder).
 	 */
-    public function registerScript(tag:String, supportRelatedPath:String) : Void
+    public function registerScript(tag:String, url:String) : Void
 	{
-		var path = !supportRelatedPath.startsWith("http://") && !supportRelatedPath.startsWith("/") 
-			? templates.getSupportPath(tag) + supportRelatedPath 
-			: supportRelatedPath;
-		if (!Lambda.has(registeredScripts, path))
+		url = getSupportRelatedUrl(tag, url);
+		if (!Lambda.has(registeredScripts, url))
 		{
-			registeredScripts.push(path);
+			registeredScripts.push(url);
 		}
 	}
 	
 	/**
 	 * Tells HaQuery to load CSS file from support component folder.
 	 * @param	tag Component name.
-	 * @param	supportRelatedPath Path to js file.
+	 * @param	url Url to css file (related to support component folder).
 	 */
-	public function registerStyle(tag:String, supportRelatedPath:String) : Void
+	public function registerStyle(tag:String, url:String) : Void
 	{
-        var path = templates.getSupportPath(tag) + supportRelatedPath;
-		if (!Lambda.has(registeredStyles, path))
+		url = getSupportRelatedUrl(tag, url);
+		if (!Lambda.has(registeredStyles, url))
 		{
-			registeredStyles.push(path);
+			registeredStyles.push(url);
 		}
 	}
 	
