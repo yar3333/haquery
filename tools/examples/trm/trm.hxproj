@@ -50,7 +50,7 @@ haxelib run HaQuery pre-build</preBuildCommand>
   <options>
     <option showHiddenPaths="False" />
     <option testMovie="OpenDocument" />
-    <option testMovieCommand="http://trms/" />
+    <option testMovieCommand="http://trm.haquery/" />
   </options>
   <!-- Plugin storage -->
   <storage />

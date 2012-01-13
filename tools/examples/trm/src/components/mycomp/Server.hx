@@ -1,6 +1,6 @@
 #if php
 
-package components.buttonexample;
+package components.mycomp;
 
 import haquery.server.HaqComponent;
 
@@ -10,7 +10,7 @@ class Server extends HaqComponent
 	
 	function init()
     {
-		template.status.html('pressed on server');
+		template.serverStatus.html('mycomp on the server');
     }
 }
 

@@ -1,13 +1,13 @@
 package pages.index;
 
+import haquery.server.HaqComponent;
 import haquery.server.HaqPage;
-import haquery.server.HaqTools;
+import haquery.server.Web;
 import php.io.Path;
-import php.Web;
 
 class Server extends HaqPage
 {
-    public function fu_upload(t, file:UploadedFile)
+    public function fu_upload(t:HaqComponent, file:UploadedFile)
     {
         q('#status').html("upload " + file.name);
         file.move('uploads/' + Path.withoutDirectory(file.name));
