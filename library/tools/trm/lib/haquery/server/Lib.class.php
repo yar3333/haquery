@@ -390,9 +390,9 @@ haquery_server_Lib::$profiler = new haquery_server_HaqProfiler();
 function haquery_server_Lib_0(&$f, &$pos, &$text, &$v) {
 	$»spos = $GLOBALS['%s']->length;
 	if($text !== "") {
-		return sprintf("%.3f", (Date::now()->getTime() - haquery_server_Lib::$startTime) / 1000.0) . " " . str_replace("\x0A", "\x0A\x09", $text) . "\x0A";
+		return sprintf("%.3f", (Date::now()->getTime() - haquery_server_Lib::$startTime) / 1000.0) . " " . str_replace("\x0A", "\x0D\x0A\x09", $text) . "\x0D\x0A";
 	} else {
-		return "\x0A";
+		return "\x0D\x0A";
 	}
 }
 function haquery_server_Lib_1(&$path) {

@@ -182,9 +182,17 @@ class haquery_server_HaqComponent extends haquery_base_HaqComponent {
 			$GLOBALS['%s']->pop();
 			return $»tmp;
 		}
-		if(Type::getClassName(Type::getClass($query)) === "HaqQuery") {
+		if(Type::getClass($query) == _hx_qtype("haquery.server.HaqQuery")) {
 			$GLOBALS['%s']->pop();
 			return $query;
+		}
+		if($query instanceof HaqXmlNodeElement) {
+			haquery_server_Lib::assert(!haquery_server_Lib::$isPostback, "Calling of the HaqComponent.q() with HaqXmlNodeElement parameter do not possible on the postback.", _hx_anonymous(array("fileName" => "HaqComponent.hx", "lineNumber" => 190, "className" => "haquery.server.HaqComponent", "methodName" => "q")));
+			{
+				$»tmp = new haquery_server_HaqQuery($this->prefixID, "", php_Lib::toPhpArray(new _hx_array(array($query))));
+				$GLOBALS['%s']->pop();
+				return $»tmp;
+			}
 		}
 		if(Type::getClassName(Type::getClass($query)) !== "String") {
 			throw new HException("HaqComponent.q() error - 'query' parameter must be a string or HaqQuery.");
@@ -200,7 +208,7 @@ class haquery_server_HaqComponent extends haquery_base_HaqComponent {
 	public function callClientMethod($method, $params) {
 		$GLOBALS['%s']->push("haquery.server.HaqComponent::callClientMethod");
 		$»spos = $GLOBALS['%s']->length;
-		haquery_server_Lib::assert(haquery_server_Lib::$isPostback, "HaqComponent.callClientMethod() allowed on the postback only.", _hx_anonymous(array("fileName" => "HaqComponent.hx", "lineNumber" => 197, "className" => "haquery.server.HaqComponent", "methodName" => "callClientMethod")));
+		haquery_server_Lib::assert(haquery_server_Lib::$isPostback, "HaqComponent.callClientMethod() allowed on the postback only.", _hx_anonymous(array("fileName" => "HaqComponent.hx", "lineNumber" => 205, "className" => "haquery.server.HaqComponent", "methodName" => "callClientMethod")));
 		$funcName = haquery_server_HaqComponent_0($this, $method, $params);
 		haquery_server_HaqInternals::addAjaxResponse(haquery_base_HaqTools::getCallClientFunctionString($funcName, $params) . ";");
 		$GLOBALS['%s']->pop();

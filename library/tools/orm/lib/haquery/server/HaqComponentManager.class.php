@@ -38,16 +38,26 @@ class haquery_server_HaqComponentManager {
 		$page = $this->newComponent(null, $pageClass, "", "", $doc, $attr, null);
 		return $page;
 	}
-	public function registerScript($tag, $supportRelatedPath) {
-		$path = $this->templates->getSupportPath($tag) . $supportRelatedPath;
-		if(!Lambda::has($this->registeredScripts, $path, null)) {
-			$this->registeredScripts->push($path);
+	public function getSupportRelatedUrl($tag, $url) {
+		if(StringTools::startsWith($url, "~/")) {
+			$url = _hx_substr($url, 2, null);
+		} else {
+			if(!StringTools::startsWith($url, "http://") && !StringTools::startsWith($url, "/")) {
+				$url = $this->templates->getSupportPath($tag) . $url;
+			}
+		}
+		return $url;
+	}
+	public function registerScript($tag, $url) {
+		$url = $this->getSupportRelatedUrl($tag, $url);
+		if(!Lambda::has($this->registeredScripts, $url, null)) {
+			$this->registeredScripts->push($url);
 		}
 	}
-	public function registerStyle($tag, $supportRelatedPath) {
-		$path = $this->templates->getSupportPath($tag) . $supportRelatedPath;
-		if(!Lambda::has($this->registeredStyles, $path, null)) {
-			$this->registeredStyles->push($path);
+	public function registerStyle($tag, $url) {
+		$url = $this->getSupportRelatedUrl($tag, $url);
+		if(!Lambda::has($this->registeredStyles, $url, null)) {
+			$this->registeredStyles->push($url);
 		}
 	}
 	public function getRegisteredScripts() {

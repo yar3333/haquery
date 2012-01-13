@@ -88,6 +88,15 @@ namespace run_exe.haquery
             }
             return !path.EndsWith(".hx") && !path.EndsWith(".hxproj");
         }
+
+        bool isSupportFileWithoutComponents(string path)
+        {
+            if (isSupportFile(path))
+            {
+                return path != getExeDir() + "\\haquery\\components";
+            }
+            return false;
+        }
         
         string file2import(string basePath, string file)
         {
@@ -278,7 +287,7 @@ namespace run_exe.haquery
             log.finishOk();
         }
 
-        public void postBuild(bool skipJS)
+        public void postBuild(bool skipJS, bool skipComponents)
         {
             log.start("Do post-build step");
 
@@ -289,7 +298,7 @@ namespace run_exe.haquery
 
             foreach (var path in getClassPaths())
             {
-                hant.copyFolderContent(path, getBinPath(), isSupportFile);
+                hant.copyFolderContent(path, getBinPath(), !skipComponents ? new hant.Tasks.IncludeDelegate(isSupportFile) : new hant.Tasks.IncludeDelegate(isSupportFileWithoutComponents));
             }
 
             loadLibFolder();

@@ -14,7 +14,7 @@ class haquery_server_HaqTemplates {
 			while($_g < $componentsFolders->length) {
 				$folder = $componentsFolders[$_g];
 				++$_g;
-				haxe_Log::trace("components folder = " . $folder, _hx_anonymous(array("fileName" => "HaqTemplates.hx", "lineNumber" => 37, "className" => "haquery.server.HaqTemplates", "methodName" => "new")));
+				haquery_server_Lib::assert(StringTools::endsWith($folder, "/"), null, _hx_anonymous(array("fileName" => "HaqTemplates.hx", "lineNumber" => 37, "className" => "haquery.server.HaqTemplates", "methodName" => "new")));
 				$this->templates->set($folder, $this->build($folder));
 				unset($folder);
 			}

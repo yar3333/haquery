@@ -41,7 +41,7 @@
   <!-- Executed before build -->
   <preBuildCommand>haxelib run HaQuery pre-build</preBuildCommand>
   <!-- Executed after build -->
-  <postBuildCommand alwaysRun="False">haxelib run HaQuery post-build skipjs</postBuildCommand>
+  <postBuildCommand alwaysRun="False">haxelib run HaQuery post-build --skipjs --skipcomponents</postBuildCommand>
   <!-- Other project options -->
   <options>
     <option showHiddenPaths="False" />
