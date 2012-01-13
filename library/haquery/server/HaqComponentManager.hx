@@ -68,7 +68,9 @@ class HaqComponentManager
 	 */
     public function registerScript(tag:String, supportRelatedPath:String) : Void
 	{
-		var path = templates.getSupportPath(tag) + supportRelatedPath;
+		var path = !supportRelatedPath.startsWith("http://") && !supportRelatedPath.startsWith("/") 
+			? templates.getSupportPath(tag) + supportRelatedPath 
+			: supportRelatedPath;
 		if (!Lambda.has(registeredScripts, path))
 		{
 			registeredScripts.push(path);
