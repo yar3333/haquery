@@ -42,20 +42,27 @@ namespace run_exe
                 
                 case "post-build":
                     var skipJS = false;
-                    if (args.Length > 1)
+                    var skipComponents = false;
+
+                    for (var i=1;i<args.Length;i++)
                     {
-                        if (args[1] == "skipjs")
+                        if (args[i] == "--skipjs")
                         {
                             skipJS = true;
                         }
                         else
+                        if (args[i] == "--skipcomponents")
                         {
-                            Console.WriteLine("'skipjs' addition key is only supported on post-build.");
+                            skipComponents = true;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Option '" + args[i] + "' is not supported.");
                             return 1;
                         }
                     }
 
-                    haquery.postBuild(skipJS);
+                    haquery.postBuild(skipJS, skipComponents);
                     break;
                     
                 case "install":
@@ -71,12 +78,12 @@ namespace run_exe
                     Console.WriteLine("HaQuery building support and deploying tool.");
                     Console.WriteLine("Usage: haquery <command>");
                     Console.WriteLine("\twhere <command> may be:");
-                    Console.WriteLine("\t\tgen-orm <databaseConnectionString>    Generate object-related classes (managers and models)");
-                    Console.WriteLine("\t\tgen-trm <componentsPackage>           Generate template-related classes");
-                    Console.WriteLine("\t\tpre-build                             Do pre-build step");
-                    Console.WriteLine("\t\tpost-build [skipjs]                   Do post-build step");
-                    Console.WriteLine("\t\tinstall                               Patch haXe librarires to HaxeMod");
-                    Console.WriteLine("\t\tuninstall                             Restore original haXe libraries");
+                    Console.WriteLine("\t\tgen-orm <databaseConnectionString>       Generate object-related classes (managers and models)");
+                    Console.WriteLine("\t\tgen-trm <componentsPackage>              Generate template-related classes");
+                    Console.WriteLine("\t\tpre-build                                Do pre-build step");
+                    Console.WriteLine("\t\tpost-build [--skipjs] [--skipcomponents] Do post-build step");
+                    Console.WriteLine("\t\tinstall                                  Patch haXe librarires to HaxeMod");
+                    Console.WriteLine("\t\tuninstall                                Restore original haXe libraries");
                     return 1;
             }
             

@@ -59,21 +59,37 @@ class haquery_server_HaqComponentManager {
 		}
 		$GLOBALS['%s']->pop();
 	}
-	public function registerScript($tag, $supportRelatedPath) {
-		$GLOBALS['%s']->push("haquery.server.HaqComponentManager::registerScript");
+	public function getSupportRelatedUrl($tag, $url) {
+		$GLOBALS['%s']->push("haquery.server.HaqComponentManager::getSupportRelatedUrl");
 		$製pos = $GLOBALS['%s']->length;
-		$path = $this->templates->getSupportPath($tag) . $supportRelatedPath;
-		if(!Lambda::has($this->registeredScripts, $path, null)) {
-			$this->registeredScripts->push($path);
+		if(StringTools::startsWith($url, "~/")) {
+			$url = _hx_substr($url, 2, null);
+		} else {
+			if(!StringTools::startsWith($url, "http://") && !StringTools::startsWith($url, "/")) {
+				$url = $this->templates->getSupportPath($tag) . $url;
+			}
+		}
+		{
+			$GLOBALS['%s']->pop();
+			return $url;
 		}
 		$GLOBALS['%s']->pop();
 	}
-	public function registerStyle($tag, $supportRelatedPath) {
+	public function registerScript($tag, $url) {
+		$GLOBALS['%s']->push("haquery.server.HaqComponentManager::registerScript");
+		$製pos = $GLOBALS['%s']->length;
+		$url = $this->getSupportRelatedUrl($tag, $url);
+		if(!Lambda::has($this->registeredScripts, $url, null)) {
+			$this->registeredScripts->push($url);
+		}
+		$GLOBALS['%s']->pop();
+	}
+	public function registerStyle($tag, $url) {
 		$GLOBALS['%s']->push("haquery.server.HaqComponentManager::registerStyle");
 		$製pos = $GLOBALS['%s']->length;
-		$path = $this->templates->getSupportPath($tag) . $supportRelatedPath;
-		if(!Lambda::has($this->registeredStyles, $path, null)) {
-			$this->registeredStyles->push($path);
+		$url = $this->getSupportRelatedUrl($tag, $url);
+		if(!Lambda::has($this->registeredStyles, $url, null)) {
+			$this->registeredStyles->push($url);
 		}
 		$GLOBALS['%s']->pop();
 	}
@@ -200,7 +216,7 @@ class haquery_server_HaqComponentManager {
 function haquery_server_HaqComponentManager_0(&$components, &$page, &$path, &$s, &$tag, &$tagComponents, &$tags, $x) {
 	$製pos = $GLOBALS['%s']->length;
 	{
-		$GLOBALS['%s']->push("haquery.server.HaqComponentManager::getInternalDataForPageHtml@112");
+		$GLOBALS['%s']->push("haquery.server.HaqComponentManager::getInternalDataForPageHtml@126");
 		$製pos2 = $GLOBALS['%s']->length;
 		while($x !== null) {
 			if(!$x->visible) {
@@ -219,7 +235,7 @@ function haquery_server_HaqComponentManager_0(&$components, &$page, &$path, &$s,
 function haquery_server_HaqComponentManager_1(&$components, &$page, &$path, &$s, &$tag, &$tagComponents, &$tags, &$visibledComponents, $x) {
 	$製pos = $GLOBALS['%s']->length;
 	{
-		$GLOBALS['%s']->push("haquery.server.HaqComponentManager::getInternalDataForPageHtml@120");
+		$GLOBALS['%s']->push("haquery.server.HaqComponentManager::getInternalDataForPageHtml@134");
 		$製pos2 = $GLOBALS['%s']->length;
 		{
 			$裨mp = $x->fullID;

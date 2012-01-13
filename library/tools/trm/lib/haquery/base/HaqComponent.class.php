@@ -7,6 +7,26 @@ class haquery_base_HaqComponent {
 		$»spos = $GLOBALS['%s']->length;
 		$this->components = new Hash();
 		$this->nextAnonimID = 0;
+		$»t = (Type::typeof($this));
+		switch($»t->index) {
+		case 6:
+		$cls = $»t->params[0];
+		{
+			if(Lambda::has(Type::getInstanceFields($cls), "template", null)) {
+				$className = Type::getClassName($cls);
+				$lastPointPos = _hx_last_index_of($className, ".", null);
+				if($lastPointPos > 0) {
+					$templateClassName = _hx_substr($className, 0, $lastPointPos) . ".Template";
+					$templateClass = Type::resolveClass($templateClassName);
+					if($templateClass !== null) {
+						$this->{"template"} = Type::createInstance($templateClass, new _hx_array(array($this)));
+					}
+				}
+			}
+		}break;
+		default:{
+		}break;
+		}
 		$GLOBALS['%s']->pop();
 	}}
 	public $id;
@@ -28,7 +48,7 @@ class haquery_base_HaqComponent {
 		$this->fullID = (haquery_base_HaqComponent_0($this, $id, $parent, $tag)) . $id;
 		$this->prefixID = haquery_base_HaqComponent_1($this, $id, $parent, $tag);
 		if($parent !== null) {
-			haquery_server_Lib::assert(!$parent->components->exists($id), "Component with same id '" . $id . "' already exist.", _hx_anonymous(array("fileName" => "HaqComponent.hx", "lineNumber" => 65, "className" => "haquery.base.HaqComponent", "methodName" => "commonConstruct")));
+			haquery_server_Lib::assert(!$parent->components->exists($id), "Component with same id '" . $id . "' already exist.", _hx_anonymous(array("fileName" => "HaqComponent.hx", "lineNumber" => 85, "className" => "haquery.base.HaqComponent", "methodName" => "commonConstruct")));
 			$parent->components->set($id, $this);
 		}
 		$GLOBALS['%s']->pop();
