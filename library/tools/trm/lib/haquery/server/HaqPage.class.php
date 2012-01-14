@@ -75,10 +75,12 @@ class haquery_server_HaqPage extends haquery_server_HaqComponent {
 		else
 			throw new HException('Unable to call «'.$m.'»');
 	}
-	static function getScriptLink($path) {
+	static function getScriptLink($url) {
 		$GLOBALS['%s']->push("haquery.server.HaqPage::getScriptLink");
 		$»spos = $GLOBALS['%s']->length;
-		$url = "/" . $path . "?" . php_FileSystem::stat($path)->mtime->getTime() / 1000;
+		if(!StringTools::startsWith($url, "http://") && !StringTools::startsWith($url, "/")) {
+			$url = "/" . $url . "?" . php_FileSystem::stat($url)->mtime->getTime() / 1000;
+		}
 		{
 			$»tmp = "<script src='" . $url . "'></script>";
 			$GLOBALS['%s']->pop();
@@ -86,10 +88,12 @@ class haquery_server_HaqPage extends haquery_server_HaqComponent {
 		}
 		$GLOBALS['%s']->pop();
 	}
-	static function getStyleLink($path) {
+	static function getStyleLink($url) {
 		$GLOBALS['%s']->push("haquery.server.HaqPage::getStyleLink");
 		$»spos = $GLOBALS['%s']->length;
-		$url = "/" . $path . "?" . php_FileSystem::stat($path)->mtime->getTime() / 1000;
+		if(!StringTools::startsWith($url, "http://") && !StringTools::startsWith($url, "/")) {
+			$url = "/" . $url . "?" . php_FileSystem::stat($url)->mtime->getTime() / 1000;
+		}
 		{
 			$»tmp = "<link rel='stylesheet' type='text/css' href='" . $url . "' />";
 			$GLOBALS['%s']->pop();

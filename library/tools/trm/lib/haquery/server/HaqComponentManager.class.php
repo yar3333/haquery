@@ -201,6 +201,92 @@ class haquery_server_HaqComponentManager {
 		}
 		$GLOBALS['%s']->pop();
 	}
+	public function createChildComponents($parent, $baseNode) {
+		$GLOBALS['%s']->push("haquery.server.HaqComponentManager::createChildComponents");
+		$»spos = $GLOBALS['%s']->length;
+		$i = 0;
+		while($i < count($baseNode->children)) {
+			$node = $baseNode->children[$i];
+			haquery_server_Lib::assert($node->name !== "haq:placeholder", null, _hx_anonymous(array("fileName" => "HaqComponentManager.hx", "lineNumber" => 199, "className" => "haquery.server.HaqComponentManager", "methodName" => "createChildComponents")));
+			haquery_server_Lib::assert($node->name !== "haq:content", null, _hx_anonymous(array("fileName" => "HaqComponentManager.hx", "lineNumber" => 200, "className" => "haquery.server.HaqComponentManager", "methodName" => "createChildComponents")));
+			$this->createChildComponents($parent, $node);
+			if(StringTools::startsWith($node->name, "haq:")) {
+				$node->component = $this->createComponent($parent, $node->name, $node->getAttribute("id"), php_Lib::hashOfAssociativeArray($node->getAttributesAssoc()), $node);
+			}
+			$i++;
+			unset($node);
+		}
+		$GLOBALS['%s']->pop();
+	}
+	public function getFieldsToLoadParams($component) {
+		$GLOBALS['%s']->push("haquery.server.HaqComponentManager::getFieldsToLoadParams");
+		$»spos = $GLOBALS['%s']->length;
+		$r = new Hash();
+		{
+			$_g = 0; $_g1 = Reflect::fields($component);
+			while($_g < $_g1->length) {
+				$field = $_g1[$_g];
+				++$_g;
+				if(!Reflect::isFunction(Reflect::field($component, $field)) && !Lambda::has(haquery_server_HaqComponentManager::$baseComponentFields, $field, null) && !StringTools::startsWith($field, "event_")) {
+					$r->set(strtolower($field), $field);
+				}
+				unset($field);
+			}
+		}
+		{
+			$GLOBALS['%s']->pop();
+			return $r;
+		}
+		$GLOBALS['%s']->pop();
+	}
+	public function prepareDocToRender($prefixID, $baseNode) {
+		$GLOBALS['%s']->push("haquery.server.HaqComponentManager::prepareDocToRender");
+		$»spos = $GLOBALS['%s']->length;
+		$i = 0;
+		while($i < count($baseNode->children)) {
+			$node = $baseNode->children[$i];
+			if(StringTools::startsWith($node->name, "haq:")) {
+				if($node->component === null) {
+					haxe_Log::trace("Component is null: " . $node->name, _hx_anonymous(array("fileName" => "HaqComponentManager.hx", "lineNumber" => 237, "className" => "haquery.server.HaqComponentManager", "methodName" => "prepareDocToRender")));
+					haquery_server_Lib::assert(false, null, _hx_anonymous(array("fileName" => "HaqComponentManager.hx", "lineNumber" => 238, "className" => "haquery.server.HaqComponentManager", "methodName" => "prepareDocToRender")));
+				}
+				if($node->component->visible) {
+					$this->prepareDocToRender($prefixID, $node);
+					$text = trim($node->component->render(), null);
+					$prev = $node->getPrevSiblingNode();
+					if($prev instanceof HaqXmlNodeText) {
+						$re = new haquery_EReg("(?:^|\x0A)([ ]+)\$", "s");
+						if($re->match(_hx_deref(($prev))->text)) {
+							$text = str_replace("\x0A", "\x0A" . $re->matched(1), $text);
+						}
+						unset($re);
+					}
+					$node->parent->replaceChild($node, new HaqXmlNodeText($text));
+					unset($text,$prev);
+				} else {
+					$node->remove();
+					$i--;
+				}
+			} else {
+				$this->prepareDocToRender($prefixID, $node);
+				$nodeID = $node->getAttribute("id");
+				if($nodeID !== null && $nodeID !== "") {
+					$node->setAttribute("id", $prefixID . $nodeID);
+				}
+				if($node->name === "label") {
+					$nodeFor = $node->getAttribute("for");
+					if($nodeFor !== null && $nodeFor !== "") {
+						$node->setAttribute("for", $prefixID . $nodeFor);
+					}
+					unset($nodeFor);
+				}
+				unset($nodeID);
+			}
+			$i++;
+			unset($node);
+		}
+		$GLOBALS['%s']->pop();
+	}
 	public function __call($m, $a) {
 		if(isset($this->$m) && is_callable($this->$m))
 			return call_user_func_array($this->$m, $a);
@@ -211,12 +297,18 @@ class haquery_server_HaqComponentManager {
 		else
 			throw new HException('Unable to call «'.$m.'»');
 	}
+	static $baseComponentFields = null;
 	function __toString() { return 'haquery.server.HaqComponentManager'; }
+}
+{
+	$emptyComponent = Type::createEmptyInstance(_hx_qtype("haquery.server.HaqComponent"));
+	haquery_server_HaqComponentManager::$baseComponentFields = Lambda::filter(Reflect::fields($emptyComponent), array(new _hx_lambda(array(&$emptyComponent), "haquery_server_HaqComponentManager_2"), 'execute'));
+	haquery_server_HaqComponentManager::$baseComponentFields->push("template");
 }
 function haquery_server_HaqComponentManager_0(&$components, &$page, &$path, &$s, &$tag, &$tagComponents, &$tags, $x) {
 	$»spos = $GLOBALS['%s']->length;
 	{
-		$GLOBALS['%s']->push("haquery.server.HaqComponentManager::getInternalDataForPageHtml@126");
+		$GLOBALS['%s']->push("haquery.server.HaqComponentManager::getInternalDataForPageHtml@138");
 		$»spos2 = $GLOBALS['%s']->length;
 		while($x !== null) {
 			if(!$x->visible) {
@@ -235,10 +327,23 @@ function haquery_server_HaqComponentManager_0(&$components, &$page, &$path, &$s,
 function haquery_server_HaqComponentManager_1(&$components, &$page, &$path, &$s, &$tag, &$tagComponents, &$tags, &$visibledComponents, $x) {
 	$»spos = $GLOBALS['%s']->length;
 	{
-		$GLOBALS['%s']->push("haquery.server.HaqComponentManager::getInternalDataForPageHtml@134");
+		$GLOBALS['%s']->push("haquery.server.HaqComponentManager::getInternalDataForPageHtml@146");
 		$»spos2 = $GLOBALS['%s']->length;
 		{
 			$»tmp = $x->fullID;
+			$GLOBALS['%s']->pop();
+			return $»tmp;
+		}
+		$GLOBALS['%s']->pop();
+	}
+}
+function haquery_server_HaqComponentManager_2(&$emptyComponent, $field) {
+	$»spos = $GLOBALS['%s']->length;
+	{
+		$GLOBALS['%s']->push("haquery.server.HaqComponentManager::prepareDocToRender@24");
+		$»spos = $GLOBALS['%s']->length;
+		{
+			$»tmp = !Reflect::isFunction(Reflect::field($emptyComponent, $field));
 			$GLOBALS['%s']->pop();
 			return $»tmp;
 		}
