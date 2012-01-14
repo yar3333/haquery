@@ -8,7 +8,7 @@ class Server extends HaqComponent
 {
     override public function render():String 
     {
-        prepareDocToRender(doc);
+        manager.prepareDocToRender(prefixID, doc);
         
         return doc.toString().trim("\r\n").replace("{content}", parentNode.innerHTML);
     }

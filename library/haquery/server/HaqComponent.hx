@@ -13,12 +13,12 @@ class HaqComponent extends haquery.base.HaqComponent
     /**
      * HTML between component's open and close tags (where component inserted).
      */
-    private var parentNode : HaqXmlNodeElement;
+    var parentNode : HaqXmlNodeElement;
 
     /**
      * template.html as DOM tree.
      */
-    private var doc : HaqXml;
+    var doc : HaqXml;
     
     /**
      * Need render?
@@ -31,7 +31,7 @@ class HaqComponent extends haquery.base.HaqComponent
 		visible = true;
 	}
     
-    public function construct(manager:HaqComponentManager, parent: HaqComponent, tag:String, id:String, doc: HaqXml, params:Hash<String>, parentNode:HaqXmlNodeElement) : Void
+    public function construct(manager:HaqComponentManager, parent:HaqComponent, tag:String, id:String, doc:HaqXml, params:Hash<String>, parentNode:HaqXmlNodeElement) : Void
     {
 		super.commonConstruct(parent, tag, id);
         
@@ -39,36 +39,10 @@ class HaqComponent extends haquery.base.HaqComponent
         this.doc = doc;
         this.parentNode = parentNode;
 		
-		loadParamsToObjectFields(params, getFieldsToLoadParams());
-        createEvents();
-        createChildComponents();
-		
-        if (Reflect.isFunction(Reflect.field(this, 'init')))
+		// loading params to object fields
+        if (params != null)
         {
-            Reflect.callMethod(this, Reflect.field(this, 'init'), []);
-        }
-    }
-    
-    function getFieldsToLoadParams() :  Hash<String>
-    {
-        var restrictedFields : Array<String> = Reflect.fields(Type.createEmptyInstance(Type.resolveClass('haquery.server.HaqComponent')));
-        var r : Hash<String> = new Hash<String>(); // fieldname => FieldName
-        for (field in Reflect.fields(this))
-        {
-            if (!Reflect.isFunction(Reflect.field(this, field))
-             && !Lambda.has(restrictedFields, field)
-             && !field.startsWith('event_')
-            ) {
-                r.set(field.toLowerCase(), field);
-            }
-        }
-        return r;
-    }
-	
-	function loadParamsToObjectFields(params:Hash<String>, fields:Hash<String>) : Void
-	{
-        if (params!=null)
-        {
+			var fields = manager.getFieldsToLoadParams(this);
             for (k in params.keys())
             {
                 var v : Dynamic = params.get(k);
@@ -87,91 +61,26 @@ class HaqComponent extends haquery.base.HaqComponent
                 }
             }
         }
-	}
+        
+		createEvents();
+        createChildComponents();
+		
+        if (Reflect.isFunction(Reflect.field(this, 'init')))
+        {
+            Reflect.callMethod(this, Reflect.field(this, 'init'), []);
+        }
+    }
 	
-	function createChildComponents() : Void
+	function createChildComponents()
 	{
-		if (doc != null) createChildComponents_inner(doc);
+		if (doc != null) manager.createChildComponents(this, doc);
 	}
-	
-	function createChildComponents_inner(baseNode:HaqXmlNodeElement) : Void
-    {
-		var i = 0;
-		while (i < untyped __call__('count', baseNode.children))
-        {
-			var node : HaqXmlNodeElement = baseNode.children[i];
-			Lib.assert(node.name!='haq:placeholder');
-			Lib.assert(node.name!='haq:content');
-            
-            createChildComponents_inner(node);
-            
-            if (node.name.startsWith('haq:'))
-            {
-                node.component = manager.createComponent(this, node.name, node.getAttribute('id'), Lib.hashOfAssociativeArray(node.getAttributesAssoc()), node);
-            }
-			i++;
-        }
-    }
-
-    function prepareDocToRender(baseNode:HaqXmlNodeElement) : Void
-    {
-		var i = 0;
-		while (i < untyped __call__('count', baseNode.children))
-        {
-            var node : HaqXmlNodeElement = baseNode.children[i];
-            if (node.name.startsWith('haq:'))
-            {
-                if (node.component == null)
-                {
-                    trace("Component is null: " + node.name);
-                    Lib.assert(false);
-                }
-                
-                if (node.component.visible)
-                {
-                    prepareDocToRender(node);
-                    
-                    var text = node.component.render().trim();
-                    var prev = node.getPrevSiblingNode();
-                    
-                    if (untyped __php__("$prev instanceof HaqXmlNodeText"))
-                    {
-                        var re : EReg = new EReg('(?:^|\n)([ ]+)$', 's');
-                        if (re.match(cast(prev, HaqXmlNodeText).text))
-                        {
-                            text = text.replace("\n", "\n"+re.matched(1));
-                        }
-                    }
-                    node.parent.replaceChild(node, new HaqXmlNodeText(text));
-                }
-                else
-                {
-                    node.remove();
-                    i--;
-                }
-            }
-            else
-            {
-                prepareDocToRender(node);
-                var nodeID = node.getAttribute('id');
-                if (nodeID!=null && nodeID!='') node.setAttribute('id', this.prefixID + nodeID);
-                if (node.name=='label')
-                {
-                    var nodeFor = node.getAttribute('for');
-                    if (nodeFor!=null && nodeFor!='') 
-                        node.setAttribute('for', this.prefixID + nodeFor);
-                }
-            }
-			
-			i++;
-        }
-    }
 
     public function render() : String
     {
         if (Lib.config.isTraceComponent) trace("render " + this.fullID);
 		
-		prepareDocToRender(doc);
+		manager.prepareDocToRender(prefixID, doc);
 
         var r = doc.toString().trim("\r\n");
         return r;
@@ -221,4 +130,22 @@ class HaqComponent extends haquery.base.HaqComponent
     {
         return manager.getSupportPath(tag);
     }
+	
+	/**
+	 * Tells HaQuery to load JS file from support component folder.
+	 * @param	url Url to js file (global or related to support component folder).
+	 */
+	function registerScript(url:String)
+	{
+		manager.registerScript(tag, url);
+	}
+	
+	/**
+	 * Tells HaQuery to load CSS file from support component folder.
+	 * @param	url Url to css file (global or related to support component folder).
+	 */
+	function registerStyle(url:String)
+	{
+		manager.registerStyle(tag, url);
+	}
 }

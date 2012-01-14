@@ -9,10 +9,22 @@ using haquery.StringTools;
 
 class HaqComponentManager 
 {
+    static var baseComponentFields : List<String> = null;
+	
 	var templates : HaqTemplates;
 	
-	var registeredScripts(default,null) : Array<String>;
-	var registeredStyles(default,null) : Array<String>;
+	var registeredScripts : Array<String>;
+	var registeredStyles : Array<String>;
+	
+	static function __init__() : Void
+	{
+		var emptyComponent = Type.createEmptyInstance(HaqComponent);
+		baseComponentFields = Lambda.filter(
+			 Reflect.fields(emptyComponent)
+			,function(field) return !Reflect.isFunction(Reflect.field(emptyComponent, field))
+		);
+		baseComponentFields.push('template');
+	}
 	
 	public function new(templates:HaqTemplates) : Void
 	{
@@ -78,7 +90,7 @@ class HaqComponentManager
 	/**
 	 * Tells HaQuery to load JS file from support component folder.
 	 * @param	tag Component name.
-	 * @param	url Url to js file (related to support component folder).
+	 * @param	url Url to js file (global or related to support component folder).
 	 */
     public function registerScript(tag:String, url:String) : Void
 	{
@@ -92,7 +104,7 @@ class HaqComponentManager
 	/**
 	 * Tells HaQuery to load CSS file from support component folder.
 	 * @param	tag Component name.
-	 * @param	url Url to css file (related to support component folder).
+	 * @param	url Url to css file (global or related to support component folder).
 	 */
 	public function registerStyle(tag:String, url:String) : Void
 	{
@@ -174,8 +186,95 @@ class HaqComponentManager
 	
     function getNameByTag(tag:String) : String
     {
-        if (!tag.startsWith('haq:')) throw "Component tag '"+tag+"' must started with 'haq:' prefix.";
+        if (!tag.startsWith('haq:')) throw "Component tag '" + tag + "' must started with 'haq:' prefix.";
 		return tag.substr("haq:".length).toLowerCase().split('-').join('_');
     }
-    
+	
+	public function createChildComponents(parent:HaqComponent, baseNode:HaqXmlNodeElement)
+    {
+		var i = 0;
+		while (i < untyped __call__('count', baseNode.children))
+        {
+			var node : HaqXmlNodeElement = baseNode.children[i];
+			Lib.assert(node.name!='haq:placeholder');
+			Lib.assert(node.name!='haq:content');
+            
+            createChildComponents(parent, node);
+            
+            if (node.name.startsWith('haq:'))
+            {
+                node.component = createComponent(parent, node.name, node.getAttribute('id'), Lib.hashOfAssociativeArray(node.getAttributesAssoc()), node);
+            }
+			i++;
+        }
+    }
+	
+	public function getFieldsToLoadParams(component:HaqComponent) : Hash<String>
+    {
+        var r : Hash<String> = new Hash<String>(); // fieldname => FieldName
+        for (field in Reflect.fields(component))
+        {
+            if (!Reflect.isFunction(Reflect.field(component, field))
+			 && !Lambda.has(baseComponentFields, field)
+             && !field.startsWith('event_')
+            ) {
+                r.set(field.toLowerCase(), field);
+            }
+        }
+        return r;
+    }
+
+    public function prepareDocToRender(prefixID:String, baseNode:HaqXmlNodeElement) : Void
+    {
+		var i = 0;
+		while (i < untyped __call__('count', baseNode.children))
+        {
+            var node : HaqXmlNodeElement = baseNode.children[i];
+            if (node.name.startsWith('haq:'))
+            {
+                if (node.component == null)
+                {
+                    trace("Component is null: " + node.name);
+                    Lib.assert(false);
+                }
+                
+                if (node.component.visible)
+                {
+                    prepareDocToRender(prefixID, node);
+                    
+                    var text = node.component.render().trim();
+                    var prev = node.getPrevSiblingNode();
+                    
+                    if (untyped __php__("$prev instanceof HaqXmlNodeText"))
+                    {
+                        var re : EReg = new EReg('(?:^|\n)([ ]+)$', 's');
+                        if (re.match(cast(prev, HaqXmlNodeText).text))
+                        {
+                            text = text.replace("\n", "\n"+re.matched(1));
+                        }
+                    }
+                    node.parent.replaceChild(node, new HaqXmlNodeText(text));
+                }
+                else
+                {
+                    node.remove();
+                    i--;
+                }
+            }
+            else
+            {
+                prepareDocToRender(prefixID, node);
+                var nodeID = node.getAttribute('id');
+                if (nodeID!=null && nodeID!='') node.setAttribute('id', prefixID + nodeID);
+                if (node.name=='label')
+                {
+                    var nodeFor = node.getAttribute('for');
+                    if (nodeFor!=null && nodeFor!='') 
+                        node.setAttribute('for', prefixID + nodeFor);
+                }
+            }
+			
+			i++;
+        }
+    }
 }
