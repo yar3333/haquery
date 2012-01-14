@@ -76,6 +76,7 @@ namespace run_exe.haquery
             if (path == getExeDir() + "\\tools"
              || path == getExeDir() + "\\run.n"
              || path == getExeDir() + "\\run.exe"
+             || path == getExeDir() + "\\run.exe.config"
              || path == getExeDir() + "\\run.pdb"
              || path == getExeDir() + "\\ICSharpCode.SharpZipLib.dll"
              || path == getExeDir() + "\\readme.txt"
