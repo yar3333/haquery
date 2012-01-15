@@ -134,6 +134,10 @@ class HaqComponent extends haquery.base.HaqComponent
 	/**
 	 * Tells HaQuery to load JS file from support component folder.
 	 * @param	url Url to js file (global or related to support component folder).
+	 * @example registerScript('myscript.js'); // assert file in support component folder
+	 * @example registerScript('/scripts/myscript.js'); // site url
+	 * @example registerScript('http://google.com/scripts/theirscript.js'); // global url
+	 * @example registerScript('<script>alert("OK");</script>'); // html block
 	 */
 	function registerScript(url:String)
 	{
