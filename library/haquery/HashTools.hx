@@ -32,4 +32,14 @@ class HashTools
         }
         return r;
     }
+    
+    public static function hashify(obj:Dynamic) : Hash<Dynamic>
+    {
+       var r = new Hash<Dynamic>();
+       for (key in Reflect.fields(obj))
+       {
+          r.set(key, Reflect.field(obj, key));
+       }
+       return r;
+    }
 }
