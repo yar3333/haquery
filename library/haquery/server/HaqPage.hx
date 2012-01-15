@@ -93,15 +93,19 @@ class HaqPage extends HaqComponent
     
     static function getScriptLink(url:String) : String
     {
+		if (url.startsWith("<")) return url;
+		
 		if (!url.startsWith("http://") && !url.startsWith("/"))
 		{
 			url = '/' + url + '?' + FileSystem.stat(url).mtime.getTime() / 1000;
 		}
-        return "<script src='" + url + "'></script>";
+		return "<script src='" + url + "'></script>";
     }
     
 	static function getStyleLink(url:String) : String
     {
+		if (url.startsWith("<")) return url;
+		
 		if (!url.startsWith("http://") && !url.startsWith("/"))
 		{
 			url = '/' + url + '?' + FileSystem.stat(url).mtime.getTime() / 1000;

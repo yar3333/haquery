@@ -79,11 +79,12 @@ class HaqComponentManager
 		{
 			url = url.substr(2);
 		}
-		else
-		if (!url.startsWith("http://") && !url.startsWith("/"))
+		
+		if (!url.startsWith("http://") && !url.startsWith("/") && !url.startsWith("<"))
 		{
 			url = templates.getSupportPath(tag) + url;
 		}
+		
 		return url;
 	}
 	
