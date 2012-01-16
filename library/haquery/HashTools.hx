@@ -33,7 +33,18 @@ class HashTools
         return r;
     }
     
-    public static function hashify(obj:Dynamic) : Hash<Dynamic>
+    /**
+     * Make hash on-the-fly.
+	 * For example:
+		 * var h : Hash<String> = cast haquery.HashTools.hashify({
+		 * 	 a: "abc"
+		 *  ,b: "def"
+		 *  ,c: "ghi"
+		 * });
+     * @param	obj Generic object to convert to a hash.
+     * @return	Result hash.
+     */
+	public static function hashify(obj:Dynamic) : Hash<Dynamic>
     {
        var r = new Hash<Dynamic>();
        for (key in Reflect.fields(obj))
