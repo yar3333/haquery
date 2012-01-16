@@ -24,16 +24,6 @@ class HaqTools
 		return v != false && v != null && v != 0 && v != "" && v != "0" && v != "false" && v != "off";
     }
     
-    public static function object2hash(obj:Dynamic) : Hash<Dynamic>
-    {
-        var r = new Hash<Dynamic>();
-        for (field in Reflect.fields(obj))
-        {
-            r.set(field, Reflect.field(obj, field));
-        }
-        return r;
-    }
-    
     public static function getNumeral(n, w1, w2, w3)
     {
         // $w1,$w2,$w3: голос, голоса, голосов

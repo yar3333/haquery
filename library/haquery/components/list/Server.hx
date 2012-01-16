@@ -1,6 +1,6 @@
 package haquery.components.list;
 
-import haquery.server.HaqTools;
+import haquery.HashTools;
 import haquery.server.Lib;
 
 using haquery.StringTools;
@@ -25,7 +25,7 @@ class Server extends Base
 		var i = 0;
         for (consts in constsList)
         {
-            manager.createComponent(this, 'haq:listitem', Std.string(i), cast HaqTools.object2hash(consts), parentNode);
+            manager.createComponent(this, 'haq:listitem', Std.string(i), cast HashTools.hashify(consts), parentNode);
             i++;
         }
 		q('#length').val(Std.string(i));
