@@ -94,4 +94,15 @@ class HaqTools
               +StringTools.format("%04x", Math.floor(Math.random() * 65536));
     }
     #end
+    
+	public static inline function getFunctionParams() : Array<Dynamic>
+	{
+		#if php
+			return haquery.server.Lib.toHaxeArray(untyped __call__("func_get_args"));
+		#end
+		
+		#if js
+			return untyped __js__("arguments");
+		#end
+	}
 }
