@@ -1,23 +1,24 @@
 <style>
-    .splitter-vertical
-    {
-        float: left;
-        width: 2px;
-        border: inset 1px;
-        margin: 0 5px;
-        cursor: e-resize;
-    }
+.splitter-vertical
+{
+    float: left;
+    width: 2px;
+    border: inset 1px;
+    margin: 0 5px;
+    cursor: e-resize;
+}
 
-    .splitter-fon
-    {
-        display:none;
-        position: absolute;
-        background-color: rgba(255,255,255,0);
-        cursor: e-resize;
-    }
+.splitter-fon
+{
+    display:none;
+    position: absolute;
+    background-color: rgba(255,255,255,0);
+    cursor: e-resize;
+}
 </style>
+
+<input type="hidden" id="a" />
+<input type="hidden" id="b" />
 
 <div id="f" class="splitter-fon"></div>
 <div id="s" class="splitter-vertical"></div>
-<span id="a" style="display:none"></span>
-<span id="b" style="display:none"></span>
