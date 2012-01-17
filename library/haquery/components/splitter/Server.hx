@@ -1,22 +1,34 @@
+#if php
+
 package haquery.components.splitter;
 
-import php.Lib;
+import haquery.server.Lib;
 import haquery.server.HaqComponent;
 
-class SplitterComponent extends HaqComponent
+class Server extends HaqComponent
 {
-    public var style : String;
+	public var style : String;
     
-    public var firstElementID : String;
-    public var secondElementID : String;
+    public var firstSelector : String;
+    public var secondSelector : String;
 
     function preRender()
     {
-        q('#a').html(firstElementID);
-        q('#b').html(secondElementID);
-        if (style!=null)
+        if (firstSelector != null)
+		{
+			q('#a').val(firstSelector);
+		}
+		
+		if (secondSelector != null)
+		{
+			q('#b').val(secondSelector);
+		}
+		
+        if (style != null)
         {
             q('#s').attr('style', style);
         }
     }
 }
+
+#end
