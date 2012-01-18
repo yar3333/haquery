@@ -38,7 +38,7 @@ class HaqConfig
     /**
      * User-defined data.
      */
-    public var customData : Hash<Dynamic>;
+    public var custom : Hash<Dynamic>;
 
 	/**
 	 * Project-specific components package.
@@ -70,7 +70,7 @@ class HaqConfig
 		sqlTraceLevel = 1;
 		isTraceComponent = false;
 		filterTracesByIP = '';
-		customData = new Hash<Dynamic>();
+		custom = new Hash<Dynamic>();
 		componentsPackage = 'haquery.components';
         layout = null;
         disablePageMetaData = false;
