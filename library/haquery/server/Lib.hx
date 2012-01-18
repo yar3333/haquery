@@ -22,9 +22,9 @@ using haquery.StringTools;
 
 class Lib
 {
-    public static var config : HaqConfig = new HaqConfig();
+    public static var config = new HaqConfig();
     
-    public static var profiler : HaqProfiler = new HaqProfiler();
+    public static var profiler = new HaqProfiler();
     
     /**
      * Ajax?
@@ -52,7 +52,7 @@ class Lib
                 startTime = Date.now().getTime();
                 haxe.Log.trace = Lib.trace;
                 
-                isPostback = php.Web.getParams().get('HAQUERY_POSTBACK')!=null ? true : false;
+                isPostback = php.Web.getParams().get('HAQUERY_POSTBACK') != null;
                 
                 var route = new HaqRoute(Web.getParams().get('route'));
                 loadBootstraps(route.path);
