@@ -62,7 +62,7 @@ class Lib
                     Session.start();
                 }
 
-                if (config.autoDatabaseConnect && config.db.type!=null)
+                if (config.autoDatabaseConnect && config.db!=null && config.db.type!=null && config.db.type!="")
                 {
                     HaqDb.connect(Lib.config.db);
                 }
