@@ -51,7 +51,7 @@ class HaqProfiler
     public #if !PROFILER inline #end function end() : Void
     {
         #if PROFILER
-        HaQuery.assert(opened.length > 0);
+        haquery.server.Lib.assert(opened.length > 0);
         
         var b = opened.pop();
         var dt = Date.now().getTime() - b.time;
