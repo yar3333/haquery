@@ -130,5 +130,17 @@ class StringTools
     {
         return untyped __call__('addcslashes', s, "\'\"\t\r\n\\");
     }
+    
+    public static inline function lengthNational(s:String) : Int
+    {
+        return untyped __call__('mb_strlen', s, 'UTF-8');
+    }
+    
+    public static function substrNational(s:String, pos:Int, ?len:Int) : String
+    {
+        return len != null 
+            ? untyped __call__('mb_substr', s, pos, len, 'UTF-8') 
+            : untyped __call__('mb_substr', s, pos, lengthNational(s) - pos, 'UTF-8');
+    }
     #end
 }
