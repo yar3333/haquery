@@ -11,8 +11,15 @@ class Lib
 {
     static public function run() : Void
     {
-        if (Firebug.detect()) Firebug.redirectTraces();
-        else                  haxe.Log.trace = haquery.client.Lib.trace;
+        if (Firebug.detect())
+		{
+			//Firebug.redirectTraces();
+			haxe.Log.trace = Firebug.trace;
+		}
+        else
+		{
+			haxe.Log.trace = haquery.client.Lib.trace;
+		}
         var system = new HaqSystem();
     }
 	
