@@ -138,7 +138,8 @@ class HaqComponent
      */
     public function findComponent(fullID:String) : Component
     {
-        if (fullID == '') return cast this;
+        if (fullID == null) return null;
+		if (fullID == '') return cast this;
         var ids = fullID.split(HaqDefines.DELIMITER);
         var r = this;
         for (id in ids)
