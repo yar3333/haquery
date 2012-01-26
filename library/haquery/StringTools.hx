@@ -89,6 +89,16 @@ class StringTools
         return untyped __js__('escape(s)');
         #end
     }
+	
+	public static inline function jsonDecode(s : String) : Dynamic
+	{
+		#if php
+			return untyped __call__('json_decode', s);
+		#else
+			return js.Lib.eval("(" + s + ")");
+	    #end
+	}
+
 
     #if php
     public static inline function toUpperCaseNational(s : String) : String
@@ -114,11 +124,6 @@ class StringTools
 	public static inline function jsonEncode(x : Dynamic) : String
 	{
 		return untyped __call__('json_encode', x);
-	}
-	
-	public static inline function jsonDecode(s : String) : Dynamic
-	{
-		return untyped __call__('json_decode', s);
 	}
     
 	public static inline function hexdec(s : String) : Int
