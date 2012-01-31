@@ -88,13 +88,13 @@ class Lib
     static public function redirect(url:String) : Void
     {
         if (Lib.isPostback) HaqInternals.addAjaxResponse("haquery.client.Lib.redirect('" + StringTools.addcslashes(url) + "');");
-        else                      php.Web.redirect(url);
+        else                php.Web.redirect(url);
     }
 
 	static public function reload() : Void
 	{
         if (Lib.isPostback) HaqInternals.addAjaxResponse("window.location.reload(true);");
-        else					  redirect(php.Web.getURI());
+        else                redirect(php.Web.getURI());
 	}
 
 	#if debug

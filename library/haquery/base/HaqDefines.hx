@@ -14,4 +14,12 @@ class HaqDefines
 	 * Delimiter for IDs in fullID.
 	 */
     public static inline var DELIMITER = '-';
+	
+    public static var elemEventNames : Array<String> = [
+		'click', 'change', 'load',
+		'mousedown', 'mouseup', 'mousemove',
+		'mouseover', 'mouseout', 'mouseenter', 'mouseleave',
+		'keypress', 'keydown', 'keyup', 
+		'focus', 'focusin', 'focusout',
+    ];
 }

@@ -1,5 +1,6 @@
 package haquery.server;
 
+import haxe.Unserializer;
 import php.FileSystem;
 import php.io.File;
 import php.io.Path;
@@ -9,6 +10,7 @@ import haquery.server.Lib;
 import haquery.server.HaqComponent;
 import haquery.server.HaqProfiler;
 import haquery.server.HaqRoute;
+import haquery.server.HaqDefines;
 
 using haquery.StringTools;
 
@@ -86,21 +88,65 @@ class HaqSystem
     {
         page.forEachComponent('preEventHandlers');
 
-        var fullElemID : String = php.Web.getParams().get('HAQUERY_ID');
-        var n = fullElemID.lastIndexOf(HaqDefines.DELIMITER);
-        var componentID = n > 0 ? fullElemID.substr(0, n) : '';
-        var elemID = n > 0 ? fullElemID.substr(n + 1) : fullElemID;
+        var componentID = php.Web.getParams().get('HAQUERY_COMPONENT');
+        var method = php.Web.getParams().get('HAQUERY_METHOD');
         
         var component : HaqComponent = page.findComponent(componentID);
-        if (component == null)
+        
+		if (component != null)
+		{
+			if (Reflect.hasField(component, method))
+			{
+				if (!callElemEventHandler(component, method))
+				{
+					if (!callSharedMethod(component, method))
+					{
+						throw "Method '" + componentID + '#' + method + "' must be marked as @shared to be callable from the client.";
+					}
+				}
+				
+			}
+			else
+			{
+				throw "Method '" + componentID + "#" + method + "' not found.";
+			}
+		}
+		else
         {
             throw "Component id = '" + componentID + "' not found.";
         }
-        
-        component.callElemEventHandler(elemID, php.Web.getParams().get('HAQUERY_EVENT'));
         
         php.Web.setHeader('Content-Type', 'text/plain; charset=utf-8');
         
         return 'HAQUERY_OK' + HaqInternals.getAjaxResponse();
     }
+	
+	function callElemEventHandler(component:HaqComponent, method:String) : Bool
+	{
+		var n = method.lastIndexOf("_");
+		if (n >= 0)
+		{
+			var event = method.substr(n + 1);
+			if (Lambda.has(HaqDefines.elemEventNames, event))
+			{
+				component.callElemEventHandler(method.substr(0, n), event);
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	function callSharedMethod(component:HaqComponent, method:String) : Bool
+	{
+		var haxeClass = Type.getClass(component);
+		var meta = haxe.rtti.Meta.getFields(haxeClass);
+		var m = Reflect.field(meta, method);
+		if (Reflect.hasField(m, "shared"))
+		{
+			Reflect.callMethod(component, Reflect.field(component, method), [ this ]);
+			return true;
+		}
+		
+		return false;
+	}
 }

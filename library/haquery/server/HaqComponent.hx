@@ -109,7 +109,11 @@ class HaqComponent extends haquery.base.HaqComponent
         return new HaqQuery(this.prefixID, query, nodes);
     }
 
-    function callClientMethod(method:String, ?params:Array<Dynamic>) : Void
+    /**
+	 * Later call of the client method.
+     * @deprecated Use callSharedMethod() instead.
+     */
+	function callClientMethod(method:String, ?params:Array<Dynamic>) : Void
     {
 		Lib.assert(Lib.isPostback, "HaqComponent.callClientMethod() allowed on the postback only.");
         
@@ -119,6 +123,20 @@ class HaqComponent extends haquery.base.HaqComponent
         
         HaqInternals.addAjaxResponse(HaqTools.getCallClientFunctionString(funcName, params) + ';');
     }
+	
+	/**
+	 * Delayed call client method, marked as @shared.
+	 */
+	function callSharedMethod(method:String, ?params:Array<Dynamic>) : Void
+	{
+		Lib.assert(Lib.isPostback, "HaqComponent.callSharedMethod() allowed on the postback only.");
+        
+        var funcName = this.fullID.length != 0
+            ? "haquery.client.HaqSystem.page.findComponent('" + fullID + "')." + method
+            : "haquery.client.HaqSystem.page." + method;
+        
+        HaqInternals.addAjaxResponse(HaqTools.getCallClientFunctionString(funcName, params) + ';');
+	}
     
     public function callElemEventHandler(elemID:String, eventName:String) : Void
     {
@@ -126,7 +144,7 @@ class HaqComponent extends haquery.base.HaqComponent
         Reflect.callMethod(this, handler, [ this ]);
     }
     
-    function getSupportPath():String
+    function getSupportPath() : String
     {
         return manager.getSupportPath(tag);
     }
