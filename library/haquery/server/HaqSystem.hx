@@ -99,7 +99,7 @@ class HaqSystem
 			{
 				if (!callElemEventHandler(component, method))
 				{
-					if (!callSharedMethod(component, method))
+					if (!callSharedMethod(component, method, Unserializer.run(php.Web.getParams().get('HAQUERY_PARAMS'))))
 					{
 						throw "Method '" + componentID + '#' + method + "' must be marked as @shared to be callable from the client.";
 					}
@@ -136,14 +136,14 @@ class HaqSystem
 		return false;
 	}
 	
-	function callSharedMethod(component:HaqComponent, method:String) : Bool
+	function callSharedMethod(component:HaqComponent, method:String, params:Array<Dynamic>) : Bool
 	{
 		var haxeClass = Type.getClass(component);
 		var meta = haxe.rtti.Meta.getFields(haxeClass);
 		var m = Reflect.field(meta, method);
 		if (Reflect.hasField(m, "shared"))
 		{
-			Reflect.callMethod(component, Reflect.field(component, method), [ this ]);
+			Reflect.callMethod(component, Reflect.field(component, method), params);
 			return true;
 		}
 		
