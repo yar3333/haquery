@@ -104,7 +104,6 @@ class HaqSystem
 						throw "Method '" + componentID + '#' + method + "' must be marked as @shared to be callable from the client.";
 					}
 				}
-				
 			}
 			else
 			{
