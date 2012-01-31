@@ -72,7 +72,7 @@ class Client extends Base
         });
         
         var form : HaqQuery = q('#form');
-        var sendData = HaqElemEventManager.getDataObjectForSendToServer(q('#file').get(0).id, 'upload');
+        var sendData = HaqElemEventManager.getDataObjectForSendToServer(fullID, q('#file').get(0).id + '_upload');
         for (key in Reflect.fields(sendData))
         {
             form.append("<input type='hidden' id='HAQUERY_ID-" + key + "' name='" + key + "' />\n");
