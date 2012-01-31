@@ -1,19 +1,12 @@
 package haquery.client;
 
+import haxe.Serializer;
 import js.Dom;
 import js.Lib;
 using haquery.StringTools;
 
 class HaqElemEventManager 
 {
-    static var elemEventNames : Array<String> = [
-		'click', 'change', 'load',
-		'mousedown', 'mouseup', 'mousemove',
-		'mouseover', 'mouseout', 'mouseenter', 'mouseleave',
-		'keypress', 'keydown', 'keyup', 
-		'focus', 'focusin', 'focusout',
-    ];
-	
     static var elems(elems_getter, null) : Array<HtmlDom>;
     static var elems_cached : Array<HtmlDom>;
     static function elems_getter() : Array<HtmlDom>
@@ -49,7 +42,7 @@ class HaqElemEventManager
         {
             var n = elem.id.lastIndexOf(HaqDefines.DELIMITER);
             var elemID = n != -1 ? elem.id.substr(n + 1) : elem.id;
-            for (eventName in elemEventNames)
+            for (eventName in HaqDefines.elemEventNames)
             {
                 var needHandler = Reflect.isFunction(Reflect.field(componentWithHandlers, elemID + "_" + eventName));
                 if (!needHandler)
@@ -77,7 +70,7 @@ class HaqElemEventManager
 		if (!r) return false;
         
 		var serverHandlers = templates.get(componentWithHandlers.tag).elemID_serverHandlers;
-        return callServerElemEventHandlers(elem, e, serverHandlers);
+        return callServerElemEventHandlers(elem.id, e.type, serverHandlers);
     }
 	
 	static function callClientElemEventHandlers(componentWithHandlers:HaqComponent, componentWithEvents:HaqComponent, elem:HtmlDom, e:js.Dom.Event) : Bool
@@ -93,30 +86,45 @@ class HaqElemEventManager
 		return true;
 	}
 	
-	static function callServerElemEventHandlers(elem:HtmlDom, e:js.Dom.Event, serverHandlers:Hash<Array<String>>) : Bool
+	public static function callServerElemEventHandlers(fullElemID:String, event:String, serverHandlers:Hash<Array<String>>) : Bool
 	{
-		var n = elem.id.lastIndexOf(HaqDefines.DELIMITER);
-		var elemID = n > 0 ? elem.id.substr(n + 1) : elem.id;
+		var n = fullElemID.lastIndexOf(HaqDefines.DELIMITER);
+		var elemID = n > 0 ? fullElemID.substr(n + 1) : fullElemID;
         
-        if (serverHandlers != null && serverHandlers.get(elemID) != null)
-        {
-            var handlers = serverHandlers.get(elemID);
-            if (!Lambda.has(handlers, e.type)) return true;  // серверного обработчика нет
-
-            var sendData = getDataObjectForSendToServer(elem.id, e.type);
-            HaqQuery._static.post(Lib.window.location.href, sendData, callServerHandlersCallbackFunction);
+		if (serverHandlers != null && serverHandlers.get(elemID) != null)
+		{
+			if (Lambda.has(serverHandlers.get(elemID), event))
+			{
+				var componentID = n > 0 ? fullElemID.substr(0, n) : "";
+				callServerMethod(componentID, elemID + "_" + event);
+			}
 		}
 		
         return true;
 	}
     
-    public static function callServerHandlersCallbackFunction(data:String) : Void
+	public static function callServerMethod(componentID:String, method:String, ?params:Array<Dynamic>, ?callbackFunc:Void->Void)
+	{
+		var sendData = getDataObjectForSendToServer(componentID, method, params);
+		HaqQuery._static.post(Lib.window.location.href, sendData, function(data:String)
+		{ 
+			callServerHandlersCallbackFunction(data);
+			if (callbackFunc != null)
+			{
+				callbackFunc();
+			}
+		});
+		
+        return true;
+	}
+    
+	public static function callServerHandlersCallbackFunction(data:String) : Void
     {
         var okMsg = "HAQUERY_OK";
         if (data.startsWith(okMsg))
         {
             var code = data.substr(okMsg.length);
-            trace("AJAX: "+code);
+            trace("AJAX: " + code);
             untyped __js__("eval(code)");
         }
         else
@@ -129,15 +137,16 @@ class HaqElemEventManager
         }
     }
     
-    public static function getDataObjectForSendToServer(fullElemID:String, eventType:String) : Dynamic
+    public static function getDataObjectForSendToServer(componentID:String, method:String, ?params:Array<Dynamic>) : Dynamic
     {
         var sendData : Dynamic = {
-             HAQUERY_POSTBACK   : 1
-            ,HAQUERY_ID         : fullElemID
-            ,HAQUERY_EVENT      : eventType
-        };
+			 HAQUERY_POSTBACK : 1
+			,HAQUERY_COMPONENT : componentID
+			,HAQUERY_METHOD : method
+			,HAQUERY_PARAMS : Serializer.run(params)
+		};
 
-        var sendedElements = getElemsForSendToServer(fullElemID);
+        var sendedElements = getElemsForSendToServer();
         for (sendElem in sendedElements)
         {
             var nodeName = sendElem.nodeName.toUpperCase();
@@ -168,7 +177,7 @@ class HaqElemEventManager
         return sendData;
     }
 	
-	static function getElemsForSendToServer(fullElemID:String) : Iterable<HtmlDom>
+	static function getElemsForSendToServer() : Iterable<HtmlDom>
 	{
 		var jqAllElemsWithID = new HaqQuery("[id]");
 		var allElemsWithID : Array<HtmlDom> = untyped jqAllElemsWithID.toArray();
