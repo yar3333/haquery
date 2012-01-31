@@ -23,7 +23,7 @@ class Server extends Base
         q('#filter').val(filter);
     }
     
-    function file_upload()
+    @shared function upload()
     {
         var files = Web.getFiles();
         var file = files.get(prefixID + 'file');
