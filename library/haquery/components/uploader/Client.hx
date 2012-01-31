@@ -72,11 +72,11 @@ class Client extends Base
         });
         
         var form : HaqQuery = q('#form');
-        var sendData = HaqElemEventManager.getDataObjectForSendToServer(fullID, q('#file').get(0).id + '_upload');
+        var sendData = HaqElemEventManager.getDataObjectForSendToServer(fullID, 'upload');
         for (key in Reflect.fields(sendData))
         {
-            form.append("<input type='hidden' id='HAQUERY_ID-" + key + "' name='" + key + "' />\n");
-            (new JQuery('#HAQUERY_ID-' + key)).val(Reflect.field(sendData, key));
+            form.append("<input type='hidden' id='HAQUERY_DATA-" + key + "' name='" + key + "' />\n");
+            (new JQuery('#HAQUERY_DATA-' + key)).val(Reflect.field(sendData, key));
         }
         form.get(0).submit();
         
@@ -84,7 +84,7 @@ class Client extends Base
         {
             if (key != prefixID + 'file')
             {
-                (new JQuery('#HAQUERY_ID-' + key)).remove();
+                (new JQuery('#HAQUERY_DATA-' + key)).remove();
             }
         }
         
