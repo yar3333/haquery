@@ -216,7 +216,7 @@ class HaqComponentManager
         for (field in Reflect.fields(component))
         {
             if (!Reflect.isFunction(Reflect.field(component, field))
-			 && !Lambda.has(baseComponentFields, field)
+			 && (field == 'visible' || !Lambda.has(baseComponentFields, field))
              && !field.startsWith('event_')
             ) {
                 r.set(field.toLowerCase(), field);
