@@ -1,6 +1,6 @@
 package haquery.components.context;
 
-import haquery.client.HaqQuery;
+import js.JQuery;
 import haquery.client.HaqEvent;
 
 class Client extends haquery.components.container.Client
@@ -9,7 +9,7 @@ class Client extends haquery.components.container.Client
     
     var event_show : HaqEvent;
     
-    var elem : HaqQuery;
+    var elem : JQuery;
     var timer : haxe.Timer;
     
     public var dataID(dataID_getter, null) : String;
@@ -18,8 +18,8 @@ class Client extends haquery.components.container.Client
         return q('#dataID').val();
     }
     
-    var mouseOver : js.jQuery.JQuery.Event->Void;
-    var mouseOut : js.jQuery.JQuery.Event->Void;
+    var mouseOver : js.JQuery.JqEvent->Void;
+    var mouseOut : js.JQuery.JqEvent->Void;
     
     public function new()
     {
@@ -27,8 +27,8 @@ class Client extends haquery.components.container.Client
         
         position = ContextPanelPosition.rightTopInner;
         
-        mouseOver = function(e:js.jQuery.JQuery.Event) { elem = new HaqQuery(e.currentTarget);  innerMouseOver(); };
-        mouseOut = function(e:js.jQuery.JQuery.Event) { innerMouseOut(); };
+        mouseOver = function(e:js.JQuery.JqEvent) { elem = new JQuery(e.currentTarget);  innerMouseOver(); };
+        mouseOut = function(e:js.JQuery.JqEvent) { innerMouseOut(); };
     }
 
     function innerMouseOver()
@@ -65,7 +65,7 @@ class Client extends haquery.components.container.Client
     {
         if (q('#p').attr('position') != null)
         {
-            position = Type.createEnumIndex(ContextPanelPosition, q('#p').attr('position'));
+            position = Type.createEnumIndex(ContextPanelPosition, Std.parseInt(q('#p').attr('position')));
         }
     }
     
@@ -91,26 +91,26 @@ class Client extends haquery.components.container.Client
         event_show.call([ q('#p'), elem ]);
     }
     
-    public function attach(elem:HaqQuery, ?dataID:String)
+    public function attach(elem:JQuery, ?dataID:String)
     {
         elem.data(prefixID + "dataID", dataID);
         elem.mouseover(mouseOver);
         elem.mouseout(mouseOut);
     }
     
-    public function detach(elem:HaqQuery)
+    public function detach(elem:JQuery)
     {
         elem.unbind("mouseover", mouseOver);
         elem.unbind("mouseout", mouseOut);
         innerMouseOut();
     }
     
-    function p_mouseover(t, e:js.jQuery.JQuery.Event)
+    function p_mouseover(t, e:js.JQuery.JqEvent)
     {
         innerMouseOver();
     }
     
-    function p_mouseout(t, e:js.jQuery.JQuery.Event)
+    function p_mouseout(t, e:js.JQuery.JqEvent)
     {
         innerMouseOut();
     }

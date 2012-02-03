@@ -12,14 +12,14 @@ class Client extends HaqComponent
 		var selector = q('#shadow').attr('selector');
         var element = parent.q(selector);
         
-        shadow.css('top', element.offset().top);
-        shadow.css('left', element.offset().left);
+        shadow.css('top', element.offset().top + "px");
+        shadow.css('left', element.offset().left + "px");
         shadow.width(element.outerWidth());
         shadow.height(element.outerHeight());
         shadow.show();
         
-        animation.css('top', element.offset().top + element.outerHeight() / 2 - animation.height() / 2);
-        animation.css('left', element.offset().left + element.outerWidth() / 2 - animation.width() / 2);
+        animation.css('top', (element.offset().top + element.outerHeight() / 2 - animation.height() / 2) + "px");
+        animation.css('left', (element.offset().left + element.outerWidth() / 2 - animation.width() / 2) + "px");
         animation.show();
 	}
 	
