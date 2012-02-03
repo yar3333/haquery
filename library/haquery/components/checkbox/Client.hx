@@ -13,8 +13,8 @@ class Client extends HaqComponent
     
     function value_setter(v:Bool) : Bool
     {
-        q('#check').attr('checked', v);
-        q('#value').val(v ? '1' : '0');
+		untyped q('#check')[0].checked = v;
+		q('#value').val(v ? '1' : '0');
         return v;
     }
     

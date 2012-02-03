@@ -2,10 +2,10 @@
 
 package haquery.components.splitter;
 
-import haquery.client.HaqQuery;
 import haquery.client.Lib;
 import haquery.client.HaqComponent;
 import haquery.client.HaqEvent;
+import js.JQuery;
 
 class Client extends HaqComponent
 {
@@ -22,8 +22,8 @@ class Client extends HaqComponent
 
     var event_change : HaqEvent;
 	
-	var a : HaqQuery;
-	var b : HaqQuery;
+	var a : JQuery;
+	var b : JQuery;
 
     var mouseupHandler : Dynamic->Void;
     var mousemoveHandler : Dynamic->Void;
@@ -49,9 +49,8 @@ class Client extends HaqComponent
 			trace("components.splitter - unknow type = " + type);
 		}
 		
-		
-		a = new HaqQuery(q('#a').val()); q('#a').remove();
-        b = new HaqQuery(q('#b').val()); q('#b').remove();
+		a = parent.q(q('#a').val()); q('#a').remove();
+        b = parent.q(q('#b').val()); q('#b').remove();
 		
 		untyped q('#s,#f').disableSelection();
         setK(k);
@@ -115,18 +114,18 @@ class Client extends HaqComponent
         var self = this;
 
         mouseupHandler = function(e) { self.mouseup(e); };
-        new HaqQuery(Lib.document).mouseup(mouseupHandler);
+        new JQuery(Lib.document).mouseup(mouseupHandler);
 
         mousemoveHandler = function(e) { self.mousemove(e); };
-        new HaqQuery(Lib.document).mousemove(mousemoveHandler);
+        new JQuery(Lib.document).mousemove(mousemoveHandler);
     }
     
     function mouseup(e)
     {
         if (!dragMode) return;
         dragMode = false;
-        new HaqQuery(Lib.document).unbind('mouseup', mouseupHandler);
-        new HaqQuery(Lib.document).unbind('mousemove', mousemoveHandler);
+        new JQuery(Lib.document).unbind('mouseup', mouseupHandler);
+        new JQuery(Lib.document).unbind('mousemove', mousemoveHandler);
         q('#f').hide();
     }
 
