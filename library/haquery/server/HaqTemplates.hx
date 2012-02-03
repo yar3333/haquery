@@ -141,11 +141,11 @@ class HaqTemplates
 				{
 					if (node.getAttribute('type') == "text/less")
                     {
-                        css += globalizeCssClassNames(tag, lessc.parse(node.innerHTML));
+                        css += globalizeCssClassNamesInCss(tag, lessc.parse(node.innerHTML));
                     }
                     else
                     {
-                        css += globalizeCssClassNames(tag, node.innerHTML);
+                        css += globalizeCssClassNamesInCss(tag, node.innerHTML);
                     }
 					
                     node.remove();
@@ -157,12 +157,6 @@ class HaqTemplates
         Lib.profiler.end();
         
         return { css: css, doc:doc };
-	}
-	
-	function globalizeCssClassNames(tag:String, text:String) : String
-	{
-		//var blocks = new EReg("([/][*].*?[*][/])|(.*)", "");
-		return text.replace(".", "." + (tag != "" ? tag + HaqDefines.DELIMITER : ""));
 	}
 	
 	public function parseServerHandlers(componentFolder:String) : Hash<Array<String>>
@@ -204,17 +198,7 @@ class HaqTemplates
 		var r = new Array<String>();
 		for (folder in componentsFolders)
 		{
-            var lessPath = HaqDefines.folders.temp + '/' + folder + 'styles.less';
             var cssPath = HaqDefines.folders.temp + '/' + folder + 'styles.css';
-            if (FileSystem.exists(lessPath))
-            {
-                if (!FileSystem.exists(cssPath) 
-                 || FileSystem.stat(lessPath).mtime.getTime() > FileSystem.stat(cssPath).mtime.getTime()
-                ) {
-                    Lessc.ccompile(lessPath, cssPath);
-                }
-            }
-			
 			if (FileSystem.exists(cssPath))
 			{
 				r.push(cssPath);
@@ -329,7 +313,12 @@ class HaqTemplates
             return f != null ? '/' + f : re.matched(0);
         });
         
-        return new HaqXml(text);
+        var doc = new HaqXml(text);
+		if (tag != "")
+		{
+			globalizeCssClassNamesInXml(tag + HaqDefines.DELIMITER, doc);
+		}
+		return doc;
 	}
 	
 	public function getInternalDataForPageHtml() : String
@@ -354,4 +343,42 @@ class HaqTemplates
     {
         return getFileUrl(tag, HaqDefines.folders.support) + '/';
     }
+	
+	function globalizeCssClassNamesInCss(tag:String, text:String) : String
+	{
+		var blocks = new EReg("(?:[/][*].*?[*][/])|(?:[{].*?[}])|([^{]+)|(?:[{])", "s");
+		var r = "";
+		while (blocks.match(text))
+		{
+			//trace(blocks);
+			if (blocks.matched(1) == "") trace("EMPTY");
+			if (blocks.matched(1) == null) trace("NULL");
+			
+			if (blocks.matched(1) != null)
+			{
+				r += blocks.matched(0).replace(".", "." + (tag != "" ? tag + HaqDefines.DELIMITER : ""));
+			}
+			else
+			{
+				r += blocks.matched(0);
+			}
+			text = text.substr(blocks.matchedPos().pos + blocks.matchedPos().len);
+		}
+		return r;
+	}
+	
+	function globalizeCssClassNamesInXml(prefixCssClass:String, doc:HaqXmlNodeElement)
+	{
+		return;
+		var nodes : Array<HaqXmlNodeElement> = untyped Lib.toHaxeArray(doc.children);
+		for (node in nodes)
+		{
+			if (node.hasAttribute("class"))
+			{
+				var classes = ~/\s+/.split(node.getAttribute("class"));				
+				node.setAttribute("class", Lambda.map(classes, function(c) return prefixCssClass + c).join(" "));
+			}
+			globalizeCssClassNamesInXml(prefixCssClass, node);
+		}
+	}
 }

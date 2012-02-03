@@ -37,7 +37,7 @@ typedef JqEvent = {
 	function stopPropagation() : Void;
 }
 
-@native("jQuery") extern class JQuery implements ArrayAccess<Dom.HtmlDom> {
+@:native("jQuery") extern class JQuery implements ArrayAccess<Dom.HtmlDom> {
 
 	var context(default,null) : Dom.HtmlDom;
 	var length(default, null) : Int;
