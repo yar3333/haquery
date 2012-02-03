@@ -180,7 +180,11 @@ namespace run_exe.haquery
                 System.Diagnostics.ProcessStartInfo psi = new System.Diagnostics.ProcessStartInfo(fileName, arguments);
                 psi.UseShellExecute = false;
                 var p = System.Diagnostics.Process.Start(psi);
-                p.WaitForExit();
+                if (!p.WaitForExit(5000))
+                {
+                    p.Kill();
+                }
+                
             }
             catch (System.ComponentModel.Win32Exception e)
             {
