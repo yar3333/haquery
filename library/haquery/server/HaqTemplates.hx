@@ -141,11 +141,11 @@ class HaqTemplates
 				{
 					if (node.getAttribute('type') == "text/less")
                     {
-                        css += lessc.parse(node.innerHTML);
+                        css += globalizeCssClassNames(tag, lessc.parse(node.innerHTML));
                     }
                     else
                     {
-                        css += node.innerHTML;
+                        css += globalizeCssClassNames(tag, node.innerHTML);
                     }
 					
                     node.remove();
@@ -155,9 +155,14 @@ class HaqTemplates
 				i++;
 			}
         Lib.profiler.end();
-		
         
         return { css: css, doc:doc };
+	}
+	
+	function globalizeCssClassNames(tag:String, text:String) : String
+	{
+		//var blocks = new EReg("([/][*].*?[*][/])|(.*)", "");
+		return text.replace(".", "." + (tag != "" ? tag + HaqDefines.DELIMITER : ""));
 	}
 	
 	public function parseServerHandlers(componentFolder:String) : Hash<Array<String>>
