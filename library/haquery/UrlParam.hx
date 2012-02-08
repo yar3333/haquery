@@ -48,14 +48,14 @@ class UrlParam
 		return Lambda.exists(parse(url).params, function(param) return param.name == name);
     }
     
-	public static function set(url:String, name:String, value:String) : String
+	public static function set(url:String, name:String, value:Dynamic) : String
     {
 		var data = parse(url);
 		for (param in data.params)
 		{
 			if (param.name == name)
 			{
-				param.value = value;
+				param.value = Std.string(value);
 				return combine(data.prefix, data.params);
 			}
 		}
