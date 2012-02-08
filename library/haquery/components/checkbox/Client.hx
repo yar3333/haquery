@@ -4,22 +4,22 @@ import haquery.client.HaqComponent;
 
 class Client extends HaqComponent
 {
-    public var value(value_getter, value_setter) : Bool;
+    public var checked(checked_getter, checked_setter) : Bool;
     
-    function value_getter() : Bool
+    function checked_getter() : Bool
     {
-        return q('#value').val() != "0";
+        return q('#checked').val() != "0";
     }
     
-    function value_setter(v:Bool) : Bool
+    function checked_setter(v:Bool) : Bool
     {
         q('#check').attr('checked', v);
-        q('#value').val(v ? '1' : '0');
+        q('#checked').val(v ? '1' : '0');
         return v;
     }
     
     function check_change()
     {
-        q('#value').val(q('#check').is(":checked") ? '1' : '0');
+        q('#checked').val(q('#check').is(":checked") ? '1' : '0');
     }
 }
