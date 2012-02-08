@@ -19,11 +19,6 @@ class HaqTools
         return false;
     }
     
-    public static function bool(v:Dynamic) : Bool
-    {
-		return v != false && v != null && v != 0 && v != "" && v != "0" && v != "false" && v != "off";
-    }
-    
     public static function getNumeral(n, w1, w2, w3)
     {
         // $w1,$w2,$w3: голос, голоса, голосов
