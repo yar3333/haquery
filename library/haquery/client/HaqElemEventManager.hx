@@ -154,9 +154,7 @@ class HaqElemEventManager
             var nodeName = sendElem.nodeName.toUpperCase();
             if (nodeName == 'INPUT' && sendElem.getAttribute('type').toUpperCase() == "CHECKBOX")
             {
-                sendData[untyped sendElem.id] = Reflect.field(sendElem, 'checked') 
-                    ? new JQuery(sendElem).val() 
-                    : '';
+                sendData[untyped sendElem.id] = Reflect.field(sendElem, 'checked') ? '1' : '0';
             }
             else
             if (nodeName == 'INPUT' && sendElem.getAttribute('type').toUpperCase() == "RADIO")

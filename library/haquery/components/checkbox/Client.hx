@@ -1,25 +1,32 @@
 package haquery.components.checkbox;
 
 import haquery.client.HaqComponent;
+import haquery.client.HaqEvent;
 
 class Client extends HaqComponent
 {
-    public var value(value_getter, value_setter) : Bool;
+    var event_change : HaqEvent;
+	
+	public var checked(checked_getter, checked_setter) : Bool;
     
-    function value_getter() : Bool
+    function checked_getter() : Bool
     {
-        return q('#value').val() != "0";
+        return cast q('#cb').prop('checked');
     }
     
-    function value_setter(v:Bool) : Bool
+    function checked_setter(v:Bool) : Bool
     {
-		untyped q('#check')[0].checked = v;
-		q('#value').val(v ? '1' : '0');
+        q('#cb').prop('checked', v);
         return v;
     }
     
-    function check_change()
+    function cb_change(e)
     {
-        q('#value').val(q('#check').is(":checked") ? '1' : '0');
+		event_change.call([ e ]);
     }
+	
+	@shared function setChecked(v:Bool)
+	{
+		checked = v;
+	}
 }

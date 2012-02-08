@@ -1,37 +1,56 @@
 package haquery.components.checkbox;
 
 import haquery.server.HaqComponent;
-import haquery.server.HaqTools;
 import haquery.server.Lib;
+import haquery.Std;
 
 class Server extends HaqComponent
 {
-    public var value : Bool;
+    public var checked(checked_getter, checked_setter) : Bool;
+	public var text : String;
     
-    public function new()
-    {
-        super();
-        value = false;
-    }
-    
-    function init()
-    {
-        if (Lib.isPostback)
-        {
-            value = HaqTools.bool(q('#value').val());
-        }
-    }
-    
+    function checked_getter() : Bool
+	{
+		if (!Lib.isPostback)
+		{
+			return q('#cb').attr("checked") ? true : false;
+		}
+		else
+		{
+			return q('#cb').val();
+		}
+	}
+	
+	function checked_setter(v:Bool) : Bool
+	{
+		q('#cb').val(v);
+		
+		if (Lib.isPostback)
+		{
+			callSharedMethod("setChecked", [ v ]);
+		}
+		
+		return v;
+	}
+	
     function preRender()
     {
-        q('#value').val(value ? '1' : '0');
-        if (value)
-        {
-            q('#check').attr("checked", "checked");
-        }
-        else
-        {
-            q('#check').removeAttr("checked");
-        }
+		if (text != null)
+		{
+			cast(components.get("text"), haquery.components.literal.Server).text = " " + text;
+		}
     }
+	
+	override function loadFieldValues(params:Hash<String>) 
+	{
+		super.loadFieldValues(params);
+		
+		if (!Lib.isPostback)
+		{
+			if (params.exists("checked"))
+			{
+				checked = Std.bool(params.get("checked"));
+			}
+		}
+	}
 }
