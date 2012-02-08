@@ -69,4 +69,17 @@ class Server extends haquery.components.container.Server
             index++;
         }
     }
+	
+	override function loadFieldValues(params:Hash<String>) 
+	{
+		super.loadFieldValues(params);
+		
+		if (!Lib.isPostback)
+		{
+			if (params.exists("value"))
+			{
+				value = params.get("value");
+			}
+		}
+	}
 }

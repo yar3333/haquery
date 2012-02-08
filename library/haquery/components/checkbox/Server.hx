@@ -1,7 +1,6 @@
 package haquery.components.checkbox;
 
 import haquery.server.HaqComponent;
-import haquery.server.HaqTools;
 import haquery.server.Lib;
 import haquery.Std;
 
@@ -24,20 +23,11 @@ class Server extends HaqComponent
 	
 	function checked_setter(v:Bool) : Bool
 	{
-		if (!Lib.isPostback)
+		q('#cb').val(v);
+		
+		if (Lib.isPostback)
 		{
-			if (v)
-			{
-				q('#cb').attr("checked", "checked");
-			}
-			else
-			{
-				q('#cb').removeAttr("checked");
-			}
-		}
-		else
-		{
-			//q('#cb').prop("checked", true);
+			callSharedMethod("setChecked", [ v ]);
 		}
 		
 		return v;
