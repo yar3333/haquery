@@ -6,26 +6,20 @@ import haquery.server.Lib;
 
 class Server extends HaqComponent
 {
-    public var value : Bool;
-    
-    public function new()
-    {
-        super();
-        value = false;
-    }
+    public var checked : Bool;
     
     function init()
     {
         if (Lib.isPostback)
         {
-            value = HaqTools.bool(q('#value').val());
+            checked = HaqTools.bool(q('#checked').val());
         }
     }
     
     function preRender()
     {
-        q('#value').val(value ? '1' : '0');
-        if (value)
+        q('#checked').val(checked ? '1' : '0');
+        if (checked)
         {
             q('#check').attr("checked", "checked");
         }
