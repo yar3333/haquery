@@ -58,23 +58,6 @@ class Lib
 	{
 		return untyped __js__("confirm")(js.Boot.__string_rec(v,""));
 	}
-    
-    public static var urlVars(urlVars_getter, null) : Hash<String>;
-    static var urlVars_cached : Hash<String>;
-    static function urlVars_getter() : Hash<String>
-    {
-        if (urlVars_cached == null)
-        {
-            urlVars_cached = new Hash<String>();
-            var sVars = window.location.href.substr(window.location.href.indexOf('?') + 1).split('&');
-            for(sVar in sVars)
-            {
-                var kv = sVar.split('=');
-                urlVars_cached.set(kv[0], kv[1]);
-            }
-        }
-        return urlVars_cached;
-    }    
 	
     ////////////////////////////////////////////////
     // official methods
