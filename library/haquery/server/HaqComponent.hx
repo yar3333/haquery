@@ -2,6 +2,7 @@ package haquery.server;
 
 import haquery.server.HaqXml;
 import haquery.server.Lib;
+import haquery.Std;
 import Type;
 
 using haquery.StringTools;
@@ -40,27 +41,10 @@ class HaqComponent extends haquery.base.HaqComponent
         this.parentNode = parentNode;
 		
 		// loading params to object fields
-        if (params != null)
-        {
-			var fields = manager.getFieldsToLoadParams(this);
-            for (k in params.keys())
-            {
-                var v : Dynamic = params.get(k);
-                k = k.toLowerCase();
-                if (fields.exists(k))
-                {
-                    var field = fields.get(k);
-                    switch (Type.typeof(Reflect.field(this, field)))
-                    {
-                        case ValueType.TInt:    v = Std.parseInt(v);
-                        case ValueType.TFloat:  v = Std.parseFloat(v);
-                        case ValueType.TBool:   v = HaqTools.bool(v);
-                        default:                // nothing to do
-                    }
-                    Reflect.setField(this, field, v);
-                }
-            }
-        }
+		if (params != null)
+		{
+			loadFieldValues(params);
+		}
         
 		createEvents();
         createChildComponents();
@@ -70,6 +54,29 @@ class HaqComponent extends haquery.base.HaqComponent
             Reflect.callMethod(this, Reflect.field(this, 'init'), []);
         }
     }
+	
+	function loadFieldValues(params:Hash<String>) : Void
+	{
+		var fields = manager.getFieldsToLoadParams(this);
+		
+		for (k in params.keys())
+		{
+			var v : Dynamic = params.get(k);
+			k = k.toLowerCase();
+			if (fields.exists(k))
+			{
+				var field = fields.get(k);
+				switch (Type.typeof(Reflect.field(this, field)))
+				{
+					case ValueType.TInt:    v = Std.parseInt(v);
+					case ValueType.TFloat:  v = Std.parseFloat(v);
+					case ValueType.TBool:   v = Std.bool(v);
+					default:                // nothing to do
+				}
+				Reflect.setField(this, field, v);
+			}
+		}
+	}
 	
 	function createChildComponents()
 	{

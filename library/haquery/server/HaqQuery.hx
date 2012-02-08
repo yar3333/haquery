@@ -2,8 +2,10 @@ package haquery.server;
 
 import haquery.server.Lib;
 import haquery.server.HaqXml;
+import haquery.Std;
 import php.Lib;
 import php.NativeArray;
+
 using haquery.StringTools;
 
 /**
@@ -191,7 +193,15 @@ class HaqQuery
                 
                 if (node.name=='input' && node.getAttribute('type')=='checkbox')
                 {
-                    return node.hasAttribute('checked');
+                    if (!Lib.isPostback)
+					{
+						return node.hasAttribute('checked');
+					}
+					else
+					{
+						var fullID = prefixID + node.getAttribute('id');
+						return Std.bool(php.Web.getParams().get(fullID));
+					}
                 }
                 
                 return node.getAttribute('value');
@@ -242,7 +252,7 @@ class HaqQuery
             else 
 			if (node.name == 'input' && node.getAttribute('type') == 'checkbox')
             {
-                if (HaqTools.bool(val))
+                if (Std.bool(val))
                 {
                     node.setAttribute('checked', 'checked');
                 }
