@@ -11,12 +11,12 @@ class Client extends HaqComponent
     
     function checked_getter() : Bool
     {
-        return untyped q('#cb')[0].checked;
+        return cast q('#cb').prop('checked');
     }
     
     function checked_setter(v:Bool) : Bool
     {
-        untyped q('#cb')[0].checked = v;
+        q('#cb').prop('checked', v);
         return v;
     }
     
@@ -24,4 +24,9 @@ class Client extends HaqComponent
     {
 		event_change.call([ e ]);
     }
+	
+	@shared function setChecked(v:Bool)
+	{
+		checked = v;
+	}
 }
