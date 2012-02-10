@@ -9,7 +9,7 @@ class HaqComponent extends haquery.base.HaqComponent
 	
 	var serverHandlers(default,null) : Hash<Array<String>>;
     
-	public function construct(manager:HaqComponentManager, parent:HaqComponent, tag:String,  id:String, serverHandlers:Hash<Array<String>>) : Void
+	public function construct(manager:HaqComponentManager, parent:HaqComponent, tag:String,  id:String, serverHandlers:Hash<Array<String>>, factoryInitParams:Array<Dynamic>=null) : Void
 	{
 		super.commonConstruct(parent, tag, id);
 		
@@ -20,7 +20,15 @@ class HaqComponent extends haquery.base.HaqComponent
         createEvents();
 		createChildComponents();
 		
-        if (Reflect.isFunction(Reflect.field(this, 'init')))
+		if (factoryInitParams != null)
+		{
+			if (Reflect.isFunction(Reflect.field(this, 'factoryInit')))
+			{
+				Reflect.callMethod(this, Reflect.field(this, 'factoryInit'), factoryInitParams);
+			}
+		}
+		
+		if (Reflect.isFunction(Reflect.field(this, 'init')))
         {
             Reflect.callMethod(this, Reflect.field(this, 'init'), []);
         }
