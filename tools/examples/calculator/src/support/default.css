@@ -1,0 +1,180 @@
+body,tr,td, img { padding: 0; margin: 0;  border: 0; border-collapse: collapse; font-size:0; }
+div,table { padding: 0; border: 0; border-collapse: collapse; font-size:0; }
+form { padding: 0; margin: 0; border-collapse: collapse; border:0; }
+
+body { font-family: Tahoma; }
+input  { font: normal 13px Tahoma; }
+
+ul { margin-top:0; margin-bottom:0; }
+li { font-size: 13px }
+pre { font-size: 13px; margin: 0 10px }
+dt { font-size: 13px; font-weight: bold }
+dd { font-size: 13px; margin: 4px 0 4px 40px }
+.table th, .table td { font-size: 13px; border: solid 1px #666; padding: 4px 10px; text-align: left }
+
+select { font: normal 13px Tahoma; height: 20px; }
+a, p, span, label { font-size: 13px; color: #000; }
+span.link { text-decoration: underline; cursor:pointer }
+a:hover, span.link:hover { text-decoration: none; }
+
+p { text-align: justify; margin: 5px 0px; }
+code { font: 14px Courier; }
+
+.clearfix { clear: both; float: none !important; }
+
+body
+{
+    background-color: #ffdfaa;
+}
+.mainInner1
+{
+    background: url(/images/main-l.png) repeat-y left;
+    padding-left: 13px;
+}
+.mainInner2
+{
+    background: #3c2000 url(/images/main-r.png) repeat-y right;
+    padding-right: 13px;
+}
+
+.header
+{
+    height: 80px;
+    background: url(/images/header.png) repeat-x 0 0;
+}
+
+.logo
+{
+    float: left;
+    margin-top: 8px;
+    margin-left: 20px;
+    padding-left: 60px;
+    background: url(/images/logo_microcalc.png) no-repeat;
+}
+
+.logo, .logo a
+{
+    font: bold 38px Verdana;
+    color: #f90;
+    font-style: italic;
+    text-decoration: none;
+}
+
+.logo a:hover
+{
+    text-decoration: underline;
+}
+
+.headerSlogan
+{
+    color: #f1c5a5;
+    font-size: 13px;
+    float:left;
+    margin: 24px 0 0 30px;
+    padding: 0;
+    font-weight: normal;
+    
+}
+
+.mainMenu { float: right; margin-top: 22px; margin-right: 10px;  }
+.mainMenu a { color: #fc6; font-size: 15px; padding: 0 15px; }
+
+.contentContainer
+{
+    width:800px;
+    background-color: #fff;
+}
+
+.content
+{
+    padding: 5px 25px;
+}
+
+.footer
+{
+    width: 100%;
+    background: #FFDFAA url(/images/footer.png) no-repeat;
+    margin-bottom: 5px;
+    height: 50px;
+}
+.footer td { vertical-align: middle; padding: 0 30px;}
+
+.footer td, .footer td a
+{
+   font: 12px Tahoma;
+ }
+
+.footer-l { text-align: left; }
+.footer-c { text-align: center; }
+.footer-r { text-align: right; }
+
+ .footer-l, .footer-r
+{
+     width: 150px;
+}
+
+.h2
+{
+    display: block;
+    color: #e38800;
+    font-size: 20px;
+    margin: 10px 0;
+    font-weight: bold;
+}
+
+.h3
+{
+    display: block;
+    color: #e38800;
+    font-size: 14px;
+    margin: 8px 0 5px;
+    font-weight: bold;
+}
+
+.h4
+{
+    display: block;
+    color: #e38800;
+    font-size: 13px;
+    margin: 8px 0 5px;
+}
+
+.panReklama
+{
+    float:left;
+    width: 100px;
+    font:  11px Arial;
+    padding-top: 10px;
+}
+.panReklama p
+{
+    text-align: right;
+}
+
+.panCalculator
+{
+    float:left;
+    margin: 0 15px;
+    width: 250px
+}
+
+.panJoke
+{
+    float: left;
+    width: 370px;
+}
+
+.panHistory
+{
+    margin-bottom: 10px;
+}
+
+.panHistory textarea
+{
+    background-color: #F6F9FD;
+    border: solid 1px #386AB3;
+    width: 100%;
+    height: 147px;
+    overflow-y: scroll;
+}
+

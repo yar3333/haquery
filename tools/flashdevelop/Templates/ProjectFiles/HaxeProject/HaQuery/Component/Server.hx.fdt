@@ -1,0 +1,28 @@
+#if php
+
+package $(Package);
+
+import haquery.server.Lib;
+import haquery.server.HaqComponent;
+
+class $(FileName) extends HaqComponent
+{
+	function init()
+    {
+        if (!Lib.isPostback)
+        {
+            $(EntryPoint)
+        }
+        else
+        {
+            
+        }
+	}
+	
+	function preRender()
+    {
+        
+	}
+}
+
+#end

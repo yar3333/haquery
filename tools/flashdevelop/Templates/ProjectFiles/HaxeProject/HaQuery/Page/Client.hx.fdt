@@ -1,0 +1,16 @@
+#if js
+
+package $(Package);
+
+import haquery.client.Lib;
+import haquery.client.HaqPage;
+
+class $(FileName) extends HaqPage
+{
+	function init()
+    {
+        $(EntryPoint)
+    }
+}
+
+#end
