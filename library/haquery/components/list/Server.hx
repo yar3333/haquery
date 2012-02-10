@@ -13,7 +13,7 @@ class Server extends Base
         {
 			for (i in 0...length)
 			{
-				manager.createComponent(this, 'haq:listitem', Std.string(i), null, parentNode);
+				manager.createComponent(this, 'listitem', Std.string(i), null, parentNode);
 			}
         }
 	}
