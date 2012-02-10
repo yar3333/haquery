@@ -16,7 +16,7 @@ class HaqComponentManager
 		this.id_tag = id_tag;
 	}
 	
-	public function createComponent(parent:HaqComponent, tag:String, id:String) : HaqComponent
+	public function createComponent(parent:HaqComponent, tag:String, id:String, factoryInitParams:Array<Dynamic>=null) : HaqComponent
     {
 		var pageClass : Class<HaqComponent>;
 		if (parent != null)
@@ -44,7 +44,7 @@ class HaqComponentManager
 		var component : HaqComponent = untyped Type.createInstance(pageClass, []);
         if (Reflect.isFunction(Reflect.field(component, 'construct')))
         {
-            component.construct(this, parent, tag, id, templates.get(tag).elemID_serverHandlers);
+            component.construct(this, parent, tag, id, templates.get(tag).elemID_serverHandlers, factoryInitParams);
         }
         else
         {

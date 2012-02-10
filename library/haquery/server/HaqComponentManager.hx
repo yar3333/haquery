@@ -278,4 +278,9 @@ class HaqComponentManager
 			i++;
         }
     }
+	
+	public function getTemplateHtml(tag:String) : String
+	{
+		return templates.get(tag).doc.toString();
+	}
 }
