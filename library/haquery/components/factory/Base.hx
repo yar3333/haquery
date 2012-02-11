@@ -19,7 +19,7 @@ class Base extends HaqComponent
     
     function length_setter(n:Int) : Int
     {
-        q('#length').val(n);
+        q('#length').val(Std.string(n));
         return n;
     }	
     
