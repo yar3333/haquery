@@ -22,7 +22,7 @@ private typedef HaqCachedTemplate = {
     var serverHandlers : Hash<Array<String>>;
 }
 
-class HaqTemplates
+class HaqComponentTemplates
 {
 	var componentsFolders : Array<String>;
 	var templates : Hash<Hash<HaqCachedTemplate>>; // templates.get(relativePathToComponentsFolder).get(tag)
