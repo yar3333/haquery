@@ -26,12 +26,17 @@ class HaqQuery
      */
     public var nodes(default, null) : Array<HaqXmlNodeElement>;
     
-    private function jQueryCall(method)
+    function jQueryCall(method)
     {
         HaqInternals.addAjaxResponse("$('" + query.replace('#', '#' + prefixID) + "')." + method + ";");
     }
     
-    public function new(prefixCssClass:String, prefixID:String, query:String, nodes:NativeArray)
+	function globalizeClassName(className:String) : String
+	{
+        return ~/\b~/.replace(className, prefixCssClass);
+	}
+    
+	public function new(prefixCssClass:String, prefixID:String, query:String, nodes:NativeArray)
     {
         this.prefixCssClass = prefixCssClass;
 		this.prefixID = prefixID;
@@ -91,13 +96,14 @@ class HaqQuery
 
     public function addClass(cssClass:String) : HaqQuery
     {
-        var classes = (new EReg('\\s+', '')).split(cssClass);
+        cssClass = globalizeClassName(cssClass);
+		
+		var classes = ~/\s+/.split(cssClass);
         for (node in nodes)
         {
             var s = node.hasAttribute('class') ? node.getAttribute('class') : '';
             for (c in classes)
             {
-                c = prefixCssClass + c;
                 if (!(new EReg('(^|\\s)' + c + '(\\s|$)', '')).match(s))
 				{
 					s += " " + c;
@@ -106,21 +112,25 @@ class HaqQuery
             node.setAttribute('class', s.ltrim());
         }
 
-        if (Lib.isPostback) jQueryCall('addClass("'+cssClass+'")');
+        if (Lib.isPostback)
+		{
+			jQueryCall('addClass("' + cssClass + '")');
+		}
 
         return this;
     }
 
     public function hasClass(cssClass:String) : Bool
     {
-        var classes = (new EReg('\\s+', '')).split(cssClass);
+        cssClass = globalizeClassName(cssClass);
+        
+		var classes = ~/\s+/.split(cssClass);
         for (node in nodes)
         {
             var s = node.hasAttribute('class') ? node.getAttribute('class') : '';
             var inAll = true;
             for (c in classes)
             {
-                c = prefixCssClass + c;
                 if (!(new EReg('(^|\\s)' + c + '(\\s|$)', '')).match(s)) 
 				{
 					inAll = false; 
@@ -134,13 +144,14 @@ class HaqQuery
 
     public function removeClass(cssClass:String) : HaqQuery
     {
-        var classes = (new EReg('\\s+', '')).split(cssClass);
+        cssClass = globalizeClassName(cssClass);
+        
+		var classes = ~/\s+/.split(cssClass);
         for (node in nodes)
         {
             var s = node.hasAttribute('class') ? node.getAttribute('class') : '';
             for (c in classes)
 			{
-				c = prefixCssClass + c;
 				s = (new EReg('(^|\\s)' + c + '(\\s|$)', '')).replace(s, ' ');
 			}
             node.setAttribute('class', s.trim());
@@ -148,7 +159,7 @@ class HaqQuery
 
         if (Lib.isPostback)
 		{
-			jQueryCall('removeClass("'+cssClass+'")');
+			jQueryCall('removeClass("' + cssClass + '")');
 		}
 
         return this;
