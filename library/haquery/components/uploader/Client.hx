@@ -3,7 +3,7 @@ package haquery.components.uploader;
 import haquery.client.HaqElemEventManager;
 import haquery.client.HaqEvent;
 import haquery.client.HaqQuery;
-import js.jQuery.JQuery;
+import js.JQuery;
 import js.Dom;
 
 using haquery.StringTools;
@@ -17,7 +17,7 @@ class Client extends Base
 
     function init()
     {
-        q("#file").attr("name", q("#file").get(0).id);
+        q("#file").attr("name", q("#file")[0].id);
     }
 
     function container_mousemove(t, e)
@@ -29,8 +29,8 @@ class Client extends Base
         var offset = container.offset();
         
         q('#file').offset({
-            left: Math.min(offset.left + container.width() - file.width(), Math.max(offset.left, e.pageX - 50)),
-            top:  Math.min(offset.top + container.height() - file.height(), Math.max(offset.top,  e.pageY - 10))
+            left: Std.int(Math.min(offset.left + container.width() - file.width(), Math.max(offset.left, e.pageX - 50))),
+            top:  Std.int(Math.min(offset.top + container.height() - file.height(), Math.max(offset.top,  e.pageY - 10)))
         });
     }
 
@@ -64,8 +64,8 @@ class Client extends Base
         event_uploading.call();
         enabled = false;
 
-        var frame : IFrame = q('#frame').get(0);
-        new HaqQuery(frame).unbind('load').load(function() {
+        var frame : IFrame = cast q('#frame')[0];
+        new JQuery(frame).unbind('load').load(function(e:JqEvent) {
             var elem : HtmlDom = frame.contentWindow.document.body.firstChild;
             var text = elem.innerHTML;
             HaqElemEventManager.callServerHandlersCallbackFunction(text); 
@@ -78,7 +78,7 @@ class Client extends Base
             form.append("<input type='hidden' id='HAQUERY_DATA-" + key + "' name='" + key + "' />\n");
             (new JQuery('#HAQUERY_DATA-' + key)).val(Reflect.field(sendData, key));
         }
-        form.get(0).submit();
+        cast(form[0]).submit();
         
         for (key in Reflect.fields(sendData))
         {

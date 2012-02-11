@@ -4,6 +4,8 @@ import haxe.Serializer;
 import haxe.Unserializer;
 import js.Dom;
 import js.Lib;
+import js.JQuery;
+
 using haquery.StringTools;
 
 class HaqElemEventManager 
@@ -57,24 +59,24 @@ class HaqElemEventManager
                 }
                 if (needHandler)
                 {
-                    new HaqQuery(elem).bind(eventName, null, function(e:js.Dom.Event):Bool {
-                        return elemEventHandler(componentWithHandlers, componentWithEvents, elem, templates, e); 
+                    new JQuery(elem).bind(eventName, function(e:JqEvent) {
+                        elemEventHandler(componentWithHandlers, componentWithEvents, elem, templates, e); 
                     });
                 }
             }
         }
     }
 
-    static function elemEventHandler(componentWithHandlers:HaqComponent, componentWithEvents:HaqComponent, elem:HtmlDom, templates:HaqTemplates, e:js.Dom.Event) : Bool
+    static function elemEventHandler(componentWithHandlers:HaqComponent, componentWithEvents:HaqComponent, elem:HtmlDom, templates:HaqTemplates, e:JqEvent)
     {
-		var r = callClientElemEventHandlers(componentWithHandlers, componentWithEvents, elem, e);
-		if (!r) return false;
-        
-		var serverHandlers = templates.get(componentWithHandlers.tag).elemID_serverHandlers;
-        return callServerElemEventHandlers(elem.id, e.type, serverHandlers);
+		if (callClientElemEventHandlers(componentWithHandlers, componentWithEvents, elem, e))
+		{
+			var serverHandlers = templates.get(componentWithHandlers.tag).elemID_serverHandlers;
+			callServerElemEventHandlers(elem.id, e.type, serverHandlers);
+		}
     }
 	
-	static function callClientElemEventHandlers(componentWithHandlers:HaqComponent, componentWithEvents:HaqComponent, elem:HtmlDom, e:js.Dom.Event) : Bool
+	static function callClientElemEventHandlers(componentWithHandlers:HaqComponent, componentWithEvents:HaqComponent, elem:HtmlDom, e:JqEvent) : Bool
 	{
 		var n = elem.id.lastIndexOf(HaqDefines.DELIMITER);
 		var elemID = n > 0 ? elem.id.substr(n + 1) : elem.id;
@@ -107,7 +109,7 @@ class HaqElemEventManager
 	public static function callServerMethod(componentID:String, method:String, ?params:Array<Dynamic>, ?callbackFunc:Dynamic->Void) : Void
 	{
 		var sendData = getDataObjectForSendToServer(componentID, method, params);
-		HaqQuery._static.post(Lib.window.location.href, sendData, function(data:String) : Void
+		untyped JQuery.post(Lib.window.location.href, sendData, function(data:String) : Void
 		{ 
 			callServerHandlersCallbackFunction(data, callbackFunc);
 		});
@@ -175,7 +177,7 @@ class HaqElemEventManager
             }
             else
             {
-                sendData[untyped sendElem.id] = new HaqQuery(sendElem).val();
+                sendData[untyped sendElem.id] = new JQuery(sendElem).val();
             }
         }
         
@@ -184,8 +186,7 @@ class HaqElemEventManager
 	
 	static function getElemsForSendToServer() : Iterable<HtmlDom>
 	{
-		var jqAllElemsWithID = new HaqQuery("[id]");
-		var allElemsWithID : Array<HtmlDom> = untyped jqAllElemsWithID.toArray();
+		var allElemsWithID = new JQuery("[id]").get();
 		var elems = Lambda.filter(allElemsWithID, function(elem)
         {
             var elemTag = elem.nodeName.toUpperCase();

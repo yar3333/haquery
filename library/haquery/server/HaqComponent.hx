@@ -85,7 +85,7 @@ class HaqComponent extends haquery.base.HaqComponent
 
     public function render() : String
     {
-        if (Lib.config.isTraceComponent) trace("render " + this.fullID);
+        if (Lib.config.isTraceComponent) trace("render " + fullID);
 		
 		manager.prepareDocToRender(prefixID, doc);
 
@@ -99,21 +99,23 @@ class HaqComponent extends haquery.base.HaqComponent
      */
     public function q(?query:Dynamic=null) : HaqQuery
     {
-        if (query == null) return new HaqQuery(this.prefixID, '', null);
+        var prefixCssClass = tag != "" ? tag + HaqDefines.DELIMITER : "";
+		
+		if (query == null) return new HaqQuery(prefixCssClass, prefixID, '', null);
         if (Type.getClass(query) == haquery.server.HaqQuery) return query;
 		if (untyped __php__("$query instanceof HaqXmlNodeElement"))
 		{
 			Lib.assert(!Lib.isPostback, "Calling of the HaqComponent.q() with HaqXmlNodeElement parameter do not possible on the postback.");
-			return new HaqQuery(this.prefixID, "", Lib.toPhpArray([ query ]));
+			return new HaqQuery(prefixCssClass, prefixID, "", Lib.toPhpArray([ query ]));
 		}
         if (Type.getClassName(Type.getClass(query)) != 'String')
 		{
 			throw "HaqComponent.q() error - 'query' parameter must be a string or HaqQuery.";
 		}
         
-        var nodes = this.doc.find(query);
+        var nodes = doc.find(query);
         
-        return new HaqQuery(this.prefixID, query, nodes);
+        return new HaqQuery(prefixCssClass, prefixID, query, nodes);
     }
 
     /**
@@ -124,7 +126,7 @@ class HaqComponent extends haquery.base.HaqComponent
     {
 		Lib.assert(Lib.isPostback, "HaqComponent.callClientMethod() allowed on the postback only.");
         
-        var funcName = this.fullID.length != 0
+        var funcName = fullID.length != 0
             ? "haquery.client.HaqSystem.page.findComponent('" + fullID + "')." + method
             : "haquery.client.HaqSystem.page." + method;
         
@@ -138,7 +140,7 @@ class HaqComponent extends haquery.base.HaqComponent
 	{
 		Lib.assert(Lib.isPostback, "HaqComponent.callSharedMethod() allowed on the postback only.");
         
-        var funcName = this.fullID.length != 0
+        var funcName = fullID.length != 0
             ? "haquery.client.HaqSystem.page.findComponent('" + fullID + "')." + method
             : "haquery.client.HaqSystem.page." + method;
         

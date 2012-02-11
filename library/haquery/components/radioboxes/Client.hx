@@ -14,7 +14,7 @@ class Client extends haquery.components.container.Client
     {
         for (elem in getInputElements())
         {
-            elem.change(function(e) return event_change.call([e]));
+            elem.change(function(e) { event_change.call([e]); } );
         }
     }
     

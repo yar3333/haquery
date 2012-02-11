@@ -13,6 +13,7 @@ using haquery.StringTools;
  */
 class HaqQuery
 {
+    public var prefixCssClass : String;
     public var prefixID : String;
     
     /**
@@ -30,9 +31,10 @@ class HaqQuery
         HaqInternals.addAjaxResponse("$('" + query.replace('#', '#' + prefixID) + "')." + method + ";");
     }
     
-    public function new(prefixID:String, query:String, nodes:NativeArray)
+    public function new(prefixCssClass:String, prefixID:String, query:String, nodes:NativeArray)
     {
-        this.prefixID = prefixID;
+        this.prefixCssClass = prefixCssClass;
+		this.prefixID = prefixID;
         this.query = query;
         this.nodes = nodes != null ? cast Lib.toHaxeArray(nodes) : [];
     }
@@ -95,8 +97,11 @@ class HaqQuery
             var s = node.hasAttribute('class') ? node.getAttribute('class') : '';
             for (c in classes)
             {
-                //assert(c!='');
-                if (!(new EReg('(^|\\s)'+c+'(\\s|$)', '')).match(s)) s += " " + c;
+                c = prefixCssClass + c;
+                if (!(new EReg('(^|\\s)' + c + '(\\s|$)', '')).match(s))
+				{
+					s += " " + c;
+				}
             }
             node.setAttribute('class', s.ltrim());
         }
@@ -115,8 +120,12 @@ class HaqQuery
             var inAll = true;
             for (c in classes)
             {
-                //assert(c!='');
-                if (!(new EReg('(^|\\s)'+c+'(\\s|$)', '')).match(s)) { inAll = false; break; }
+                c = prefixCssClass + c;
+                if (!(new EReg('(^|\\s)' + c + '(\\s|$)', '')).match(s)) 
+				{
+					inAll = false; 
+					break;
+				}
             }
             if (inAll) return true;
         }
@@ -129,7 +138,11 @@ class HaqQuery
         for (node in nodes)
         {
             var s = node.hasAttribute('class') ? node.getAttribute('class') : '';
-            for (c in classes) s = (new EReg('(^|\\s)' + c + '(\\s|$)', '')).replace(s, ' ');
+            for (c in classes)
+			{
+				c = prefixCssClass + c;
+				s = (new EReg('(^|\\s)' + c + '(\\s|$)', '')).replace(s, ' ');
+			}
             node.setAttribute('class', s.trim());
         }
 
@@ -257,11 +270,11 @@ class HaqQuery
         }
         
         // setting
-        for (node in this.nodes)
+        for (node in nodes)
         {
             if (Lib.isPostback && node.hasAttribute('id'))
             {
-                var fullID = this.prefixID + node.getAttribute('id');
+                var fullID = prefixID + node.getAttribute('id');
 				untyped __php__("
 					if (isset($_POST[$fullID])) $_POST[$fullID] = $val; 
 				");
