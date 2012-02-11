@@ -145,10 +145,10 @@ class HaqComponent extends haquery.base.HaqComponent
         HaqInternals.addAjaxResponse(HaqTools.getCallClientFunctionString(funcName, params) + ';');
 	}
     
-    public function callElemEventHandler(elemID:String, eventName:String) : Void
+    public function callElemEventHandler(elemID:String, eventName:String) : Dynamic
     {
         var handler = elemID + '_' + eventName;
-        Reflect.callMethod(this, handler, [ this ]);
+        return Reflect.callMethod(this, handler, [ this ]);
     }
     
     function getSupportPath() : String

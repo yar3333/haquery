@@ -64,7 +64,7 @@ class HaqComponent extends haquery.base.HaqComponent
 	/**
 	 * Call server method, marked as @shared.
 	 */
-	function callSharedMethod(method:String, ?params:Array<Dynamic>, ?callbackFunc:Void->Void) : Void
+	function callSharedMethod(method:String, ?params:Array<Dynamic>, ?callbackFunc:Dynamic->Void) : Void
 	{
 		HaqElemEventManager.callServerMethod(fullID, method, params, callbackFunc);
 	}
