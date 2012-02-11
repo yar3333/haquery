@@ -14,8 +14,7 @@ class HaqQuery extends JQuery
 	
 	private function globalizeClassName(className:String) : String
 	{
-        var classes = (new EReg('\\s+', '')).split(className);
-		return Lambda.map(classes, function(c) return prefixCssClass + c).join(' ');
+        return ~/\b~/.replace(className, prefixCssClass);
 	}
 	
 	override public function addClass(className:String) : JQuery 
