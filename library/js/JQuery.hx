@@ -44,6 +44,8 @@ typedef JqEvent = {
 
 	@:overload(function(j:js.JQuery):Void{})
 	@:overload(function(j:js.Dom.HtmlDom):Void{})
+	@:overload(function(html:String, j:js.JQuery):Void{})
+	@:overload(function(html:String, j:js.Dom.HtmlDom):Void{})
 	function new( html : String ) : Void;
 
 	// attributes
@@ -64,6 +66,8 @@ typedef JqEvent = {
 	function html() : String;
 
 	@:overload(function(value:String):js.JQuery{})
+	@:overload(function(value:Int):js.JQuery{})
+	@:overload(function(value:Float):js.JQuery{})
 	function val() : String;
 
 	@:overload(function(text:String):js.JQuery{})
