@@ -120,11 +120,22 @@ class Tasks
         {
             if (FileSystem.exists(path))
             {
-                if (FileSystem.exists(newpath))
-                {
-                    FileSystem.deleteFile(newpath);
-                }
-                FileSystem.rename(path, newpath);
+                if (!FileSystem.isDirectory(path))
+				{
+					if (FileSystem.exists(newpath))
+					{
+						FileSystem.deleteFile(newpath);
+					}
+					FileSystem.rename(path, newpath);
+				}
+				else
+				{
+					if (FileSystem.exists(newpath))
+					{
+						FileSystem.deleteDirectory(newpath);
+					}
+					FileSystem.rename(path, newpath);
+				}
             }
             else
             {
@@ -178,7 +189,7 @@ class Tasks
         }
     }
     
-    public function getWindowsRegistryValue(key:String) : String
+    /*public function getWindowsRegistryValue(key:String) : String
     {
         var dir = neko.Sys.getEnv("TMP");
 		if (dir == null)
@@ -200,5 +211,5 @@ class Tasks
         if (re.match(content)) return re.matched(1);
         
         return content;
-    }
+    }*/
 }
