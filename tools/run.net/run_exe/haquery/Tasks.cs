@@ -221,7 +221,7 @@ namespace run_exe.haquery
             if (File.Exists(binPath + "\\haquery\\client\\haquery.js")
              && File.Exists(binPath + "\\haquery\\client\\haquery.js.old"))
             {
-                restoreFileTimes(binPath + "\\haquery\\client\\haquery.js.old", "" + binPath + "\\haquery\\client\\haquery.js");
+                restoreFileTimes(binPath + "\\haquery\\client\\haquery.js.old", binPath + "\\haquery\\client\\haquery.js");
                 hant.deleteFile(binPath + "\\haquery\\client\\haquery.js.old");
             }
             
@@ -362,7 +362,7 @@ namespace run_exe.haquery
             
             if (!File.Exists(r + "haxe.exe"))
             {
-                throw new Exception("HaXe not found (file '" + r + "haxe.exe' do not exist).");
+                throw new Exception("HaXe not found (file '" + r + "haxe.exe' does not exist).");
             }
             
             return r;
@@ -412,11 +412,6 @@ namespace run_exe.haquery
             }
             
             log.finishOk();
-        }
-
-        static bool getTrue(string path)
-        {
-            return true;
         }
         
         public void uninstall()
