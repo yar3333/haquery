@@ -26,6 +26,10 @@ class HaqComponent extends haquery.base.HaqComponent
 			{
 				Reflect.callMethod(this, Reflect.field(this, 'factoryInit'), factoryInitParams);
 			}
+			else
+			{
+				throw "Client class of the " + tag + " component must contain method factoryInit() to be instanceable on the client via factory component.";
+			}
 		}
 		
 		if (Reflect.isFunction(Reflect.field(this, 'init')))
