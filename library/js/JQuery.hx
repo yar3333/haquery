@@ -69,6 +69,9 @@ typedef JqEvent = {
 	@:overload(function(text:String):js.JQuery{})
 	function text() : String;
 
+	@:overload(function(name:String,value:Dynamic):js.JQuery{})
+	function prop( name : String ) : String;
+	
 	// Size & Position
 	@:overload(function(value:Int):js.JQuery{})
 	function width() : Int;

@@ -3,7 +3,7 @@ package haquery.components.factory;
 import haquery.client.Lib;
 import haquery.client.HaqComponent;
 import haxe.Unserializer;
-import js.jQuery.JQuery;
+import js.JQuery;
 import js.Dom;
 import haquery.client.HaqElemEventManager;
 
@@ -23,7 +23,7 @@ class Client extends Base
 		if (factoryInitParams == null) factoryInitParams = [];
 		
 		var doc = new JQuery(template);
-		var nodes : Array<Dom> = cast doc;
+		var nodes : Array<HtmlDom> = cast doc;
 		for (node in nodes)
 		{
 			prepareDoc(node);
@@ -35,14 +35,14 @@ class Client extends Base
 		length++;
 	}
 	
-	function prepareDoc(node:Dom)
+	function prepareDoc(node:HtmlDom)
 	{
 		if (node.id != "")
 		{
 			node.id = prefixID + node.id;
 		}
 		
-		var nodes : Array<Dom> = cast node.childNodes;
+		var nodes : Array<HtmlDom> = cast node.childNodes;
 		for (child in nodes)
 		{
 			prepareDoc(child);
