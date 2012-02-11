@@ -3,6 +3,7 @@ package haquery.components.tabs;
 import haquery.client.HaqQuery;
 import haquery.client.HaqEvent;
 import haquery.client.HaqComponent;
+import js.JQuery;
 
 class Client extends haquery.components.container.Client
 {
@@ -11,42 +12,34 @@ class Client extends haquery.components.container.Client
     function init()
     {
         var self = this;
-        q('#tabs>*:eq(0)>*').each(function(index, elem)
-        {
-            new HaqQuery(elem).click(function(e)
+        
+        var tabs = q('#tabs>*:eq(0)>*').get();
+		for (i in 0...tabs.length)
+		{
+			new JQuery(tabs[i]).click(function(e)
             {
-                self.active = index;
+                self.active = i;
             });
-        });
+		}
         
         active = 0;
     }
     
     function active_getter() : Int
     {
-        var r = -1;
-        q('#tabs>*:eq(1)>*').each(function(index, elem)
-        {
-            if (new HaqQuery(elem).hasClass('active'))
-            {
-                r = index;
-            }
-        });
-        return r;
+        var panels = q('#tabs>*:eq(1)>*').get();
+		for (i in 0...panels.length)
+		{
+			if (new JQuery(panels[i]).hasClass('active')) return i;
+		}
+        return -1;
     }
 
     function active_setter(n:Int) : Int
     {
-        q('#tabs>*:eq(0)>*').each(function(index, elem)
-        {
-            new HaqQuery(elem).removeClass('active');
-        });
+        q('#tabs>*:eq(0)>*').removeClass('active');
         q('#tabs>*:eq(0)>*:eq(' + n + ')').addClass('active');
-        
-        q('#tabs>*:eq(1)>*').each(function(index, elem)
-        {
-            new HaqQuery(elem).removeClass('active').hide();
-        });
+        q('#tabs>*:eq(1)>*').removeClass('active').hide();
         q('#tabs>*:eq(1)>*:eq(' + n + ')').addClass('active').show();
         
         return n;
