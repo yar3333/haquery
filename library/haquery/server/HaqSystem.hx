@@ -26,7 +26,7 @@ class HaqSystem
             trace("HAQUERY SYSTEM Start route.pagePath = " + route.path + ", HTTP_HOST = " + Web.getHttpHost() + ", clientIP = " + Web.getClientIP() + ", pageID = " + route.pageID);
             
             Lib.profiler.begin('templates');
-                var templates = new HaqTemplates(HaqConfig.getComponentsFolders("", Lib.config.componentsPackage));
+                var templates = new HaqComponentTemplates(HaqConfig.getComponentsFolders("", Lib.config.componentsPackage));
             Lib.profiler.end();
 
             var params = php.Web.getParams();
@@ -58,7 +58,7 @@ class HaqSystem
         Lib.print(html);
     }
     
-    function renderPage(page:HaqPage, templates:HaqTemplates, manager:HaqComponentManager, path:String) : String
+    function renderPage(page:HaqPage, templates:HaqComponentTemplates, manager:HaqComponentManager, path:String) : String
     {
         Lib.profiler.begin('renderPage');
             page.forEachComponent('preRender');

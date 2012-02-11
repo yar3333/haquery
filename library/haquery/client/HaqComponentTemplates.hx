@@ -8,7 +8,7 @@ typedef HaqTemplate =
 	var clas : Class<HaqComponent>;
 }
 
-class HaqTemplates
+class HaqComponentTemplates
 {
 	var componentsFolders : Array<String>;
 	var tag_elemID_serverHandlers : Hash<Hash<Array<String>>>;
