@@ -1,5 +1,6 @@
 package haquery.server;
 
+import haxe.Serializer;
 import haxe.Unserializer;
 import php.FileSystem;
 import php.io.File;
@@ -47,7 +48,7 @@ class HaqSystem
             }
             else
             {
-                html = renderAjax(page);
+                html = processPostback(page);
             }
             
             trace("HAQUERY SYSTEM Finish");
@@ -57,7 +58,7 @@ class HaqSystem
         Lib.print(html);
     }
     
-    static function renderPage(page:HaqPage, templates:HaqTemplates, manager:HaqComponentManager, path:String) : String
+    function renderPage(page:HaqPage, templates:HaqTemplates, manager:HaqComponentManager, path:String) : String
     {
         Lib.profiler.begin('renderPage');
             page.forEachComponent('preRender');
@@ -84,7 +85,7 @@ class HaqSystem
         return html;
     }
     
-    function renderAjax(page : HaqPage)
+    function processPostback(page : HaqPage)
     {
         page.forEachComponent('preEventHandlers');
 
@@ -93,16 +94,24 @@ class HaqSystem
         
         var component : HaqComponent = page.findComponent(componentID);
         
+		var result = null;
+		
 		if (component != null)
 		{
 			if (Reflect.hasField(component, method))
 			{
-				if (!callElemEventHandler(component, method))
+				var r = callElemEventHandler(component, method);
+				if (!r.success)
 				{
-					if (!callSharedMethod(component, method, Unserializer.run(php.Web.getParams().get('HAQUERY_PARAMS'))))
-					{
-						throw "Method '" + componentID + '#' + method + "' must be marked as @shared to be callable from the client.";
-					}
+					r = callSharedMethod(component, method, Unserializer.run(php.Web.getParams().get('HAQUERY_PARAMS')));
+				}
+				if (r.success)
+				{
+					result = r.result;
+				}
+				else
+				{
+					throw "Method " + method + "() of the " + component.tag + " component's server class must exists and marked @shared to be callable from the client.";
 				}
 			}
 			else
@@ -117,10 +126,10 @@ class HaqSystem
         
         php.Web.setHeader('Content-Type', 'text/plain; charset=utf-8');
         
-        return 'HAQUERY_OK' + HaqInternals.getAjaxResponse();
+        return 'HAQUERY_OK' + Serializer.run(result) + "\n" + HaqInternals.getAjaxResponse();
     }
 	
-	function callElemEventHandler(component:HaqComponent, method:String) : Bool
+	function callElemEventHandler(component:HaqComponent, method:String) : { success:Bool, result:Dynamic }
 	{
 		var n = method.lastIndexOf("_");
 		if (n >= 0)
@@ -128,24 +137,21 @@ class HaqSystem
 			var event = method.substr(n + 1);
 			if (Lambda.has(HaqDefines.elemEventNames, event))
 			{
-				component.callElemEventHandler(method.substr(0, n), event);
-				return true;
+				return { success:true, result:component.callElemEventHandler(method.substr(0, n), event) };
 			}
 		}
-		return false;
+		return { success:false, result:null };
 	}
 	
-	function callSharedMethod(component:HaqComponent, method:String, params:Array<Dynamic>) : Bool
+	function callSharedMethod(component:HaqComponent, method:String, params:Array<Dynamic>) : { success:Bool, result:Dynamic }
 	{
 		var haxeClass = Type.getClass(component);
 		var meta = haxe.rtti.Meta.getFields(haxeClass);
 		var m = Reflect.field(meta, method);
 		if (Reflect.hasField(m, "shared"))
 		{
-			Reflect.callMethod(component, Reflect.field(component, method), params);
-			return true;
+			return { success:true, result:Reflect.callMethod(component, Reflect.field(component, method), params) };
 		}
-		
-		return false;
+		return { success:false, result:null };
 	}
 }

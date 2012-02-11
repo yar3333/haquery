@@ -1,6 +1,7 @@
 package haquery.client;
 
 import haxe.Serializer;
+import haxe.Unserializer;
 import js.Dom;
 import js.Lib;
 using haquery.StringTools;
@@ -103,39 +104,45 @@ class HaqElemEventManager
         return true;
 	}
     
-	public static function callServerMethod(componentID:String, method:String, ?params:Array<Dynamic>, ?callbackFunc:Void->Void)
+	public static function callServerMethod(componentID:String, method:String, ?params:Array<Dynamic>, ?callbackFunc:Dynamic->Void) : Void
 	{
 		var sendData = getDataObjectForSendToServer(componentID, method, params);
-		HaqQuery._static.post(Lib.window.location.href, sendData, function(data:String)
+		HaqQuery._static.post(Lib.window.location.href, sendData, function(data:String) : Void
 		{ 
-			callServerHandlersCallbackFunction(data);
-			if (callbackFunc != null)
-			{
-				callbackFunc();
-			}
+			callServerHandlersCallbackFunction(data, callbackFunc);
 		});
-		
-        return true;
 	}
-    
-	public static function callServerHandlersCallbackFunction(data:String) : Void
-    {
-        var okMsg = "HAQUERY_OK";
-        if (data.startsWith(okMsg))
-        {
-            var code = data.substr(okMsg.length);
-            trace("AJAX: " + code);
-            untyped __js__("eval(code)");
-        }
-        else
-        {
-            if (data != '')
-            {
-                var errWin = Lib.window.open("", "HAQUERY_ERROR_AJAX");
-                errWin.document.write(data);
-            }
-        }
-    }
+	
+	public static function callServerHandlersCallbackFunction(data:String, ?callbackFunc:Dynamic->Void) : Void
+	{
+		var okMsg = "HAQUERY_OK";
+		if (data.startsWith(okMsg))
+		{
+			var resultAndCode = data.substr(okMsg.length);
+			var n = resultAndCode.indexOf("\n");
+			if (n >= 0)
+			{
+				var result = Unserializer.run(resultAndCode.substr(0, n));
+				var code = resultAndCode.substr(n + 1);
+				trace("AJAX result:");
+				trace(result);
+				trace("AJAX code:\n" + code);
+				untyped __js__("eval(code)");
+				if (callbackFunc != null)
+				{
+					callbackFunc(result);
+				}
+			}
+		}
+		else
+		{
+			if (data != '')
+			{
+				var errWin = Lib.window.open("", "HAQUERY_ERROR_AJAX");
+				errWin.document.write(data);
+			}
+		}
+	}
     
     public static function getDataObjectForSendToServer(componentID:String, method:String, ?params:Array<Dynamic>) : Dynamic
     {

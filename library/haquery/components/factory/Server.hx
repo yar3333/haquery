@@ -25,12 +25,13 @@ class Server extends Base
 		q('#template').val(Serializer.run(manager.getTemplateHtml(tag)));
 	}
 	
-    override function callElemEventHandler(elemID:String, eventName:String) : Void
+    override function callElemEventHandler(elemID:String, eventName:String) : Dynamic
     {
         if (parent != null)
         {
             var handler = elemID + '_' + eventName;
-            Reflect.callMethod(parent, handler, [ this ]);
+            return Reflect.callMethod(parent, handler, [ this ]);
         }
+		return null;
     }
 }

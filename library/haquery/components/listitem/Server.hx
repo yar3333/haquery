@@ -39,12 +39,13 @@ class Server extends Base
         super.construct(manager, parent, tag, id, xml, params, null);
 	}
     
-    override function callElemEventHandler(elemID:String, eventName:String) : Void
+    override function callElemEventHandler(elemID:String, eventName:String) : Dynamic
     {
         if (parent != null && parent.parent != null)
         {
             var handler = elemID + '_' + eventName;
-            Reflect.callMethod(parent.parent, handler, [ this ]);
+            return Reflect.callMethod(parent.parent, handler, [ this ]);
         }
+		return null;
     }
 }
