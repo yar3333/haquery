@@ -11,7 +11,7 @@ class HaqComponentManager
 {
     static var baseComponentFields : List<String> = null;
 	
-	var templates : HaqTemplates;
+	var templates : HaqComponentTemplates;
 	
 	var registeredScripts : Array<String>;
 	var registeredStyles : Array<String>;
@@ -26,7 +26,7 @@ class HaqComponentManager
 		baseComponentFields.push('template');
 	}
 	
-	public function new(templates:HaqTemplates) : Void
+	public function new(templates:HaqComponentTemplates) : Void
 	{
 		this.templates = templates;
 		registeredScripts = [];

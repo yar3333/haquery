@@ -2,15 +2,15 @@ package haquery.client;
 
 import js.Lib;
 import haquery.client.HaqComponent;
-import haquery.client.HaqTemplates;
+import haquery.client.HaqComponentTemplates;
 using haquery.StringTools;
 
 class HaqComponentManager 
 {
-    public var templates(default,null) : HaqTemplates;
+    public var templates(default,null) : HaqComponentTemplates;
 	var id_tag : Hash<String>;
 	
-	public function new(templates:HaqTemplates, id_tag:Hash<String>) : Void
+	public function new(templates:HaqComponentTemplates, id_tag:Hash<String>) : Void
 	{
 		this.templates = templates;
 		this.id_tag = id_tag;
