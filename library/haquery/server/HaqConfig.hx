@@ -10,8 +10,6 @@ using haquery.StringTools;
 
 class HaqConfig
 {
-    static var defaultComponentsPackage = "components.haquery";
-	
     public var db : { type:String, host:String, user:String, pass:String, database:String };
 	
     public var autoSessionStart : Bool;
@@ -73,7 +71,7 @@ class HaqConfig
 		isTraceComponent = false;
 		filterTracesByIP = '';
 		custom = new Hash<Dynamic>();
-		componentsPackage = defaultComponentsPackage;
+		componentsPackage = "components.default";
         layout = null;
         disablePageMetaData = false;
 	}
@@ -88,7 +86,7 @@ class HaqConfig
 			return componentsConfigCache.get(cacheKey);
 		}
 		
-		var r = { extendsPackage : componentsPackage != defaultComponentsPackage ? defaultComponentsPackage : null };
+		var r = { extendsPackage : null };
 		
 		var configFilePath = componentsPackage.replace(".", "/") + "/config.xml";
 		

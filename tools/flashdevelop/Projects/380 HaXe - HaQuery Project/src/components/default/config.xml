@@ -1,0 +1,3 @@
+<components>
+    <extends package="components.haquery" />
+</components>
