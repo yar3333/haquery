@@ -43,6 +43,7 @@
     <hidden path="run.pdb" />
     <hidden path="run.exe" />
     <hidden path="run.n" />
+    <hidden path="restorefiletime.exe" />
   </hiddenPaths>
   <!-- Executed before build -->
   <preBuildCommand />

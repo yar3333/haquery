@@ -187,6 +187,8 @@ class Tasks
 			{
 				p.kill();
 			}
+			
+			//Sys.command(fileName, args);
 		}
 		catch (e:Dynamic)
 		{
@@ -239,7 +241,7 @@ class Tasks
         log.finishOk();
     }
     
-    public function genTrm(componentsPackage:String)
+    function genTrm(componentsPackage:String)
     {
         log.start("Generate template related mapping classes");
         
@@ -252,7 +254,9 @@ class Tasks
     {
         log.start("Do pre-build step");
         
-        genImports();
+		genTrm();
+		
+		genImports();
 		try { saveLibFolder(); } catch (e:Dynamic) { }
         
         log.finishOk();
