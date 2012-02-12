@@ -37,7 +37,7 @@ class HaqElemEventManager
         return r;
     }
 	
-    public static function connect(componentWithHandlers:HaqComponent, componentWithEvents:HaqComponent, templates:HaqComponentTemplates)
+    public static function connect(componentWithHandlers:HaqComponent, componentWithEvents:HaqComponent, templates:HaqTemplates)
     {
         var elems:Array<HtmlDom> = getComponentElems(componentWithEvents);
         
@@ -67,7 +67,7 @@ class HaqElemEventManager
         }
     }
 
-    static function elemEventHandler(componentWithHandlers:HaqComponent, componentWithEvents:HaqComponent, elem:HtmlDom, templates:HaqComponentTemplates, e:JqEvent)
+    static function elemEventHandler(componentWithHandlers:HaqComponent, componentWithEvents:HaqComponent, elem:HtmlDom, templates:HaqTemplates, e:JqEvent)
     {
 		if (callClientElemEventHandlers(componentWithHandlers, componentWithEvents, elem, e))
 		{

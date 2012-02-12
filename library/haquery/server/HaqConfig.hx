@@ -41,10 +41,10 @@ class HaqConfig
     public var custom : Hash<Dynamic>;
 
 	/**
-	 * Project-specific components package.
-	 * Parent components package must be specified in config.xml file.
+	 * Project-specific names of the components collections ( = subfolders in the components directory).
+	 * HaQuery do finding components from the last added collection to the first.
 	 */
-	public var componentsPackage : String;
+	public var componentsCollections : Array<String>;
     
     /**
      * Path to layout file (null if layout not need).
@@ -71,77 +71,9 @@ class HaqConfig
 		isTraceComponent = false;
 		filterTracesByIP = '';
 		custom = new Hash<Dynamic>();
-		componentsPackage = "components.default";
+		componentsCollections = [ "haquery", "default" ];
         layout = null;
         disablePageMetaData = false;
-	}
-	
-	static var componentsConfigCache = new Hash<{ extendsPackage : String }>();
-	
-	public static function getComponentsConfig(classPaths:Array<String>, componentsPackage:String) : { extendsPackage : String }
-	{
-		var cacheKey = classPaths.join(";") + "|" + componentsPackage;
-		if (componentsConfigCache.exists(cacheKey))
-		{
-			return componentsConfigCache.get(cacheKey);
-		}
-		
-		var r = { extendsPackage : null };
-		
-		var configFilePath = componentsPackage.replace(".", "/") + "/config.xml";
-		
-		var i = classPaths.length - 1;
-		while (i >= 0)
-		{
-			var basePath = classPaths[i];
-			if (FileSystem.exists(basePath.rtrim("/") + "/" + configFilePath))
-			{
-				var text = File.getContent(basePath + configFilePath);
-				var xml = new HaqXml(text);
-				var nativeNodes : NativeArray = xml.find(">components>extends");
-				if (nativeNodes != null)
-				{
-					var nodes : Array<HaqXmlNodeElement> = cast Lib.toHaxeArray(nativeNodes);
-					if (nodes.length > 0)
-					{
-						if (nodes[0].hasAttribute("package"))
-						{
-							r.extendsPackage = nodes[0].getAttribute("package");
-						}
-					}
-				}
-			}
-			i--;
-		}
-		
-		componentsConfigCache.set(cacheKey, r);
-		
-		return r;
-	}
-	
-	public static function getComponentsFolders(basePath:String, componentsPackage:String) : Array<String>
-	{
-		if (basePath != "") basePath = basePath.replace('\\', '/').rtrim('/') + '/';
-		
-		var r : Array<String> = [];
-		
-		if (componentsPackage != null && componentsPackage != "")
-		{
-			var path = componentsPackage.replace(".", "/");
-			if (!FileSystem.isDirectory(basePath + path))
-			{
-				throw "Components directory '" + path + "' do not exists.";
-			}
-			r.unshift(path + '/');
-			
-			var config = getComponentsConfig([ basePath ], componentsPackage);
-			for (path in getComponentsFolders(basePath, config.extendsPackage))
-			{
-				r.unshift(path);
-			}
-		}
-		
-		return r;
 	}
 }
 #end

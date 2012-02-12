@@ -1,6 +1,7 @@
 package ;
 
 import haquery.server.HaqConfig;
+import haquery.server.HaqDefines;
 import haquery.server.HaqTemplates;
 import haquery.server.HaqXml;
 import php.FileSystem;
@@ -15,50 +16,37 @@ class TrmGenerator
 	static inline var MIN_DATE = new Date(2000, 0, 0, 0, 0, 0);
 	static var isFirstPrint = true; 
 	
-	static public function makeForComponents(componentsPackage:String)
+	public static function makeForComponents()
     {
 		for (classPath in TrmTools.getClassPaths())
 		{
-			var basePath = classPath.replace("\\", "/").rtrim("/") + "/";
-			var path = basePath + componentsPackage.replace(".", "/");
-			if (FileSystem.isDirectory(path))
+			if (FileSystem.isDirectory(classPath + HaqDefines.folder.components))
 			{
-				makeForComponentsFolder(componentsPackage);
+				for (collection in FileSystem.readDirectory(classPath + HaqDefines.folder.components))
+				{
+					for (tag in FileSystem.readDirectory(classPath + HaqDefines.folder.components + '/' + collection))
+					{
+						makeForComponent(classPath, collection, tag);
+					}
+				}
 			}
 		}
     }
 	
-	static function makeForComponentsFolder(componentsPackage:String)
+	static function makeForComponent(classPath:String, collection:String, tag:String)
 	{
-		//trace("TrmGenerator.makeForComponentsFolder('" + componentsPackage + "')");
+		trace("TrmGenerator.makeForComponent('" + classPath + "', '" + collection + "', '" + tag + "')");
 		
-		var path = findFile(componentsPackage.replace(".", "/"));
-		//trace("readDirectory " + path);
-		for (componentName in FileSystem.readDirectory(path))
-		{
-			if (FileSystem.isDirectory(path + "/" + componentName))
-			{
-				makeForComponent(componentsPackage, componentName);
-			}
-		}
-	}
-	
-	static function makeForComponent(componentsPackage:String, componentName:String)
-	{
-		//trace("TrmGenerator.makeForComponent('" + componentsPackage + "', '" + componentName + "')");
+		var componentPath = HaqDefines.folder.components + "/" + collection + "/" + tag + "/";
+		var destFilePath = classPath + componentPath + "Template.hx";
+		var componentData = getComponentData(classPath, collection, tag);
 		
-		var destFilePath = findFile(componentsPackage.replace(".", "/") + "/" + componentName) + "/Template.hx";
-		
-		var componentData = getComponentData(componentsPackage, componentName);
-		
-		if (findFile(componentsPackage.replace(".", "/") + "/" + componentName + "/Server.hx") != null
-		 || findFile(componentsPackage.replace(".", "/") + "/" + componentName + "/Client.hx") != null)
+		if (findFile(componentPath + "Server.hx") != null
+		 || findFile(componentPath + "Client.hx") != null)
 		{
 			if (!FileSystem.exists(destFilePath) || FileSystem.stat(destFilePath).mtime.getTime() < componentData.lastMod.getTime())
 			{
-				//trace("\ncomponentData.templateText = \n" + componentData.templateText + "\n");
-				
-				var haxeClass = new TrmHaxeClass(componentsPackage + "." + componentName + ".Template", componentData.superClass);
+				var haxeClass = new TrmHaxeClass(HaqDefines.folder.components + "." + collection + "." + tag + ".Template", componentData.superClass);
 				
 				haxeClass.addVar(TrmTools.createVar("component", "#if php haquery.server.HaqComponent #else haquery.client.HaqComponent #end"), true);
 				
@@ -107,7 +95,6 @@ class TrmGenerator
 		var i = classPaths.length - 1;
 		while (i >= 0)
 		{
-			//trace("findFile check: " + classPaths[i] + relativePath);
 			if (FileSystem.exists(classPaths[i] + relativePath))
 			{
 				return classPaths[i] + relativePath;
@@ -117,7 +104,7 @@ class TrmGenerator
 		return null;
 	}
 	
-	static function getComponentData(componentsPackage:String, componentName:String) : { templateText:String, superClass:String, lastMod:Date }
+	static function getComponentData(classPath:String, collection:String, tag:String) : { templateText:String, superClass:String, lastMod:Date }
 	{
 		//trace("\ngetComponentData('" + componentsPackage + "', '" + componentName + "')");
 		

@@ -26,7 +26,7 @@ class HaqSystem
             trace("HAQUERY SYSTEM Start route.pagePath = " + route.path + ", HTTP_HOST = " + Web.getHttpHost() + ", clientIP = " + Web.getClientIP() + ", pageID = " + route.pageID);
             
             Lib.profiler.begin('templates');
-                var templates = new HaqComponentTemplates(HaqConfig.getComponentsFolders("", Lib.config.componentsPackage));
+                var templates = new HaqTemplates(HaqConfig.getComponentsFolders("", Lib.config.componentsPackage));
             Lib.profiler.end();
 
             var params = php.Web.getParams();
@@ -58,19 +58,18 @@ class HaqSystem
         Lib.print(html);
     }
     
-    function renderPage(page:HaqPage, templates:HaqComponentTemplates, manager:HaqComponentManager, path:String) : String
+    function renderPage(page:HaqPage, manager:HaqComponentManager, path:String) : String
     {
         Lib.profiler.begin('renderPage');
             page.forEachComponent('preRender');
             
             if (!Lib.config.disablePageMetaData)
             {
-                page.insertStyles(templates.getStyleFilePaths().concat(manager.getRegisteredStyles()));
+                page.insertStyles(manager.getRegisteredStyles());
                 page.insertScripts([ 'haquery/client/jquery.js', 'haquery/client/haquery.js' ].concat(manager.getRegisteredScripts()));
                 page.insertInitInnerBlock(
                       "<script>\n"
                     + "    if(typeof haquery=='undefined') alert('haquery.js must be loaded!');\n"
-                    + "    " + templates.getInternalDataForPageHtml().replace('\n','\n    ') + '\n'
                     + "    " + manager.getInternalDataForPageHtml(page, path).replace('\n', '\n    ') + '\n'
                     + "    haquery.client.Lib.run();\n"
                     + "</script>"

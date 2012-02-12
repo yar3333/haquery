@@ -6,7 +6,7 @@ import js.Dom;
 
 class HaqInternals 
 {
-    public static var componentsFolders : Array<String>;
+    public static var componentClassNames : Hash<String>;
 	
     private static var tags : Array<Array<String>>;
 	public static var id_tag(id_tag_getter, null) : Hash<String>;

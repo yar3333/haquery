@@ -8,7 +8,17 @@ class Main
 	{
         var args = Sys.args();
         
-        var haquery = new haquery.Tasks();
+        if (args.length > 0)
+		{
+			Sys.setCwd(args.pop());
+		}
+		else
+		{
+			Lib.println("To run this program use haxelib utility.");
+			return 1;
+		}
+		
+		var haquery = new haquery.Tasks();
         
         switch (args.length > 0 ? args[0] : '')
         {
@@ -20,17 +30,6 @@ class Main
 				else
 				{
 					Lib.println("Database connection string must be specified (format: 'mysql://USER:PASSWORD@HOST/DATABASE').");
-					return 1;
-				}
-            
-			case "gen-trm":
-				if (args.length > 1)
-				{
-					haquery.genTrm(args[1]);
-				}
-				else
-				{
-					Lib.println("Components package must be specified.");
 					return 1;
 				}
             
