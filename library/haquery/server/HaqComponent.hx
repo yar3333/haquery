@@ -153,10 +153,10 @@ class HaqComponent extends haquery.base.HaqComponent
         return Reflect.callMethod(this, handler, [ this ]);
     }
     
-    function getSupportPath() : String
+    /*function getSupportPath() : String
     {
         return manager.getSupportPath(tag);
-    }
+    }*/
 	
 	/**
 	 * Tells HaQuery to load JS file from support component folder.

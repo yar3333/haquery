@@ -12,6 +12,7 @@ import haquery.server.HaqComponent;
 import haquery.server.HaqProfiler;
 import haquery.server.HaqRoute;
 import haquery.server.HaqDefines;
+import haquery.server.HaqTemplate;
 
 using haquery.StringTools;
 
@@ -25,17 +26,15 @@ class HaqSystem
 
             trace("HAQUERY SYSTEM Start route.pagePath = " + route.path + ", HTTP_HOST = " + Web.getHttpHost() + ", clientIP = " + Web.getClientIP() + ", pageID = " + route.pageID);
             
-            Lib.profiler.begin('templates');
-                var templates = new HaqTemplates(HaqConfig.getComponentsFolders("", Lib.config.componentsPackage));
-            Lib.profiler.end();
-
             var params = php.Web.getParams();
             if (route.pageID != null)
             {
                 params.set('pageID', route.pageID);
             }
 
-            var manager : HaqComponentManager = new HaqComponentManager(templates);
+            Lib.profiler.begin('manager');
+				var manager : HaqComponentManager = new HaqComponentManager(Lib.config.componentCollections);
+            Lib.profiler.end();
             
             Lib.profiler.begin('createPage');
                 var page = manager.createPage(route.path, params);
@@ -44,7 +43,7 @@ class HaqSystem
             var html : String;
             if (!isPostback)
             {
-                html = renderPage(page, templates, manager, route.path);
+                html = renderPage(page, manager);
             }
             else
             {
@@ -58,7 +57,7 @@ class HaqSystem
         Lib.print(html);
     }
     
-    function renderPage(page:HaqPage, manager:HaqComponentManager, path:String) : String
+    function renderPage(page:HaqPage, manager:HaqComponentManager) : String
     {
         Lib.profiler.begin('renderPage');
             page.forEachComponent('preRender');
@@ -70,7 +69,7 @@ class HaqSystem
                 page.insertInitInnerBlock(
                       "<script>\n"
                     + "    if(typeof haquery=='undefined') alert('haquery.js must be loaded!');\n"
-                    + "    " + manager.getInternalDataForPageHtml(page, path).replace('\n', '\n    ') + '\n'
+                    + "    " + manager.getInternalDataForPageHtml(page).replace('\n', '\n    ') + '\n'
                     + "    haquery.client.Lib.run();\n"
                     + "</script>"
                 );
