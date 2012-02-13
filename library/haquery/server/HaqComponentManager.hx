@@ -16,7 +16,7 @@ class HaqComponentManager
 	
 	var collections : Array<String>;
 	
-	var ctemplates : Hash<HaqTemplate>;
+	var ttemplates : Hash<HaqTemplate>;
 	
 	var registeredScripts : Array<String>;
 	var registeredStyles : Array<String>;
@@ -35,26 +35,27 @@ class HaqComponentManager
 	{
 		this.collections = collections;
 		
+		ttemplates = new Hash<HaqTemplate>();
 		registeredScripts = [];
 		registeredStyles = [];
 	}
 	
 	public function getTemplate(tag:String) : HaqTemplate
 	{
-        if (!ctemplates.exists(tag))
+        if (!ttemplates.exists(tag))
 		{
 			var i = collections.length - 1;
 			while (i >= 0)
 			{
 				if (FileSystem.isDirectory(HaqDefines.folders.components + '/' + collections[i] + '/' + tag))
 				{
-					ctemplates.set(tag, new HaqTemplate(new ComponentTemplateParser(collections[i], tag)));
+					ttemplates.set(tag, new HaqTemplate(new ComponentTemplateParser(collections[i], tag)));
 					break;
 				}
 				i--;
 			}
 		}
-		return ctemplates.get(tag);
+		return ttemplates.get(tag);
 	}
 	
 	function newComponent(parent:HaqComponent, clas:Class<HaqComponent>, name:String, id:String, doc:HaqXml, attr:Hash<String>, parentNode:HaqXmlNodeElement) : HaqComponent
@@ -155,7 +156,7 @@ class HaqComponentManager
 		
         s += "haquery.client.HaqInternals.componentCollections = [ " + Lambda.map(collections, function(c) return "'" + c + "'").join(', ') + " ];\n";
         
-        var tags = ctemplates.keys();
+        var tags = ttemplates.keys();
         s += "haquery.client.HaqInternals.tags = [\n";
         var tagComponents = getTagComponents(page);
         for (tag in tagComponents.keys())
@@ -180,7 +181,7 @@ class HaqComponentManager
         serverHandlers.set('', pageTemplate.serverHandlers);
         for (tag in tags)
         {
-            serverHandlers.set(tag, ctemplates.get(tag).serverHandlers);
+            serverHandlers.set(tag, ttemplates.get(tag).serverHandlers);
         }
         s += "haquery.client.HaqInternals.serializedServerHandlers = \"" + Serializer.run(serverHandlers) + "\";\n";
         s += "haquery.client.HaqInternals.pagePackage = \"" + pageClassName + "\";";
