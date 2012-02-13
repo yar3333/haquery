@@ -53,4 +53,9 @@ class HashTools
        }
        return r;
     }
+	
+	public static inline function keysIterable<T>(h:Hash<T>) : Iterable<String>
+	{
+		return { iterator:function() return h.keys() };
+	}
 }

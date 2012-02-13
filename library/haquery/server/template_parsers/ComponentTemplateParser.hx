@@ -1,6 +1,14 @@
 package haquery.server.template_parsers;
 
 import haquery.server.HaqDefines;
+import haquery.server.HaqXml;
+import php.FileSystem;
+import php.io.File;
+import php.NativeArray;
+import php.Lessc;
+import haquery.server.HaqComponent;
+
+using haquery.StringTools;
 
 class ComponentTemplateParser implements ITemplateParser
 {
@@ -9,7 +17,7 @@ class ComponentTemplateParser implements ITemplateParser
 	
 	var config : ComponentConfig;
 	
-	public function new(collection : String, tag : String)
+	public function new(collection:String, tag:String)
 	{
 		this.collection = collection;
 		this.tag = tag;
@@ -28,17 +36,23 @@ class ComponentTemplateParser implements ITemplateParser
 		
 		if (config.extendsCollection != null)
 		{
-			return getServerClass(config.extendsCollection, tag);
+			return new ComponentTemplateParser(config.extendsCollection, tag).getServerClass();
 		}
 		
 		return HaqComponent;
+	}
+	
+	public function getServerHandlers() : Hash<Array<String>>
+	{
+		// TODO: getServerHandlers
+		return null;
 	}
 	
 	function getRawTemplateHtml() : String
 	{
 		var html = "";
 		
-		var path = HaqDefines.folders.components + '/' + collection + '/' + tag + '/template.html';
+		var path = getFullPath(HaqDefines.folders.components + '/' + collection + '/' + tag + '/template.html');
 		if (FileSystem.exists(path))
 		{
 			html = File.getContent(path);
@@ -46,15 +60,15 @@ class ComponentTemplateParser implements ITemplateParser
 		
 		if (config.extendsCollection != null)
 		{
-			html = getDoc(config.extendsCollection, tag) + html;
+			html = new ComponentTemplateParser(config.extendsCollection, tag).getDocAndCss() + html;
 		}
 		
 		return html;
 	}
 	
-	public function findSupportFile(fileName:String) : String
+	public function getSupportFilePath(fileName:String) : String
 	{
-		var path = HaqDefines.folders.components + '/' + collection + '/' + tag + '/' + HaqDefines.folder.support + '/' + fileName;
+		var path = getFullPath(HaqDefines.folders.components + '/' + collection + '/' + tag + '/' + HaqDefines.folders.support + '/' + fileName);
 		if (FileSystem.exists(path))
 		{
 			return path;
@@ -62,7 +76,7 @@ class ComponentTemplateParser implements ITemplateParser
 		
 		if (config.extendsCollection != null)
 		{
-			return findSupportFile(config.extendsCollection, tag, fileName);
+			return getSupportFilePath(fileName);
 		}
 		
 		return null;
@@ -70,11 +84,8 @@ class ComponentTemplateParser implements ITemplateParser
 	
 	function getConfig() : ComponentConfig
 	{
-		return parseConfigFile(HaqDefines.folders.components + '/' + collection + '/' + tag + '/config.xml');
-	}
-	
-	function parseConfigFile(path:String) : ComponentConfig
-	{
+		var path = getFullPath(HaqDefines.folders.components + '/' + collection + '/' + tag + '/config.xml');
+		
 		var r = { extendsCollection : null };
 		
 		if (FileSystem.exists(path))
@@ -88,7 +99,7 @@ class ComponentTemplateParser implements ITemplateParser
 				{
 					if (nodes[0].hasAttribute("collection"))
 					{
-						configCache.extendsCollection = nodes[0].getAttribute("collection");
+						r.extendsCollection = nodes[0].getAttribute("collection");
 					}
 				}
 			}
@@ -97,14 +108,14 @@ class ComponentTemplateParser implements ITemplateParser
 		return r;
 	}
 	
-	function getDoc() : { css:String, doc:HaqXml }
+	public function getDocAndCss() : { doc:HaqXml, css:String }
 	{
-		var text = getRawTemplateHtml(collection, tag);
+		var text = getRawTemplateHtml();
 		
         var reSupportFileUrl = new EReg("~/([-_/\\.a-zA-Z0-9]*)", "");
         text = reSupportFileUrl.customReplace(text, function(re)
         {
-            var f = getFile(collection, tag, HaqDefines.folders.support + '/' + re.matched(1));
+            var f = getSupportFilePath(re.matched(1));
             return f != null ? '/' + f : re.matched(0);
         });
 		
@@ -120,11 +131,11 @@ class ComponentTemplateParser implements ITemplateParser
 			{
 				if (node.getAttribute('type') == "text/less")
 				{
-					css += globalizeCssClassNames(tag, (new Lessc()).parse(node.innerHTML));
+					css += globalizeCssClassNames(new Lessc().parse(node.innerHTML));
 				}
 				else
 				{
-					css += globalizeCssClassNames(tag, node.innerHTML);
+					css += globalizeCssClassNames(node.innerHTML);
 				}
 				
 				node.remove();
@@ -134,7 +145,7 @@ class ComponentTemplateParser implements ITemplateParser
 			i++;
 		}
 		
-		return new HaqXml();
+		return { doc:doc, css:css };
 	}
 	
 	function globalizeCssClassNames(text:String) : String
@@ -143,10 +154,6 @@ class ComponentTemplateParser implements ITemplateParser
 		var r = "";
 		while (blocks.match(text))
 		{
-			//trace(blocks);
-			if (blocks.matched(1) == "") trace("EMPTY");
-			if (blocks.matched(1) == null) trace("NULL");
-			
 			if (blocks.matched(1) != null)
 			{
 				r += blocks.matched(0).replace(".", "." + (tag != "" ? tag + HaqDefines.DELIMITER : ""));
@@ -158,5 +165,13 @@ class ComponentTemplateParser implements ITemplateParser
 			text = text.substr(blocks.matchedPos().pos + blocks.matchedPos().len);
 		}
 		return r;
+	}
+	
+	/**
+	 * May be overriten.
+	 */
+	function getFullPath(path:String)
+	{
+		return path;
 	}
 }

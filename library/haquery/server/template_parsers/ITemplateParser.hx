@@ -5,7 +5,8 @@ import haquery.server.HaqComponent;
 
 interface ITemplateParser
 {
-	function getDoc() : { css:String, doc:HaqXml };
-	function getServerClassName() : String;
-	function getConfig() : ComponentConfig;
+	function getDocAndCss() : { css:String, doc:HaqXml };
+	function getServerClass() : Class<HaqComponent>;
+	function getServerHandlers() : Hash<Array<String>>;
+	function getSupportFilePath(fileName:String) : String;
 }
