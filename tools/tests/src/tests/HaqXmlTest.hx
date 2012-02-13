@@ -28,7 +28,7 @@ class HaqXmlTest extends haxe.unit.TestCase
         this.assertEquals('br', node.name);
 		
 		this.assertEquals("String", Type.getClassName(Type.getClass("abc")));
-		this.assertEquals(haquery.server.HaqQuery, Type.getClass(new HaqQuery("", "", nativeNodes)));
+		this.assertEquals(haquery.server.HaqQuery, Type.getClass(new HaqQuery("", "", "", nativeNodes)));
 		
 		var query = nodes[0];
 		this.assertTrue(untyped __php__("$node instanceof HaqXmlNodeElement"));
