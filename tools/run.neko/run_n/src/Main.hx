@@ -8,8 +8,11 @@ class Main
 	{
         var args = Sys.args();
         
-        if (args.length > 0)
+		var exeDir = Sys.getCwd();
+        
+		if (args.length > 0)
 		{
+			
 			Sys.setCwd(args.pop());
 		}
 		else
@@ -18,7 +21,7 @@ class Main
 			return 1;
 		}
 		
-		var haquery = new haquery.Tasks();
+		var haquery = new haquery.Tasks(exeDir);
         
         switch (args.length > 0 ? args[0] : '')
         {
