@@ -1,4 +1,4 @@
-package components1.randnum;
+package components.set1.randnum;
 
 import haquery.server.HaqComponent;
 
