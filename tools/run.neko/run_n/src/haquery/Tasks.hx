@@ -17,11 +17,11 @@ class Tasks
     var hant : hant.Tasks;
 	var exeDir : String;
     
-    public function new()
+    public function new(exeDir:String)
     {
         log = new hant.Log(2);
         hant = new hant.Tasks(log);
-		exeDir = Path.directory(Sys.executablePath()).replace('\\', '/');
+		this.exeDir = exeDir.replace('\\', '/');
     }
     
     function genImports()
@@ -56,7 +56,7 @@ class Tasks
     
     function isServerFile(path:String)
     {
-        if (path == exeDir + "/tools") return false;
+        if (path == exeDir + "tools") return false;
 		
 		if (FileSystem.isDirectory(path))
         {
@@ -67,7 +67,7 @@ class Tasks
     
     function isClientFile(path:String)
     {
-		if (path == exeDir + "/tools") return false;
+		if (path == exeDir + "tools") return false;
 		
         if (FileSystem.isDirectory(path))
         {
@@ -78,11 +78,11 @@ class Tasks
     
     function isSupportFile(path:String)
     {
-		if (path == exeDir + "/tools"
-		 || path == exeDir + "/run.n"
-		 || path == exeDir + "/restorefiletime.exe"
-		 || path == exeDir + "/readme.txt"
-		 || path == exeDir + "/haxelib.xml"
+		if (path == exeDir + "tools"
+		 || path == exeDir + "run.n"
+		 || path == exeDir + "restorefiletime.exe"
+		 || path == exeDir + "readme.txt"
+		 || path == exeDir + "haxelib.xml"
 		) return false;
 		
 		if (FileSystem.isDirectory(path))
@@ -96,7 +96,7 @@ class Tasks
 	{
 		if (isSupportFile(path))
 		{
-			return path != exeDir + "/haquery/components";
+			return path != exeDir + "haquery/components";
 		}
 		return false;
 	}
@@ -199,16 +199,16 @@ class Tasks
 	
 	function buildJs()
     {
-        var binPath = getBinPath();
+		var clientPath = getBinPath() + '/haquery/client';
 		
-		log.start("Build client to '" + binPath + "/haquery/client/haquery.js'");
+		log.start("Build client to '" + clientPath + "/haquery.js'");
         
-		if (FileSystem.exists(binPath + "/haquery/client/haquery.js"))
+		if (FileSystem.exists(clientPath + "/haquery.js"))
 		{
-			hant.rename(binPath + "/haquery/client/haquery.js", binPath + "/haquery/client/haquery.js.old");
+			hant.rename(clientPath + "/haquery.js", clientPath + "/haquery.js.old");
 		}
 		
-		hant.createDirectory(binPath + '/haquery/client');
+		hant.createDirectory(clientPath);
         
         var params = new Array<String>();
         for (path in getClassPaths())
@@ -217,35 +217,89 @@ class Tasks
         }
 		params.push("-lib"); params.push("HaQuery");
         params.push('-js');
-        params.push(binPath + '/haquery/client/haquery.js');
+        params.push(clientPath + "/haquery.js");
         params.push('-main'); params.push('Main');
         params.push('-debug');
         run("haxe", params);
         
-		if (FileSystem.exists(binPath + "/haquery/client/haquery.js")
-		 && FileSystem.exists(binPath + "/haquery/client/haquery.js.old"))
+		if (FileSystem.exists(clientPath + "/haquery.js"))
 		{
-			restoreFileTime(binPath + "/haquery/client/haquery.js.old", binPath + "/haquery/client/haquery.js");
-			hant.deleteFile(binPath + "/haquery/client/haquery.js.old");
+			var fapp = File.append(clientPath + "/haquery.js", false);
+			fapp.writeString(getComponentEntendsCollectionsForInternalHtml());
+			fapp.close();
+		}
+		
+		if (FileSystem.exists(clientPath + "/haquery.js")
+		 && FileSystem.exists(clientPath + "/haquery.js.old"))
+		{
+			restoreFileTime(clientPath + "/haquery.js.old", clientPath + "/haquery.js");
+			hant.deleteFile(clientPath + "/haquery.js.old");
 		}
 		
 		log.finishOk();
     }
 	
+	function getComponentEntendsCollectionsForInternalHtml() : String
+	{
+		var componentEntendsCollections = getComponentEntendsCollections();
+		
+		var s = "haquery.client.HaqInternals.componentEntendsCollections = haquery.HashTools.hashify({\n";
+		
+		s += Lambda.map(HashTools.keysIterable(componentEntendsCollections), function(collection)
+		{
+			var collectionTagExtends = componentEntendsCollections.get(collection);
+			return collection + ": { " + Lambda.map(HashTools.keysIterable(collectionTagExtends), function(tag) return tag + ":" + "'" + collectionTagExtends.get(tag) + "'").join(", ") + " }";
+		}).join(",\n");
+		
+		s += "});\n";
+		
+		return s;
+	}
+	
+	/**
+	 * @return collection -> tag -> extendsCollection
+	 */
+	function getComponentEntendsCollections() : Hash<Hash<String>>
+	{
+		var r = new Hash<Hash<String>>();
+		
+		for (classPath in getClassPaths())
+		{
+			for (collection in FileSystem.readDirectory(classPath))
+			{
+				var collectionPath = classPath + collection;
+				if (FileSystem.exists(collectionPath) && FileSystem.isDirectory(collectionPath))
+				{
+					for (tag in FileSystem.readDirectory(collectionPath))
+					{
+						if (FileSystem.isDirectory(collectionPath + '/' + tag))
+						{
+							var parser = new CompileStageComponentTemplateParser(getClassPaths(), collection, tag);
+							if (!r.exists(collection)) r.set(collection, new Hash<String>());
+							r.get(collection).set(tag, parser.config.extendsCollection);
+						}
+					}
+				}
+			}
+		}
+		
+		return r;
+	}
+	
     public function genOrm(databaseConnectionString:String)
     {
         log.start("Generate object related mapping classes");
         
-        Sys.command('php', [ exeDir + '/tools/orm/index.php', databaseConnectionString, 'src' ]);
+        Sys.command('php', [ exeDir + 'tools/orm/index.php', databaseConnectionString, 'src' ]);
         
         log.finishOk();
     }
     
-    function genTrm(componentsPackage:String)
+    function genTrm()
     {
         log.start("Generate template related mapping classes");
         
-        Sys.command('php', [ exeDir + '/tools/trm/index.php', componentsPackage ]);
+        Sys.command('php', [ exeDir + 'tools/trm/index.php' ]);
         
         log.finishOk();
     }
@@ -314,9 +368,9 @@ class Tasks
 	
 	function restoreFileTime(fromPath:String, toPath:String)
 	{
-		log.start("Restore file time '" + fromPath + "' => '" + toPath + "'");
+		log.start("Restore file time '" + fromPath + "' => '" + toPath + "' (" + exeDir + ")");
 		
-		run(exeDir + "/restorefiletime.exe", [ fromPath.replace('/', '\\'), toPath.replace('/', '\\') ]);
+		run(exeDir + "restorefiletime.exe", [ fromPath.replace('/', '\\'), toPath.replace('/', '\\') ]);
 		
 		log.finishOk();
 	}
@@ -364,7 +418,7 @@ class Tasks
     {
         log.start('Install FlashDevelop templates');
         
-        var srcPath = exeDir + "/tools/flashdevelop.zip";
+        var srcPath = exeDir + "tools/flashdevelop.zip";
         var userLocalPath = Sys.getEnv('LOCALAPPDATA') != null 
             ? Sys.getEnv('LOCALAPPDATA') 
             : Sys.getEnv('USERPROFILE') + '/Local Settings/Application Data';
@@ -386,7 +440,7 @@ class Tasks
 			
 			var destPath = haxePath + "std";
 			hant.createDirectory(destPath);
-            unzip(exeDir + "/tools/haxemod.zip", destPath);
+            unzip(exeDir + "tools/haxemod.zip", destPath);
         }
         
         log.finishOk();
