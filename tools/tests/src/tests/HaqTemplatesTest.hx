@@ -24,40 +24,41 @@ class HaqTemplatesTest extends TestCase
 		assertTrue(template != null);
 		if (template != null)
 		{
-			//template.
-			
+			assertEquals("text component template file", template.doc.innerHTML);
+			assertEquals("", template.css);
+			assertEquals("components/set0/text/support/suptest.txt", template.getSupportFilePath("suptest.txt"));
 		}
 	}
 	
 	public function testComponentsSet1()
 	{
-		var dataFilePath = HaqDefines.folders.temp + '/components1/components.data';
+		/*var dataFilePath = HaqDefines.folders.temp + '/components1/components.data';
 		if (FileSystem.exists(dataFilePath)) FileSystem.deleteFile(dataFilePath);
 		var stylesFilePath = HaqDefines.folders.temp + '/components1/styles.css';
-		if (FileSystem.exists(stylesFilePath)) FileSystem.deleteFile(stylesFilePath);
+		if (FileSystem.exists(stylesFilePath)) FileSystem.deleteFile(stylesFilePath);*/
 		
 		var manager = new HaqComponentManager([ 'set1' ]);
 		
 		var template = manager.getTemplate('randnum');
 		assertTrue(template != null);
 		
-		var html : String = template.doc.innerHTML;
+		var html = template.doc.innerHTML;
         assertEquals(StringTools.htmlEscape("<div id='n'>0</div>"), StringTools.htmlEscape(html.trim(' \t\r\n')));
-		assertEquals(template.serverHandlers.keys().hasNext(), false);
+		//assertEquals(template.serverHandlers.keys().hasNext(), false);
 	}
 	
 	public function testComponentsSet1CreateRandNum()
 	{
 		var manager = new HaqComponentManager([ 'set1' ]);
         assertTrue(manager.getTemplate('randnum') != null);
-        assertEquals('components1.randnum.Server', Type.getClassName(manager.getTemplate('randnum').serverClass));
+        assertEquals('components.set1.randnum.Server', Type.getClassName(manager.getTemplate('randnum').serverClass));
 		
 		var randnum : HaqComponent = manager.createComponent(null, 'randnum', 'rn', null, null);
 		assertTrue(randnum != null);
-		assertEquals('components1.randnum.Server', Type.getClassName(Type.getClass(randnum)));
+		assertEquals('components.set1.randnum.Server', Type.getClassName(Type.getClass(randnum)));
 		
 		randnum.forEachComponent('preRender');
-		var html : String = randnum.render();
+		var html = randnum.render();
 		assertEquals(StringTools.htmlEscape("<div id='rn-n'>123</div>"), StringTools.htmlEscape(html.trim(' \t\r\n')));
 	}
 }
