@@ -5,10 +5,10 @@ import haxe.Unserializer;
 
 private typedef CssSelector =
 {
-	var type:String;
-	var tags:Array<String>;
-	var ids:Array <String>; 
-	var classes:Array<String>;
+	var type : String;
+	var tags : Array<String>;
+	var ids : Array <String>; 
+	var classes : Array<String>;
 }
 
 private typedef HtmlLexem =
@@ -62,6 +62,14 @@ class HaqXmlNode
 	public function toString() : String
 	{
 		return '';
+	}
+	
+	public function serialize() : String
+	{
+		var ser = new Serializer();
+		ser.useCache = true;
+		ser.serialize(this);
+		return ser.toString();
 	}
 }
 
@@ -148,16 +156,16 @@ class HaqXmlNodeElement extends HaqXmlNode
 		
 		for (child in children)
 		{
-			Lib.println("child.name = " + child.name);
+			//Lib.println("child.name = " + child.name);
 		}
         var sChildren = Lambda.array(Lambda.map(nodes, function(a) return a.toString())).join('');
 		
         return name!=null && name!='' 
-            ? "<" + name+sAttrs + ">" + sChildren + ""
+            ? "<" + name + sAttrs + ">" + sChildren + "</" + name + ">"
             : sChildren;
     }
 
-    public function serialize() : String
+    /*public function serialize() : String
     {
         return Serializer.run( { name : name, attributes:attributes, nodes:nodes  } );
     }
@@ -172,7 +180,7 @@ class HaqXmlNodeElement extends HaqXmlNode
 		var nodes : Array<HaqXmlNode> = clone.nodes;
 		
         for (node in nodes) this.addChild(node);
-    }
+    }*/
 
 	public function getAttribute(name:String) : String
 	{
@@ -290,7 +298,7 @@ class HaqXmlNodeElement extends HaqXmlNode
     
     public function replaceChild(node:HaqXmlNodeElement, newNode:HaqXmlNode)
     {
-        newNode = Unserializer.run(Serializer.run(newNode));
+        newNode = Unserializer.run(newNode.serialize());
         newNode.parent = this;
         
         for (i in 0...nodes.length)
@@ -322,7 +330,7 @@ class HaqXmlNodeElement extends HaqXmlNode
     
     public function replaceChildWithInner(node:HaqXmlNodeElement,  nodeContainer:HaqXmlNodeElement)
     {
-        var nodeContainer : HaqXmlNodeElement = Unserializer.run(Serializer.run(nodeContainer));
+        var nodeContainer : HaqXmlNodeElement = Unserializer.run(nodeContainer.serialize());
         
         for (n in nodeContainer.nodes ) n.parent = this;
         
@@ -410,7 +418,7 @@ class HaqXmlNodeText extends HaqXmlNode
         return this.text;
     }
 
-    public function serialize()
+    /*public function serialize()
     {
         return Serializer.run(this.text);
     }
@@ -418,7 +426,7 @@ class HaqXmlNodeText extends HaqXmlNode
     public function unserialize(serialized)
     {
         this.text = Unserializer.run(serialized);
-    }
+    }*/
 }
 
 class HaqXmlAttribute
@@ -436,7 +444,7 @@ class HaqXmlAttribute
     
 	public function toString()
     {
-        return name+"=" + quote + value+ quote;
+        return name + "=" + quote + value + quote;
     }
 }
 
@@ -462,32 +470,40 @@ class HaqXmlParser
         
         var reComment = "<!--.*?-->";
 
-        var re : EReg = new EReg("(?<script1>" + reScript + ")|(?<style4>" + reStyle + ")|(?<elem7>" + reElementOpen +"(?<attrs9>(?:\\s+" + reAttr 
-		+")*)\\s*" + reElementEnd + ")|(?<close11>" + reElementClose + ")|(?<comment13>" + reComment+ ")", "is");
+        var re = new EReg(
+				 "(?<script1>" + reScript + ")|(?<style4>" + reStyle + ")|(?<elem7>" + reElementOpen 
+		       + "(?<attrs9>(?:\\s+" + reAttr +")*)\\s*" + reElementEnd + ")|(?<close11>" + reElementClose + ")|(?<comment13>" + reComment + ")", "is"
+		);
 		
 		var matches = new Array<HtmlLexem>();
 		var parsedStr : String = str;
+		var cutted = 0;
 		while (parsedStr != null && parsedStr != "" && re.match(parsedStr))
 		{
 			var r = {
 				 all : re.matched(0)
-				,allPos : re.matchedPos().pos
-				,script : re.matched(1)
-				,scriptAttrs : re.matched(2)
-				,scriptText : re.matched(3)
-				,style : re.matched(4)
-				,styleAttrs : re.matched(5)
-				,styleText : re.matched(6)
-				,elem : re.matched(7)
-				,tagOpen : re.matched(8)
-				,attrs : re.matched(9)
-				,tagEnd : re.matched(10)
-				,close : re.matched(11)
-				,tagClose : re.matched(12)
-				,comment : re.matched(13)
+				,allPos : re.matchedPos().pos + cutted
+				,script : getMatched(re, 1)
+				,scriptAttrs : getMatched(re, 2)
+				,scriptText : getMatched(re, 3)
+				,style : getMatched(re, 4)
+				,styleAttrs : getMatched(re, 5)
+				,styleText : getMatched(re, 6)
+				,elem : getMatched(re, 7)
+				,tagOpen : getMatched(re, 8)
+				,attrs : getMatched(re, 9)
+				,tagEnd : getMatched(re, 10)
+				,close : getMatched(re, 11)
+				,tagClose : getMatched(re, 12)
+				,comment : getMatched(re, 13)
 			};
+			//Lib.println("r.allPos = " + r.allPos);
+			
 			matches.push(r);
-			parsedStr = re.matchedRight();
+			
+			var rightStr = re.matchedRight();
+			cutted += parsedStr.length - rightStr.length;
+			parsedStr = rightStr;
 		}
         
 		if (matches.length > 0)
@@ -501,32 +517,46 @@ class HaqXmlParser
             return nodes;
         }
 		
-        return str.length > 0 ? cast [ new HaqXmlNodeText(str) ] : new Array<HaqXmlNode>();
+        return str.length > 0 ? cast [ new HaqXmlNodeText(str) ] : [];
     }
 	
 	
+	static function getMatched(re:EReg, n:Int)
+	{
+		try { return re.matched(n); } 
+		catch (e:Dynamic) { return null; }
+	}
+	
 	private static function parseInner(str:String, matches:Array<HtmlLexem>, i:{i:Int}) : Array<HaqXmlNode>
     {
-        var nodes = new Array<HaqXmlNode>();
+        //Lib.println("parseInner(" + str + ", " + matches.length + ", " + i.i + ")");
+        
+		var nodes = new Array<HaqXmlNode>();
         
 		var prevEnd = i.i > 0 ? matches[i.i - 1].allPos + matches[i.i - 1].all.length : 0;
-        var curStart = i.i > 0 ? matches[i.i - 1].allPos : 0;
+		//Lib.println("prevEnd = " + prevEnd);
+        var curStart = matches[i.i].allPos;
+		//Lib.println("curStart = " + curStart);
         
-		if (prevEnd<curStart)
+		if (prevEnd < curStart)
         {
-            nodes.push(new HaqXmlNodeText(str.substr(prevEnd, curStart-prevEnd)));
+            nodes.push(new HaqXmlNodeText(str.substr(prevEnd, curStart - prevEnd)));
         }
 
         while (i.i < matches.length)
         {
+			//Lib.println("i = " + i);
             var m = matches[i.i];
+			//Lib.println("m = " + m.all);
+			//Lib.println("1nodes = " + nodes.length);			
             
-			if ((m.elem != null) && m.elem != '')
+			if (m.elem != null && m.elem != '')
             {
-                nodes.push(parseElement(str, matches, i));
+				nodes.push(parseElement(str, matches, i));
+				//Lib.println("5nodes = " + nodes.length);
             }
             else
-            if ((m.script != null) && m.script != '')
+            if (m.script != null && m.script != '')
             {
                 var scriptNode = new HaqXmlNodeElement('script', parseAttrs(m.scriptAttrs));
                 scriptNode.addChild(new HaqXmlNodeText(m.scriptText));
@@ -551,22 +581,34 @@ class HaqXmlParser
                 throw("Error");
             }
             
+			//Lib.println("2nodes = " + nodes.length);			
+			
 			var curEnd = matches[i.i].allPos + matches[i.i].all.length;
+			//trace("curEnd = " + curEnd);
+			//trace("matches.length = " + matches.length);
             var nextStart = i.i + 1 < matches.length ? matches[i.i + 1].allPos : str.length;
+			//trace("nextStart = " + nextStart);
             if (curEnd < nextStart)
             {
                 nodes.push(new HaqXmlNodeText(str.substr(curEnd, nextStart - curEnd)));
             }
 			
+			//Lib.println("3nodes = " + nodes.length);			
+			
 			i.i++;
         }
+		
+		//Lib.println("i = " + i);
+		//Lib.println("4nodes = " + nodes.length);
         
 		return nodes;
     }
 
     private static function parseElement(str, matches:Array<HtmlLexem>, i:{i:Int}) : HaqXmlNodeElement
     {
-        var tag = matches[i.i].tagOpen;
+        //Lib.println("parseElement(" + str + ", " + matches.length + ", " + i.i + ")");
+		
+		var tag = matches[i.i].tagOpen;
         var attrs = matches[i.i].attrs;
         var isWithClose = matches[i.i].tagEnd != null || Reflect.hasField(getSelfClosingTags(), tag);
 		
@@ -594,9 +636,8 @@ class HaqXmlParser
 
 		var re = new EReg("(?<name>" + getRegExpForID() + ")\\s*=\\s*(?<value>'[^']*'|\"[^\"]*\"|[-_a-z0-9]+)" , "is");
 		var parsedStr = str;
-        while (parsedStr != null && parsedStr != '' && re.match(str))
+        while (parsedStr != null && parsedStr != '' && re.match(parsedStr))
         {
-			
 			var name =  re.matched(1);
 			var value = re.matched(2);
 			var quote = value.substr(0, 1);
