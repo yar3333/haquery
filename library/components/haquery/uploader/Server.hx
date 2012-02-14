@@ -7,7 +7,7 @@ import haquery.server.HaqTools;
 import haquery.server.Lib;
 import haquery.server.Web;
 import haquery.server.HaqXml;
-import php.FileSystem;
+import haquery.server.FileSystem;
 import php.Session;
 import php.Lib;
 

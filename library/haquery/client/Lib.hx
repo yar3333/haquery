@@ -1,3 +1,5 @@
+#if js
+
 package haquery.client;
 
 import haxe.Stack;
@@ -72,3 +74,5 @@ class Lib
     public static inline function eval( code : String ) : Dynamic { return js.Lib.eval(code); }
 	public static inline function setErrorHandler( f ) { return js.Lib.setErrorHandler(f); }
 }
+
+#end

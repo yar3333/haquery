@@ -1,4 +1,4 @@
-package haquery;
+package haquery.tools;
 
 import neko.io.File;
 import neko.io.FileOutput;
@@ -8,6 +8,10 @@ import neko.Sys;
 import neko.Lib;
 import neko.FileSystem;
 import neko.zip.Uncompress;
+
+import haquery.server.db.HaqDb;
+import haquery.tools.orm.OrmGenerator;
+import haquery.tools.CompileStageComponentTemplateParser;
 
 using StringTools;
 
@@ -286,11 +290,26 @@ class Tasks
 		return r;
 	}
 	
-    public function genOrm(databaseConnectionString:String)
+    public function genOrm(databaseConnectionString:String, destBasePath:String)
     {
         log.start("Generate object related mapping classes");
         
-        Sys.command('php', [ exeDir + 'tools/orm/index.php', databaseConnectionString, 'src' ]);
+		var re = new EReg('^([a-z]+)\\://([_a-zA-Z0-9]+)\\:(.+?)@([_a-zA-Z0-9]+)/([_a-zA-Z0-9]+)$', '');
+		if (!re.match(databaseConnectionString))
+		{
+			Lib.println("Connection string example: 'mysql://root:123456@localhost/mydb'.");
+			Sys.exit(1);
+		}
+		
+		HaqDb.connect({
+			 type : re.matched(1)
+			,user : re.matched(2)
+			,pass : re.matched(3)
+			,host : re.matched(4)
+			,database : re.matched(5)
+		});
+		
+		OrmGenerator.make(destBasePath);
         
         log.finishOk();
     }

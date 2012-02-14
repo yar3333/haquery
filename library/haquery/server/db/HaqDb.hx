@@ -1,11 +1,15 @@
 package haquery.server.db;
 
-import php.db.Mysql;
 import haquery.server.db.HaqDbDriver;
 import haquery.server.db.HaqDbDriver_mysql;
 import haquery.server.HaqProfiler;
 import haquery.server.Lib;
+
+#if php
 import php.db.ResultSet;
+#elseif neko
+import neko.db.ResultSet;
+#end
 
 class HaqDb
 {

@@ -1,6 +1,8 @@
-import haquery.Tasks;
+package ;
+
 import neko.Lib;
 import neko.Sys;
+import haquery.tools.Tasks;
 
 class Main 
 {
@@ -21,14 +23,14 @@ class Main
 			return 1;
 		}
 		
-		var haquery = new haquery.Tasks(exeDir);
+		var haquery = new Tasks(exeDir);
         
         switch (args.length > 0 ? args[0] : '')
         {
             case 'gen-orm': 
-				if (args.length > 1)
+				if (args.length > 0)
 				{
-					haquery.genOrm(args[1]);
+					haquery.genOrm(args[0], 'src');
 				}
 				else
 				{

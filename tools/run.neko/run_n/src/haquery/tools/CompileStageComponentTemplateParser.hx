@@ -1,13 +1,8 @@
-package haquery;
+package haquery.tools;
 
-#if neko
-import neko.FileSystem;
-import neko.io.File;
-#elseif php
-import php.FileSystem;
-import php.io.File;
-#end
-
+import haquery.server.FileSystem;
+import haquery.server.io.File;
+import haquery.server.HaqDefines;
 import haxe.xml.Fast;
 
 using StringTools;

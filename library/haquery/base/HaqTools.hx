@@ -3,8 +3,8 @@ package haquery.base;
 import Type;
 import haquery.StringTools;
 
-#if php
-    import php.Web;
+#if (php || neko)
+import haquery.server.Web;
 #end
 
 class HaqTools 
@@ -27,7 +27,7 @@ class HaqTools
         return w1;
     }
 	
-    #if php
+    #if (php || neko)
     static function serverVarToClientString(v:Dynamic) : String
 	{
 		switch (Type.typeof(v))
@@ -67,7 +67,8 @@ class HaqTools
 			+ ")";
 	}
     
-    static function hexClientIP()
+    #if php
+	static function hexClientIP()
     {
         var ip : String = Web.getClientIP();
         var parts = ip.split('.');
@@ -78,26 +79,32 @@ class HaqTools
         }
         return hex;
     }
+	#end
     
     public static function uuid() : String
     {
-        var time : Int = Math.floor(Date.now().getTime());
+		var time : Int = Math.floor(Date.now().getTime());
+        #if php
         return StringTools.format("%08s", hexClientIP().substr(0,8))
               +StringTools.format("-%08x", time / 65536)
               +StringTools.format("-%04x", time % 65536)
               +StringTools.format("-%04x", Math.floor(Math.random() * 65536))
               +StringTools.format("%04x", Math.floor(Math.random() * 65536));
+		#elseif neko
+			return Web.getClientIP() + "-" + time + "-" + Math.floor(Math.random() * 65536) + Math.floor(Math.random() * 65536);
+		#end
     }
     #end
     
+	
+	#if (php || js)
 	public static inline function getFunctionParams() : Array<Dynamic>
 	{
 		#if php
 			return haquery.server.Lib.toHaxeArray(untyped __call__("func_get_args"));
-		#end
-		
-		#if js
+		#elseif js
 			return untyped __js__("arguments");
 		#end
 	}
+	#end
 }

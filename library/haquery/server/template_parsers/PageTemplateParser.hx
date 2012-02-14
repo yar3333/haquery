@@ -4,8 +4,8 @@ import haquery.server.HaqDefines;
 import haquery.server.HaqComponent;
 import haquery.server.HaqXml;
 import haquery.server.HaqPage;
-import php.FileSystem;
-import php.io.File;
+import haquery.server.FileSystem;
+import haquery.server.io.File;
 
 using haquery.StringTools;
 

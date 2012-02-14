@@ -1,11 +1,19 @@
-package ;
+package haquery.tools.orm;
 
+#if php
 import php.db.ResultSet;
 import php.FileSystem;
 import php.Lib;
+#elseif neko
+import neko.db.ResultSet;
+import neko.FileSystem;
+import neko.Lib;
+#end
+
 import haquery.server.db.HaqDb;
 import haquery.server.db.HaqDbDriver;
-import OrmTools;
+import haquery.tools.orm.OrmTools;
+
 using haquery.StringTools;
 
 class OrmGenerator

@@ -3,8 +3,6 @@ package haquery.server;
 import haquery.server.Lib;
 import haquery.server.HaqXml;
 import haquery.Std;
-import php.Lib;
-import php.NativeArray;
 
 using haquery.StringTools;
 
@@ -177,9 +175,9 @@ class HaqQuery
             if (Lib.isPostback && node.name == 'textarea' && node.hasAttribute('id'))
             {
                 var fullID = prefixID + node.getAttribute('id');
-                if (php.Web.getParams().exists(fullID))
+                if (Web.getParams().exists(fullID))
 				{
-					return php.Web.getParams().get(fullID);
+					return Web.getParams().get(fullID);
 				}
             }
             return node.innerHTML;
@@ -231,9 +229,9 @@ class HaqQuery
                 if (Lib.isPostback && node.hasAttribute('id'))
                 {
                     var fullID = prefixID + node.getAttribute('id');
-                    if (php.Web.getParams().exists(fullID))
+                    if (Web.getParams().exists(fullID))
 					{
-						return php.Web.getParams().get(fullID);
+						return Web.getParams().get(fullID);
 					}
                 }
                 
@@ -258,7 +256,7 @@ class HaqQuery
 					else
 					{
 						var fullID = prefixID + node.getAttribute('id');
-						return Std.bool(php.Web.getParams().get(fullID));
+						return Std.bool(Web.getParams().get(fullID));
 					}
                 }
                 
@@ -273,7 +271,10 @@ class HaqQuery
                     if (re.match(query))
                     {
                         var fullID = prefixID + re.matched(1);
-                        if (php.Web.getParams().exists(fullID)) return php.Web.getParams().get(fullID);
+                        if (Web.getParams().exists(fullID))
+						{
+							return Web.getParams().get(fullID);
+						}
                     }
                 }
             }

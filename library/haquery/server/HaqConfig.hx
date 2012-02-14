@@ -1,9 +1,5 @@
-#if php
 package haquery.server;
 
-import php.FileSystem;
-import php.io.File;
-import php.NativeArray;
 import haquery.server.HaqXml;
 
 using haquery.StringTools;
@@ -75,4 +71,3 @@ class HaqConfig
         disablePageMetaData = false;
 	}
 }
-#end

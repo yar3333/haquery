@@ -1,13 +1,13 @@
-package ;
+package haquery.tools.orm;
 
-//import php.db.ResultSet;
-import php.FileSystem;
-import php.io.File;
-import php.io.FileOutput;
-import php.Lib;
+import haquery.server.FileSystem;
+import haquery.server.io.File;
+import haquery.server.io.FileOutput;
+import haquery.server.Lib;
 import haquery.server.db.HaqDb;
 import haquery.server.db.HaqDbDriver;
-import OrmHaxeClass;
+import haquery.tools.orm.OrmHaxeClass;
+
 using haquery.StringTools;
 
 class OrmModelGenerator 

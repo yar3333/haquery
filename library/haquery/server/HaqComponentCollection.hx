@@ -3,9 +3,8 @@ package haquery.server;
 import haquery.server.HaqTemplate;
 import haquery.server.template_parsers.ComponentTemplateParser;
 import haquery.server.HaqXml;
-import php.FileSystem;
-import php.io.File;
-import php.NativeArray;
+import haquery.server.FileSystem;
+import haquery.server.io.File;
 
 class HaqComponentCollection extends haquery.base.HaqComponentCollection
 {
