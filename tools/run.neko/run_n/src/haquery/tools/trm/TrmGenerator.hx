@@ -1,14 +1,12 @@
-package ;
+package haquery.tools.trm;
 
-import haquery.CompileStageComponentTemplateParser;
-import haquery.server.HaqConfig;
+import haquery.server.FileSystem;
 import haquery.server.HaqDefines;
-//import haquery.server.HaqTemplates;
 import haquery.server.HaqXml;
-import php.FileSystem;
-import php.io.File;
-import php.Lib;
-import TrmHaxeClass;
+import haquery.server.io.File;
+import haquery.server.Lib;
+import haquery.tools.CompileStageComponentTemplateParser;
+import haquery.tools.trm.TrmHaxeClass;
 
 using haquery.StringTools;
 
@@ -17,7 +15,7 @@ class TrmGenerator
 	static inline var MIN_DATE = new Date(2000, 0, 0, 0, 0, 0);
 	static var isFirstPrint = true; 
 	
-	public static function makeForComponents()
+	public static function run()
     {
 		for (classPath in TrmTools.getClassPaths())
 		{
@@ -146,7 +144,7 @@ class TrmGenerator
 	static function getTemplateVars(collection:String, node:HaqXmlNodeElement) : Array<TrmHaxeVarGetter>
 	{
 		var r : Array<TrmHaxeVarGetter> = [];
-		var children : Array<HaqXmlNodeElement> = cast Lib.toHaxeArray(node.children);
+		var children = node.children;
 		for (child in children)
 		{
 			if (child.hasAttribute("id") && child.getAttribute("id").trim() != "")

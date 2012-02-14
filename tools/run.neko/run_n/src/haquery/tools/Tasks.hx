@@ -318,7 +318,7 @@ class Tasks
     {
         log.start("Generate template related mapping classes");
         
-        Sys.command('php', [ exeDir + 'tools/trm/index.php' ]);
+        haquery.tools.trm.TrmGenerator.run();
         
         log.finishOk();
     }

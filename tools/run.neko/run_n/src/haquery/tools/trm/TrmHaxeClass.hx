@@ -1,6 +1,4 @@
-package ;
-
-import php.Lib;
+package haquery.tools.trm;
 
 using haquery.StringTools;
 
@@ -77,7 +75,6 @@ class TrmHaxeClass
 			  + 'function ' + name + '('
 			  + Lambda.map(vars, function(v:TrmHaxeVar) { return v.name + ":" + v.type + (v.defVal != null ? '=' + v.defVal : ''); } ).join(', ')
 			  + ') : ' + retType;
-		//Lib.println("\t" + header);
 		var s = header + '\n'
 			  + '\t{\n'
 			  + TrmTools.indent(body.trim(), '\t\t') + '\n'
