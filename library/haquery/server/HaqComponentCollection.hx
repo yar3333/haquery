@@ -30,27 +30,23 @@ class HaqComponentCollection extends haquery.base.HaqComponentCollection
 		if (FileSystem.exists(configPath))
 		{
 			var xml = new HaqXml(File.getContent(configPath));
-			var nativeNodes : NativeArray = xml.find(">collection>import");
-			if (nativeNodes != null)
+			var nodes = xml.find(">collection>import");
+			for (node in nodes)
 			{
-				var nodes : Array<HaqXmlNodeElement> = cast Lib.toHaxeArray(nativeNodes);
-				for (node in nodes)
+				if (node.hasAttribute("collection"))
 				{
-					if (node.hasAttribute("collection"))
+					var collectionName = StringTools.trim(node.getAttribute("collection"));
+					if (collectionName != "")
 					{
-						var collectionName = StringTools.trim(node.getAttribute("collection"));
-						if (collectionName != "")
+						if (haquery.base.HaqComponentCollection.collections.exists(collectionName))
 						{
-							if (haquery.base.HaqComponentCollection.collections.exists(collectionName))
-							{
-								r.push(haquery.base.HaqComponentCollection.collections.get(collectionName));
-							}
-							else
-							{
-								var collection = new HaqComponentCollection(collectionName);
-								r.push(collection);
-								haquery.base.HaqComponentCollection.collections.set(collectionName, collection);
-							}
+							r.push(haquery.base.HaqComponentCollection.collections.get(collectionName));
+						}
+						else
+						{
+							var collection = new HaqComponentCollection(collectionName);
+							r.push(collection);
+							haquery.base.HaqComponentCollection.collections.set(collectionName, collection);
 						}
 					}
 				}

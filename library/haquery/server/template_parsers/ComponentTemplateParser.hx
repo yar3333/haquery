@@ -85,16 +85,12 @@ class ComponentTemplateParser extends BaseTemplateParser
 		if (FileSystem.exists(path))
 		{
 			var xml = new HaqXml(File.getContent(path));
-			var nativeNodes : NativeArray = xml.find(">component>extends");
-			if (nativeNodes != null)
+			var nodes = xml.find(">component>extends");
+			if (nodes.length > 0)
 			{
-				var nodes : Array<HaqXmlNodeElement> = cast Lib.toHaxeArray(nativeNodes);
-				if (nodes.length > 0)
+				if (nodes[0].hasAttribute("collection"))
 				{
-					if (nodes[0].hasAttribute("collection"))
-					{
-						r.extendsCollection = nodes[0].getAttribute("collection");
-					}
+					r.extendsCollection = nodes[0].getAttribute("collection");
 				}
 			}
 		}
@@ -117,10 +113,9 @@ class ComponentTemplateParser extends BaseTemplateParser
 		
 		var css = '';
 		var i = 0; 
-		var children : Array<HaqXmlNodeElement> = untyped Lib.toHaxeArray(doc.children);
-		while (i < children.length)
+		while (i < doc.children.length)
 		{
-			var node : HaqXmlNodeElement = children[i];
+			var node : HaqXmlNodeElement = doc.children[i];
 			if (node.name=='style' && !node.hasAttribute('id'))
 			{
 				if (node.getAttribute('type') == "text/less")
@@ -133,7 +128,7 @@ class ComponentTemplateParser extends BaseTemplateParser
 				}
 				
 				node.remove();
-				children.splice(i, 1);
+				doc.children.splice(i, 1);
 				i--;
 			}
 			i++;

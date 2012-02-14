@@ -209,7 +209,7 @@ class HaqComponentManager
             
             if (node.name.startsWith('haq:'))
             {
-                node.component = createComponent(parent, node.name, node.getAttribute('id'), Lib.hashOfAssociativeArray(node.getAttributesAssoc()), node);
+                node.component = createComponent(parent, node.name, node.getAttribute('id'), node.getAttributesAssoc(), node);
             }
 			i++;
         }
@@ -248,15 +248,15 @@ class HaqComponentManager
                 {
                     prepareDocToRender(prefixID, node);
                     
-                    var text = node.component.render().trim();
+                    var text : String = node.component.render().trim();
                     var prev = node.getPrevSiblingNode();
                     
-                    if (untyped __php__("$prev instanceof HaqXmlNodeText"))
+                    if (Type.getClass(prev) == HaqXmlNodeText)
                     {
                         var re : EReg = new EReg('(?:^|\n)([ ]+)$', 's');
                         if (re.match(cast(prev, HaqXmlNodeText).text))
                         {
-                            text = text.replace("\n", "\n"+re.matched(1));
+                            text = text.replace("\n", "\n" + re.matched(1));
                         }
                     }
                     node.parent.replaceChild(node, new HaqXmlNodeText(text));
@@ -271,12 +271,17 @@ class HaqComponentManager
             {
                 prepareDocToRender(prefixID, node);
                 var nodeID = node.getAttribute('id');
-                if (nodeID!=null && nodeID!='') node.setAttribute('id', prefixID + nodeID);
-                if (node.name=='label')
+                if (nodeID != null && nodeID != '')
+				{
+					node.setAttribute('id', prefixID + nodeID);
+				}
+                if (node.name == 'label')
                 {
                     var nodeFor = node.getAttribute('for');
-                    if (nodeFor!=null && nodeFor!='') 
-                        node.setAttribute('for', prefixID + nodeFor);
+                    if (nodeFor != null && nodeFor != '')
+					{
+						node.setAttribute('for', prefixID + nodeFor);
+					}
                 }
             }
 			

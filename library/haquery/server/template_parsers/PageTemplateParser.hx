@@ -79,8 +79,8 @@ class PageTemplateParser extends BaseTemplateParser
         
         var layoutDoc = new HaqXml(File.getContent(Lib.config.layout));
         
-        var placeholders : Array<HaqXmlNodeElement> = untyped Lib.toHaxeArray(layoutDoc.find('haq:placeholder'));
-        var contents : Array<HaqXmlNodeElement> = untyped Lib.toHaxeArray(pageDoc.find('>haq:content'));
+        var placeholders = layoutDoc.find('haq:placeholder');
+        var contents = pageDoc.find('>haq:content');
         for (ph in placeholders)
         {
             var content : HaqXmlNodeElement = null;

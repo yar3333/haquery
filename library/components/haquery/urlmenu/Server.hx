@@ -24,7 +24,7 @@ class Server extends components.haquery.container.Server
         var bestDeep = 0;
         var self = this;
         
-        for (node in Lib.toHaxeArray(parentNode.children))
+        for (node in parentNode.children)
         {
             var elem : HaqXmlNodeElement = cast node;
             

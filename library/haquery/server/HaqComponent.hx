@@ -103,10 +103,10 @@ class HaqComponent extends haquery.base.HaqComponent
 		
 		if (query == null) return new HaqQuery(prefixCssClass, prefixID, '', null);
         if (Type.getClass(query) == haquery.server.HaqQuery) return query;
-		if (untyped __php__("$query instanceof HaqXmlNodeElement"))
+		if (Type.getClass(query) ==  HaqXmlNodeElement)
 		{
 			Lib.assert(!Lib.isPostback, "Calling of the HaqComponent.q() with HaqXmlNodeElement parameter do not possible on the postback.");
-			return new HaqQuery(prefixCssClass, prefixID, "", Lib.toPhpArray([ query ]));
+			return new HaqQuery(prefixCssClass, prefixID, "", [ query ]);
 		}
         if (Type.getClassName(Type.getClass(query)) != 'String')
 		{
