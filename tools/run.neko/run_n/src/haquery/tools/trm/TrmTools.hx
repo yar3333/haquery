@@ -1,8 +1,8 @@
-package ;
+package haquery.tools.trm;
 
-import php.FileSystem;
-import php.io.File;
-import TrmHaxeClass;
+import haquery.server.FileSystem;
+import haquery.server.io.File;
+import haquery.tools.trm.TrmHaxeClass;
 
 using haquery.StringTools;
 
