@@ -1,5 +1,6 @@
 package tests;
 
+import haquery.server.HaqComponentCollection;
 import haxe.unit.TestCase;
 import php.FileSystem;
 import haquery.server.HaqComponent;
@@ -13,15 +14,16 @@ class HaqTemplatesTest extends TestCase
 {
 	public function testEmpty()
 	{
-		var manager = new HaqComponentManager([]);
-		assertTrue(manager != null);
+		var collection = new HaqComponentCollection('');
+		var manager = new HaqComponentManager(collection);
 	}
 	
 	public function testComponentsSet0()
 	{
-		var manager = new HaqComponentManager([ 'set0' ]);
-		var template = manager.getTemplate('text');
+		var collection = new HaqComponentCollection('set0');
+		var template = collection.getTemplate(null, 'text');
 		assertTrue(template != null);
+		
 		if (template != null)
 		{
 			assertEquals("text component template file", template.doc.innerHTML);
@@ -37,9 +39,8 @@ class HaqTemplatesTest extends TestCase
 		var stylesFilePath = HaqDefines.folders.temp + '/components1/styles.css';
 		if (FileSystem.exists(stylesFilePath)) FileSystem.deleteFile(stylesFilePath);*/
 		
-		var manager = new HaqComponentManager([ 'set1' ]);
-		
-		var template = manager.getTemplate('randnum');
+		var collection = new HaqComponentCollection('set1');
+		var template = collection.getTemplate(null, 'randnum');
 		assertTrue(template != null);
 		
 		var html = template.doc.innerHTML;
@@ -49,9 +50,12 @@ class HaqTemplatesTest extends TestCase
 	
 	public function testComponentsSet1CreateRandNum()
 	{
-		var manager = new HaqComponentManager([ 'set1' ]);
-        assertTrue(manager.getTemplate('randnum') != null);
-        assertEquals('components.set1.randnum.Server', Type.getClassName(manager.getTemplate('randnum').serverClass));
+		var collection = new HaqComponentCollection('set1');
+        var template = collection.getTemplate(null, 'randnum');
+		assertTrue(template != null);
+        assertEquals('components.set1.randnum.Server', Type.getClassName(template.serverClass));
+		
+		var manager = new HaqComponentManager(collection);
 		
 		var randnum : HaqComponent = manager.createComponent(null, 'randnum', 'rn', null, null);
 		assertTrue(randnum != null);

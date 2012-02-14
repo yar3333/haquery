@@ -3,10 +3,12 @@ package haquery.base;
 #if php
 import haquery.server.HaqEvent;
 import haquery.server.Lib;
+import haquery.server.HaqTemplate;
 private typedef Component = haquery.server.HaqComponent;
 #else
 import haquery.client.HaqEvent;
 import haquery.client.Lib;
+import haquery.client.HaqTemplate;
 private typedef Component = haquery.client.HaqComponent;
 #end
 
@@ -14,17 +16,22 @@ using haquery.StringTools;
 
 class HaqComponent
 {
-    /**
-     * Empty for page.
-     */
-    public var id(default,null) : String;
-
     public var parent(default,null) : Component;
 
     /**
      * Component name.
      */
-    public var tag(default,null)  : String;
+    public var tag(default, null)  : String;
+	
+    /**
+     * Empty for page.
+     */
+    public var id(default,null) : String;
+
+    /**
+     * Empty for page.
+     */
+	public var componentTemplate(default, null) : HaqTemplate;
 
     /**
      * Empty for page.
@@ -69,13 +76,14 @@ class HaqComponent
 		}
 	}
 	
-	function commonConstruct(parent:Component, tag:String,  id:String) 
+	function commonConstruct(parent:Component, componentTemplate:HaqTemplate, tag:String,  id:String) 
 	{
 		if (id == null || id == '') id = parent != null ? parent.getNextAnonimID() : '';
 		
 		this.parent = parent;
 		this.tag = tag;
 		this.id = id;
+		this.componentTemplate = componentTemplate;
 		
 		this.fullID = (parent!=null ? parent.prefixID : '') + id;
 		this.prefixID = this.fullID != '' ? this.fullID + HaqDefines.DELIMITER : '';

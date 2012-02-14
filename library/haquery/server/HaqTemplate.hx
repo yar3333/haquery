@@ -11,6 +11,9 @@ class HaqTemplate
 	public var serverClass(default, null) : Class<HaqComponent>;
 	public var serverHandlers(default, null) : Hash<Array<String>>;
 	
+	public var collection(default, null) : String;
+	public var extendsCollection(default, null) : String;
+	
 	public function new(parser:ITemplateParser) 
 	{
 		this.parser = parser;
@@ -21,6 +24,9 @@ class HaqTemplate
 		
 		serverHandlers = parser.getServerHandlers();
 		serverClass = parser.getServerClass();
+		
+		collection = parser.getCollectionName();
+		extendsCollection = parser.getExtendsCollectionName();
 	}
 	
 	public function getSupportFilePath(relPath:String)

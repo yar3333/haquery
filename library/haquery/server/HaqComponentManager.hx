@@ -14,9 +14,7 @@ class HaqComponentManager
 {
     static var baseComponentFields : List<String> = null;
 	
-	var collections : Array<String>;
-	
-	var ttemplates : Hash<HaqTemplate>;
+	public var collection(default, null) : HaqComponentCollection;
 	
 	var registeredScripts : Array<String>;
 	var registeredStyles : Array<String>;
@@ -31,38 +29,19 @@ class HaqComponentManager
 		baseComponentFields.push('template');
 	}
 	
-	public function new(collections:Array<String>) : Void
+	public function new(collection:HaqComponentCollection)
 	{
-		this.collections = collections;
+		this.collection = collection;
 		
-		ttemplates = new Hash<HaqTemplate>();
 		registeredScripts = [];
 		registeredStyles = [];
 	}
 	
-	public function getTemplate(tag:String) : HaqTemplate
-	{
-        if (!ttemplates.exists(tag))
-		{
-			var i = collections.length - 1;
-			while (i >= 0)
-			{
-				if (FileSystem.isDirectory(HaqDefines.folders.components + '/' + collections[i] + '/' + tag))
-				{
-					ttemplates.set(tag, new HaqTemplate(new ComponentTemplateParser(collections[i], tag)));
-					break;
-				}
-				i--;
-			}
-		}
-		return ttemplates.get(tag);
-	}
-	
-	function newComponent(parent:HaqComponent, clas:Class<HaqComponent>, name:String, id:String, doc:HaqXml, attr:Hash<String>, parentNode:HaqXmlNodeElement) : HaqComponent
+	function newComponent(parent:HaqComponent, clas:Class<HaqComponent>, componentTemplate:HaqTemplate, name:String, id:String, doc:HaqXml, attr:Hash<String>, parentNode:HaqXmlNodeElement) : HaqComponent
 	{
         Lib.profiler.begin('newComponent');
             var r : HaqComponent = Type.createInstance(clas, []);
-            r.construct(this, parent, name, id, doc, attr, parentNode);
+            r.construct(this, parent, componentTemplate, name, id, doc, attr, parentNode);
         Lib.profiler.end();
 		return r;
 	}
@@ -70,8 +49,8 @@ class HaqComponentManager
 	public function createComponent(parent:HaqComponent, tagOrName:String, id:String, attr:Hash<String>, parentNode:HaqXmlNodeElement) : HaqComponent
 	{
         var name : String = tagOrName.startsWith('haq:') ? getNameByTag(tagOrName) : tagOrName;
-		var template = getTemplate(name);
-		var component : HaqComponent = newComponent(parent, template.serverClass, name, id, template.doc, attr, parentNode);
+		var template =  collection.getTemplate(parent, name);
+		var component : HaqComponent = newComponent(parent, template.serverClass, template, name, id, template.doc, attr, parentNode);
 		return component;
 	}
 	
@@ -94,10 +73,10 @@ class HaqComponentManager
         }
 		
 		var template = new HaqTemplate(new PageTemplateParser(path));
-        return cast newComponent(null, template.serverClass, '', '', template.doc, attr, null);
+        return cast newComponent(null, template.serverClass, template, '', '', template.doc, attr, null);
 	}
     
-	function getFullUrl(tag:String, url:String) : String
+	function getFullUrl(componentTemplate:HaqTemplate, url:String) : String
 	{
 		if (url.startsWith("~/"))
 		{
@@ -106,7 +85,7 @@ class HaqComponentManager
 		
 		if (!url.startsWith("http://") && !url.startsWith("/") && !url.startsWith("<"))
 		{
-			url = '/' + getTemplate(tag).getSupportFilePath(url);
+			url = '/' + componentTemplate.getSupportFilePath(url);
 		}
 		
 		return url;
@@ -117,9 +96,9 @@ class HaqComponentManager
 	 * @param	tag Component name.
 	 * @param	url Url to js file (global or related to support component folder).
 	 */
-    public function registerScript(tag:String, url:String) : Void
+    public function registerScript(componentTemplate:HaqTemplate, url:String) : Void
 	{
-		url = getFullUrl(tag, url);
+		url = getFullUrl(componentTemplate, url);
 		if (!Lambda.has(registeredScripts, url))
 		{
 			registeredScripts.push(url);
@@ -131,9 +110,9 @@ class HaqComponentManager
 	 * @param	tag Component name.
 	 * @param	url Url to css file (global or related to support component folder).
 	 */
-	public function registerStyle(tag:String, url:String) : Void
+	public function registerStyle(componentTemplate:HaqTemplate, url:String) : Void
 	{
-		url = getFullUrl(tag, url);
+		url = getFullUrl(componentTemplate, url);
 		if (!Lambda.has(registeredStyles, url))
 		{
 			registeredStyles.push(url);
@@ -152,11 +131,14 @@ class HaqComponentManager
 	
 	public function getInternalDataForPageHtml(page:HaqPage) : String
     {
-		var s = '';
+		// TODO: getInternalDataForPageHtml
+		return '';
+		
+/*		var s = '';
 		
         s += "haquery.client.HaqInternals.componentCollections = [ " + Lambda.map(collections, function(c) return "'" + c + "'").join(', ') + " ];\n";
         
-        var tags = ttemplates.keys();
+        var tags = templates.keys();
         s += "haquery.client.HaqInternals.tags = [\n";
         var tagComponents = getTagComponents(page);
         for (tag in tagComponents.keys())
@@ -181,12 +163,13 @@ class HaqComponentManager
         serverHandlers.set('', pageTemplate.serverHandlers);
         for (tag in tags)
         {
-            serverHandlers.set(tag, ttemplates.get(tag).serverHandlers);
+            serverHandlers.set(tag, templates.get(tag).serverHandlers);
         }
         s += "haquery.client.HaqInternals.serializedServerHandlers = \"" + Serializer.run(serverHandlers) + "\";\n";
         s += "haquery.client.HaqInternals.pagePackage = \"" + pageClassName + "\";";
 
         return s;
+*/
     }
     
     function getTagComponents(page:HaqPage) : Hash<Array<HaqComponent>>

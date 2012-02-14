@@ -10,7 +10,7 @@ import haquery.server.HaqComponent;
 
 using haquery.StringTools;
 
-class ComponentTemplateParser implements ITemplateParser
+class ComponentTemplateParser extends BaseTemplateParser
 {
 	var collection : String;
 	var tag : String;
@@ -25,7 +25,7 @@ class ComponentTemplateParser implements ITemplateParser
 		config = getConfig();
 	}
 	
-	public function getServerClass() : Class<HaqComponent>
+	override public function getServerClass() : Class<HaqComponent>
 	{
 		var className = HaqDefines.folders.components + "." + collection + "." + tag + ".Server";
 		var clas = Type.resolveClass(className);
@@ -40,12 +40,6 @@ class ComponentTemplateParser implements ITemplateParser
 		}
 		
 		return HaqComponent;
-	}
-	
-	public function getServerHandlers() : Hash<Array<String>>
-	{
-		// TODO: getServerHandlers
-		return null;
 	}
 	
 	function getRawTemplateHtml() : String
@@ -66,7 +60,7 @@ class ComponentTemplateParser implements ITemplateParser
 		return html;
 	}
 	
-	public function getSupportFilePath(fileName:String) : String
+	override public function getSupportFilePath(fileName:String) : String
 	{
 		var path = getFullPath(HaqDefines.folders.components + '/' + collection + '/' + tag + '/' + HaqDefines.folders.support + '/' + fileName);
 		if (FileSystem.exists(path))
@@ -108,7 +102,7 @@ class ComponentTemplateParser implements ITemplateParser
 		return r;
 	}
 	
-	public function getDocAndCss() : { doc:HaqXml, css:String }
+	override public function getDocAndCss() : { doc:HaqXml, css:String }
 	{
 		var text = getRawTemplateHtml();
 		
@@ -173,5 +167,15 @@ class ComponentTemplateParser implements ITemplateParser
 	function getFullPath(path:String)
 	{
 		return path;
+	}
+	
+	override public function getCollectionName() : String
+	{
+		return collection;
+	}
+	
+	override public function getExtendsCollectionName() : String
+	{
+		return config.extendsCollection;
 	}
 }

@@ -9,4 +9,6 @@ interface ITemplateParser
 	function getServerClass() : Class<HaqComponent>;
 	function getServerHandlers() : Hash<Array<String>>;
 	function getSupportFilePath(fileName:String) : String;
+	function getCollectionName() : String;
+	function getExtendsCollectionName() : String;
 }

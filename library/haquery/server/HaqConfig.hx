@@ -41,10 +41,9 @@ class HaqConfig
     public var custom : Hash<Dynamic>;
 
 	/**
-	 * Project-specific names of the component collections ( = subfolders in the components directory).
-	 * HaQuery do finding components from the last added collection to the first.
+	 * Project-specific name of the base component collection ( = subfolder in the component directory).
 	 */
-	public var componentCollections(default, null) : Array<String>;
+	public var componentCollection(default, null) : String;
     
     /**
      * Path to layout file (null if layout not need).
@@ -71,7 +70,7 @@ class HaqConfig
 		isTraceComponent = false;
 		filterTracesByIP = '';
 		custom = new Hash<Dynamic>();
-		componentCollections = [ "haquery" ];
+		componentCollection = "haquery";
         layout = null;
         disablePageMetaData = false;
 	}
