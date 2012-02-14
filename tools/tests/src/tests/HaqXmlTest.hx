@@ -10,42 +10,42 @@ class HaqXmlTest extends haxe.unit.TestCase
 {
     public function testText()
     {
-		var nodes = Lib.toHaxeArray(HaqXmlParser.parse("abc"));
+		var nodes = HaqXmlParser.parse("abc");
         this.assertEquals(1, nodes.length);
 
         var node = nodes[0];
+		this.assertTrue(Type.getClass(node) == HaqXmlNodeText);
         this.assertEquals('abc', cast(node, HaqXmlNodeText).text);
     }
 
     public function testTagWithClose()
     {
-        var nativeNodes = HaqXmlParser.parse("<br p=2 />");
-		
-		var nodes = Lib.toHaxeArray(nativeNodes);
+		var nodes = HaqXmlParser.parse("<br p=2 />");
         this.assertEquals(1, nodes.length);
 
-        var node : HaqXmlNodeElement = nodes[0];
+		this.assertTrue(Type.getClass(nodes[0]) == HaqXmlNodeElement);
+        
+		var node : HaqXmlNodeElement = cast nodes[0];
         this.assertEquals('br', node.name);
 		
 		this.assertEquals("String", Type.getClassName(Type.getClass("abc")));
-		this.assertEquals(haquery.server.HaqQuery, Type.getClass(new HaqQuery("", "", "", nativeNodes)));
-		
-		var query = nodes[0];
-		this.assertTrue(untyped __php__("$node instanceof HaqXmlNodeElement"));
+		this.assertEquals(haquery.server.HaqQuery, Type.getClass(new HaqQuery("", "", "", cast nodes)));
     }
 
     public function testTagAndText()
     {
-        var nodes = Lib.toHaxeArray(HaqXmlParser.parse("<a>abc</a>"));
+        var nodes = HaqXmlParser.parse("<a>abc</a>");
         this.assertEquals(1, nodes.length);
 
-        var node : HaqXmlNodeElement = nodes[0];
+		this.assertTrue(Type.getClass(nodes[0]) == HaqXmlNodeElement);
+		
+        var node : HaqXmlNodeElement = cast nodes[0];
         this.assertEquals('a', node.name);
     }
 
     public function getParsedAsString(str:String)
     {
-        var nodes : Array<Dynamic> = Lib.toHaxeArray(HaqXmlParser.parse(str));
+        var nodes = HaqXmlParser.parse(str);
         return nodes.join('');
     }
 
@@ -80,26 +80,24 @@ class HaqXmlTest extends haxe.unit.TestCase
 
     public function testComment()
     {
-        var nodes : Array<HaqXmlNode> = cast Lib.toHaxeArray(HaqXmlParser.parse("<a><!-- comment<p></p> --></a>"));
+        var nodes = HaqXmlParser.parse("<a><!-- comment<p></p> --></a>");
         this.assertEquals(1, nodes.length);
-        this.assertEquals("HaqXmlNodeElement", getClassName(nodes[0]));
+        this.assertTrue(Type.getClass(nodes[0]) == HaqXmlNodeElement);
         
         var node : HaqXmlNodeElement = cast nodes[0];
-        var subnodes = Lib.toHaxeArray(node.nodes);
+        var subnodes = node.nodes;
         this.assertEquals(1, subnodes.length);
-        this.assertEquals("HaqXmlNodeText", getClassName(subnodes[0]));
+        this.assertTrue(Type.getClass(subnodes[0]) == HaqXmlNodeText);
     }
     
     public function processSerializationTest(str:String)
     {
-		var srcNodesNative = HaqXmlParser.parse(str);
-		var srcNodes = Lib.toHaxeArray(srcNodesNative);
+		var srcNodes = HaqXmlParser.parse(str);
         var srcNodesStr = srcNodes.join('');
         
-		var s: String = php.Lib.serialize(srcNodesNative);
-		var r: Dynamic = php.Lib.unserialize(s);
+		var s = php.Lib.serialize(srcNodes);
+		var dstNodes : Array<HaqXmlNodeElement> = cast php.Lib.unserialize(s);
 		
-		var dstNodes = Lib.toHaxeArray(cast(r, NativeArray));
 		var dstNodesStr = dstNodes.join('');
         
 		this.assertEquals(dstNodesStr, srcNodesStr);
@@ -147,112 +145,108 @@ class HaqXmlTest extends haxe.unit.TestCase
     {
         var xml = new HaqXml("<div class='first second'><p id='myp' class='first'><a href='b'>cde</a></p></div>");
         
-        var nodes = Lib.toHaxeArray(xml.find(''));
+        var nodes = xml.find('');
         //this.assertInternalType('array', nodes);
         this.assertEquals(0, nodes.length);
         
-        var nodes = Lib.toHaxeArray(xml.find('div'));
+        var nodes = xml.find('div');
         //this.assertInternalType('array', nodes);
         this.assertEquals(1, nodes.length);
         
-        var divs = Lib.toHaxeArray(xml.find('div'));
-        nodes = Lib.toHaxeArray(divs[0].find('div'));
+        var divs = xml.find('div');
+        nodes = divs[0].find('div');
         //this.assertInternalType('array', nodes);
         this.assertEquals(0, nodes.length);
         
-        nodes = Lib.toHaxeArray(divs[0].find('*'));
+        nodes = divs[0].find('*');
         //echo "DIVS = "+((string)divs[0])+"\n";
         //this.assertInternalType('array', nodes);
         this.assertEquals(2, nodes.length);
         
-        nodes = Lib.toHaxeArray(xml.find('#no'));
+        nodes = xml.find('#no');
         this.assertEquals(0, nodes.length);
 
-        nodes = Lib.toHaxeArray(xml.find('.no'));
+        nodes = xml.find('.no');
         this.assertEquals(0, nodes.length);
         
-        nodes = Lib.toHaxeArray(xml.find('a'));
+        nodes = xml.find('a');
         //this.assertInternalType('array', nodes);
         this.assertEquals(1, nodes.length);
         this.assertEquals('a', nodes[0].name);
         this.assertEquals('b', nodes[0].getAttribute('href'));
         
-        nodes = Lib.toHaxeArray(xml.find('.first'));
+        nodes = xml.find('.first');
         this.assertEquals(2, nodes.length);
         this.assertEquals('p', nodes[0].name);
         this.assertEquals('div', nodes[1].name);
         
-        nodes = Lib.toHaxeArray(xml.find('.first.second'));
+        nodes = xml.find('.first.second');
         this.assertEquals(1, nodes.length);
         this.assertEquals('div', nodes[0].name);
         
-        nodes = Lib.toHaxeArray(xml.find('#myp'));
+        nodes = xml.find('#myp');
         this.assertEquals(1, nodes.length);
         this.assertEquals('p', nodes[0].name);
         
-        nodes = Lib.toHaxeArray(xml.find('.first#myp'));
+        nodes = xml.find('.first#myp');
         this.assertEquals(1, nodes.length);
         
-        nodes = Lib.toHaxeArray(xml.find('.second#myp'));
+        nodes = xml.find('.second#myp');
         this.assertEquals(0, nodes.length);
         
-        nodes = Lib.toHaxeArray(xml.find('.first.second a'));
+        nodes = xml.find('.first.second a');
         this.assertEquals(1, nodes.length);
         
-        nodes = Lib.toHaxeArray(xml.find('.first.second>a'));
+        nodes = xml.find('.first.second>a');
         this.assertEquals(0, nodes.length);
         
-        nodes = Lib.toHaxeArray(xml.find('.first.second >a'));
+        nodes = xml.find('.first.second >a');
         this.assertEquals(0, nodes.length);
         
-        nodes = Lib.toHaxeArray(xml.find('.second>a'));
+        nodes = xml.find('.second>a');
         this.assertEquals(0, nodes.length);
         
-        nodes = Lib.toHaxeArray(xml.find('.second a'));
+        nodes = xml.find('.second a');
         this.assertEquals(1, nodes.length);
         
-        nodes = Lib.toHaxeArray(xml.find('.first>a'));
+        nodes = xml.find('.first>a');
         this.assertEquals(1, nodes.length);
         
-        nodes = Lib.toHaxeArray(xml.find('div>p>a'));
+        nodes = xml.find('div>p>a');
         this.assertEquals(1, nodes.length);
         
-        nodes = Lib.toHaxeArray(xml.find('div>a'));
+        nodes = xml.find('div>a');
         this.assertEquals(0, nodes.length);
         
-        nodes = Lib.toHaxeArray(xml.find('div>*>a'));
+        nodes = xml.find('div>*>a');
         this.assertEquals(1, nodes.length);
         
-        nodes = Lib.toHaxeArray(xml.find('*'));
+        nodes = xml.find('*');
         this.assertEquals(3, nodes.length);
         
-        nodes = Lib.toHaxeArray(xml.find('a,p'));
+        nodes = xml.find('a,p');
         this.assertEquals(2, nodes.length);
         
-        nodes = Lib.toHaxeArray(xml.find('a , p'));
+        nodes = xml.find('a , p');
         this.assertEquals(2, nodes.length);
         
-        nodes = Lib.toHaxeArray(xml.find('a, a'));
+        nodes = xml.find('a, a');
         this.assertEquals(1, nodes.length);
     }
 
     public function testSiblings()
     {
         var xml = new HaqXml("<br />\n        <div id='m'>test</div>");
-        var nodes = Lib.toHaxeArray(xml.find("#m"));
-        //this.assertInternalType('array', nodes);
+        var nodes = xml.find("#m");
+		
         this.assertEquals(1, nodes.length);
-        var node = nodes[0];
-        //this.assertInstanceOf("HaqXmlNodeElement", node);
+		this.assertTrue(Type.getClass(nodes[0]) == HaqXmlNodeElement);
+        
+		var node : HaqXmlNodeElement = nodes[0];
         this.assertEquals("m", node.getAttribute('id'));
-        var prev = node.getPrevSiblingNode();
-        //this.assertInstanceOf("HaqXmlNodeText", prev);
+        
+		var prev = node.getPrevSiblingNode();
+		this.assertTrue(Type.getClass(prev) == HaqXmlNodeText);
         this.assertEquals("\n        ", cast(prev, HaqXmlNodeText).text);
-    }
-    
-    
-    public static function getClassName(obj:Dynamic) : String
-    {
-        return untyped __call__("get_class", obj);
     }
 }

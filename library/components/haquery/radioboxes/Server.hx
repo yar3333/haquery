@@ -13,7 +13,7 @@ class Server extends components.haquery.container.Server
     
     function getInputElements() : List<HaqXmlNodeElement>
     {
-        var inputs : Array<HaqXmlNodeElement> = cast Lib.toHaxeArray(parentNode.find("input"));
+        var inputs = parentNode.find("input");
         return Lambda.filter(inputs, function(input) return input.getAttribute('type').toLowerCase()=='radio');
     }
     

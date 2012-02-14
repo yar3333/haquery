@@ -36,12 +36,12 @@ class HaqQuery
         return ~/\b~/.replace(className, prefixCssClass);
 	}
     
-	public function new(prefixCssClass:String, prefixID:String, query:String, nodes:NativeArray)
+	public function new(prefixCssClass:String, prefixID:String, query:String, nodes:Array<HaqXmlNodeElement>)
     {
         this.prefixCssClass = prefixCssClass;
 		this.prefixID = prefixID;
         this.query = query;
-        this.nodes = nodes != null ? cast Lib.toHaxeArray(nodes) : [];
+        this.nodes = nodes != null ? nodes : [];
     }
 	
     public function __toString()
@@ -241,7 +241,7 @@ class HaqQuery
                 
                 if (node.name=='select')
                 {
-                    var options : Array<HaqXmlNodeElement> = untyped Lib.toHaxeArray(node.find('>option'));
+                    var options = node.find('>option');
                     for (option in options)
                     {
                         if (option.hasAttribute('selected')) return option.getAttribute ('value');
@@ -298,7 +298,7 @@ class HaqQuery
             else 
 			if (node.name=='select')
             {
-                var options : Array<HaqXmlNodeElement> = untyped Lib.toHaxeArray(node.find('>option'));
+                var options = node.find('>option');
                 for (option in options)
                 {
                     if (option.getAttribute('value') == val)

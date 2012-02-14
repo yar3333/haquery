@@ -30,13 +30,12 @@ class HaqPage extends HaqComponent
     public function insertStyles(links:Array<String>)
     {
         var text = Lambda.map(links, function(path) return getStyleLink(path)).join('\n        ');
-        var heads = Lib.toHaxeArray(doc.find(">html>head"));
+        var heads = doc.find(">html>head");
         if (heads.length > 0)
         {
             var head : HaqXmlNodeElement = heads[0];
             var child : HaqXmlNodeElement = null;
-            var children = Lib.toHaxeArray(head.children);
-            if (children.length > 0)
+            if (head.children.length > 0)
             {
                 child = head.children[0];
                 while (child != null && child.name != 'link' && (child.getAttribute('rel') != 'stylesheet' || child.getAttribute('type') != 'text/css'))
@@ -55,13 +54,12 @@ class HaqPage extends HaqComponent
     public function insertScripts(links:Array<String>)
     {
         var text = Lambda.map(links, function(path) return getScriptLink(path)).join('\n        ');
-        var heads = Lib.toHaxeArray(doc.find(">html>head"));
+        var heads = doc.find(">html>head");
         if (heads.length > 0)
         {
             var head : HaqXmlNodeElement = heads[0];
             var child : HaqXmlNodeElement = null;
-            var children = Lib.toHaxeArray(head.children);
-            if (children.length > 0)
+            if (head.children.length > 0)
             {
                 child = head.children[0];
                 while (child != null && child.name != 'script')
@@ -79,10 +77,10 @@ class HaqPage extends HaqComponent
     
     public function insertInitInnerBlock(text:String)
     {
-        var bodyes = Lib.toHaxeArray(doc.find(">html>body"));
+        var bodyes = doc.find(">html>body");
         if (bodyes.length > 0)
         {
-            var body : HaqXmlNodeElement = bodyes[0];
+            var body = bodyes[0];
             body.addChild(new HaqXmlNodeText("\n        " + text.replace('\n', '\n        ') + '\n    '));
         }
         else
