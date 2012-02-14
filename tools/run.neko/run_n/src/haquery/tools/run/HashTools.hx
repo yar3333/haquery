@@ -1,4 +1,4 @@
-package haquery;
+package haquery.tools.run;
 
 class HashTools
 {

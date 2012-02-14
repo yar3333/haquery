@@ -1,7 +1,5 @@
 package haquery.server;
 
-import php.Lib;
-
 class HaqInternals 
 {
 	static var ajaxResponse = "";

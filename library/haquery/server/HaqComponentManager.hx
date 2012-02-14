@@ -6,7 +6,7 @@ import haquery.server.Lib;
 import haquery.server.template_parsers.ComponentTemplateParser;
 import haquery.server.template_parsers.PageTemplateParser;
 import haxe.Serializer;
-import php.FileSystem;
+import haquery.server.FileSystem;
 
 using haquery.StringTools;
 

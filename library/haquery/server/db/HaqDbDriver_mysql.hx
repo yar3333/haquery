@@ -1,11 +1,18 @@
 package haquery.server.db;
 
 import Type;
-import php.db.Connection;
-import php.db.Mysql;
 import haquery.server.db.HaqDbDriver;
 import haquery.server.Lib;
+
+#if php
+import php.db.Connection;
+import php.db.Mysql;
 import php.db.ResultSet;
+#elseif neko
+import neko.db.Connection;
+import neko.db.Mysql;
+import neko.db.ResultSet;
+#end
 
 class HaqDbDriver_mysql implements HaqDbDriver
 {
@@ -24,7 +31,7 @@ class HaqDbDriver_mysql implements HaqDbDriver
 
     public function query(sql:String) : ResultSet
     {
-        if (Lib.config.sqlTraceLevel>=2) trace("SQL QUERY: " + sql);
+        if (Lib.config.sqlTraceLevel >= 2) trace("SQL QUERY: " + sql);
         var r = connection.request(sql);
         var errno:Int = untyped __call__('mysql_errno');
         if (errno != 0)

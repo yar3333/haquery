@@ -2,10 +2,18 @@ package haquery.server;
 
 import haxe.Serializer;
 import haxe.Unserializer;
-import php.FileSystem;
+
+import haquery.server.FileSystem;
+#if php
 import php.io.File;
 import php.io.Path;
 import php.Sys;
+#elseif neko
+import neko.io.File;
+import neko.io.Path;
+import neko.Sys;
+#end
+
 import haquery.server.Web;
 import haquery.server.Lib;
 import haquery.server.HaqComponent;
@@ -24,9 +32,9 @@ class HaqSystem
 		
         Lib.profiler.begin("system");
 
-            trace("HAQUERY SYSTEM Start route.pagePath = " + route.path + ", HTTP_HOST = " + Web.getHttpHost() + ", clientIP = " + Web.getClientIP() + ", pageID = " + route.pageID);
+            trace("HAQUERY SYSTEM Start route.pagePath = " + route.path #if php +  ", HTTP_HOST = " + Web.getHttpHost() #end + ", clientIP = " + Web.getClientIP() + ", pageID = " + route.pageID);
             
-            var params = php.Web.getParams();
+            var params = Web.getParams();
             if (route.pageID != null)
             {
                 params.set('pageID', route.pageID);
@@ -78,7 +86,7 @@ class HaqSystem
             var html : String = page.render();
         Lib.profiler.end();
 
-        php.Web.setHeader('Content-Type', page.contentType);
+        Web.setHeader('Content-Type', page.contentType);
         
         return html;
     }
@@ -87,8 +95,8 @@ class HaqSystem
     {
         page.forEachComponent('preEventHandlers');
 
-        var componentID = php.Web.getParams().get('HAQUERY_COMPONENT');
-        var method = php.Web.getParams().get('HAQUERY_METHOD');
+        var componentID = Web.getParams().get('HAQUERY_COMPONENT');
+        var method = Web.getParams().get('HAQUERY_METHOD');
         
         var component : HaqComponent = page.findComponent(componentID);
         
@@ -101,7 +109,7 @@ class HaqSystem
 				var r = callElemEventHandler(component, method);
 				if (!r.success)
 				{
-					r = callSharedMethod(component, method, Unserializer.run(php.Web.getParams().get('HAQUERY_PARAMS')));
+					r = callSharedMethod(component, method, Unserializer.run(Web.getParams().get('HAQUERY_PARAMS')));
 				}
 				if (r.success)
 				{
@@ -122,7 +130,7 @@ class HaqSystem
             throw "Component id = '" + componentID + "' not found.";
         }
         
-        php.Web.setHeader('Content-Type', 'text/plain; charset=utf-8');
+        Web.setHeader('Content-Type', 'text/plain; charset=utf-8');
         
         return 'HAQUERY_OK' + Serializer.run(result) + "\n" + HaqInternals.getAjaxResponse();
     }

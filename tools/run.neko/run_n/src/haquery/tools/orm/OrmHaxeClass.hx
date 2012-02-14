@@ -1,7 +1,8 @@
-package ;
+package haquery.tools.orm;
 
-import php.Lib;
+import haquery.server.Lib;
 import haquery.server.db.HaqDbDriver;
+
 using haquery.StringTools;
 
 typedef OrmHaxeVar = {>HaqDbTableFieldData,

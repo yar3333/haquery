@@ -1,4 +1,4 @@
-package haquery;
+package haquery.tools.run;
 
 typedef ComponentConfig =
 {

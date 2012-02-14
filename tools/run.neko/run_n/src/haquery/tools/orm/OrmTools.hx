@@ -1,7 +1,8 @@
-package ;
+package haquery.tools.orm;
 
-import OrmHaxeClass;
+import haquery.tools.orm.OrmHaxeClass;
 import haquery.server.db.HaqDbDriver;
+
 using haquery.StringTools;
 
 class OrmTools 

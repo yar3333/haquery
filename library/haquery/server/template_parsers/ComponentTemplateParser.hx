@@ -1,12 +1,17 @@
 package haquery.server.template_parsers;
 
 import haquery.server.HaqDefines;
+import haquery.server.HaqComponent;
 import haquery.server.HaqXml;
+
+#if php
 import php.FileSystem;
 import php.io.File;
-import php.NativeArray;
 import php.Lessc;
-import haquery.server.HaqComponent;
+#elseif neko
+import neko.FileSystem;
+import neko.io.File;
+#end
 
 using haquery.StringTools;
 
@@ -120,7 +125,11 @@ class ComponentTemplateParser extends BaseTemplateParser
 			{
 				if (node.getAttribute('type') == "text/less")
 				{
+					#if php
 					css += globalizeCssClassNames(new Lessc().parse(node.innerHTML));
+					#else
+					css += "\n// Lessc supported for the php target only.\n\n";
+					#end
 				}
 				else
 				{

@@ -1,9 +1,10 @@
 package haquery.server;
 
-import php.Lib;
-import php.FileSystem;
+import haquery.server.Lib;
 import haquery.server.HaqComponent;
 import haquery.server.HaqXml;
+import haquery.server.FileSystem;
+
 using haquery.StringTools;
 
 class HaqPage extends HaqComponent

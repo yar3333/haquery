@@ -1,6 +1,6 @@
 package haquery.base;
 
-#if php
+#if (php || neko)
 import haquery.server.HaqTemplate;
 import haxe.Serializer;
 typedef ComponentCollection = haquery.server.HaqComponentCollection;

@@ -1,3 +1,5 @@
+#if js
+
 package haquery.client;
 
 import haxe.Unserializer;
@@ -48,3 +50,5 @@ class HaqInternals
     
     public static var pagePackage : String;
 }
+
+#end
