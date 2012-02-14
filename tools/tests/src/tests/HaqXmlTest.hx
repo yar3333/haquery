@@ -1,6 +1,7 @@
 package tests;
 
 import haquery.server.HaqQuery;
+import haxe.Serializer;
 import php.Lib;
 import php.NativeArray;
 import php.NativeString;
@@ -43,22 +44,22 @@ class HaqXmlTest extends haxe.unit.TestCase
         this.assertEquals('a', node.name);
     }
 
-    public function getParsedAsString(str:String)
+    public function getParsedAsString(str:String) : String
     {
         var nodes = HaqXmlParser.parse(str);
-        return nodes.join('');
+        return Lambda.fold(nodes, function(node, s) return s + node.toString(), "");
     }
 
     public function testSimpleConvertDeconvert()
     {
-        this.assertEquals(this.getParsedAsString("<a>abc</a>"), "<a>abc</a>");
-        this.assertEquals(this.getParsedAsString("<a p=2>abc</a>"), "<a p=2>abc</a>");
-        this.assertEquals(this.getParsedAsString("<a p = 2>abc</a>"), "<a p=2>abc</a>");
-        this.assertEquals(this.getParsedAsString("<a p = '2'>abc</a>"), "<a p='2'>abc</a>");
-        this.assertEquals(this.getParsedAsString('<a p = "2">abc</a>'), '<a p="2">abc</a>');
-        this.assertEquals(this.getParsedAsString('<br/>'), '<br />');
-        this.assertEquals(this.getParsedAsString('<br />'), '<br />');
-        this.assertEquals(this.getParsedAsString("<a href='http://ya.ru?a=5'>Все на Яндекс!</a>"), "<a href='http://ya.ru?a=5'>Все на Яндекс!</a>");
+        this.assertEquals("<a>abc</a>", this.getParsedAsString("<a>abc</a>"));
+        this.assertEquals("<a p=2>abc</a>", this.getParsedAsString("<a p=2>abc</a>"));
+        this.assertEquals("<a p=2>abc</a>", this.getParsedAsString("<a p = 2>abc</a>"));
+        this.assertEquals("<a p='2'>abc</a>", this.getParsedAsString("<a p = '2'>abc</a>"));
+        this.assertEquals('<a p="2">abc</a>', this.getParsedAsString('<a p = "2">abc</a>'));
+        this.assertEquals('<br />', this.getParsedAsString('<br/>'));
+        this.assertEquals('<br />', this.getParsedAsString('<br />'));
+        this.assertEquals("<a href='http://ya.ru?a=5'>Все на Яндекс!</a>", this.getParsedAsString("<a href='http://ya.ru?a=5'>Все на Яндекс!</a>"));
     }
 
     public function testComplexConvertDeconvert()
@@ -69,13 +70,6 @@ class HaqXmlTest extends haxe.unit.TestCase
     public function testManyRootNodes()
     {
         this.assertEquals(this.getParsedAsString("<p>abc</p>TEXT<a>def</a>"), "<p>abc</p>TEXT<a>def</a>");
-    }
-
-    public function testComplexParse()
-    {
-        var s = php.io.File.getContent('tests/HaqXmlTest-in.html');
-		php.io.File.putContent("tests/HaqXmlTest-out.html", this.getParsedAsString(s));
-		assertEquals(s, php.io.File.getContent('tests/HaqXmlTest-out.html'));
     }
 
     public function testComment()
@@ -90,19 +84,19 @@ class HaqXmlTest extends haxe.unit.TestCase
         this.assertTrue(Type.getClass(subnodes[0]) == HaqXmlNodeText);
     }
     
-    public function processSerializationTest(str:String)
+    public function testComplexParse()
     {
-		var srcNodes = HaqXmlParser.parse(str);
-        var srcNodesStr = srcNodes.join('');
-        
-		var s = php.Lib.serialize(srcNodes);
-		var dstNodes : Array<HaqXmlNodeElement> = cast php.Lib.unserialize(s);
-		
-		var dstNodesStr = dstNodes.join('');
-        
-		this.assertEquals(dstNodesStr, srcNodesStr);
+		var s = php.io.File.getContent('tests/HaqXmlTest-in.html');
+		php.io.File.putContent("tests/HaqXmlTest-out.html", this.getParsedAsString(s));
+		assertEquals(s, php.io.File.getContent('tests/HaqXmlTest-out.html'));
     }
-
+    
+	public function processSerializationTest(str:String)
+    {
+		var doc = new HaqXml(str);
+		var dstDoc : Array<HaqXmlNodeElement> = cast haxe.Unserializer.run(doc.serialize());
+		this.assertEquals(str, doc.innerHTML);
+    }
 
     public function testSerialization1()
     {
@@ -117,50 +111,21 @@ class HaqXmlTest extends haxe.unit.TestCase
         this.processSerializationTest(php.io.File.getContent('tests/HaqXmlTest-in.html'));
     }
     
-    /*public function testSpeed()
-    {
-        str = php.io.File.getContent('xmlTest-in.html');
-        loops = 200;
-        
-        start = microtime(true);
-        for (i = 0; i < loops; i++)
-        {
-            xml = new haquery_models_HaqXml(str);
-        }
-        echo "\nspeed: "+((microtime(true)-start)/loops);
-        
-        xml = new haquery_models_HaqXml(str);
-        saved = php.Lib.serialize(xml);
-        start = microtime(true);
-        for (i = 0; i < loops; i++)
-        {
-            xml = php.Lib.unserialize(saved);
-        }
-        echo "\nspeed (unserialize): "+((microtime(true)-start)/loops);
-
-        echo "\n";
-    }*/
-    
     public function testSelectors()
     {
         var xml = new HaqXml("<div class='first second'><p id='myp' class='first'><a href='b'>cde</a></p></div>");
         
         var nodes = xml.find('');
-        //this.assertInternalType('array', nodes);
         this.assertEquals(0, nodes.length);
         
         var nodes = xml.find('div');
-        //this.assertInternalType('array', nodes);
         this.assertEquals(1, nodes.length);
         
         var divs = xml.find('div');
         nodes = divs[0].find('div');
-        //this.assertInternalType('array', nodes);
         this.assertEquals(0, nodes.length);
         
         nodes = divs[0].find('*');
-        //echo "DIVS = "+((string)divs[0])+"\n";
-        //this.assertInternalType('array', nodes);
         this.assertEquals(2, nodes.length);
         
         nodes = xml.find('#no');
@@ -170,7 +135,6 @@ class HaqXmlTest extends haxe.unit.TestCase
         this.assertEquals(0, nodes.length);
         
         nodes = xml.find('a');
-        //this.assertInternalType('array', nodes);
         this.assertEquals(1, nodes.length);
         this.assertEquals('a', nodes[0].name);
         this.assertEquals('b', nodes[0].getAttribute('href'));
@@ -249,4 +213,28 @@ class HaqXmlTest extends haxe.unit.TestCase
 		this.assertTrue(Type.getClass(prev) == HaqXmlNodeText);
         this.assertEquals("\n        ", cast(prev, HaqXmlNodeText).text);
     }
+	
+    /*public function testSpeed()
+    {
+        str = php.io.File.getContent('xmlTest-in.html');
+        loops = 200;
+        
+        start = microtime(true);
+        for (i = 0; i < loops; i++)
+        {
+            xml = new haquery_models_HaqXml(str);
+        }
+        echo "\nspeed: "+((microtime(true)-start)/loops);
+        
+        xml = new haquery_models_HaqXml(str);
+        saved = php.Lib.serialize(xml);
+        start = microtime(true);
+        for (i = 0; i < loops; i++)
+        {
+            xml = php.Lib.unserialize(saved);
+        }
+        echo "\nspeed (unserialize): "+((microtime(true)-start)/loops);
+
+        echo "\n";
+    }*/
 }
