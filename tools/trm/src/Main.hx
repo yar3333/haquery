@@ -10,6 +10,6 @@ class Main
 {
 	static function main() 
 	{
-		TrmGenerator.makeForComponents(args[0]);
+		TrmGenerator.makeForComponents();
 	}
 }

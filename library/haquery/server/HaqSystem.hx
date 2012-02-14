@@ -33,7 +33,7 @@ class HaqSystem
             }
 
             Lib.profiler.begin('manager');
-				var manager : HaqComponentManager = new HaqComponentManager(Lib.config.componentCollections);
+				var manager : HaqComponentManager = new HaqComponentManager(new HaqComponentCollection(Lib.config.componentCollection));
             Lib.profiler.end();
             
             Lib.profiler.begin('createPage');

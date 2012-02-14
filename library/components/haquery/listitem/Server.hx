@@ -2,11 +2,12 @@ package components.haquery.listitem;
 
 import haquery.server.HaqComponent;
 import haquery.server.HaqComponentManager;
+import haquery.server.HaqTemplate;
 import haquery.server.HaqXml;
 
 class Server extends Base
 {
-	override public function construct(manager:HaqComponentManager, parent:HaqComponent, tag:String, id:String, doc:HaqXml, params:Hash<String>, parentNode:HaqXmlNodeElement):Void 
+	override public function construct(manager:HaqComponentManager, parent:HaqComponent, componentTemplate:HaqTemplate, tag:String, id:String, doc:HaqXml, params:Hash<String>, parentNode:HaqXmlNodeElement):Void 
 	{
 		var innerHTML = parentNode.innerHTML;
         
@@ -36,7 +37,7 @@ class Server extends Base
             xml = new HaqXml('XML parse error.');
         }
         
-        super.construct(manager, parent, tag, id, xml, params, null);
+        super.construct(manager, parent, componentTemplate, tag, id, xml, params, null);
 	}
     
     override function callElemEventHandler(elemID:String, eventName:String) : Dynamic

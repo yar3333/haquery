@@ -9,7 +9,7 @@ import php.io.File;
 
 using haquery.StringTools;
 
-class PageTemplateParser implements ITemplateParser
+class PageTemplateParser extends BaseTemplateParser
 {
 	var pagePackage : String;
 	
@@ -18,16 +18,38 @@ class PageTemplateParser implements ITemplateParser
 		this.pagePackage = pagePackage;
 	}
 	
-	public function getServerClass() : Class<HaqComponent>
+	override public function getServerClass() : Class<HaqComponent>
 	{
 		var clas = Type.resolveClass(pagePackage + ".Server");
 		return cast (clas != null ? clas : HaqPage);
 	}
 	
-	public function getServerHandlers() : Hash<Array<String>>
+	override public function getServerHandlers() : Hash<Array<String>>
 	{
-		// TODO: getServerHandlers
-		return null;
+        Lib.profiler.begin('parseServerHandlers');
+            var serverMethods = [ 'click','change' ];   // server events
+            var serverHandlers : Hash<Array<String>> = new Hash<Array<String>>();
+            var tempObj = Type.createEmptyInstance(getServerClass());
+            for (field in Reflect.fields(tempObj))
+            {
+                if (Reflect.isFunction(Reflect.field(tempObj, field)))
+                {
+                    var parts = field.split('_');
+                    if (parts.length == 2 && Lambda.has(serverMethods, parts[1]))
+                    {
+                        var nodeID = parts[0];
+                        var method = parts[1];
+                        if (!serverHandlers.exists(nodeID))
+						{
+							serverHandlers.set(nodeID, new Array<String>());
+						}
+                        serverHandlers.get(nodeID).push(method);
+                    }
+                }
+            }
+        Lib.profiler.end();
+		
+		return serverHandlers;
 	}
 	
 	public function getRawTemplateHtml() : String
@@ -36,13 +58,13 @@ class PageTemplateParser implements ITemplateParser
 		return FileSystem.exists(templatePath) ? File.getContent(templatePath) : '';
 	}
 	
-	public function getSupportFilePath(fileName:String) : String
+	override public function getSupportFilePath(fileName:String) : String
 	{
 		var path = pagePackage.replace('.', '/') + '/' + HaqDefines.folders.support + '/' + fileName;
 		return FileSystem.exists(path) ? path : null;
 	}
 	
-	public function getDocAndCss() : { doc:HaqXml, css:String }
+	override public function getDocAndCss() : { doc:HaqXml, css:String }
 	{
 		var pageText = getRawTemplateHtml();
         
@@ -75,5 +97,15 @@ class PageTemplateParser implements ITemplateParser
         }
         
 		return { doc:layoutDoc, css:"" };
+	}
+	
+	override public function getCollectionName() : String
+	{
+		return "";
+	}
+
+	override public function getExtendsCollectionName() : String
+	{
+		return "";
 	}
 }
