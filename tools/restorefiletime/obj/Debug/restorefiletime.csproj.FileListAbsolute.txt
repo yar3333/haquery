@@ -1,6 +1,0 @@
-d:\MyProg\HaQueryLib\tools\run.neko\restorefiletime\obj\Debug\ResolveAssemblyReference.cache
-d:\MyProg\HaQueryLib\library\restorefiletime.exe.config
-d:\MyProg\HaQueryLib\library\restorefiletime.exe
-d:\MyProg\HaQueryLib\library\restorefiletime.pdb
-d:\MyProg\HaQueryLib\tools\run.neko\restorefiletime\obj\Debug\restorefiletime.exe
-d:\MyProg\HaQueryLib\tools\run.neko\restorefiletime\obj\Debug\restorefiletime.pdb
