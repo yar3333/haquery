@@ -22,3 +22,5 @@ tools/examples/inputs/bin
 tools/examples/inputs/src/Imports.hx
 library/restorefiletime.pdb
 library/restorefiletime.exe.config
+tools/restorefiletime/obj
+tools/restorefiletime/restorefiletime.suo
