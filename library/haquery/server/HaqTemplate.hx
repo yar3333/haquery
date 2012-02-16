@@ -10,9 +10,7 @@ class HaqTemplate
 	public var css(default, null) : String;
 	public var serverClass(default, null) : Class<HaqComponent>;
 	public var serverHandlers(default, null) : Hash<Array<String>>;
-	
-	public var collection(default, null) : String;
-	public var extendsCollection(default, null) : String;
+	public var imports(default, null) : Array<String>;
 	
 	public function new(parser:ITemplateParser) 
 	{
@@ -22,11 +20,10 @@ class HaqTemplate
 		doc = docAndCss.doc;
 		css = docAndCss.css;
 		
+		serverClass = parser.getClass();
 		serverHandlers = parser.getServerHandlers();
-		serverClass = parser.getServerClass();
 		
-		collection = parser.getCollectionName();
-		extendsCollection = parser.getExtendsCollectionName();
+		imports = parser.getImports();
 	}
 	
 	public function getSupportFilePath(relPath:String)

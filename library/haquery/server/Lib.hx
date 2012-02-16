@@ -7,7 +7,7 @@ import haxe.Stack;
 import php.NativeArray;
 import php.Session;
 import php.firePHP.FirePHP;
-private typedef HaxeLib = HaxeLib;
+private typedef HaxeLib = php.Lib;
 #elseif neko
 private typedef HaxeLib = neko.Lib;
 #end

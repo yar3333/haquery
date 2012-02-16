@@ -4,6 +4,8 @@ import neko.FileSystem;
 import neko.io.File;
 import neko.Sys;
 import neko.Lib;
+import neko.io.Process;
+
 using StringTools;
 
 class Tasks 
@@ -191,6 +193,24 @@ class Tasks
             log.finishFail(message);
         }
     }
+	
+	public function run(fileName:String, args:Array<String>) : Int
+	{
+		try
+		{
+			var p : Process = new Process(fileName, args);
+			var r = p.exitCode();
+			Lib.println(p.stdout.readAll().toString()); 
+			Lib.println(p.stderr.readAll().toString()); 
+			p.close();
+			return r;
+		}
+		catch (e:Dynamic)
+		{
+			Lib.println("Error: file '" + fileName + "' not found. Maybe you need to add directory to the PATH system environment variable.");
+			throw e;
+		}
+	}
     
     /*public function getWindowsRegistryValue(key:String) : String
     {

@@ -1,6 +1,5 @@
 package tests;
 
-import haquery.server.HaqComponentCollection;
 import haxe.unit.TestCase;
 import php.FileSystem;
 import haquery.server.HaqComponent;
@@ -14,18 +13,17 @@ class HaqTemplatesTest extends TestCase
 {
 	public function testEmpty()
 	{
-		var collection = new HaqComponentCollection('');
-		var manager = new HaqComponentManager(collection);
+		var manager = new HaqComponentManager("pages.index", null);
 	}
 	
 	public function testComponentsSet0()
 	{
-		var collection = new HaqComponentCollection('set0');
-		var template = collection.getTemplate(null, 'text');
-		assertTrue(template != null);
+		var manager = new HaqComponentManager("pages.test0", null);
+		assertTrue(manager != null);
 		
-		if (template != null)
+		if (manager != null)
 		{
+			var template = manager.templates.get("components.set0.text");
 			assertEquals("text component template file", template.doc.innerHTML);
 			assertEquals("", template.css);
 			assertEquals("components/set0/text/support/suptest.txt", template.getSupportFilePath("suptest.txt"));
@@ -34,35 +32,27 @@ class HaqTemplatesTest extends TestCase
 	
 	public function testComponentsSet1()
 	{
-		/*var dataFilePath = HaqDefines.folders.temp + '/components1/components.data';
-		if (FileSystem.exists(dataFilePath)) FileSystem.deleteFile(dataFilePath);
-		var stylesFilePath = HaqDefines.folders.temp + '/components1/styles.css';
-		if (FileSystem.exists(stylesFilePath)) FileSystem.deleteFile(stylesFilePath);*/
-		
-		var collection = new HaqComponentCollection('set1');
-		var template = collection.getTemplate(null, 'randnum');
+		var manager = new HaqComponentManager("pages.test1", null);
+		var template = manager.templates.get("components.set1.randnum");
 		assertTrue(template != null);
 		
 		var html = template.doc.innerHTML;
-        assertEquals(StringTools.htmlEscape("<div id='n'>0</div>"), StringTools.htmlEscape(html.trim(' \t\r\n')));
-		//assertEquals(template.serverHandlers.keys().hasNext(), false);
+        assertEquals(StringTools.htmlEscape("<div id='n'>0</div>"), StringTools.htmlEscape(html.trim(" \t\r\n")));
 	}
 	
 	public function testComponentsSet1CreateRandNum()
 	{
-		var collection = new HaqComponentCollection('set1');
-        var template = collection.getTemplate(null, 'randnum');
+		var manager = new HaqComponentManager("pages.test1", null);
+        var template = manager.templates.get("components.set1.randnum");
 		assertTrue(template != null);
-        assertEquals('components.set1.randnum.Server', Type.getClassName(template.serverClass));
+        assertEquals("components.set1.randnum.Server", Type.getClassName(template.serverClass));
 		
-		var manager = new HaqComponentManager(collection);
-		
-		var randnum : HaqComponent = manager.createComponent(null, 'randnum', 'rn', null, null);
+		var randnum : HaqComponent = manager.createComponent(manager.page, "randnum", "rn", null, null);
 		assertTrue(randnum != null);
-		assertEquals('components.set1.randnum.Server', Type.getClassName(Type.getClass(randnum)));
+		assertEquals("components.set1.randnum.Server", Type.getClassName(Type.getClass(randnum)));
 		
-		randnum.forEachComponent('preRender');
+		randnum.forEachComponent("preRender");
 		var html = randnum.render();
-		assertEquals(StringTools.htmlEscape("<div id='rn-n'>123</div>"), StringTools.htmlEscape(html.trim(' \t\r\n')));
+		assertEquals(StringTools.htmlEscape("<div id='rn-n'>123</div>"), StringTools.htmlEscape(html.trim(" \t\r\n")));
 	}
 }

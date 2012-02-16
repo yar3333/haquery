@@ -11,9 +11,9 @@ class HaqComponent extends haquery.base.HaqComponent
 	
 	var serverHandlers(default,null) : Hash<Array<String>>;
     
-	public function construct(manager:HaqComponentManager, parent:HaqComponent, tag:String,  id:String, serverHandlers:Hash<Array<String>>, factoryInitParams:Array<Dynamic>=null) : Void
+	public function construct(fullTag:String, manager:HaqComponentManager, parent:HaqComponent, tag:String,  id:String, serverHandlers:Hash<Array<String>>, factoryInitParams:Array<Dynamic>=null) : Void
 	{
-		super.commonConstruct(parent, tag, id);
+		super.commonConstruct(fullTag, parent, tag, id);
 		
 		this.manager = manager;
         this.serverHandlers = serverHandlers;

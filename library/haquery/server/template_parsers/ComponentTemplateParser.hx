@@ -15,35 +15,39 @@ import neko.io.File;
 
 using haquery.StringTools;
 
-class ComponentTemplateParser extends BaseTemplateParser
+class ComponentTemplateParser implements ITemplateParser
 {
-	var collection : String;
-	var tag : String;
-	
+	var fullTag : String;
 	var config : ComponentConfig;
 	
-	public function new(collection:String, tag:String)
+	public function new(fullTag:String)
 	{
-		this.collection = collection;
-		this.tag = tag;
-		
+		this.fullTag = fullTag;
 		config = getConfig();
 	}
 	
-	override public function getServerClass() : Class<HaqComponent>
+	public function getClass() : Class<HaqComponent>
 	{
-		var className = HaqDefines.folders.components + "." + collection + "." + tag + ".Server";
+		var className = fullTag + ".Server";
 		var clas = Type.resolveClass(className);
 		if (clas != null)
 		{
 			return cast clas;
 		}
 		
-		if (config.extendsCollection != null)
+		if (config.extend != null)
 		{
-			return new ComponentTemplateParser(config.extendsCollection, tag).getServerClass();
+			return new ComponentTemplateParser(config.extend).getClass();
 		}
 		
+		return getBaseClass();
+	}
+	
+	/**
+	 * May be overrided.
+	 */
+	function getBaseClass() : Class<HaqComponent>
+	{
 		return HaqComponent;
 	}
 	
@@ -51,29 +55,29 @@ class ComponentTemplateParser extends BaseTemplateParser
 	{
 		var html = "";
 		
-		var path = getFullPath(HaqDefines.folders.components + '/' + collection + '/' + tag + '/template.html');
+		var path = getFullPath(fullTag.replace(".", "/") + "/template.html");
 		if (FileSystem.exists(path))
 		{
 			html = File.getContent(path);
 		}
 		
-		if (config.extendsCollection != null)
+		if (config.extend != null)
 		{
-			html = new ComponentTemplateParser(config.extendsCollection, tag).getDocAndCss() + html;
+			html = new ComponentTemplateParser(config.extend).getDocAndCss() + html;
 		}
 		
 		return html;
 	}
 	
-	override public function getSupportFilePath(fileName:String) : String
+	public function getSupportFilePath(fileName:String) : String
 	{
-		var path = getFullPath(HaqDefines.folders.components + '/' + collection + '/' + tag + '/' + HaqDefines.folders.support + '/' + fileName);
+		var path = getFullPath(fullTag.replace('.', '/') + '/' + HaqDefines.folders.support + '/' + fileName);
 		if (FileSystem.exists(path))
 		{
 			return path;
 		}
 		
-		if (config.extendsCollection != null)
+		if (config.extend != null)
 		{
 			return getSupportFilePath(fileName);
 		}
@@ -81,11 +85,12 @@ class ComponentTemplateParser extends BaseTemplateParser
 		return null;
 	}
 	
+	// TODO: imports
 	function getConfig() : ComponentConfig
 	{
-		var path = getFullPath(HaqDefines.folders.components + '/' + collection + '/' + tag + '/config.xml');
+		var path = getFullPath(fullTag.replace('.', '/') + '/config.xml');
 		
-		var r = { extendsCollection : null };
+		var r = { extend:null, imports:new Array<String>() };
 		
 		if (FileSystem.exists(path))
 		{
@@ -95,7 +100,7 @@ class ComponentTemplateParser extends BaseTemplateParser
 			{
 				if (nodes[0].hasAttribute("collection"))
 				{
-					r.extendsCollection = nodes[0].getAttribute("collection");
+					r.extend = nodes[0].getAttribute("collection");
 				}
 			}
 		}
@@ -103,7 +108,7 @@ class ComponentTemplateParser extends BaseTemplateParser
 		return r;
 	}
 	
-	override public function getDocAndCss() : { doc:HaqXml, css:String }
+	public function getDocAndCss() : { doc:HaqXml, css:String }
 	{
 		var text = getRawTemplateHtml();
 		
@@ -154,7 +159,7 @@ class ComponentTemplateParser extends BaseTemplateParser
 		{
 			if (blocks.matched(1) != null)
 			{
-				r += blocks.matched(0).replace(".", "." + (tag != "" ? tag + HaqDefines.DELIMITER : ""));
+				r += blocks.matched(0).replace(".", "." + (fullTag != "" ? fullTag.replace(".", "_") + HaqDefines.DELIMITER : ""));
 			}
 			else
 			{
@@ -173,13 +178,36 @@ class ComponentTemplateParser extends BaseTemplateParser
 		return path;
 	}
 	
-	override public function getCollectionName() : String
+	public function getImports() : Array<String>
 	{
-		return collection;
+		return config.imports;
 	}
 	
-	override public function getExtendsCollectionName() : String
+	public function getServerHandlers() : Hash<Array<String>>
 	{
-		return config.extendsCollection;
+        Lib.profiler.begin('parseServerHandlers');
+            var serverMethods = [ 'click','change' ];   // server events
+            var serverHandlers : Hash<Array<String>> = new Hash<Array<String>>();
+            var tempObj = Type.createEmptyInstance(getClass());
+            for (field in Reflect.fields(tempObj))
+            {
+                if (Reflect.isFunction(Reflect.field(tempObj, field)))
+                {
+                    var parts = field.split('_');
+                    if (parts.length == 2 && Lambda.has(serverMethods, parts[1]))
+                    {
+                        var nodeID = parts[0];
+                        var method = parts[1];
+                        if (!serverHandlers.exists(nodeID))
+						{
+							serverHandlers.set(nodeID, new Array<String>());
+						}
+                        serverHandlers.get(nodeID).push(method);
+                    }
+                }
+            }
+        Lib.profiler.end();
+		
+		return serverHandlers;
 	}
 }

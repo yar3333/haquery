@@ -41,21 +41,17 @@ class HaqSystem
             }
 
             Lib.profiler.begin('manager');
-				var manager : HaqComponentManager = new HaqComponentManager(new HaqComponentCollection(Lib.config.componentCollection));
-            Lib.profiler.end();
-            
-            Lib.profiler.begin('createPage');
-                var page = manager.createPage(route.path, params);
+				var manager : HaqComponentManager = new HaqComponentManager(route.className, params);
             Lib.profiler.end();
 
             var html : String;
             if (!isPostback)
             {
-                html = renderPage(page, manager);
+                html = renderPage(manager.page, manager);
             }
             else
             {
-                html = processPostback(page);
+                html = processPostback(manager.page);
             }
             
             trace("HAQUERY SYSTEM Finish");
@@ -117,7 +113,7 @@ class HaqSystem
 				}
 				else
 				{
-					throw "Method " + method + "() of the " + component.tag + " component's server class must exists and marked @shared to be callable from the client.";
+					throw "Method " + method + "() of the " + component.fullTag + " component's server class must exists and marked @shared to be callable from the client.";
 				}
 			}
 			else

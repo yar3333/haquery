@@ -1,0 +1,5 @@
+<config>
+    <imports>
+        <collection package="components.set0" />
+    </imports>
+</config>

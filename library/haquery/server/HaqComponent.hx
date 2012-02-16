@@ -32,9 +32,9 @@ class HaqComponent extends haquery.base.HaqComponent
 		visible = true;
 	}
     
-    public function construct(manager:HaqComponentManager, parent:HaqComponent, componentTemplate:HaqTemplate, tag:String, id:String, doc:HaqXml, params:Hash<String>, parentNode:HaqXmlNodeElement) : Void
+    public function construct(manager:HaqComponentManager, fullTag:String, parent:HaqComponent, id:String, doc:HaqXml, params:Hash<String>, parentNode:HaqXmlNodeElement) : Void
     {
-		super.commonConstruct(parent, componentTemplate, tag, id);
+		super.commonConstruct(fullTag, parent, componentTemplate, id);
         
 		this.manager = manager;
         this.doc = doc;
@@ -99,7 +99,7 @@ class HaqComponent extends haquery.base.HaqComponent
      */
     public function q(?query:Dynamic=null) : HaqQuery
     {
-        var prefixCssClass = tag != "" ? tag + HaqDefines.DELIMITER : "";
+        var prefixCssClass = fullTag != "" ? fullTag.replace(".", "_") + HaqDefines.DELIMITER : "";
 		
 		if (query == null) return new HaqQuery(prefixCssClass, prefixID, '', null);
         if (Type.getClass(query) == haquery.server.HaqQuery) return query;
