@@ -3,7 +3,6 @@ package haquery.tools;
 import neko.io.File;
 import neko.io.FileOutput;
 import neko.io.Path;
-import neko.io.Process;
 import neko.Sys;
 import neko.Lib;
 import neko.FileSystem;
@@ -176,30 +175,6 @@ class Tasks
 	
     // -------------------------------------------------------------------------------
     
-	function run(fileName:String, args:Array<String>)
-	{
-		try
-		{
-			var p : Process = new Process(fileName, args);
-			//p.stdin.close();
-			for (i in 1...100)
-			{
-				Sys.sleep(0.05);
-			}
-			Lib.println("PID(" + fileName + ") = " + p.getPid());
-			if (p.getPid() != 0)
-			{
-				p.kill();
-			}
-			
-			//Sys.command(fileName, args);
-		}
-		catch (e:Dynamic)
-		{
-			Lib.println("Error: file '" + fileName + "' not found. Maybe you need to add directory to the PATH system environment variable.");
-			throw e;
-		}
-	}
 	
 	function buildJs()
     {
@@ -224,7 +199,7 @@ class Tasks
         params.push(clientPath + "/haquery.js");
         params.push('-main'); params.push('Main');
         params.push('-debug');
-        run("haxe", params);
+        hant.run("haxe", params);
         
 		if (FileSystem.exists(clientPath + "/haquery.js"))
 		{
@@ -389,7 +364,7 @@ class Tasks
 	{
 		log.start("Restore file time '" + fromPath + "' => '" + toPath + "' (" + exeDir + ")");
 		
-		run(exeDir + "restorefiletime.exe", [ fromPath.replace('/', '\\'), toPath.replace('/', '\\') ]);
+		hant.run(exeDir + "restorefiletime.exe", [ fromPath.replace('/', '\\'), toPath.replace('/', '\\') ]);
 		
 		log.finishOk();
 	}

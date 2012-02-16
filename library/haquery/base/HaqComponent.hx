@@ -21,8 +21,8 @@ class HaqComponent
     /**
      * Component name.
      */
-    public var tag(default, null)  : String;
-	
+    public var fullTag(default, null)  : String;
+    
     /**
      * Empty for page.
      */
@@ -76,12 +76,12 @@ class HaqComponent
 		}
 	}
 	
-	function commonConstruct(parent:Component, componentTemplate:HaqTemplate, tag:String,  id:String) 
+	function commonConstruct(fullTag:String, parent:Component, componentTemplate:HaqTemplate, id:String) 
 	{
 		if (id == null || id == '') id = parent != null ? parent.getNextAnonimID() : '';
 		
+		this.fullTag = fullTag;
 		this.parent = parent;
-		this.tag = tag;
 		this.id = id;
 		this.componentTemplate = componentTemplate;
 		

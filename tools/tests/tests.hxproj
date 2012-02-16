@@ -39,9 +39,9 @@
     <hidden path="bin" />
   </hiddenPaths>
   <!-- Executed before build -->
-  <preBuildCommand>haxelib run HaQuery pre-build</preBuildCommand>
+  <preBuildCommand />
   <!-- Executed after build -->
-  <postBuildCommand alwaysRun="False">haxelib run HaQuery post-build --skipcomponents</postBuildCommand>
+  <postBuildCommand alwaysRun="False" />
   <!-- Other project options -->
   <options>
     <option showHiddenPaths="False" />

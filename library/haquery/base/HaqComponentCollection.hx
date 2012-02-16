@@ -1,3 +1,4 @@
+/*
 package haquery.base;
 
 #if (php || neko)
@@ -13,10 +14,8 @@ private typedef HaqComponentCollectionData =
 {
 	var name : String;
 	var imports : Array<String>;
-	var inhehitances : Hash<String>; // tag -> superTag
+	var tagExtends : Hash<String>;
 }
-
-
 
 class HaqComponentCollection 
 {
@@ -54,10 +53,10 @@ class HaqComponentCollection
 	
 	public function serialize() : String
 	{
-		var inhehitances = new Hash<String>();
+		var tagExtends = new Hash<String>();
 		for (tag in templates.keys())
 		{
-			inhehitances.set(tag, templates.get(tag).extendsCollection);
+			tagExtends.set(tag, templates.get(tag).extendsCollection);
 		}
 		
 		return Serializer.run( { 
@@ -66,9 +65,5 @@ class HaqComponentCollection
 			,inhehitances : inhehitances
 		});
 	}
-	
-	/*public function unserialize(str:String) : ComponentCollection
-	{
-		
-	}*/
 }
+*/

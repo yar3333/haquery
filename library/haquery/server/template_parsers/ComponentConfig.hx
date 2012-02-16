@@ -2,5 +2,6 @@ package haquery.server.template_parsers;
 
 typedef ComponentConfig =
 {
-	var extendsCollection : String;
+	var extend : String;
+	var imports : Array<String>;
 }

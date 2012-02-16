@@ -1,3 +1,4 @@
+/*
 package haquery.server;
 
 import haquery.server.HaqTemplate;
@@ -79,16 +80,17 @@ class HaqComponentCollection extends haquery.base.HaqComponentCollection
 	/**
 	 * May be overriten.
 	 */
-	function parseTemplate(name:String, tag:String)
+	/*function parseTemplate(name:String, tag:String)
 	{
 		return new HaqTemplate(new ComponentTemplateParser(name, tag));
-	}
+	}*/
 	
 	/**
 	 * May be overriten.
 	 */
-	function getFullPath(path:String)
+	/*function getFullPath(path:String)
 	{
 		return path;
 	}
 }
+*/
