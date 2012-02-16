@@ -22,3 +22,5 @@ tools/examples/inputs/bin
 tools/examples/inputs/src/Imports.hx
 tools/restorefiletime/restorefiletime.suo
 tools/restorefiletime/obj
+tools/examples/factory/bin
+tools/examples/factory/src/Imports.hx

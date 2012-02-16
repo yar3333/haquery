@@ -58,7 +58,8 @@ class HaqComponent extends haquery.base.HaqComponent
     
     private function connectElemEventHandlers() : Void
     {
-        HaqElemEventManager.connect(this, this, manager.templates);
+        trace("connectElemEventHandlers " + tag);
+		HaqElemEventManager.connect(this, this, manager.templates);
     }
 	
 	/**

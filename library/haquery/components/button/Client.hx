@@ -6,8 +6,19 @@ class Client extends Base
 {
     var event_click : HaqEvent;
     
+    function factoryInit()
+    {
+        trace("b_factoryInit");
+    }
+    
+    function init()
+    {
+        trace("b_init");
+    }
+    
     function b_click()
     {
+        trace("b_click");
         return enabled ? event_click.call() : false;
     }
     

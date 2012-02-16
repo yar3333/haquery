@@ -14,7 +14,7 @@ class Server extends Base
         {
 			for (i in 0...length)
 			{
-				manager.createComponent(this, component, Std.string(i), null, parentNode);
+				manager.createComponent(this, component, "c" + Std.string(i), null, parentNode);
 			}
         }
 	}
