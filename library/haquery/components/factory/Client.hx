@@ -1,5 +1,6 @@
 package haquery.components.factory;
 
+import haquery.client.HaqDefines;
 import haquery.client.Lib;
 import haquery.client.HaqComponent;
 import haxe.Unserializer;
@@ -18,7 +19,7 @@ class Client extends Base
         template = Unserializer.run(q('#template').val()); q('#template').remove();
     }
 	
-	function create(parentElem:JQuery, newComponentID:String, factoryInitParams:Array<Dynamic>)
+	public function create(parentElem:JQuery, factoryInitParams:Array<Dynamic>)
 	{
 		if (factoryInitParams == null) factoryInitParams = [];
 		
@@ -26,7 +27,7 @@ class Client extends Base
 		var nodes : Array<HtmlDom> = cast doc;
 		for (node in nodes)
 		{
-			prepareDoc(node);
+			prepareDoc(node, Std.string(length));
 		}
 		doc.appendTo(parentElem);
 		
@@ -35,17 +36,17 @@ class Client extends Base
 		length++;
 	}
 	
-	function prepareDoc(node:HtmlDom)
+	function prepareDoc(node:HtmlDom, childID:String)
 	{
 		if (node.id != "")
 		{
-			node.id = prefixID + node.id;
+			node.id = prefixID + childID + HaqDefines.DELIMITER + node.id;
 		}
 		
 		var nodes : Array<HtmlDom> = cast node.childNodes;
 		for (child in nodes)
 		{
-			prepareDoc(child);
+			prepareDoc(child, childID);
 		}
 	}
 	
