@@ -1,12 +1,10 @@
 package haquery.components.factory;
 
 import haquery.client.HaqDefines;
-import haquery.client.Lib;
-import haquery.client.HaqComponent;
+import haquery.client.HaqElemEventManager;
 import haxe.Unserializer;
 import js.jQuery.JQuery;
 import js.Dom;
-import haquery.client.HaqElemEventManager;
 
 class Client extends Base
 {
@@ -27,11 +25,13 @@ class Client extends Base
 		var nodes : Array<HtmlDom> = cast doc;
 		for (node in nodes)
 		{
-			prepareDoc(node, Std.string(length));
+			prepareDoc(node, "c" + Std.string(length));
 		}
 		doc.appendTo(parentElem);
 		
-		manager.createComponent(this, component, Std.string(length), factoryInitParams);
+		HaqElemEventManager.elemsWasChanged();
+		
+		var c = manager.createComponent(this, component, "c" + Std.string(length), factoryInitParams);
 		
 		length++;
 	}
@@ -49,12 +49,4 @@ class Client extends Base
 			prepareDoc(child, childID);
 		}
 	}
-	
-    override function connectElemEventHandlers():Void 
-    {
-        if (parent != null)
-        {
-            HaqElemEventManager.connect(parent, this, manager.templates);
-        }
-    }
 }

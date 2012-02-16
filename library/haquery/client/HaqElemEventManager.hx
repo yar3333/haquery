@@ -4,6 +4,7 @@ import haxe.Serializer;
 import haxe.Unserializer;
 import js.Dom;
 import js.Lib;
+
 using haquery.StringTools;
 
 class HaqElemEventManager 
@@ -18,10 +19,17 @@ class HaqElemEventManager
         }
         return elems_cached;
     }
+	
+	public static function elemsWasChanged()
+	{
+		elems_cached = null;
+	}
     
     public static function getComponentElems(component:HaqComponent) : Array<HtmlDom>
     {
-        var re = new EReg('^' + component.prefixID + '[^' + HaqDefines.DELIMITER + ']+$', '');
+		trace("getComponentElems component.prefixID = " + component.prefixID);
+        
+		var re = new EReg('^' + component.prefixID + '[^' + HaqDefines.DELIMITER + ']+$', '');
         
         var r = new Array<HtmlDom>();
         for (elem in elems)
