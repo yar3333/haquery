@@ -8,17 +8,10 @@ class Client extends Base
     
     function factoryInit()
     {
-        trace("b_factoryInit");
-    }
-    
-    function init()
-    {
-        trace("b_init");
     }
     
     function b_click()
     {
-        trace("b_click");
         return enabled ? event_click.call() : false;
     }
     
