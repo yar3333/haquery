@@ -1,10 +1,10 @@
 package haquery.base;
 
-#if php
+#if (php || neko)
 	import haquery.server.HaqComponent;
     import haquery.server.Lib;
     import haquery.server.HaqQuery;
-#else
+#elseif js
 	import haquery.client.HaqComponent;
     import haquery.client.Lib;
     import haquery.client.HaqQuery;

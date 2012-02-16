@@ -1,3 +1,5 @@
+#if js
+
 package haquery.client;
 
 import haxe.Unserializer;
@@ -6,7 +8,9 @@ import js.Dom;
 
 class HaqInternals 
 {
-    public static var componentsFolders : Array<String>;
+    //public static var componentClassNames : Hash<String>;
+	public static var componentCollections : Array<String>;
+	public static var componentEntendsCollections : Hash<Hash<String>>;
 	
     private static var tags : Array<Array<String>>;
 	public static var id_tag(id_tag_getter, null) : Hash<String>;
@@ -20,8 +24,11 @@ class HaqInternals
 			{
 				var tag = tagAndIDs[0];
 				var ids : Array<String> = tagAndIDs[1].split(',');
-				if (ids.length==1 && ids[0]=='') ids = [];
-				for (id in ids) id_tag_cached.set(id, tag);
+				if (ids.length == 1 && ids[0] == '') ids = [];
+				for (id in ids)
+				{
+					id_tag_cached.set(id, tag);
+				}
 			}
 		}
 		return id_tag_cached;
@@ -43,3 +50,5 @@ class HaqInternals
     
     public static var pagePackage : String;
 }
+
+#end

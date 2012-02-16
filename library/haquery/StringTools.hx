@@ -16,30 +16,50 @@ class StringTools
 
 	public static inline function isSpace( s : String, pos : Int ) : Bool { return HaxeStringTools.isSpace(s, pos); }
 
-	public static inline function ltrim( s : String #if php , chars : String = null #end ) : String
+	public static #if php inline #end function ltrim( s : String, chars : String = null ) : String
     {
         #if php
 		return untyped __call__("ltrim", s, chars);
         #else
-        return HaxeStringTools.ltrim(s);
+        if (chars == null)
+		{
+			return HaxeStringTools.ltrim(s);
+		}
+		while (chars.indexOf(s.substr(0, 1)) >= 0)
+		{
+			s = s.substr(1, s.length - 1);
+		}
+		return s;
         #end
     }
 
-	public static inline function rtrim( s : String #if php , chars : String = null #end ) : String
+	public static #if php inline #end function rtrim( s : String, chars : String = null ) : String
     {
         #if php
 		return untyped __call__("rtrim", s, chars);
         #else
-        return HaxeStringTools.rtrim(s);
+        if (chars == null)
+		{
+			return HaxeStringTools.rtrim(s);
+		}
+		while (chars.indexOf(s.substr(s.length - 1, 1)) >= 0)
+		{
+			s = s.substr(0, s.length - 1);
+		}
+		return s;
         #end
     }
 
-	public static inline function trim( s : String #if php , chars : String = null #end ) : String
+	public static #if php inline #end function trim( s : String, chars : String = null ) : String
     { 
         #if php
 		return untyped __call__("trim", s, chars);
         #else
-        return HaxeStringTools.trim(s);
+        if (chars == null)
+		{
+			return HaxeStringTools.trim(s);
+		}
+		return rtrim(ltrim(s, chars), chars);
         #end
     }
 
@@ -90,15 +110,16 @@ class StringTools
         #end
     }
 	
+	#if (php || js)
 	public static inline function jsonDecode(s : String) : Dynamic
 	{
 		#if php
 			return untyped __call__('json_decode', s);
-		#else
+		#elseif js
 			return js.Lib.eval("(" + s + ")");
 	    #end
 	}
-
+	#end
 
     #if php
     public static inline function toUpperCaseNational(s : String) : String
@@ -131,11 +152,6 @@ class StringTools
 		return untyped __call__('hexdec', s);
 	}
     
-    public static function addcslashes(s:String) : String
-    {
-        return untyped __call__('addcslashes', s, "\'\"\t\r\n\\");
-    }
-    
     public static inline function lengthNational(s:String) : Int
     {
         return untyped __call__('mb_strlen', s, 'UTF-8');
@@ -147,5 +163,14 @@ class StringTools
             ? untyped __call__('mb_substr', s, pos, len, 'UTF-8') 
             : untyped __call__('mb_substr', s, pos, lengthNational(s) - pos, 'UTF-8');
     }
-    #end
+	#end
+    
+	public static function addcslashes(s:String) : String
+    {
+		#if php
+        return untyped __call__('addcslashes', s, "\'\"\t\r\n\\");
+		#else
+		return new EReg("\'\"\t\r\n\\", "g").replace(s, "\\\\0");
+		#end
+    }
 }

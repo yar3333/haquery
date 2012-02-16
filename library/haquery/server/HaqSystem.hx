@@ -2,16 +2,25 @@ package haquery.server;
 
 import haxe.Serializer;
 import haxe.Unserializer;
-import php.FileSystem;
+
+import haquery.server.FileSystem;
+#if php
 import php.io.File;
 import php.io.Path;
 import php.Sys;
+#elseif neko
+import neko.io.File;
+import neko.io.Path;
+import neko.Sys;
+#end
+
 import haquery.server.Web;
 import haquery.server.Lib;
 import haquery.server.HaqComponent;
 import haquery.server.HaqProfiler;
 import haquery.server.HaqRoute;
 import haquery.server.HaqDefines;
+import haquery.server.HaqTemplate;
 
 using haquery.StringTools;
 
@@ -23,32 +32,26 @@ class HaqSystem
 		
         Lib.profiler.begin("system");
 
-            trace("HAQUERY SYSTEM Start route.pagePath = " + route.path + ", HTTP_HOST = " + Web.getHttpHost() + ", clientIP = " + Web.getClientIP() + ", pageID = " + route.pageID);
+            trace("HAQUERY SYSTEM Start route.pagePath = " + route.path #if php +  ", HTTP_HOST = " + Web.getHttpHost() #end + ", clientIP = " + Web.getClientIP() + ", pageID = " + route.pageID);
             
-            Lib.profiler.begin('templates');
-                var templates = new HaqTemplates(HaqConfig.getComponentsFolders("", Lib.config.componentsPackage));
-            Lib.profiler.end();
-
-            var params = php.Web.getParams();
+            var params = Web.getParams();
             if (route.pageID != null)
             {
                 params.set('pageID', route.pageID);
             }
 
-            var manager : HaqComponentManager = new HaqComponentManager(templates);
-            
-            Lib.profiler.begin('createPage');
-                var page = manager.createPage(route.path, params);
+            Lib.profiler.begin('manager');
+				var manager : HaqComponentManager = new HaqComponentManager(route.className, params);
             Lib.profiler.end();
 
             var html : String;
             if (!isPostback)
             {
-                html = renderPage(page, templates, manager, route.path);
+                html = renderPage(manager.page, manager);
             }
             else
             {
-                html = processPostback(page);
+                html = processPostback(manager.page);
             }
             
             trace("HAQUERY SYSTEM Finish");
@@ -58,20 +61,19 @@ class HaqSystem
         Lib.print(html);
     }
     
-    function renderPage(page:HaqPage, templates:HaqTemplates, manager:HaqComponentManager, path:String) : String
+    function renderPage(page:HaqPage, manager:HaqComponentManager) : String
     {
         Lib.profiler.begin('renderPage');
             page.forEachComponent('preRender');
             
             if (!Lib.config.disablePageMetaData)
             {
-                page.insertStyles(templates.getStyleFilePaths().concat(manager.getRegisteredStyles()));
+                page.insertStyles(manager.getRegisteredStyles());
                 page.insertScripts([ 'haquery/client/jquery.js', 'haquery/client/haquery.js' ].concat(manager.getRegisteredScripts()));
                 page.insertInitInnerBlock(
                       "<script>\n"
                     + "    if(typeof haquery=='undefined') alert('haquery.js must be loaded!');\n"
-                    + "    " + templates.getInternalDataForPageHtml().replace('\n','\n    ') + '\n'
-                    + "    " + manager.getInternalDataForPageHtml(page, path).replace('\n', '\n    ') + '\n'
+                    + "    " + manager.getInternalDataForPageHtml(page).replace('\n', '\n    ') + '\n'
                     + "    haquery.client.Lib.run();\n"
                     + "</script>"
                 );
@@ -80,7 +82,7 @@ class HaqSystem
             var html : String = page.render();
         Lib.profiler.end();
 
-        php.Web.setHeader('Content-Type', page.contentType);
+        Web.setHeader('Content-Type', page.contentType);
         
         return html;
     }
@@ -89,8 +91,8 @@ class HaqSystem
     {
         page.forEachComponent('preEventHandlers');
 
-        var componentID = php.Web.getParams().get('HAQUERY_COMPONENT');
-        var method = php.Web.getParams().get('HAQUERY_METHOD');
+        var componentID = Web.getParams().get('HAQUERY_COMPONENT');
+        var method = Web.getParams().get('HAQUERY_METHOD');
         
         var component : HaqComponent = page.findComponent(componentID);
         
@@ -103,7 +105,7 @@ class HaqSystem
 				var r = callElemEventHandler(component, method);
 				if (!r.success)
 				{
-					r = callSharedMethod(component, method, Unserializer.run(php.Web.getParams().get('HAQUERY_PARAMS')));
+					r = callSharedMethod(component, method, Unserializer.run(Web.getParams().get('HAQUERY_PARAMS')));
 				}
 				if (r.success)
 				{
@@ -111,7 +113,7 @@ class HaqSystem
 				}
 				else
 				{
-					throw "Method " + method + "() of the " + component.tag + " component's server class must exists and marked @shared to be callable from the client.";
+					throw "Method " + method + "() of the " + component.fullTag + " component's server class must exists and marked @shared to be callable from the client.";
 				}
 			}
 			else
@@ -124,7 +126,7 @@ class HaqSystem
             throw "Component id = '" + componentID + "' not found.";
         }
         
-        php.Web.setHeader('Content-Type', 'text/plain; charset=utf-8');
+        Web.setHeader('Content-Type', 'text/plain; charset=utf-8');
         
         return 'HAQUERY_OK' + Serializer.run(result) + "\n" + HaqInternals.getAjaxResponse();
     }

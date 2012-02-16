@@ -3,15 +3,16 @@ package haquery.server;
 import haquery.server.HaqComponent;
 import haquery.server.HaqXml;
 import haquery.server.Lib;
+import haquery.server.template_parsers.ComponentTemplateParser;
+import haquery.server.template_parsers.PageTemplateParser;
 import haxe.Serializer;
+import haquery.server.FileSystem;
 
 using haquery.StringTools;
 
-class HaqComponentManager 
+class HaqComponentManager extends haquery.base.HaqComponentManager
 {
     static var baseComponentFields : List<String> = null;
-	
-	var templates : HaqTemplates;
 	
 	var registeredScripts : Array<String>;
 	var registeredStyles : Array<String>;
@@ -26,54 +27,44 @@ class HaqComponentManager
 		baseComponentFields.push('template');
 	}
 	
-	public function new(templates:HaqTemplates) : Void
+	public function new(pageFullTag:String, pageAttr:Hash<String>)
 	{
-		this.templates = templates;
 		registeredScripts = [];
 		registeredStyles = [];
+		super(pageFullTag, pageAttr);
 	}
 	
-	function newComponent(parent:HaqComponent, clas:Class<HaqComponent>, name:String, id:String, doc:HaqXml, attr:Hash<String>, parentNode:HaqXmlNodeElement) : HaqComponent
+	function newComponent(fulltag:String, parent:HaqComponent, clas:Class<HaqComponent>, id:String, doc:HaqXml, attr:Hash<String>, parentNode:HaqXmlNodeElement) : HaqComponent
 	{
         Lib.profiler.begin('newComponent');
             var r : HaqComponent = Type.createInstance(clas, []);
-            r.construct(this, parent, name, id, doc, attr, parentNode);
+            r.construct(this, fulltag, parent, id, doc, attr, parentNode);
         Lib.profiler.end();
 		return r;
 	}
 	
-	public function createComponent(parent:HaqComponent, tagOrName:String, id:String, attr:Hash<String>, parentNode:HaqXmlNodeElement) : HaqComponent
+	public function createComponent(parent:HaqComponent, tag:String, id:String, attr:Hash<String>, parentNode:HaqXmlNodeElement) : HaqComponent
 	{
-        var name : String = tagOrName.startsWith('haq:') ? getNameByTag(tagOrName) : tagOrName;
-		var template = templates.get(name);
-		var component : HaqComponent = newComponent(parent, template.serverClass, name, id, template.doc, attr, parentNode);
+		var fullTag = getFullTag(parent, tag);
+		var template =  getTemplate(fullTag);
+		var component : HaqComponent = newComponent(fullTag, parent, template.serverClass, id, template.doc, attr, parentNode);
 		return component;
 	}
 	
-	public function createPage(path:String, attr:Hash<String>) : HaqPage
+	override function createPage(pageFullTag:String, attr:Hash<String>) : HaqPage
 	{
-		var className = path.replace('/', '.') + '.Server';
+		var template = new HaqTemplate(new PageTemplateParser(pageFullTag));
 		
-        var standardPageClass = Type.resolveClass('haquery.server.HaqPage');
-        var pageClass = Type.resolveClass(className);
-        if (pageClass == null)
-        {
-            pageClass = standardPageClass;
-        }
-        else
-        {
-            if (!HaqTools.isClassHasSuperClass(pageClass, standardPageClass))
-            {
-                throw "Class '" + className + "' must be inherited from '" + Type.getClassName(standardPageClass) + "'.";
-            }
-        }
+		if (!HaqTools.isClassHasSuperClass(template.serverClass, haquery.server.HaqPage))
+		{
+            // TODO: class type check
+			//throw "Class '" + Type.getClassName(template.serverClass) + "' must be inherited from '" + Type.getClassName(standardPageClass) + "'.";
+		}
 		
-		var doc = templates.getPageTemplateDoc(path);
-        var page : HaqPage = cast(newComponent(null, cast pageClass, '', '', doc, attr, null), HaqPage);
-        return page;
+        return cast newComponent(pageFullTag, null, template.serverClass, '', template.doc, attr, null);
 	}
     
-	function getSupportRelatedUrl(tag:String, url:String) : String
+	function getFullUrl(fullTag:String, url:String) : String
 	{
 		if (url.startsWith("~/"))
 		{
@@ -82,7 +73,7 @@ class HaqComponentManager
 		
 		if (!url.startsWith("http://") && !url.startsWith("/") && !url.startsWith("<"))
 		{
-			url = templates.getSupportPath(tag) + url;
+			url = '/' + getTemplate(fullTag).getSupportFilePath(url);
 		}
 		
 		return url;
@@ -90,12 +81,12 @@ class HaqComponentManager
 	
 	/**
 	 * Tells HaQuery to load JS file from support component folder.
-	 * @param	tag Component name.
+	 * @param	fullTag Component package name.
 	 * @param	url Url to js file (global or related to support component folder).
 	 */
-    public function registerScript(tag:String, url:String) : Void
+    public function registerScript(fullTag:String, url:String) : Void
 	{
-		url = getSupportRelatedUrl(tag, url);
+		url = getFullUrl(fullTag, url);
 		if (!Lambda.has(registeredScripts, url))
 		{
 			registeredScripts.push(url);
@@ -104,12 +95,12 @@ class HaqComponentManager
 	
 	/**
 	 * Tells HaQuery to load CSS file from support component folder.
-	 * @param	tag Component name.
+	 * @param	fullTag Component package name.
 	 * @param	url Url to css file (global or related to support component folder).
 	 */
-	public function registerStyle(tag:String, url:String) : Void
+	public function registerStyle(fullTag:String, url:String) : Void
 	{
-		url = getSupportRelatedUrl(tag, url);
+		url = getFullUrl(fullTag, url);
 		if (!Lambda.has(registeredStyles, url))
 		{
 			registeredStyles.push(url);
@@ -126,11 +117,16 @@ class HaqComponentManager
 		return registeredStyles;
 	}
 	
-	public function getInternalDataForPageHtml(page:HaqPage, path:String) : String
+	public function getInternalDataForPageHtml(page:HaqPage) : String
     {
-		var s = '';
+		// TODO: getInternalDataForPageHtml
+		return '';
+		
+/*		var s = '';
+		
+        s += "haquery.client.HaqInternals.componentCollections = [ " + Lambda.map(collections, function(c) return "'" + c + "'").join(', ') + " ];\n";
         
-        var tags = templates.getTags();
+        var tags = templates.keys();
         s += "haquery.client.HaqInternals.tags = [\n";
         var tagComponents = getTagComponents(page);
         for (tag in tagComponents.keys())
@@ -149,47 +145,44 @@ class HaqComponentManager
         }
         s = s.rtrim("\n,") + "\n];\n";
 		
-        var serverHandlers = new Hash<Hash<Array<String>>>();
-        serverHandlers.set('', templates.parseServerHandlers(path));
+		var pageClassName = Type.getClassName(Type.getClass(page));
+		var pageTemplate = new HaqTemplate(new PageTemplateParser(pageClassName));
+		var serverHandlers = new Hash<Hash<Array<String>>>();
+        serverHandlers.set('', pageTemplate.serverHandlers);
         for (tag in tags)
         {
             serverHandlers.set(tag, templates.get(tag).serverHandlers);
         }
         s += "haquery.client.HaqInternals.serializedServerHandlers = \"" + Serializer.run(serverHandlers) + "\";\n";
-        
-        s += "haquery.client.HaqInternals.pagePackage = \"" + path.replace('/', '.') + "\";";
+        s += "haquery.client.HaqInternals.pagePackage = \"" + pageClassName + "\";";
 
         return s;
+*/
     }
     
-    function getTagComponents(page:HaqPage) : Hash<Array<HaqComponent>>
+    function getFullTagComponents(page:HaqPage) : Hash<Array<HaqComponent>>
     {
         var r = new Hash<Array<HaqComponent>>();
-        getTagComponents_fill(page, r);
+        getFullTagComponents_fill(page, r);
         return r;
     }
     
-    function getTagComponents_fill(component:HaqComponent, r:Hash<Array<HaqComponent>>)
+    function getFullTagComponents_fill(component:HaqComponent, r:Hash<Array<HaqComponent>>)
     {
         for (child in component.components)
         {
-            var tag = child.tag;
-            if (!r.exists(tag)) r.set(tag, new Array<HaqComponent>());
-            r.get(child.tag).push(child);
-            getTagComponents_fill(child, r);
+            var fullTag = child.fullTag;
+            if (!r.exists(fullTag)) r.set(fullTag, new Array<HaqComponent>());
+            r.get(child.fullTag).push(child);
+            getFullTagComponents_fill(child, r);
         }
     }
 	
-    public function getSupportPath(tag:String) : String
-    {
-		return templates.getSupportPath(tag);
-    }
-	
-    function getNameByTag(tag:String) : String
+    /*function getNameByTag(tag:String) : String
     {
         if (!tag.startsWith('haq:')) throw "Component tag '" + tag + "' must started with 'haq:' prefix.";
 		return tag.substr("haq:".length).toLowerCase().split('-').join('_');
-    }
+    }*/
 	
 	public function createChildComponents(parent:HaqComponent, baseNode:HaqXmlNodeElement)
     {
@@ -204,7 +197,7 @@ class HaqComponentManager
             
             if (node.name.startsWith('haq:'))
             {
-                node.component = createComponent(parent, node.name, node.getAttribute('id'), Lib.hashOfAssociativeArray(node.getAttributesAssoc()), node);
+                node.component = createComponent(parent, node.name.substr('haq:'.length), node.getAttribute('id'), node.getAttributesAssoc(), node);
             }
 			i++;
         }
@@ -243,15 +236,15 @@ class HaqComponentManager
                 {
                     prepareDocToRender(prefixID, node);
                     
-                    var text = node.component.render().trim();
+                    var text : String = node.component.render().trim();
                     var prev = node.getPrevSiblingNode();
                     
-                    if (untyped __php__("$prev instanceof HaqXmlNodeText"))
+                    if (Type.getClass(prev) == HaqXmlNodeText)
                     {
                         var re : EReg = new EReg('(?:^|\n)([ ]+)$', 's');
                         if (re.match(cast(prev, HaqXmlNodeText).text))
                         {
-                            text = text.replace("\n", "\n"+re.matched(1));
+                            text = text.replace("\n", "\n" + re.matched(1));
                         }
                     }
                     node.parent.replaceChild(node, new HaqXmlNodeText(text));
@@ -266,12 +259,17 @@ class HaqComponentManager
             {
                 prepareDocToRender(prefixID, node);
                 var nodeID = node.getAttribute('id');
-                if (nodeID!=null && nodeID!='') node.setAttribute('id', prefixID + nodeID);
-                if (node.name=='label')
+                if (nodeID != null && nodeID != '')
+				{
+					node.setAttribute('id', prefixID + nodeID);
+				}
+                if (node.name == 'label')
                 {
                     var nodeFor = node.getAttribute('for');
-                    if (nodeFor!=null && nodeFor!='') 
-                        node.setAttribute('for', prefixID + nodeFor);
+                    if (nodeFor != null && nodeFor != '')
+					{
+						node.setAttribute('for', prefixID + nodeFor);
+					}
                 }
             }
 			
@@ -279,8 +277,21 @@ class HaqComponentManager
         }
     }
 	
-	public function getTemplateHtml(tag:String) : String
+	/*public function getTemplateHtml(tag:String) : String
 	{
 		return templates.get(tag).doc.toString();
-	}
+	}*/
+	
+	/*
+	function createDirectory(path:String)
+	{
+		var parentPath = Path.directory(path);
+		if (parentPath != null && parentPath != '' && !FileSystem.exists(parentPath)) createDirectory(parentPath);
+		FileSystem.createDirectory(path);
+	}*/
+    
+    /*public function getSupportPath(tag:String) : String
+    {
+        return getFileUrl(tag, HaqDefines.folders.support) + '/';
+    }*/
 }
