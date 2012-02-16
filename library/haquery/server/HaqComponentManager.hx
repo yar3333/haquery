@@ -64,7 +64,7 @@ class HaqComponentManager extends haquery.base.HaqComponentManager
         return cast newComponent(pageFullTag, null, template.serverClass, '', template.doc, attr, null);
 	}
     
-	function getFullUrl(componentTemplate:HaqTemplate, url:String) : String
+	function getFullUrl(fullTag:String, url:String) : String
 	{
 		if (url.startsWith("~/"))
 		{
@@ -73,7 +73,7 @@ class HaqComponentManager extends haquery.base.HaqComponentManager
 		
 		if (!url.startsWith("http://") && !url.startsWith("/") && !url.startsWith("<"))
 		{
-			url = '/' + componentTemplate.getSupportFilePath(url);
+			url = '/' + getTemplate(fullTag).getSupportFilePath(url);
 		}
 		
 		return url;
@@ -81,12 +81,12 @@ class HaqComponentManager extends haquery.base.HaqComponentManager
 	
 	/**
 	 * Tells HaQuery to load JS file from support component folder.
-	 * @param	tag Component name.
+	 * @param	fullTag Component package name.
 	 * @param	url Url to js file (global or related to support component folder).
 	 */
-    public function registerScript(componentTemplate:HaqTemplate, url:String) : Void
+    public function registerScript(fullTag:String, url:String) : Void
 	{
-		url = getFullUrl(componentTemplate, url);
+		url = getFullUrl(fullTag, url);
 		if (!Lambda.has(registeredScripts, url))
 		{
 			registeredScripts.push(url);
@@ -95,12 +95,12 @@ class HaqComponentManager extends haquery.base.HaqComponentManager
 	
 	/**
 	 * Tells HaQuery to load CSS file from support component folder.
-	 * @param	tag Component name.
+	 * @param	fullTag Component package name.
 	 * @param	url Url to css file (global or related to support component folder).
 	 */
-	public function registerStyle(componentTemplate:HaqTemplate, url:String) : Void
+	public function registerStyle(fullTag:String, url:String) : Void
 	{
-		url = getFullUrl(componentTemplate, url);
+		url = getFullUrl(fullTag, url);
 		if (!Lambda.has(registeredStyles, url))
 		{
 			registeredStyles.push(url);

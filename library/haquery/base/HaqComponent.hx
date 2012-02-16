@@ -19,7 +19,7 @@ class HaqComponent
     public var parent(default,null) : Component;
 
     /**
-     * Component name.
+     * Component package name (for example: 'components.haquery.button').
      */
     public var fullTag(default, null)  : String;
     
@@ -31,15 +31,10 @@ class HaqComponent
     /**
      * Empty for page.
      */
-	public var componentTemplate(default, null) : HaqTemplate;
-
-    /**
-     * Empty for page.
-     */
     public var fullID(default,null) : String;
 
     /**
-     * Prefix for DOM elemets ID.
+     * Prefix for DOM elements ID.
      */
     public var prefixID(default,null) : String;
 	
@@ -76,14 +71,13 @@ class HaqComponent
 		}
 	}
 	
-	function commonConstruct(fullTag:String, parent:Component, componentTemplate:HaqTemplate, id:String) 
+	function commonConstruct(fullTag:String, parent:Component, id:String) 
 	{
 		if (id == null || id == '') id = parent != null ? parent.getNextAnonimID() : '';
 		
 		this.fullTag = fullTag;
 		this.parent = parent;
 		this.id = id;
-		this.componentTemplate = componentTemplate;
 		
 		this.fullID = (parent!=null ? parent.prefixID : '') + id;
 		this.prefixID = this.fullID != '' ? this.fullID + HaqDefines.DELIMITER : '';

@@ -34,7 +34,7 @@ class HaqComponent extends haquery.base.HaqComponent
     
     public function construct(manager:HaqComponentManager, fullTag:String, parent:HaqComponent, id:String, doc:HaqXml, params:Hash<String>, parentNode:HaqXmlNodeElement) : Void
     {
-		super.commonConstruct(fullTag, parent, componentTemplate, id);
+		super.commonConstruct(fullTag, parent, id);
         
 		this.manager = manager;
         this.doc = doc;
@@ -168,7 +168,7 @@ class HaqComponent extends haquery.base.HaqComponent
 	 */
 	function registerScript(url:String)
 	{
-		manager.registerScript(componentTemplate, url);
+		manager.registerScript(fullID, url);
 	}
 	
 	/**
@@ -177,6 +177,6 @@ class HaqComponent extends haquery.base.HaqComponent
 	 */
 	function registerStyle(url:String)
 	{
-		manager.registerStyle(componentTemplate, url);
+		manager.registerStyle(fullID, url);
 	}
 }
