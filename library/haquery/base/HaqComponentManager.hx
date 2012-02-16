@@ -11,7 +11,9 @@ typedef Page = haquery.client.HaqPage
 class HaqComponentManager 
 {
 	public var templates(default, null) : Hash<Template>;
+	
 	public var page(default, null) : Page;
+	//public var pageTemplate(default, null) : Template;
 	
 	public function new(pageFullTag:String, pageAttr:Hash<String>)
 	{
@@ -40,9 +42,33 @@ class HaqComponentManager
 		return null;
 	}
 	
-	public function getFullTag(parent:HaqComponent, tag:String) : String
+	public function findTemplate(parent:HaqComponent, tag:String) : Template
 	{
-		// TODO: getFullTag
+		var packageName = getPackageByFullTag(parent.fullTag);
+		
+		var template = getTemplate(packageName + '.' + tag);
+		if (template == null)
+		{
+			for (importPackage in getTemplate(parent.fullTag).imports)
+			{
+				template = getTemplate(importPackage + '.' + tag);
+				if (template != null)
+				{
+					break;
+				}
+			}
+		}
+		
+		return template;
+	}
+	
+	function getPackageByFullTag(fullTag:String)
+	{
+		var n = fullTag.lastIndexOf('.');
+		if (n >= 0)
+		{
+			return fullTag.substr(0, n);
+		}
 		return '';
 	}
 }

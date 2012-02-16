@@ -45,9 +45,8 @@ class HaqComponentManager extends haquery.base.HaqComponentManager
 	
 	public function createComponent(parent:HaqComponent, tag:String, id:String, attr:Hash<String>, parentNode:HaqXmlNodeElement) : HaqComponent
 	{
-		var fullTag = getFullTag(parent, tag);
-		var template =  getTemplate(fullTag);
-		var component : HaqComponent = newComponent(fullTag, parent, template.serverClass, id, template.doc, attr, parentNode);
+		var template =  findTemplate(parent, tag);
+		var component : HaqComponent = newComponent(template.fullTag, parent, template.serverClass, id, template.doc, attr, parentNode);
 		return component;
 	}
 	

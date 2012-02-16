@@ -10,20 +10,20 @@ using haquery.StringTools;
 
 class HaqElemEventManager 
 {
-    static var elems(elems_getter, null) : Array<HtmlDom>;
-    static var elems_cached : Array<HtmlDom>;
-    static function elems_getter() : Array<HtmlDom>
+    static var allElems(allElems_getter, null) : Array<HtmlDom>;
+    static var allElems_cached : Array<HtmlDom>;
+    static function allElems_getter() : Array<HtmlDom>
     {
-        if (elems_cached == null)
+        if (allElems_cached == null)
         {
-            elems_cached = (new JQuery("*[id]")).toArray();
+            allElems_cached = new JQuery("[id]").toArray();
         }
-        return elems_cached;
+        return allElems_cached;
     }
 	
 	public static function elemsWasChanged()
 	{
-		elems_cached = null;
+		allElems_cached = null;
 	}
     
     public static function getComponentElems(component:HaqComponent) : Array<HtmlDom>
@@ -31,7 +31,7 @@ class HaqElemEventManager
 		var re = new EReg('^' + component.prefixID + '[^' + HaqDefines.DELIMITER + ']+$', '');
         
         var r = new Array<HtmlDom>();
-        for (elem in elems)
+        for (elem in allElems)
         {
             if (re.match(elem.id))
             {
@@ -191,7 +191,7 @@ class HaqElemEventManager
 	
 	static function getElemsForSendToServer() : Iterable<HtmlDom>
 	{
-		var allElemsWithID = new JQuery("[id]").get();
+		var allElemsWithID = new JQuery("[id]").toArray();
 		var elems = Lambda.filter(allElemsWithID, function(elem)
         {
             var elemTag = elem.nodeName.toUpperCase();
