@@ -7,13 +7,37 @@ using haquery.StringTools;
 
 class HaqComponentManager 
 {
-    public var templates(default,null) : HaqTemplates;
+	var componentsFolders : Array<String>;
+	var tag_elemID_serverHandlers : Hash<Hash<Array<String>>>;
 	var id_tag : Hash<String>;
 	
-	public function new(templates:HaqTemplates, id_tag:Hash<String>) : Void
+	public function new(componentsFolders:Array<String>, tag_elemID_serverHandlers:Hash<Hash<Array<String>>>, id_tag:Hash<String>) : Void
 	{
-		this.templates = templates;
+		this.componentsFolders = componentsFolders;
+		this.tag_elemID_serverHandlers = tag_elemID_serverHandlers;
 		this.id_tag = id_tag;
+	}
+	
+	public function get(tag:String) : HaqTemplate
+	{
+		var r : HaqTemplate = { elemID_serverHandlers : tag_elemID_serverHandlers.get(tag), clas : null };
+		
+		var i = componentsFolders.length - 1;
+		while (i >= 0)
+		{
+			var folder = componentsFolders[i];
+			var className = folder.replace('/', '.') + tag + '.Client';
+			var clas : Class<HaqComponent> = untyped Type.resolveClass(className);
+			if (clas != null)
+			{
+				r.clas = clas;
+				break;
+			}
+			i--;
+		}
+		if (r.clas == null) r.clas = untyped Type.resolveClass('haquery.client.HaqComponent');
+		
+		return r; 
 	}
 	
 	public function createComponent(parent:HaqComponent, tag:String, id:String, factoryInitParams:Array<Dynamic>=null) : HaqComponent

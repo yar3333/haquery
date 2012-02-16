@@ -1,10 +1,16 @@
 package haquery.server;
 
-import php.FileSystem;
+import haquery.server.FileSystem;
+import haquery.server.Lib;
+import haquery.server.Sys;
+import haquery.server.Web;
+
+#if php
 import php.io.Path;
-import php.Lib;
-import php.Sys;
-import php.Web;
+#elseif neko
+import neko.io.Path;
+#end
+
 using haquery.StringTools;
 
 enum HaqRouteType
@@ -64,7 +70,7 @@ class HaqRoute
             
 			if (!isPageExist(path))
 			{
-				php.Web.setReturnCode(404);
+				Web.setReturnCode(404);
                 Lib.print("<h1>File not found (404)</h1>");
 				Sys.exit(0);
 			}

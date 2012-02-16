@@ -1,0 +1,6 @@
+D:\MyProg\HaQueryLib\library\run.exe.config
+D:\MyProg\HaQueryLib\library\run.exe
+D:\MyProg\HaQueryLib\library\run.pdb
+D:\MyProg\HaQueryLib\tools\run.net\run_exe\obj\Debug\ResolveAssemblyReference.cache
+D:\MyProg\HaQueryLib\tools\run.net\run_exe\obj\Debug\run.exe
+D:\MyProg\HaQueryLib\tools\run.net\run_exe\obj\Debug\run.pdb

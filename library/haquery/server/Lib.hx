@@ -1,14 +1,17 @@
 package haquery.server;
 
+import haquery.server.io.File;
 import haxe.Stack;
 
-import php.Sys;
+#if php
 import php.NativeArray;
 import php.Session;
-import php.FileSystem;
-import php.io.FileOutput;
-import php.io.Path;
 import php.firePHP.FirePHP;
+private typedef HaxeLib = php.Lib;
+#elseif neko
+private typedef HaxeLib = neko.Lib;
+#end
+
 import haquery.server.HaqInternals;
 import haquery.server.HaqConfig;
 import haquery.server.HaqRoute;
@@ -17,6 +20,9 @@ import haquery.server.HaqSystem;
 import haquery.server.db.HaqDb;
 import haquery.server.HaqProfiler;
 import haquery.server.Web;
+import haquery.server.FileSystem;
+import haquery.server.io.FileOutput;
+import haquery.server.io.File;
 
 using haquery.StringTools;
 
@@ -52,15 +58,17 @@ class Lib
                 startTime = Date.now().getTime();
                 haxe.Log.trace = Lib.trace;
                 
-                isPostback = php.Web.getParams().get('HAQUERY_POSTBACK') != null;
+                isPostback = Web.getParams().get('HAQUERY_POSTBACK') != null;
                 
                 var route = new HaqRoute(Web.getParams().get('route'));
                 loadBootstraps(route.path);
                 
-                if (Lib.config.autoSessionStart)
+                #if php
+				if (Lib.config.autoSessionStart)
                 {
                     Session.start();
                 }
+				#end
 
                 if (config.autoDatabaseConnect && config.db!=null && config.db.type!=null && config.db.type!="")
                 {
@@ -87,14 +95,26 @@ class Lib
 	
     static public function redirect(url:String) : Void
     {
-        if (Lib.isPostback) HaqInternals.addAjaxResponse("haquery.client.Lib.redirect('" + StringTools.addcslashes(url) + "');");
-        else                php.Web.redirect(url);
+        if (Lib.isPostback)
+		{
+			HaqInternals.addAjaxResponse("haquery.client.Lib.redirect('" + StringTools.addcslashes(url) + "');");
+		}
+        else
+		{
+			Web.setHeader('Location', url);
+		}
     }
 
 	static public function reload() : Void
 	{
-        if (Lib.isPostback) HaqInternals.addAjaxResponse("window.location.reload(true);");
-        else                redirect(php.Web.getURI());
+        if (Lib.isPostback)
+		{
+			HaqInternals.addAjaxResponse("window.location.reload(true);");
+		}
+        else
+		{
+			redirect(Web.getURI());
+		}
 	}
 
 	#if debug
@@ -112,8 +132,9 @@ class Lib
 		}
 	#end
 	
-    static function trace(v:Dynamic, ?pos : haxe.PosInfos) : Void
+	static function trace(v:Dynamic, ?pos : haxe.PosInfos) : Void
     {
+        #if php
         if (Lib.config.filterTracesByIP != '')
         {
             if (Lib.config.filterTracesByIP!=Web.getClientIP()) return;
@@ -129,7 +150,7 @@ class Lib
             text += StringTools.stripTags(dump);
         }
 
-        if (text != '')
+		if (text != '')
         {
             var isHeadersSent : Bool = untyped __call__('headers_sent');
             if (!isHeadersSent)
@@ -157,7 +178,7 @@ class Lib
             }
             else
             {
-                php.Lib.println("<script>if (console) console.debug(decodeURIComponent(\"" + StringTools.urlEncode("SERVER " + text) + "\"));</script>");
+                HaxeLib.println("<script>if (console) console.debug(decodeURIComponent(\"" + StringTools.urlEncode("SERVER " + text) + "\"));</script>");
             }
         }
         
@@ -166,12 +187,15 @@ class Lib
             FileSystem.createDirectory(HaqDefines.folders.temp);
         }
         
-        var f : FileOutput = php.io.File.append(HaqDefines.folders.temp + "/haquery.log", false);
+        var f : FileOutput = File.append(HaqDefines.folders.temp + "/haquery.log", false);
         if (f != null)
         {
             f.writeString(text != '' ? StringTools.format('%.3f', (Date.now().getTime() - startTime) / 1000.0) + " " + StringTools.replace(text, "\n", "\r\n\t") + "\r\n" : "\r\n");
             f.close();
         }
+		#else
+		Lib.println(v);
+		#end
     }
     
     /**
@@ -195,7 +219,7 @@ class Lib
     /**
      * Disk path to virtual path (url).
      */
-    static public function path2url(path:String) : String
+    /*static public function path2url(path:String) : String
     {   
         var realPath = FileSystem.fullPath('').replace("\\", '/') + '/' + path.trim('/\\');
         var rootPath:String = StringTools.replace(Web.getDocumentRoot(), "\\", '/');
@@ -206,13 +230,15 @@ class Lib
         var n = rootPath.length;
         var s = realPath.substr(n);
         return '/' + s.ltrim('/');
-    }
+    }*/
     
     static function traceException(e:Dynamic) : Void
     {
         var text = "HAXE EXCEPTION: " + Std.string(e) + "\n"
                  + "Stack trace:" + Stack.toString(Stack.exceptionStack()).replace('\n', '\n\t');
-        var nativeStack : Array<Hash<Dynamic>> = php.Stack.nativeExceptionStack();
+        
+		#if php		 
+		var nativeStack : Array<Hash<Dynamic>> = php.Stack.nativeExceptionStack();
         assert(nativeStack != null);
         text += "\n\n";
         text += "NATIVE EXCEPTION: " + Std.string(e) + "\n";
@@ -232,6 +258,8 @@ class Lib
                 text += "\n";
             }
         }
+		#end
+		
         trace(text);
     }
 	
@@ -251,49 +279,47 @@ class Lib
 	/**
 		Print the specified value on the default output.
 	**/
-    public static inline function print( v : Dynamic ) : Void { return php.Lib.print(v); }
+    public static inline function print( v : Dynamic ) : Void { return HaxeLib.print(v); }
 
 	/**
 		Print the specified value on the default output followed by a newline character.
 	**/
-	public static inline function println( v : Dynamic ) : Void { return php.Lib.println(v); }
+	public static inline function println( v : Dynamic ) : Void { return HaxeLib.println(v); }
 
-	public static inline function dump(v : Dynamic) : Void { return php.Lib.dump(v); }
-
+	#if php
+	public static inline function extensionLoaded(name : String) { return HaxeLib.extensionLoaded(name); }
+	public static inline function isCli() : Bool { return HaxeLib.isCli(); }
+	public static inline function printFile(file : String) { return HaxeLib.printFile(file); }
+	
+	public static inline function dump(v : Dynamic) : Void { return HaxeLib.dump(v); }
+	
 	/**
 		Serialize using native PHP serialization. This will return a Binary string that can be
 		stored for long term usage.
 	**/
-	public static inline function serialize( v : Dynamic ) : String { return php.Lib.serialize(v); }
+	public static inline function serialize( v : Dynamic ) : String { return HaxeLib.serialize(v); }
 
 	/**
 		Unserialize a string using native PHP serialization. See [serialize].
 	**/
-	public static inline function unserialize( s : String ) : Dynamic { return php.Lib.unserialize(s); }
-
-	public static inline function extensionLoaded(name : String) { return php.Lib.extensionLoaded(name); }
-
-	public static inline function isCli() : Bool { return php.Lib.isCli(); }
-
-	public static inline function printFile(file : String) { return php.Lib.printFile(file); }
-
-	public static inline function toPhpArray(a : Array<Dynamic>) : NativeArray { return php.Lib.toPhpArray(a); }
-
-	public static inline function toHaxeArray(a : NativeArray) : Array<Dynamic> { return php.Lib.toHaxeArray(a); }
-
-	public static inline function hashOfAssociativeArray<T>(arr : NativeArray) : Hash<T> { return php.Lib.hashOfAssociativeArray(arr); }
+	public static inline function unserialize( s : String ) : Dynamic { return HaxeLib.unserialize(s); }
 	
-	public static inline function associativeArrayOfHash(hash : Hash<Dynamic>) : NativeArray { return php.Lib.associativeArrayOfHash(hash); }
-
-	/**
-		For neko compatibility only.
-	**/
-	public static inline function rethrow( e : Dynamic ) { return php.Lib.rethrow(e); }
-
-	public static inline function getClasses() { return php.Lib.getClasses(); }
+	public static inline function toPhpArray(a : Array<Dynamic>) : NativeArray { return HaxeLib.toPhpArray(a); }
+	public static inline function toHaxeArray(a : NativeArray) : Array<Dynamic> { return HaxeLib.toHaxeArray(a); }
+	public static inline function hashOfAssociativeArray<T>(arr : NativeArray) : Hash<T> { return HaxeLib.hashOfAssociativeArray(arr); }
+	public static inline function associativeArrayOfHash(hash : Hash<Dynamic>) : NativeArray { return HaxeLib.associativeArrayOfHash(hash); }
 	
 	/**
 	*  Loads types defined in the specified directory.
  	*/
- 	public static inline function loadLib(pathToLib : String) : Void { return php.Lib.loadLib(pathToLib); }
+ 	public static inline function loadLib(pathToLib : String) : Void { return HaxeLib.loadLib(pathToLib); }
+	#end
+
+	/**
+		For neko compatibility only.
+	**/
+	public static inline function rethrow( e : Dynamic ) { return HaxeLib.rethrow(e); }
+
+	public static inline function getClasses() { return HaxeLib.getClasses(); }
+	
 }

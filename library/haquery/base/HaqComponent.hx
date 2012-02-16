@@ -1,12 +1,14 @@
 package haquery.base;
 
-#if php
+#if (php || neko)
 import haquery.server.HaqEvent;
 import haquery.server.Lib;
+import haquery.server.HaqTemplate;
 private typedef Component = haquery.server.HaqComponent;
-#else
+#elseif js
 import haquery.client.HaqEvent;
 import haquery.client.Lib;
+import haquery.client.HaqTemplate;
 private typedef Component = haquery.client.HaqComponent;
 #end
 
@@ -14,17 +16,17 @@ using haquery.StringTools;
 
 class HaqComponent
 {
+    public var parent(default,null) : Component;
+
+    /**
+     * Component package name (for example: 'components.haquery.button').
+     */
+    public var fullTag(default, null)  : String;
+    
     /**
      * Empty for page.
      */
     public var id(default,null) : String;
-
-    public var parent(default,null) : Component;
-
-    /**
-     * Component name.
-     */
-    public var tag(default,null)  : String;
 
     /**
      * Empty for page.
@@ -32,7 +34,7 @@ class HaqComponent
     public var fullID(default,null) : String;
 
     /**
-     * Prefix for DOM elemets ID.
+     * Prefix for DOM elements ID.
      */
     public var prefixID(default,null) : String;
 	
@@ -69,12 +71,12 @@ class HaqComponent
 		}
 	}
 	
-	function commonConstruct(parent:Component, tag:String,  id:String) 
+	function commonConstruct(fullTag:String, parent:Component, id:String) 
 	{
 		if (id == null || id == '') id = parent != null ? parent.getNextAnonimID() : '';
 		
+		this.fullTag = fullTag;
 		this.parent = parent;
-		this.tag = tag;
 		this.id = id;
 		
 		this.fullID = (parent!=null ? parent.prefixID : '') + id;

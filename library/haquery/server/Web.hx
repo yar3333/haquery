@@ -2,6 +2,12 @@ package haquery.server;
 
 import haxe.io.Bytes;
 
+#if php
+private typedef HaxeWeb = php.Web;
+#elseif neko
+private typedef HaxeWeb = neko.Web;
+#end
+
 class UploadedFile
 {
     public var name(default,null) : String;
@@ -77,29 +83,29 @@ class Web {
 	/**
 		Returns the GET and POST parameters.
 	**/
-	public static inline function getParams() { return php.Web.getParams(); }
+	public static inline function getParams() { return HaxeWeb.getParams(); }
 
 	/**
 		Returns an Array of Strings built using GET / POST values.
 		If you have in your URL the parameters [a[]=foo;a[]=hello;a[5]=bar;a[3]=baz] then
-		[php.Web.getParamValues("a")] will return [["foo","hello",null,"baz",null,"bar"]]
+		[HaxeWeb.getParamValues("a")] will return [["foo","hello",null,"baz",null,"bar"]]
 	**/
-	public static inline function getParamValues( param : String ) : Array<String> { return php.Web.getParamValues(param); }
+	public static inline function getParamValues( param : String ) : Array<String> { return HaxeWeb.getParamValues(param); }
 
 	/**
 		Returns the local server host name
 	**/
-	public static inline function getHostName() : String { return php.Web.getHostName(); }
+	public static inline function getHostName() : String { return HaxeWeb.getHostName(); }
 
 	/**
 		Surprisingly returns the client IP address.
 	**/
-	public static inline function getClientIP() : String { return php.Web.getClientIP(); }
+	public static inline function getClientIP() : String { return HaxeWeb.getClientIP(); }
 
 	/**
 		Returns the original request URL (before any server internal redirections)
 	**/
-	public static inline function getURI() : String { return php.Web.getURI(); }
+	public static inline function getURI() : String { return HaxeWeb.getURI(); }
 
 	/**
 		Tell the client to redirect to the given url ("Location" header)
@@ -110,28 +116,28 @@ class Web {
 		Set an output header value. If some data have been printed, the headers have
 		already been sent so this will raise an exception.
 	**/
-	public static inline function setHeader( h : String, v : String ) { return php.Web.setHeader(h,v); }
+	public static inline function setHeader( h : String, v : String ) { return HaxeWeb.setHeader(h,v); }
 
 	/**
 		Set the HTTP return code. Same remark as setHeader.
 		See status code explanation here: http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
 	**/
-	public static inline function setReturnCode( r : Int ) { return php.Web.setReturnCode(r); }
+	public static inline function setReturnCode( r : Int ) { return HaxeWeb.setReturnCode(r); }
 
 	/**
 		Retrieve a client header value sent with the request.
 	**/
-	public static inline function getClientHeader( k : String ) : String { return php.Web.getClientHeader(k); }
+	public static inline function getClientHeader( k : String ) : String { return HaxeWeb.getClientHeader(k); }
 	
 	/**
 		Retrieve all the client headers.
 	**/
-	public static inline function getClientHeaders() { return php.Web.getClientHeaders(); }
+	public static inline function getClientHeaders() { return HaxeWeb.getClientHeaders(); }
 
 	/**
 		Returns all the GET parameters String
 	**/
-	public static inline function getParamsString() : String { return php.Web.getParamsString(); }
+	public static inline function getParamsString() : String { return HaxeWeb.getParamsString(); }
 
 	/**
 		Returns all the POST data. POST Data is always parsed as
@@ -141,23 +147,23 @@ class Web {
 		case, you will have to use [getMultipart] or [parseMultipart]
 		methods.
 	**/
-	public static inline function getPostData() { return php.Web.getPostData(); }
+	public static inline function getPostData() { return HaxeWeb.getPostData(); }
 
 	/**
 		Returns an object with the authorization sent by the client (Basic scheme only).
 	**/
-	public static inline function getAuthorization() : { user : String, pass : String } { return php.Web.getAuthorization(); }
+	public static inline function getAuthorization() : { user : String, pass : String } { return HaxeWeb.getAuthorization(); }
 
 	/**
 		Get the current script directory in the local filesystem.
 	**/
-	public static inline function getCwd() : String { return php.Web.getCwd(); }
+	public static inline function getCwd() : String { return HaxeWeb.getCwd(); }
 
 	/**
 		Get the multipart parameters as an hashtable. The data
 		cannot exceed the maximum size specified.
 	**/
-	public static inline function getMultipart( maxSize : Int ) : Hash<String> { return php.Web.getMultipart(maxSize); }
+	public static inline function getMultipart( maxSize : Int ) : Hash<String> { return HaxeWeb.getMultipart(maxSize); }
 
 	/**
 		Parse the multipart data. Call [onPart] when a new part is found
@@ -165,22 +171,23 @@ class Web {
 		and [onData] when some part data is readed. You can this way
 		directly save the data on hard drive in the case of a file upload.
 	**/
-	public static inline function parseMultipart( onPart : String -> String -> Void, onData : Bytes -> Int -> Int -> Void ) : Void { return php.Web.parseMultipart(onPart, onData); }
+	public static inline function parseMultipart( onPart : String -> String -> Void, onData : Bytes -> Int -> Int -> Void ) : Void { return HaxeWeb.parseMultipart(onPart, onData); }
 
 	/**
 		Flush the data sent to the client. By default on Apache, outgoing data is buffered so
 		this can be useful for displaying some long operation progress.
 	**/
-	public static inline function flush() : Void { return php.Web.flush(); }
+	public static inline function flush() : Void { return HaxeWeb.flush(); }
 
 	/**
 		Get the HTTP method used by the client.
 	**/
-	public static inline function getMethod() : String { return php.Web.getMethod(); }
+	public static inline function getMethod() : String { return HaxeWeb.getMethod(); }
 
 	public static var isModNeko(isModNeko_getter, null) : Bool; 
-    static inline function isModNeko_getter() : Bool  { return php.Web.isModNeko; }
+    static inline function isModNeko_getter() : Bool  { return HaxeWeb.isModNeko; }
 
+	#if php
 	public static function getDocumentRoot() : String {
         return untyped __php__("$_SERVER['DOCUMENT_ROOT']");
     }
@@ -189,7 +196,7 @@ class Web {
         return untyped __php__("$_SERVER['HTTP_HOST']"); 
     }
 
-    public static function getFiles() : Hash<UploadedFile> 
+	public static function getFiles() : Hash<UploadedFile> 
     {
         var files : Hash<php.NativeArray> = Lib.hashOfAssociativeArray(untyped __var__("_FILES"));
         var r = new Hash<UploadedFile>();
@@ -206,4 +213,5 @@ class Web {
         }
         return r;
     }
+	#end
 }
