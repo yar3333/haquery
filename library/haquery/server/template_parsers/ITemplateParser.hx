@@ -5,6 +5,7 @@ import haquery.server.HaqComponent;
 
 interface ITemplateParser
 {
+	function getFullTag() : String;
 	function getDocAndCss() : { css:String, doc:HaqXml };
 	function getClass() : Class<HaqComponent>;
 	function getServerHandlers() : Hash<Array<String>>;

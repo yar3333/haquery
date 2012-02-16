@@ -22,7 +22,7 @@ class Server extends Base
 	function preRender()
     {
         q('#component').val(component);
-		q('#template').val(Serializer.run(manager.getTemplate(manager.getFullTag(this, component)).doc.toString()));
+		q('#template').val(Serializer.run(manager.findTemplate(this, component).doc.toString()));
 	}
 	
     override function callElemEventHandler(elemID:String, eventName:String) : Dynamic

@@ -26,6 +26,11 @@ class ComponentTemplateParser implements ITemplateParser
 		config = getConfig();
 	}
 	
+	public function getFullTag() : String
+	{
+		return fullTag;
+	}
+	
 	public function getClass() : Class<HaqComponent>
 	{
 		var className = fullTag + ".Server";
