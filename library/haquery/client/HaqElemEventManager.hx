@@ -27,8 +27,6 @@ class HaqElemEventManager
     
     public static function getComponentElems(component:HaqComponent) : Array<HtmlDom>
     {
-		trace("getComponentElems component.prefixID = " + component.prefixID);
-        
 		var re = new EReg('^' + component.prefixID + '[^' + HaqDefines.DELIMITER + ']+$', '');
         
         var r = new Array<HtmlDom>();
