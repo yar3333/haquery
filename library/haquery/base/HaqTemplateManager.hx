@@ -6,6 +6,10 @@ typedef Page = haquery.server.HaqPage
 typedef Page = haquery.client.HaqPage
 #end
 
+import  haquery.server.FileSystem;
+
+using haquery.StringTools;
+
 class HaqTemplateManager<Template:HaqTemplate>
 {
 	public var templates(default, null) : Hash<Template>;
@@ -13,26 +17,30 @@ class HaqTemplateManager<Template:HaqTemplate>
 	public function new()
 	{
 		templates = new Hash<Template>();
+		fillTemplates(HaqDefines.folders.pages);
 	}
 	
-	public function getTemplate(fullTag:String) : Template
+	function fillTemplates(pack:String)
 	{
-		if (!templates.exists(fullTag))
+		var path = getFullPath(pack.replace(".", "/"));
+		for (file in FileSystem.readDirectory(path))
 		{
-			templates.set(fullTag, parseTemplate(fullTag));
+			if (FileSystem.isDirectory(path + "/" + file))
+			{
+				var fullTag = pack + "." + file;
+				var template = parseTemplate(fullTag);
+				if (template != null)
+				{
+					templates.set(fullTag, template);
+				}
+				fillTemplates(fullTag);
+			}
 		}
-		return templates.get(fullTag);
-	}
-	
-	public function createPage(pageFullTag:String, pageAttr:Hash<String>) : Page
-	{
-		throw "Method must be overriden.";
-		return null;
 	}
 	
 	function parseTemplate(fullTag:String) : Template
 	{
-		throw "Method must be overriden.";
+		throw "This method must be overriten.";
 		return null;
 	}
 	
@@ -40,12 +48,12 @@ class HaqTemplateManager<Template:HaqTemplate>
 	{
 		var packageName = getPackageByFullTag(parentFullTag);
 		
-		var template = getTemplate(packageName + '.' + tag);
+		var template = templates.get(packageName + '.' + tag);
 		if (template == null)
 		{
-			for (importPackage in getTemplate(parentFullTag).imports)
+			for (importPackage in templates.get(parentFullTag).imports)
 			{
-				template = getTemplate(importPackage + '.' + tag);
+				template = templates.get(importPackage + '.' + tag);
 				if (template != null)
 				{
 					break;
@@ -64,5 +72,10 @@ class HaqTemplateManager<Template:HaqTemplate>
 			return fullTag.substr(0, n);
 		}
 		return '';
+	}
+	
+	function getFullPath(path:String)
+	{
+		return path;
 	}
 }

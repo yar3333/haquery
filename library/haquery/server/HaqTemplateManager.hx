@@ -6,6 +6,7 @@ import haquery.server.HaqComponent;
 import haquery.server.HaqTemplate;
 import haquery.server.HaqXml;
 import haquery.server.Lib;
+import haquery.server.io.File;
 import haquery.server.HaqTemplateParser;
 import haquery.server.FileSystem;
 
@@ -36,7 +37,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		super();
 	}
 	
-	override function createPage(pageFullTag:String, attr:Hash<String>) : HaqPage
+	public function createPage(pageFullTag:String, attr:Hash<String>) : HaqPage
 	{
 		var template = new HaqTemplate(pageFullTag);
         return cast newComponent(pageFullTag, null, template.serverClass, '', template.doc, attr, null);
@@ -66,7 +67,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		
 		if (!url.startsWith("http://") && !url.startsWith("/") && !url.startsWith("<"))
 		{
-			url = '/' + getTemplate(fullTag).getSupportFilePath(url);
+			url = '/' + templates.get(fullTag).getSupportFilePath(url);
 		}
 		
 		return url;
@@ -103,14 +104,23 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 	function generatePackageCssFile(pack:String, fullTags:Array<String>, forceUpdate = false) : String
 	{
 		var path = HaqDefines.folders.temp + '/styles/' + pack + '.css';
-		// TODO: generate css for package
+		
+		var text = "";
+		for (fullTag in fullTags)
+		{
+			var template = templates.get(fullTag);
+			text += "/* " + fullTag + "*/\n" + template.css + "\n\n";
+		}
+		
+		File.putContent(path, text);
+		
 		return path;
 	}
 	
 	public function getRegisteredStyles() : Array<String>
 	{
 		var packageStyles = [];
-		var usedPackages = getUsedPackages();
+		var usedPackages = getPackages();
 		for (pack in usedPackages.keys())
 		{
 			packageStyles.push(generatePackageCssFile(pack, usedPackages.get(pack)));
@@ -127,7 +137,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 	 * 
 	 * @return package => [ fullTag0, fullTag1, ... ]
 	 */
-	function getUsedPackages() : Hash<Array<String>>
+	function getPackages() : Hash<Array<String>>
 	{
 		var r = new Hash<Array<String>>();
 		for (fullTag in templates.keys())
@@ -301,22 +311,4 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 			i++;
         }
     }
-	
-	/*public function getTemplateHtml(tag:String) : String
-	{
-		return templates.get(tag).doc.toString();
-	}*/
-	
-	/*
-	function createDirectory(path:String)
-	{
-		var parentPath = Path.directory(path);
-		if (parentPath != null && parentPath != '' && !FileSystem.exists(parentPath)) createDirectory(parentPath);
-		FileSystem.createDirectory(path);
-	}*/
-    
-    /*public function getSupportPath(tag:String) : String
-    {
-        return getFileUrl(tag, HaqDefines.folders.support) + '/';
-    }*/
 }
