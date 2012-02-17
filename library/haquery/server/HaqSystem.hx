@@ -41,17 +41,21 @@ class HaqSystem
             }
 
             Lib.profiler.begin('manager');
-				var manager : HaqComponentManager = new HaqComponentManager(route.className, params);
+				var manager : HaqComponentManager = new HaqComponentManager();
             Lib.profiler.end();
 
-            var html : String;
+            Lib.profiler.begin('page');
+				var page = manager.createPage(route.className, params);
+            Lib.profiler.end();
+            
+			var html : String;
             if (!isPostback)
             {
-                html = renderPage(manager.page);
+                html = renderPage(page);
             }
             else
             {
-                html = processPostback(manager.page);
+                html = processPostback(page);
             }
             
             trace("HAQUERY SYSTEM Finish");

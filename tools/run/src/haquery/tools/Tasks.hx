@@ -10,9 +10,9 @@ import neko.zip.Uncompress;
 
 import haquery.server.db.HaqDb;
 import haquery.tools.orm.OrmGenerator;
-import haquery.tools.CompileStageComponentTemplateParser;
+import haquery.tools.CompileStageTemplateParser;
 
-using StringTools;
+using haquery.StringTools;
 
 class Tasks 
 {

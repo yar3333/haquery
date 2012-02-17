@@ -1,23 +1,24 @@
 package haquery.base;
 
-#if (php || neko)
-typedef Template = haquery.server.HaqTemplate
-typedef Page = haquery.server.HaqPage
-#elseif js
-typedef Template = haquery.client.HaqTemplate
-typedef Page = haquery.client.HaqPage
+#if (!tools)
+	#if (php || neko)
+		typedef Template = haquery.server.HaqTemplate
+		typedef Page = haquery.server.HaqPage
+	#elseif js
+		typedef Template = haquery.client.HaqTemplate
+		typedef Page = haquery.client.HaqPage
+	#end
+#else
+	typedef Template = haquery.tools.HaqTemplate
 #end
 
-class HaqComponentManager 
+class HaqTemplateManager 
 {
 	public var templates(default, null) : Hash<Template>;
 	
-	public var page(default, null) : Page;
-	
-	public function new(pageFullTag:String, pageAttr:Hash<String>)
+	public function new()
 	{
 		templates = new Hash<Template>();
-		page = createPage(pageFullTag, pageAttr);
 	}
 	
 	public function getTemplate(fullTag:String) : Template
@@ -29,7 +30,7 @@ class HaqComponentManager
 		return templates.get(fullTag);
 	}
 	
-	function createPage(pageFullTag:String, pageAttr:Hash<String>) : Page
+	public function createPage(pageFullTag:String, pageAttr:Hash<String>) : Page
 	{
 		throw "Method must be overriden.";
 		return null;

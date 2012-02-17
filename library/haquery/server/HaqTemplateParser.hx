@@ -1,7 +1,8 @@
-package haquery.server.template_parsers;
+package haquery.server;
 
 import haquery.server.HaqDefines;
 import haquery.server.HaqComponent;
+import haquery.server.HaqPage;
 import haquery.server.HaqXml;
 
 #if php
@@ -15,10 +16,10 @@ import neko.io.File;
 
 using haquery.StringTools;
 
-class ComponentTemplateParser implements ITemplateParser
+class HaqTemplateParser
 {
 	var fullTag : String;
-	var config : ComponentConfig;
+	var config : HaqTemplateConfig;
 	
 	public function new(fullTag:String)
 	{
@@ -29,6 +30,11 @@ class ComponentTemplateParser implements ITemplateParser
 	public function getFullTag() : String
 	{
 		return fullTag;
+	}
+	
+	function isPage() : Bool
+	{
+		return fullTag.startsWith(HaqDefines.folders.pages.replace("/", "."));
 	}
 	
 	public function getClass() : Class<HaqComponent>
@@ -42,18 +48,10 @@ class ComponentTemplateParser implements ITemplateParser
 		
 		if (config.extend != null)
 		{
-			return new ComponentTemplateParser(config.extend).getClass();
+			return new HaqTemplateParser(config.extend).getClass();
 		}
 		
-		return getBaseClass();
-	}
-	
-	/**
-	 * May be overrided.
-	 */
-	function getBaseClass() : Class<HaqComponent>
-	{
-		return HaqComponent;
+		return isPage() ? cast(HaqPage, HaqComponent) : HaqComponent;
 	}
 	
 	function getRawTemplateHtml() : String
@@ -68,7 +66,7 @@ class ComponentTemplateParser implements ITemplateParser
 		
 		if (config.extend != null)
 		{
-			html = new ComponentTemplateParser(config.extend).getDocAndCss() + html;
+			html = new HaqTemplateParser(config.extend).getDocAndCss() + html;
 		}
 		
 		return html;
@@ -90,7 +88,7 @@ class ComponentTemplateParser implements ITemplateParser
 		return null;
 	}
 	
-	function getConfig() : ComponentConfig
+	function getConfig() : HaqTemplateConfig
 	{
 		var pathParts = fullTag.split(".");
 		pathParts.unshift("");
@@ -112,7 +110,7 @@ class ComponentTemplateParser implements ITemplateParser
 		return r;
 	}
 	
-	function parseConfig(path:String) : ComponentConfig
+	function parseConfig(path:String) : HaqTemplateConfig
 	{
 		if (FileSystem.exists(path))
 		{
@@ -143,6 +141,46 @@ class ComponentTemplateParser implements ITemplateParser
 	}
 	
 	public function getDocAndCss() : { doc:HaqXml, css:String }
+	{
+		return isPage() ? getPageDocAndCss() : getComponentDocAndCss();
+	}
+	
+	function getPageDocAndCss() : { doc:HaqXml, css:String }
+	{
+		var pageText = getRawTemplateHtml();
+        
+        var pageDoc = new HaqXml(pageText);
+        
+        if (Lib.config.layout == null || Lib.config.layout == "") return { doc:pageDoc, css:"" };
+        
+        if (!FileSystem.exists(Lib.config.layout))
+        {
+            throw "Layout file '" + Lib.config.layout + "' not found.";
+        }
+        
+        var layoutDoc = new HaqXml(File.getContent(Lib.config.layout));
+        
+        var placeholders = layoutDoc.find('haq:placeholder');
+        var contents = pageDoc.find('>haq:content');
+        for (ph in placeholders)
+        {
+            var content : HaqXmlNodeElement = null;
+            for (c in contents) 
+            {
+                if (c.getAttribute('id') == ph.getAttribute('id'))
+                {
+                    content = c;
+                    break;
+                }
+            }
+            if (content != null) ph.parent.replaceChildWithInner(ph, content);
+            else                 ph.parent.replaceChildWithInner(ph, ph);
+        }
+        
+		return { doc:layoutDoc, css:"" };
+	}	
+	
+	function getComponentDocAndCss() : { doc:HaqXml, css:String }
 	{
 		var text = getRawTemplateHtml();
 		
@@ -217,12 +255,12 @@ class ComponentTemplateParser implements ITemplateParser
 		return config.imports;
 	}
 	
-	public function getServerHandlers() : Hash<Array<String>>
+	public function getServerHandlers(clas:Class<HaqComponent>=null) : Hash<Array<String>>
 	{
         Lib.profiler.begin('parseServerHandlers');
             var serverMethods = [ 'click','change' ];   // server events
             var serverHandlers : Hash<Array<String>> = new Hash<Array<String>>();
-            var tempObj = Type.createEmptyInstance(getClass());
+            var tempObj = Type.createEmptyInstance(clas!=null ? clas : getClass());
             for (field in Reflect.fields(tempObj))
             {
                 if (Reflect.isFunction(Reflect.field(tempObj, field)))
