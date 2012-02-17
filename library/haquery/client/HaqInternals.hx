@@ -34,9 +34,11 @@ class HaqInternals
 		return id_tag_cached;
 	}
     
-	
+	/**
+	 * fullTag =>
+	 */
     static var serializedServerHandlers : String;
-    public static var serverHandlers(serverHandlers_getter, null) : Hash<Hash<Array<String>>>;
+	public static var serverHandlers(serverHandlers_getter, null) : Hash<Hash<Array<String>>>;
     static var serverHandlers_cached : Hash<Hash<Array<String>>>;
     static function serverHandlers_getter() : Hash<Hash<Array<String>>>
     {

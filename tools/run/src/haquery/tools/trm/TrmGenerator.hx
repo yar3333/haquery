@@ -5,7 +5,7 @@ import haquery.server.HaqDefines;
 import haquery.server.HaqXml;
 import haquery.server.io.File;
 import haquery.server.Lib;
-import haquery.tools.CompileStageComponentTemplateParser;
+import haquery.tools.CompileStageTemplateParser;
 import haquery.tools.trm.TrmHaxeClass;
 
 using haquery.StringTools;
@@ -25,27 +25,27 @@ class TrmGenerator
 				{
 					for (tag in FileSystem.readDirectory(classPath + HaqDefines.folders.components + '/' + collection))
 					{
-						makeForComponent(classPath, collection, tag);
+						makeForComponent(classPath, collection + "." + tag);
 					}
 				}
 			}
 		}
     }
 	
-	static function makeForComponent(classPath:String, collection:String, tag:String)
+	static function makeForComponent(classPath:String, fullTag:String)
 	{
-		trace("TrmGenerator.makeForComponent('" + classPath + "', '" + collection + "', '" + tag + "')");
+		trace("TrmGenerator.makeForComponent('" + classPath + "', '" + fullTag + "')");
 		
-		var componentPath = HaqDefines.folders.components + "/" + collection + "/" + tag + "/";
+		var componentPath = HaqDefines.folders.components + "/" + fullTag.replace(".", "/") + "/";
 		var destFilePath = classPath + componentPath + "Template.hx";
-		var componentData = getComponentData(collection, tag);
+		var componentData = getComponentData(fullTag);
 		
 		if (findFile(componentPath + "Server.hx") != null
 		 || findFile(componentPath + "Client.hx") != null)
 		{
 			if (!FileSystem.exists(destFilePath) || FileSystem.stat(destFilePath).mtime.getTime() < componentData.lastMod.getTime())
 			{
-				var haxeClass = new TrmHaxeClass(HaqDefines.folders.components + "." + collection + "." + tag + ".Template", componentData.superClass);
+				var haxeClass = new TrmHaxeClass(fullTag + ".Template", componentData.superClass);
 				
 				haxeClass.addVar(TrmTools.createVar("component", "#if php haquery.server.HaqComponent #else haquery.client.HaqComponent #end"), true);
 				
@@ -103,30 +103,28 @@ class TrmGenerator
 		return null;
 	}
 	
-	static function getComponentData(collection:String, tag:String) : { templateText:String, superClass:String, lastMod:Date }
+	static function getComponentData(fullTag:String) : { templateText:String, superClass:String, lastMod:Date }
 	{
 		//trace("\ngetComponentData('" + componentsPackage + "', '" + componentName + "')");
 		
-		var componentsPackage = HaqDefines.folders.components + '.' + collection;
-		
-		var templateSuperClassPath = findFile(componentsPackage.replace(".", "/") + tag + "/Template.hx");
+		var templateSuperClassPath = findFile(fullTag.replace(".", "/") + "/Template.hx");
 		if (templateSuperClassPath != null)
 		{
 			return { 
 				  templateText : ""
-				, superClass : componentsPackage + "." + tag
+				, superClass : fullTag
 				, lastMod : MIN_DATE
 			};
 		}
 		
-		var templatePath = findFile(componentsPackage.replace(".", "/") + "/" + tag + "/template.html");
+		var templatePath = findFile(fullTag.replace(".", "/") + "/template.html");
 		var templateText = templatePath != null ? File.getContent(templatePath) : "";
 		var lastMod = templatePath != null ? FileSystem.stat(templatePath).mtime : MIN_DATE;
 		
-		var extendsCollection =  new CompileStageComponentTemplateParser(TrmTools.getClassPaths(), collection, tag).config.extendsCollection;
-		if (extendsCollection != null && extendsCollection != "")
+		var extend =  new CompileStageTemplateParser(TrmTools.getClassPaths(), fullTag).getExtend();
+		if (extend != null && extend != "")
 		{
-			var superTemplateData = getComponentData(extendsCollection, tag);
+			var superTemplateData = getComponentData(extend);
 			return { 
 				  templateText : superTemplateData.templateText + templateText
 				, superClass : superTemplateData.superClass 
@@ -157,7 +155,7 @@ class TrmGenerator
 				{
 					var componentName = child.name.substr("haq:".length);
 					
-					var parser = new CompileStageComponentTemplateParser(TrmTools.getClassPaths(), collection, componentName);
+					var parser = new CompileStageTemplateParser(TrmTools.getClassPaths(), collection, componentName);
 					var serverClassName = parser.getServerClassName();
 					var clientClassName = parser.getClientClassName();
 					

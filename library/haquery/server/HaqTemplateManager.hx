@@ -3,8 +3,7 @@ package haquery.server;
 import haquery.server.HaqComponent;
 import haquery.server.HaqXml;
 import haquery.server.Lib;
-import haquery.server.template_parsers.ComponentTemplateParser;
-import haquery.server.template_parsers.PageTemplateParser;
+import haquery.server.HaqTemplateParser;
 import haxe.Serializer;
 import haquery.server.FileSystem;
 
@@ -28,16 +27,16 @@ class HaqComponentManager extends haquery.base.HaqComponentManager
 		baseComponentFields.push('template');
 	}
 	
-	public function new(pageFullTag:String, pageAttr:Hash<String>)
+	public function new()
 	{
 		registeredScripts = [];
 		registeredStyles = [];
-		super(pageFullTag, pageAttr);
+		super();
 	}
 	
 	override function createPage(pageFullTag:String, attr:Hash<String>) : HaqPage
 	{
-		var template = new HaqTemplate(new PageTemplateParser(pageFullTag));
+		var template = new HaqTemplate(pageFullTag);
         return cast newComponent(pageFullTag, null, template.serverClass, '', template.doc, attr, null);
 	}
 	

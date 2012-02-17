@@ -1,10 +1,8 @@
 package haquery.server;
 
-import haquery.server.template_parsers.ITemplateParser;
-
 class HaqTemplate 
 {
-	var parser : ITemplateParser;
+	var parser : HaqTemplateParser;
 	
 	public var fullTag(fullTag_getter, null) : String;
 	
@@ -14,16 +12,16 @@ class HaqTemplate
 	public var serverHandlers(default, null) : Hash<Array<String>>;
 	public var imports(default, null) : Array<String>;
 	
-	public function new(parser:ITemplateParser) 
+	public function new(fullTag:String) 
 	{
-		this.parser = parser;
+		parser = new HaqTemplateParser(fullTag);
 		
 		var docAndCss = parser.getDocAndCss();
 		doc = docAndCss.doc;
 		css = docAndCss.css;
 		
 		serverClass = parser.getClass();
-		serverHandlers = parser.getServerHandlers();
+		serverHandlers = parser.getServerHandlers(serverClass);
 		
 		imports = parser.getImports();
 	}
