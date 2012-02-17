@@ -1,6 +1,6 @@
 package haquery.server;
 
-class HaqTemplate 
+class HaqTemplate extends haquery.base.HaqTemplate
 {
 	var parser : HaqTemplateParser;
 	
@@ -10,7 +10,7 @@ class HaqTemplate
 	public var css(default, null) : String;
 	public var serverClass(default, null) : Class<HaqComponent>;
 	public var serverHandlers(default, null) : Hash<Array<String>>;
-	public var imports(default, null) : Array<String>;
+	
 	
 	public function new(fullTag:String) 
 	{
@@ -23,7 +23,7 @@ class HaqTemplate
 		serverClass = parser.getClass();
 		serverHandlers = parser.getServerHandlers(serverClass);
 		
-		imports = parser.getImports();
+		super(parser.getImports());
 	}
 	
 	public function getSupportFilePath(relPath:String)

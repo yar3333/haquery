@@ -1,7 +1,7 @@
 package haquery.client;
 
-typedef HaqTemplate =
+class HaqTemplate extends haquery.base.HaqTemplate
 { 
-	var elemID_serverHandlers: Hash<Array<String>>;
-	var clas : Class<HaqComponent>;
+	public var elemID_serverHandlers: Hash<Array<String>>;
+	public var clas : Class<HaqComponent>;
 }

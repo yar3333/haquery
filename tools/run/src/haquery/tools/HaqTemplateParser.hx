@@ -1,12 +1,11 @@
 package haquery.tools;
 
-import haquery.server.HaqTemplateParser;
 import haquery.server.FileSystem;
 import haquery.server.HaqDefines;
 
 using StringTools;
 
-class CompileStageTemplateParser extends HaqTemplateParser
+class HaqTemplateParser extends haquery.server.HaqTemplateParser
 {
 	var classPaths : Array<String>;
 	
@@ -36,17 +35,17 @@ class CompileStageTemplateParser extends HaqTemplateParser
 		return config.extend;
 	}
 	
-	function getClassName(className:String)
+	function getClassName(shortClassName:String)
 	{
-		var className = fullTag + "." + className;
-		if (getFullPath(className.replace('.', '/') + ".hx") != null)
+		var fullClassName = fullTag + "." + shortClassName;
+		if (getFullPath(fullClassName.replace('.', '/') + ".hx") != null)
 		{
-			return className;
+			return fullClassName;
 		}
 		
 		if (config.extend != null && config.extend != "")
 		{
-			return new CompileStageTemplateParser(classPaths, config.extend).getClassName(className);
+			return new HaqTemplateParser(classPaths, config.extend).getClassName(shortClassName);
 		}
 		
 		return null;
@@ -64,5 +63,15 @@ class CompileStageTemplateParser extends HaqTemplateParser
 		return r != null && r != ""  ? r : "haquery.client.HaqComponent";
 	}
 	
-	//public function getTemplate
+	public function getSuperTemplateClassName()
+	{
+		// TODO: getSuperTemplateClassName
+		return null;
+	}
+	
+	public function getDocTextAndLastMod() : { text:String, lastMod:Date }
+	{
+		// TODO: getDocTextAndLastMod
+		return null;
+	}
 }

@@ -5,7 +5,11 @@ import haquery.server.HaqDefines;
 import haquery.server.HaqXml;
 import haquery.server.io.File;
 import haquery.server.Lib;
-import haquery.tools.CompileStageTemplateParser;
+
+import haquery.tools.HaqTemplate;
+import haquery.tools.HaqTemplateParser;
+import haquery.tools.HaqTemplateManager;
+
 import haquery.tools.trm.TrmHaxeClass;
 
 using haquery.StringTools;
@@ -17,6 +21,8 @@ class TrmGenerator
 	
 	public static function run()
     {
+		var manager = new HaqTemplateManager();
+		
 		for (classPath in TrmTools.getClassPaths())
 		{
 			if (FileSystem.isDirectory(classPath + HaqDefines.folders.components))
@@ -25,18 +31,18 @@ class TrmGenerator
 				{
 					for (tag in FileSystem.readDirectory(classPath + HaqDefines.folders.components + '/' + collection))
 					{
-						makeForComponent(classPath, collection + "." + tag);
+						makeForComponent(classPath, manager, HaqDefines.folders.components + "." + collection + "." + tag);
 					}
 				}
 			}
 		}
     }
 	
-	static function makeForComponent(classPath:String, fullTag:String)
+	static function makeForComponent(classPath:String, manager:HaqTemplateManager, fullTag:String)
 	{
 		trace("TrmGenerator.makeForComponent('" + classPath + "', '" + fullTag + "')");
 		
-		var componentPath = HaqDefines.folders.components + "/" + fullTag.replace(".", "/") + "/";
+		var componentPath = fullTag.replace(".", "/") + "/";
 		var destFilePath = classPath + componentPath + "Template.hx";
 		var componentData = getComponentData(fullTag);
 		
@@ -50,7 +56,7 @@ class TrmGenerator
 				haxeClass.addVar(TrmTools.createVar("component", "#if php haquery.server.HaqComponent #else haquery.client.HaqComponent #end"), true);
 				
 				var doc = new HaqXml(componentData.templateText);
-				var templateVars = getTemplateVars(collection, doc);
+				var templateVars = getTemplateVars(manager, fullTag, doc);
 				if (templateVars.length > 0)
 				{
 					if (isFirstPrint)
@@ -58,7 +64,7 @@ class TrmGenerator
 						Lib.print("\n  ");
 						isFirstPrint = false;
 					}
-					Lib.print(collection + "." + tag + "\n  ");
+					Lib.print(fullTag + "\n  ");
 					
 					for (templateVar in templateVars)
 					{
@@ -121,7 +127,7 @@ class TrmGenerator
 		var templateText = templatePath != null ? File.getContent(templatePath) : "";
 		var lastMod = templatePath != null ? FileSystem.stat(templatePath).mtime : MIN_DATE;
 		
-		var extend =  new CompileStageTemplateParser(TrmTools.getClassPaths(), fullTag).getExtend();
+		var extend = new HaqTemplateParser(TrmTools.getClassPaths(), fullTag).getExtend();
 		if (extend != null && extend != "")
 		{
 			var superTemplateData = getComponentData(extend);
@@ -139,7 +145,7 @@ class TrmGenerator
 		};
 	}
 	
-	static function getTemplateVars(collection:String, node:HaqXmlNodeElement) : Array<TrmHaxeVarGetter>
+	static function getTemplateVars(manager:HaqTemplateManager, fullTag:String, node:HaqXmlNodeElement) : Array<TrmHaxeVarGetter>
 	{
 		var r : Array<TrmHaxeVarGetter> = [];
 		var children = node.children;
@@ -153,20 +159,15 @@ class TrmGenerator
 				var body = "return component.q('#" + componentID + "');";
 				if (child.name.startsWith("haq:"))
 				{
-					var componentName = child.name.substr("haq:".length);
-					
-					var parser = new CompileStageTemplateParser(TrmTools.getClassPaths(), collection, componentName);
-					var serverClassName = parser.getServerClassName();
-					var clientClassName = parser.getClientClassName();
-					
-					type = "#if php " + serverClassName + " #else " + clientClassName + " #end";
+					var template = manager.findTemplate(fullTag, child.name.substr("haq:".length));
+					type = "#if php " + template.serverClassName + " #else " + template.clientClassName + " #end";
 					body = "return cast component.components.get('" + componentID + "');";
 				}
 				
 				r.push({ name:componentID, type:type, body:body });
 			}
 			
-			r = r.concat(getTemplateVars(collection, child));
+			r = r.concat(getTemplateVars(manager, fullTag, child));
 		}
 		return r;
 	}

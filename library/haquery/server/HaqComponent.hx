@@ -1,15 +1,16 @@
 package haquery.server;
 
+import haquery.Std;
+
 import haquery.server.HaqXml;
 import haquery.server.Lib;
-import haquery.Std;
-import Type;
+//import haquery.server.HaqTemplateManager;
 
 using haquery.StringTools;
 
 class HaqComponent extends haquery.base.HaqComponent
 {
-    var manager : HaqComponentManager;
+    var manager : HaqTemplateManager;
     
     /**
      * HTML between component's open and close tags (where component inserted).
@@ -32,7 +33,7 @@ class HaqComponent extends haquery.base.HaqComponent
 		visible = true;
 	}
     
-    public function construct(manager:HaqComponentManager, fullTag:String, parent:HaqComponent, id:String, doc:HaqXml, params:Hash<String>, parentNode:HaqXmlNodeElement) : Void
+    public function construct(manager:HaqTemplateManager, fullTag:String, parent:HaqComponent, id:String, doc:HaqXml, params:Hash<String>, parentNode:HaqXmlNodeElement) : Void
     {
 		super.commonConstruct(fullTag, parent, id);
         

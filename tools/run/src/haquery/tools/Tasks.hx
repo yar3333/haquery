@@ -10,7 +10,7 @@ import neko.zip.Uncompress;
 
 import haquery.server.db.HaqDb;
 import haquery.tools.orm.OrmGenerator;
-import haquery.tools.CompileStageTemplateParser;
+import haquery.server.HaqDefines;
 
 using haquery.StringTools;
 
@@ -242,6 +242,7 @@ class Tasks
 	{
 		var r = new Hash<Hash<String>>();
 		
+		// TODO: collection findind
 		for (classPath in getClassPaths())
 		{
 			for (collection in FileSystem.readDirectory(classPath))
@@ -253,9 +254,10 @@ class Tasks
 					{
 						if (FileSystem.isDirectory(collectionPath + '/' + tag))
 						{
-							var parser = new CompileStageComponentTemplateParser(getClassPaths(), collection, tag);
+							// TODO: NEXT LINE NOT CORRECT
+							var parser = new HaqTemplateParser(getClassPaths(), HaqDefines.folders.components + "." + collection + "." + tag);
 							if (!r.exists(collection)) r.set(collection, new Hash<String>());
-							r.get(collection).set(tag, parser.config.extendsCollection);
+							r.get(collection).set(tag, parser.getExtend());
 						}
 					}
 				}
