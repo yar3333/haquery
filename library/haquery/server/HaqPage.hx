@@ -15,11 +15,16 @@ class HaqPage extends HaqComponent
     public var contentType : String;
     
     /**
-     * Last unexist URL part was placed in that var. 
-     * For example, if requested URL is "http://site.com/news/123"
+     * Last unexist URL part will be placed to this var. 
+     * For example, if your request "http://site.com/news/123"
      * then pageID will be "123".
      */
     public var pageID : String;
+	
+    /**
+     * Disable special CSS and JS inserts to your HTML pages.
+     */
+	public var disableSystemHtmlInserts : Bool;
 	
 	public function new() : Void
 	{
@@ -28,7 +33,25 @@ class HaqPage extends HaqComponent
 		contentType = "text/html; charset=utf-8";
 	}
     
-    public function insertStyles(links:Array<String>)
+	override public function render():String 
+	{
+		if (!disableSystemHtmlInserts)
+		{
+			insertStyles(manager.getRegisteredStyles());
+			insertScripts([ 'haquery/client/jquery.js', 'haquery/client/haquery.js' ].concat(manager.getRegisteredScripts()));
+			insertInitBlock(
+				  "<script>\n"
+				+ "    if(typeof haquery=='undefined') alert('haquery.js must be loaded!');\n"
+				+ "    " + manager.getSystemInitClientCode().replace('\n', '\n    ') + '\n'
+				+ "    haquery.client.Lib.run();\n"
+				+ "</script>"
+			);
+		}
+		
+		return super.render();
+	}
+    
+    function insertStyles(links:Array<String>)
     {
         var text = Lambda.map(links, function(path) return getStyleLink(path)).join('\n        ');
         var heads = doc.find(">html>head");
@@ -52,7 +75,7 @@ class HaqPage extends HaqComponent
         }
     }
     
-    public function insertScripts(links:Array<String>)
+    function insertScripts(links:Array<String>)
     {
         var text = Lambda.map(links, function(path) return getScriptLink(path)).join('\n        ');
         var heads = doc.find(">html>head");
@@ -76,7 +99,7 @@ class HaqPage extends HaqComponent
         }
     }
     
-    public function insertInitInnerBlock(text:String)
+    function insertInitBlock(text:String)
     {
         var bodyes = doc.find(">html>body");
         if (bodyes.length > 0)
@@ -90,7 +113,7 @@ class HaqPage extends HaqComponent
         }
     }
     
-    static function getScriptLink(url:String) : String
+    function getScriptLink(url:String) : String
     {
 		if (url.startsWith("<")) return url;
 		
@@ -101,7 +124,7 @@ class HaqPage extends HaqComponent
 		return "<script src='" + url + "'></script>";
     }
     
-	static function getStyleLink(url:String) : String
+	function getStyleLink(url:String) : String
     {
 		if (url.startsWith("<")) return url;
 		
@@ -111,5 +134,4 @@ class HaqPage extends HaqComponent
 		}
         return "<link rel='stylesheet' type='text/css' href='" + url + "' />";
     }
-    
 }

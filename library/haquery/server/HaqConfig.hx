@@ -8,7 +8,12 @@ class HaqConfig
 {
     public var db : { type:String, host:String, user:String, pass:String, database:String };
 	
-    public var autoSessionStart : Bool;
+    /**
+     * Path to layout file (null if layout not need).
+     */
+	public var layout : String;
+    
+	public var autoSessionStart : Bool;
 
     public var autoDatabaseConnect : Bool;
 
@@ -36,21 +41,7 @@ class HaqConfig
      */
     public var custom : Hash<Dynamic>;
 
-	/**
-	 * Project-specific name of the base component collection ( = subfolder in the component directory).
-	 */
-	public var componentCollection(default, null) : String;
     
-    /**
-     * Path to layout file (null if layout not need).
-     */
-    public var layout : String;
-    
-    /**
-     * Disable special CSS and JS inserts to your HTML pages.
-     */
-    public var disablePageMetaData : Bool;
-	
 	public function new() : Void
 	{
 		db = {
@@ -60,14 +51,12 @@ class HaqConfig
 			,pass : null
 			,database : null
 		};
+        layout = null;
 		autoSessionStart = true;
 		autoDatabaseConnect = true;
 		sqlTraceLevel = 1;
 		isTraceComponent = false;
 		filterTracesByIP = '';
 		custom = new Hash<Dynamic>();
-		componentCollection = "haquery";
-        layout = null;
-        disablePageMetaData = false;
 	}
 }
