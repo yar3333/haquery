@@ -9,6 +9,7 @@ import haxe.Serializer;
 import haquery.server.FileSystem;
 
 using haquery.StringTools;
+using haquery.HashTools;
 
 class HaqComponentManager extends haquery.base.HaqComponentManager
 {
@@ -34,6 +35,18 @@ class HaqComponentManager extends haquery.base.HaqComponentManager
 		super(pageFullTag, pageAttr);
 	}
 	
+	override function createPage(pageFullTag:String, attr:Hash<String>) : HaqPage
+	{
+		var template = new HaqTemplate(new PageTemplateParser(pageFullTag));
+        return cast newComponent(pageFullTag, null, template.serverClass, '', template.doc, attr, null);
+	}
+	
+	public function createComponent(parent:HaqComponent, tag:String, id:String, attr:Hash<String>, parentNode:HaqXmlNodeElement) : HaqComponent
+	{
+		var template = findTemplate(parent, tag);
+		return newComponent(template.fullTag, parent, template.serverClass, id, template.doc, attr, parentNode);
+	}
+	
 	function newComponent(fulltag:String, parent:HaqComponent, clas:Class<HaqComponent>, id:String, doc:HaqXml, attr:Hash<String>, parentNode:HaqXmlNodeElement) : HaqComponent
 	{
         Lib.profiler.begin('newComponent');
@@ -43,26 +56,6 @@ class HaqComponentManager extends haquery.base.HaqComponentManager
 		return r;
 	}
 	
-	public function createComponent(parent:HaqComponent, tag:String, id:String, attr:Hash<String>, parentNode:HaqXmlNodeElement) : HaqComponent
-	{
-		var template =  findTemplate(parent, tag);
-		var component : HaqComponent = newComponent(template.fullTag, parent, template.serverClass, id, template.doc, attr, parentNode);
-		return component;
-	}
-	
-	override function createPage(pageFullTag:String, attr:Hash<String>) : HaqPage
-	{
-		var template = new HaqTemplate(new PageTemplateParser(pageFullTag));
-		
-		if (!HaqTools.isClassHasSuperClass(template.serverClass, haquery.server.HaqPage))
-		{
-            // TODO: class type check
-			//throw "Class '" + Type.getClassName(template.serverClass) + "' must be inherited from '" + Type.getClassName(standardPageClass) + "'.";
-		}
-		
-        return cast newComponent(pageFullTag, null, template.serverClass, '', template.doc, attr, null);
-	}
-    
 	function getFullUrl(fullTag:String, url:String) : String
 	{
 		if (url.startsWith("~/"))
@@ -106,24 +99,56 @@ class HaqComponentManager extends haquery.base.HaqComponentManager
 		}
 	}
 	
+	function generatePackageCssFile(pack:String, fullTags:Array<String>, forceUpdate = false) : String
+	{
+		var path = HaqDefines.folders.temp + '/styles/' + pack + '.css';
+		// TODO: generate css for package
+		return path;
+	}
+	
+	public function getRegisteredStyles() : Array<String>
+	{
+		var packageStyles = [];
+		var usedPackages = getUsedPackages();
+		for (pack in usedPackages.keys())
+		{
+			packageStyles.push(generatePackageCssFile(pack, usedPackages.get(pack)));
+		}
+		return packageStyles.concat(registeredStyles);
+	}
+	
 	public function getRegisteredScripts() : Array<String>
 	{
 		return registeredScripts;
 	}
 	
-	public function getRegisteredStyles() : Array<String>
+	/**
+	 * 
+	 * @return package => [ fullTag0, fullTag1, ... ]
+	 */
+	function getUsedPackages() : Hash<Array<String>>
 	{
-		return registeredStyles;
+		var r = new Hash<Array<String>>();
+		for (fullTag in templates.keys())
+		{
+			var pack = getPackageByFullTag(fullTag);
+			if (!r.exists(pack))
+			{
+				r.set(pack, []);
+			}
+			r.get(pack).push(fullTag);
+		}
+		return r;
 	}
 	
-	public function getInternalDataForPageHtml(page:HaqPage) : String
+	public function getSystemInitClientCode() : String
     {
-		// TODO: getInternalDataForPageHtml
-		return '';
+		var s = '';
 		
-/*		var s = '';
+        // TODO: getSystemInitClientCode
 		
-        s += "haquery.client.HaqInternals.componentCollections = [ " + Lambda.map(collections, function(c) return "'" + c + "'").join(', ') + " ];\n";
+		/*
+		s += "haquery.client.HaqInternals.componentCollections = [ " + Lambda.map(collections, function(c) return "'" + c + "'").join(', ') + " ];\n";
         
         var tags = templates.keys();
         s += "haquery.client.HaqInternals.tags = [\n";
@@ -154,12 +179,12 @@ class HaqComponentManager extends haquery.base.HaqComponentManager
         }
         s += "haquery.client.HaqInternals.serializedServerHandlers = \"" + Serializer.run(serverHandlers) + "\";\n";
         s += "haquery.client.HaqInternals.pagePackage = \"" + pageClassName + "\";";
+		*/
 
         return s;
-*/
     }
     
-    function getFullTagComponents(page:HaqPage) : Hash<Array<HaqComponent>>
+    /*function getFullTagComponents(page:HaqPage) : Hash<Array<HaqComponent>>
     {
         var r = new Hash<Array<HaqComponent>>();
         getFullTagComponents_fill(page, r);
@@ -175,7 +200,7 @@ class HaqComponentManager extends haquery.base.HaqComponentManager
             r.get(child.fullTag).push(child);
             getFullTagComponents_fill(child, r);
         }
-    }
+    }*/
 	
     /*function getNameByTag(tag:String) : String
     {

@@ -90,27 +90,56 @@ class ComponentTemplateParser implements ITemplateParser
 		return null;
 	}
 	
-	// TODO: imports
 	function getConfig() : ComponentConfig
 	{
-		var path = getFullPath(fullTag.replace('.', '/') + '/config.xml');
+		var pathParts = fullTag.split(".");
+		pathParts.unshift("");
 		
 		var r = { extend:null, imports:new Array<String>() };
 		
-		if (FileSystem.exists(path))
+		var basePath = ".";
+		for (pathPart in pathParts)
 		{
-			var xml = new HaqXml(File.getContent(path));
-			var nodes = xml.find(">component>extends");
-			if (nodes.length > 0)
+			basePath += pathPart + '/';
+			var c = parseConfig(getFullPath(basePath + "config.xml"));
+			if (c != null)
 			{
-				if (nodes[0].hasAttribute("collection"))
-				{
-					r.extend = nodes[0].getAttribute("collection");
-				}
+				r.extend = c.extend;
+				r.imports = c.imports.concat(r.imports);
 			}
 		}
 		
 		return r;
+	}
+	
+	function parseConfig(path:String) : ComponentConfig
+	{
+		if (FileSystem.exists(path))
+		{
+			var r = { extend:null, imports:new Array<String>() };
+			var xml = new HaqXml(File.getContent(path));
+			
+			var extendNodes = xml.find(">config>extend>component");
+			if (extendNodes.length > 0)
+			{
+				if (extendNodes[0].hasAttribute("package"))
+				{
+					r.extend = extendNodes[0].getAttribute("package");
+				}
+			}
+			
+			var importComponentNodes = xml.find(">config>imports>components");
+			for (importComponentNode in importComponentNodes)
+			{
+				if (importComponentNode.hasAttribute("package"))
+				{
+					r.imports.push(importComponentNode.getAttribute("package"));
+				}
+			}
+			
+			return r;
+		}
+		return null;
 	}
 	
 	public function getDocAndCss() : { doc:HaqXml, css:String }

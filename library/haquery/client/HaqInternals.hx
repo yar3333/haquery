@@ -48,7 +48,7 @@ class HaqInternals
     }
     
     
-    public static var pagePackage : String;
+    public static var pageFullID : String;
 }
 
 #end

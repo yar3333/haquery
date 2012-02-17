@@ -47,7 +47,7 @@ class HaqSystem
             var html : String;
             if (!isPostback)
             {
-                html = renderPage(manager.page, manager);
+                html = renderPage(manager.page);
             }
             else
             {
@@ -61,24 +61,10 @@ class HaqSystem
         Lib.print(html);
     }
     
-    function renderPage(page:HaqPage, manager:HaqComponentManager) : String
+    function renderPage(page:HaqPage) : String
     {
         Lib.profiler.begin('renderPage');
             page.forEachComponent('preRender');
-            
-            if (!Lib.config.disablePageMetaData)
-            {
-                page.insertStyles(manager.getRegisteredStyles());
-                page.insertScripts([ 'haquery/client/jquery.js', 'haquery/client/haquery.js' ].concat(manager.getRegisteredScripts()));
-                page.insertInitInnerBlock(
-                      "<script>\n"
-                    + "    if(typeof haquery=='undefined') alert('haquery.js must be loaded!');\n"
-                    + "    " + manager.getInternalDataForPageHtml(page).replace('\n', '\n    ') + '\n'
-                    + "    haquery.client.Lib.run();\n"
-                    + "</script>"
-                );
-            }
-            
             var html : String = page.render();
         Lib.profiler.end();
 

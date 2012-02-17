@@ -13,7 +13,6 @@ class HaqComponentManager
 	public var templates(default, null) : Hash<Template>;
 	
 	public var page(default, null) : Page;
-	//public var pageTemplate(default, null) : Template;
 	
 	public function new(pageFullTag:String, pageAttr:Hash<String>)
 	{
