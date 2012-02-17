@@ -19,12 +19,14 @@ class Tasks
     var log : hant.Log;
     var hant : hant.Tasks;
 	var exeDir : String;
+	var project : FlashDevelopProject;
     
     public function new(exeDir:String)
     {
         log = new hant.Log(2);
         hant = new hant.Tasks(log);
 		this.exeDir = exeDir.replace('\\', '/');
+		project = new FlashDevelopProject('.', this.exeDir);
     }
     
     function genImports()
@@ -33,7 +35,7 @@ class Tasks
         
         var fo : FileOutput = File.write("src/Imports.hx", false);
         
-        for (path in getClassPaths())
+        for (path in project.classPaths)
         {
             fo.writeString("// " + path + "\n");
             genImportsInner(fo, path);
@@ -123,62 +125,13 @@ class Tasks
         return true;
     }
     
-    public function getClassPaths()
-    {
-        var r : Array<String> = new Array<String>();
-        
-		r.push(exeDir);
-		
-		for (file in FileSystem.readDirectory(''))
-        {
-            if (file.endsWith('.hxproj'))
-            {
-                var xml = Xml.parse(File.getContent(file));
-                var fast = new haxe.xml.Fast(xml.firstElement());
-                if (fast.hasNode.classpaths)
-                {
-                    var classpaths = fast.node.classpaths;
-                    for (elem in classpaths.elements)
-                    {
-                        if (elem.name == 'class' && elem.has.path)
-                        {
-                            r.push(elem.att.path.replace('\\', '/'));
-                        }
-                    }
-                }
-            }
-        }
-        return r;
-    }
 	
-	function getBinPath() : String
-	{
-		for (file in FileSystem.readDirectory(''))
-		{
-			if (file.endsWith(".hxproj"))
-			{
-				var xml = Xml.parse(File.getContent(file));
-				var fast = new haxe.xml.Fast(xml.firstElement());
-				if (fast.hasNode.output && fast.node.output.hasNode.movie)
-				{
-					var movie = fast.node.output.node.movie;
-					if (movie.has.path)
-					{
-						return movie.att.path.replace('\\', '/');
-					}
-				}
-			}
-		}
-		
-		return "bin";
-	}
 	
     // -------------------------------------------------------------------------------
-    
 	
 	function buildJs()
     {
-		var clientPath = getBinPath() + '/haquery/client';
+		var clientPath = project.binPath + '/haquery/client';
 		
 		log.start("Build client to '" + clientPath + "/haquery.js'");
         
@@ -190,7 +143,7 @@ class Tasks
 		hant.createDirectory(clientPath);
         
         var params = new Array<String>();
-        for (path in getClassPaths())
+        for (path in project.classPaths)
         {
             params.push('-cp'); params.push(path);
         }
@@ -243,7 +196,7 @@ class Tasks
 		var r = new Hash<Hash<String>>();
 		
 		// TODO: collection findind
-		for (classPath in getClassPaths())
+		for (classPath in project.classPaths)
 		{
 			for (collection in FileSystem.readDirectory(classPath))
 			{
@@ -254,8 +207,7 @@ class Tasks
 					{
 						if (FileSystem.isDirectory(collectionPath + '/' + tag))
 						{
-							// TODO: NEXT LINE NOT CORRECT
-							var parser = new HaqTemplateParser(getClassPaths(), HaqDefines.folders.components + "." + collection + "." + tag);
+							var parser = new HaqTemplateParser(project.classPaths, HaqDefines.folders.components + "." + collection + "." + tag);
 							if (!r.exists(collection)) r.set(collection, new Hash<String>());
 							r.get(collection).set(tag, parser.getExtend());
 						}
@@ -295,7 +247,7 @@ class Tasks
     {
         log.start("Generate template related mapping classes");
         
-        haquery.tools.trm.TrmGenerator.run();
+        haquery.tools.trm.TrmGenerator.run(project.classPaths);
         
         log.finishOk();
     }
@@ -314,7 +266,7 @@ class Tasks
 	
 	function saveLibFolder()
 	{
-		var binPath = getBinPath();
+		var binPath = project.binPath;
 
 		log.start("Save " + binPath + "/lib folder");
 
@@ -329,7 +281,7 @@ class Tasks
 
 	function loadLibFolder()
 	{
-		var binPath = getBinPath();
+		var binPath = project.binPath;
 		
 		log.start("Load file times to " + binPath + "/lib");
 
@@ -352,9 +304,9 @@ class Tasks
 			buildJs();
 		}
         
-        for (path in getClassPaths())
+        for (path in project.classPaths)
         {
-            hant.copyFolderContent(path, getBinPath(), !skipComponents ? isSupportFile : isSupportFileWithoutComponents);
+            hant.copyFolderContent(path, project.binPath, !skipComponents ? isSupportFile : isSupportFileWithoutComponents);
         }
 		
 		loadLibFolder();

@@ -19,9 +19,9 @@ class TrmGenerator
 	static inline var MIN_DATE = new Date(2000, 0, 0, 0, 0, 0);
 	static var isFirstPrint = true; 
 	
-	public static function run()
+	public static function run(classPaths:Array<String>)
     {
-		var manager = new HaqTemplateManager();
+		var manager = new HaqTemplateManager(classPaths);
 		
 		for (classPath in TrmTools.getClassPaths())
 		{
