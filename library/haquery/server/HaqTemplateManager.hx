@@ -1,16 +1,18 @@
 package haquery.server;
 
+import haxe.Serializer;
+
 import haquery.server.HaqComponent;
+import haquery.server.HaqTemplate;
 import haquery.server.HaqXml;
 import haquery.server.Lib;
 import haquery.server.HaqTemplateParser;
-import haxe.Serializer;
 import haquery.server.FileSystem;
 
 using haquery.StringTools;
 using haquery.HashTools;
 
-class HaqComponentManager extends haquery.base.HaqComponentManager
+class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 {
     static var baseComponentFields : List<String> = null;
 	
@@ -42,7 +44,7 @@ class HaqComponentManager extends haquery.base.HaqComponentManager
 	
 	public function createComponent(parent:HaqComponent, tag:String, id:String, attr:Hash<String>, parentNode:HaqXmlNodeElement) : HaqComponent
 	{
-		var template = findTemplate(parent, tag);
+		var template = findTemplate(parent.fullTag, tag);
 		return newComponent(template.fullTag, parent, template.serverClass, id, template.doc, attr, parentNode);
 	}
 	

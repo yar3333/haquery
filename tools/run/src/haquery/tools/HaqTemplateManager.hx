@@ -1,11 +1,6 @@
 package haquery.tools;
 
-class HaqTemplateManager 
+class HaqTemplateManager extends haquery.base.HaqTemplateManager<haquery.tools.HaqTemplate>
 {
-
-	public function new() 
-	{
-		
-	}
 	
 }

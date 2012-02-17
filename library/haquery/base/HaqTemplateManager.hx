@@ -1,18 +1,12 @@
 package haquery.base;
-
-#if (!tools)
-	#if (php || neko)
-		typedef Template = haquery.server.HaqTemplate
-		typedef Page = haquery.server.HaqPage
-	#elseif js
-		typedef Template = haquery.client.HaqTemplate
-		typedef Page = haquery.client.HaqPage
-	#end
-#else
-	typedef Template = haquery.tools.HaqTemplate
+	
+#if (php || neko)
+typedef Page = haquery.server.HaqPage
+#elseif js
+typedef Page = haquery.client.HaqPage
 #end
 
-class HaqTemplateManager 
+class HaqTemplateManager<Template:HaqTemplate>
 {
 	public var templates(default, null) : Hash<Template>;
 	
@@ -42,14 +36,14 @@ class HaqTemplateManager
 		return null;
 	}
 	
-	public function findTemplate(parent:HaqComponent, tag:String) : Template
+	public function findTemplate(parentFullTag:String, tag:String) : Template
 	{
-		var packageName = getPackageByFullTag(parent.fullTag);
+		var packageName = getPackageByFullTag(parentFullTag);
 		
 		var template = getTemplate(packageName + '.' + tag);
 		if (template == null)
 		{
-			for (importPackage in getTemplate(parent.fullTag).imports)
+			for (importPackage in getTemplate(parentFullTag).imports)
 			{
 				template = getTemplate(importPackage + '.' + tag);
 				if (template != null)

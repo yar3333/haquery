@@ -2,12 +2,12 @@ package haquery.client;
 
 import js.Lib;
 import haquery.client.HaqComponent;
-import haquery.client.HaqTemplates;
+import haquery.client.HaqTemplate;
 
 using haquery.StringTools;
 
 // TODO: client HaqTemplateManager
-class HaqTemplateManager extends haquery.base.HaqTemplateManager
+class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 {
 	var componentsFolders : Array<String>;
 	var tag_elemID_serverHandlers : Hash<Hash<Array<String>>>;
