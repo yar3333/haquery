@@ -3,6 +3,8 @@ package haquery.tools;
 import haquery.server.FileSystem;
 import haquery.tools.HaqTemplate;
 
+using haquery.HashTools;
+
 class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 {
 	var classPaths : Array<String>;
@@ -31,5 +33,16 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 			i--;
 		}
 		return null;
+	}
+	
+	public function getStaticTemplateDataForJs()
+	{
+		var r = "\nhaquery.client.HaqInternals.templates = haquery.HashTools.hashify({\n";
+		r += Lambda.map(templates.keysIterable(), function(fullTag) {
+			var template = templates.get(fullTag);
+			var importsParam = "[" + Lambda.map(template.imports, function(s) return "'" + s + "'").join(",") + "]";
+			return "'" + fullTag + "' : new haquery.client.HaqTemplate(" + importsParam + ", '" + template.clientClassName + "')";
+		}).join(",\n");
+		r += "\n});\n"
 	}
 }

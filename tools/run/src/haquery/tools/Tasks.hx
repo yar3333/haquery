@@ -156,8 +156,9 @@ class Tasks
         
 		if (FileSystem.exists(clientPath + "/haquery.js"))
 		{
+			var manager = new HaqTemplateManager(project.classPaths);
 			var fapp = File.append(clientPath + "/haquery.js", false);
-			fapp.writeString(getComponentEntendsCollectionsForInternalHtml());
+			fapp.writeString(manager.getStaticTemplateDataForJs());
 			fapp.close();
 		}
 		
@@ -171,7 +172,7 @@ class Tasks
 		log.finishOk();
     }
 	
-	function getComponentEntendsCollectionsForInternalHtml() : String
+	/*function getComponentEntendsCollectionsForInternalHtml() : String
 	{
 		var componentEntendsCollections = getComponentEntendsCollections();
 		
@@ -191,7 +192,7 @@ class Tasks
 	/**
 	 * @return collection -> tag -> extendsCollection
 	 */
-	function getComponentEntendsCollections() : Hash<Hash<String>>
+	/*function getComponentEntendsCollections() : Hash<Hash<String>>
 	{
 		var r = new Hash<Hash<String>>();
 		
@@ -217,7 +218,7 @@ class Tasks
 		}
 		
 		return r;
-	}
+	}*/
 	
     public function genOrm(databaseConnectionString:String, destBasePath:String)
     {

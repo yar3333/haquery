@@ -8,9 +8,7 @@ import js.Dom;
 
 class HaqInternals 
 {
-    //public static var componentClassNames : Hash<String>;
-	public static var componentCollections : Array<String>;
-	public static var componentEntendsCollections : Hash<Hash<String>>;
+	public static var templates(default, null) : Hash<HaqTemplate>;
 	
     private static var tags : Array<Array<String>>;
 	public static var id_tag(id_tag_getter, null) : Hash<String>;
@@ -49,8 +47,10 @@ class HaqInternals
         return serverHandlers_cached;
     }
     
-    
     public static var pageFullID : String;
+	
+	
+	
 }
 
 #end

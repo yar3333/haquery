@@ -13,6 +13,7 @@ import haquery.tools.HaqTemplateManager;
 import haquery.tools.trm.TrmHaxeClass;
 
 using haquery.StringTools;
+using haquery.HashTools;
 
 class TrmGenerator
 {
@@ -23,18 +24,9 @@ class TrmGenerator
     {
 		var manager = new HaqTemplateManager(classPaths);
 		
-		for (classPath in TrmTools.getClassPaths())
+		for (fullTag in manager.templates.keys())
 		{
-			if (FileSystem.isDirectory(classPath + HaqDefines.folders.components))
-			{
-				for (collection in FileSystem.readDirectory(classPath + HaqDefines.folders.components))
-				{
-					for (tag in FileSystem.readDirectory(classPath + HaqDefines.folders.components + '/' + collection))
-					{
-						makeForComponent(classPath, manager, HaqDefines.folders.components + "." + collection + "." + tag);
-					}
-				}
-			}
+			makeForComponent(classPath, manager, fullTag);
 		}
     }
 	
@@ -109,6 +101,7 @@ class TrmGenerator
 		return null;
 	}
 	
+	// TODO: rewrite to HaqTemplateParser
 	static function getComponentData(fullTag:String) : { templateText:String, superClass:String, lastMod:Date }
 	{
 		//trace("\ngetComponentData('" + componentsPackage + "', '" + componentName + "')");
