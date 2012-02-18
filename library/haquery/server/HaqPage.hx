@@ -38,10 +38,10 @@ class HaqPage extends HaqComponent
 		if (!disableSystemHtmlInserts)
 		{
 			insertStyles(manager.getRegisteredStyles());
-			insertScripts([ 'haquery/client/jquery.js', 'haquery/client/haquery.js' ].concat(manager.getRegisteredScripts()));
+			insertScripts([ 'haquery/client/jquery.js', HaqDefines.haqueryClientFilePath ].concat(manager.getRegisteredScripts()));
 			insertInitBlock(
 				  "<script>\n"
-				+ "    if(typeof haquery=='undefined') alert('haquery.js must be loaded!');\n"
+				+ "    if(typeof haquery=='undefined') alert('" + HaqDefines.haqueryClientFilePath + " must be loaded!');\n"
 				+ "    " + manager.getSystemInitClientCode().replace('\n', '\n    ') + '\n'
 				+ "    haquery.client.Lib.run();\n"
 				+ "</script>"

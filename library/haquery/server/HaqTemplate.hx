@@ -11,6 +11,9 @@ class HaqTemplate extends haquery.base.HaqTemplate
 	public var serverClass(default, null) : Class<HaqComponent>;
 	public var serverHandlers(default, null) : Hash<Array<String>>;
 	
+	public var lastTemplateDocModified : Date;
+	public var lastServerCodeModified : Date;
+	public var lastClientCodeModified : Date;
 	
 	public function new(fullTag:String) 
 	{

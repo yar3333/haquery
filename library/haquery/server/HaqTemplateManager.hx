@@ -32,9 +32,18 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 	
 	public function new()
 	{
+		super();
+		
 		registeredScripts = [];
 		registeredStyles = [];
-		super();
+		
+		if (FileSystem.exists(HaqDefines.haqueryClientFilePath))
+		{
+			// TODO: sure, what this is be done one time
+			var fapp = File.append(HaqDefines.haqueryClientFilePath, false);
+			fapp.writeString(getStaticTemplateDataForHaqueryClientFile());
+			fapp.close();
+		}
 	}
 	
 	public function createPage(pageFullTag:String, attr:Hash<String>) : HaqPage
@@ -152,73 +161,6 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		return r;
 	}
 	
-	public function getSystemInitClientCode() : String
-    {
-		var s = '';
-		
-        // TODO: getSystemInitClientCode
-		
-		/*
-		s += "haquery.client.HaqInternals.componentCollections = [ " + Lambda.map(collections, function(c) return "'" + c + "'").join(', ') + " ];\n";
-        
-        var tags = templates.keys();
-        s += "haquery.client.HaqInternals.tags = [\n";
-        var tagComponents = getTagComponents(page);
-        for (tag in tagComponents.keys())
-        {
-            var components = tagComponents.get(tag);
-            var visibledComponents =  Lambda.filter(components, function (x) {
-                while (x != null)
-                {
-                    if (!x.visible) return false;
-                    x = x.parent;
-                }
-                return true;
-            });
-			var ids =  Lambda.map(visibledComponents, function(x) { return x.fullID; } ).join(',');
-			s += "    ['" + tag + "', '" + ids + "'],\n";
-        }
-        s = s.rtrim("\n,") + "\n];\n";
-		
-		var pageClassName = Type.getClassName(Type.getClass(page));
-		var pageTemplate = new HaqTemplate(new PageTemplateParser(pageClassName));
-		var serverHandlers = new Hash<Hash<Array<String>>>();
-        serverHandlers.set('', pageTemplate.serverHandlers);
-        for (tag in tags)
-        {
-            serverHandlers.set(tag, templates.get(tag).serverHandlers);
-        }
-        s += "haquery.client.HaqInternals.serializedServerHandlers = \"" + Serializer.run(serverHandlers) + "\";\n";
-        s += "haquery.client.HaqInternals.pagePackage = \"" + pageClassName + "\";";
-		*/
-
-        return s;
-    }
-    
-    /*function getFullTagComponents(page:HaqPage) : Hash<Array<HaqComponent>>
-    {
-        var r = new Hash<Array<HaqComponent>>();
-        getFullTagComponents_fill(page, r);
-        return r;
-    }
-    
-    function getFullTagComponents_fill(component:HaqComponent, r:Hash<Array<HaqComponent>>)
-    {
-        for (child in component.components)
-        {
-            var fullTag = child.fullTag;
-            if (!r.exists(fullTag)) r.set(fullTag, new Array<HaqComponent>());
-            r.get(child.fullTag).push(child);
-            getFullTagComponents_fill(child, r);
-        }
-    }*/
-	
-    /*function getNameByTag(tag:String) : String
-    {
-        if (!tag.startsWith('haq:')) throw "Component tag '" + tag + "' must started with 'haq:' prefix.";
-		return tag.substr("haq:".length).toLowerCase().split('-').join('_');
-    }*/
-	
 	public function createChildComponents(parent:HaqComponent, baseNode:HaqXmlNodeElement)
     {
 		var i = 0;
@@ -253,7 +195,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
         return r;
     }
 
-    public function prepareDocToRender(prefixID:String, baseNode:HaqXmlNodeElement) : Void
+	public function prepareDocToRender(prefixID:String, baseNode:HaqXmlNodeElement) : Void
     {
 		var i = 0;
 		while (i < untyped __call__('count', baseNode.children))
@@ -311,4 +253,53 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 			i++;
         }
     }
+	
+	public function getSystemInitClientCode() : String
+    {
+		var s = '';
+		
+        // TODO: getSystemInitClientCode
+		
+		/*
+		s += "haquery.client.HaqInternals.componentCollections = [ " + Lambda.map(collections, function(c) return "'" + c + "'").join(', ') + " ];\n";
+        
+        var tags = templates.keys();
+        s += "haquery.client.HaqInternals.tags = [\n";
+        var tagComponents = getTagComponents(page);
+        for (tag in tagComponents.keys())
+        {
+            var components = tagComponents.get(tag);
+            var visibledComponents =  Lambda.filter(components, function (x) {
+                while (x != null)
+                {
+                    if (!x.visible) return false;
+                    x = x.parent;
+                }
+                return true;
+            });
+			var ids =  Lambda.map(visibledComponents, function(x) { return x.fullID; } ).join(',');
+			s += "    ['" + tag + "', '" + ids + "'],\n";
+        }
+        s = s.rtrim("\n,") + "\n];\n";
+		
+		var pageClassName = Type.getClassName(Type.getClass(page));
+		var pageTemplate = new HaqTemplate(new PageTemplateParser(pageClassName));
+		var serverHandlers = new Hash<Hash<Array<String>>>();
+        serverHandlers.set('', pageTemplate.serverHandlers);
+        for (tag in tags)
+        {
+            serverHandlers.set(tag, templates.get(tag).serverHandlers);
+        }
+        s += "haquery.client.HaqInternals.serializedServerHandlers = \"" + Serializer.run(serverHandlers) + "\";\n";
+        s += "haquery.client.HaqInternals.pagePackage = \"" + pageClassName + "\";";
+		*/
+
+        return s;
+    }
+	
+	function getStaticTemplateDataForHaqueryClientFile() : String
+	{
+		// TODO: getStaticTemplateDataForHaqueryClientFile()
+		return "";
+	}
 }

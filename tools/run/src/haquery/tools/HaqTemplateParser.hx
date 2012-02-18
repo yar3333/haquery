@@ -1,12 +1,15 @@
 package haquery.tools;
 
 import haquery.server.FileSystem;
+import haquery.server.io.File;
 import haquery.server.HaqDefines;
 
 using StringTools;
 
 class HaqTemplateParser extends haquery.server.HaqTemplateParser
 {
+	static inline var MIN_DATE = new Date(2000, 0, 0, 0, 0, 0);
+	
 	var classPaths : Array<String>;
 	
 	public function new(classPaths:Array<String>, fullTag:String)
@@ -35,12 +38,22 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 		return config.extend;
 	}
 	
-	function getClassName(shortClassName:String)
+	function getLocalClassName(shortClassName:String) : String
 	{
 		var fullClassName = fullTag + "." + shortClassName;
 		if (getFullPath(fullClassName.replace('.', '/') + ".hx") != null)
 		{
 			return fullClassName;
+		}
+		return null;
+	}
+	
+	function getClassName(shortClassName:String)
+	{
+		var localClassName = getLocalClassName(shortClassName);
+		if (localClassName != null)
+		{
+			return localClassName;
 		}
 		
 		if (config.extend != null && config.extend != "")
@@ -63,15 +76,45 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 		return r != null && r != ""  ? r : "haquery.client.HaqComponent";
 	}
 	
-	public function getSuperTemplateClassName()
+	public function getTrmSuperClassName()
 	{
-		// TODO: getSuperTemplateClassName
+		if (config.extend != null && config.extend != "")
+		{
+			return new HaqTemplateParser(classPaths, config.extend).getClassName("Template");
+		}
 		return null;
 	}
 	
 	public function getDocTextAndLastMod() : { text:String, lastMod:Date }
 	{
-		// TODO: getDocTextAndLastMod
-		return null;
+		var docFilePath = getFullPath(fullTag.replace(".", "/") + "/template.html");
+		var text = docFilePath != null ? File.getContent(docFilePath) : "";
+		var lastMod = docFilePath != null ? FileSystem.stat(docFilePath).mtime : MIN_DATE;
+		if (config.extend != null && config.extend != "")
+		{
+			var parentDocTextAndLastMod = new HaqTemplateParser(classPaths, config.extend).getDocTextAndLastMod();
+			text = parentDocTextAndLastMod.text + text;
+			if (parentDocTextAndLastMod.lastMod.getTime() > lastMod.getTime())
+			{
+				lastMod = parentDocTextAndLastMod.lastMod;
+			}
+			
+		}
+		return { text:text, lastMod:lastMod };
+	}
+	
+	public function hasLocalServerClass() : Bool
+	{
+		return getLocalClassName("Server") != null;
+	}
+	
+	public function hasLocalClientClass() : Bool
+	{
+		return getLocalClassName("Client") != null;
+	}
+	
+	public function getTrmFilePath() : String
+	{
+		return getFullPath(fullTag.replace('.', '/')) + "/Template.hx";
 	}
 }

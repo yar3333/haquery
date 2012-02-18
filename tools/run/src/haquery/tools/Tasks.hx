@@ -154,14 +154,6 @@ class Tasks
         params.push('-debug');
         hant.run("haxe", params);
         
-		if (FileSystem.exists(clientPath + "/haquery.js"))
-		{
-			var manager = new HaqTemplateManager(project.classPaths);
-			var fapp = File.append(clientPath + "/haquery.js", false);
-			fapp.writeString(manager.getStaticTemplateDataForJs());
-			fapp.close();
-		}
-		
 		if (FileSystem.exists(clientPath + "/haquery.js")
 		 && FileSystem.exists(clientPath + "/haquery.js.old"))
 		{
