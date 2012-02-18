@@ -23,4 +23,8 @@ class HaqDefines
 		'keypress', 'keydown', 'keyup', 
 		'focus', 'focusin', 'focusout',
     ];
+	
+	#if (php || neko)
+	public static var haqueryClientFilePath = "haquery/client/haquery.js";
+	#end
 }

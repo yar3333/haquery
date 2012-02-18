@@ -35,7 +35,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		return null;
 	}
 	
-	public function getStaticTemplateDataForJs()
+	public function getStaticTemplateDataForJs() : String
 	{
 		var r = "\nhaquery.client.HaqInternals.templates = haquery.HashTools.hashify({\n";
 		r += Lambda.map(templates.keysIterable(), function(fullTag) {
@@ -43,6 +43,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 			var importsParam = "[" + Lambda.map(template.imports, function(s) return "'" + s + "'").join(",") + "]";
 			return "'" + fullTag + "' : new haquery.client.HaqTemplate(" + importsParam + ", '" + template.clientClassName + "')";
 		}).join(",\n");
-		r += "\n});\n"
+		r += "\n});\n";
+		return r;
 	}
 }

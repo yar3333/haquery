@@ -17,10 +17,16 @@ class HaqTemplateManager<Template:HaqTemplate>
 	public function new()
 	{
 		templates = new Hash<Template>();
-		fillTemplates(HaqDefines.folders.pages);
+		fillTemplates();
 	}
 	
-	function fillTemplates(pack:String)
+	#if (php || neko)
+	function fillTemplates()
+	{
+		fillTemplatesBySearch(HaqDefines.folders.pages);
+	}
+	
+	function fillTemplatesBySearch(pack:String)
 	{
 		var path = getFullPath(pack.replace(".", "/"));
 		for (file in FileSystem.readDirectory(path))
@@ -33,10 +39,16 @@ class HaqTemplateManager<Template:HaqTemplate>
 				{
 					templates.set(fullTag, template);
 				}
-				fillTemplates(fullTag);
+				fillTemplatesBySearch(fullTag);
 			}
 		}
 	}
+	#elseif js
+	function fillTemplates()
+	{
+		throw "This method must be overriden.";
+	}
+	#end
 	
 	function parseTemplate(fullTag:String) : Template
 	{
