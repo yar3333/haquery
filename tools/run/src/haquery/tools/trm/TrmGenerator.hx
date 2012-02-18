@@ -9,8 +9,7 @@ import haquery.server.Lib;
 import haquery.tools.HaqTemplate;
 import haquery.tools.HaqTemplateParser;
 import haquery.tools.HaqTemplateManager;
-
-import haquery.tools.trm.TrmHaxeClass;
+import haquery.tools.HaxeClass;
 
 using haquery.StringTools;
 using haquery.HashTools;
@@ -53,9 +52,9 @@ class TrmGenerator
 		{
 			if (!FileSystem.exists(template.trmFilePath) || FileSystem.stat(template.trmFilePath).mtime.getTime() < template.docLastMod.getTime())
 			{
-				var haxeClass = new TrmHaxeClass(fullTag + ".Template", template.trmSuperClassName);
+				var haxeClass = new HaxeClass(fullTag + ".Template", template.trmSuperClassName);
 				
-				haxeClass.addVar(TrmTools.createVar("component", "#if php haquery.server.HaqComponent #else haquery.client.HaqComponent #end"), true);
+				haxeClass.addVar(createVar("component", "#if php haquery.server.HaqComponent #else haquery.client.HaqComponent #end"), true);
 				
 				var doc = new HaqXml(template.docText);
 				var templateVars = getTemplateVars(fullTag, doc);
@@ -75,7 +74,7 @@ class TrmGenerator
 					
 					haxeClass.addMethod(
 						 "new"
-						,[ TrmTools.createVar("component", "#if php haquery.server.HaqComponent #else haquery.client.HaqComponent #end") ]
+						,[ createVar("component", "#if php haquery.server.HaqComponent #else haquery.client.HaqComponent #end") ]
 						,"Void"
 						,"this.component = component;"
 					);
@@ -147,9 +146,9 @@ class TrmGenerator
 		};
 	}*/
 	
-	function getTemplateVars(fullTag:String, node:HaqXmlNodeElement) : Array<TrmHaxeVarGetter>
+	function getTemplateVars(fullTag:String, node:HaqXmlNodeElement) : Array<HaxeVarGetter>
 	{
-		var r : Array<TrmHaxeVarGetter> = [];
+		var r : Array<HaxeVarGetter> = [];
 		var children = node.children;
 		for (child in children)
 		{
@@ -166,11 +165,20 @@ class TrmGenerator
 					body = "return cast component.components.get('" + componentID + "');";
 				}
 				
-				r.push({ name:componentID, type:type, body:body });
+				r.push({ haxeName:componentID, haxeType:type, haxeBody:body });
 			}
 			
 			r = r.concat(getTemplateVars(fullTag, child));
 		}
 		return r;
 	}
+	
+	static function createVar(name:String, type:String, defVal:String = null) : HaxeVar
+	{
+		return {
+			 haxeName : name
+			,haxeType : type
+			,haxeDefVal : defVal
+		};
+	}	
 }

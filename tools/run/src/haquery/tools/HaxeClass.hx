@@ -1,21 +1,20 @@
-package haquery.tools.trm;
+package haquery.tools;
 
 using haquery.StringTools;
 
-typedef TrmHaxeVar = {
-	var name : String;
-	var type : String;
-	var defVal : String;
+typedef HaxeVar = {
+	var haxeName : String;
+	var haxeType : String;
+	var haxeDefVal : String;
 }
 
-typedef TrmHaxeVarGetter = {
-	var name : String;
-	var type : String;
-	var body:String;
+typedef HaxeVarGetter = {
+	var haxeName : String;
+	var haxeType : String;
+	var haxeBody:String;
 }
 
-
-class TrmHaxeClass
+class HaxeClass
 {
 	var fullClassName : String;
 	var baseFullClassName : String;
@@ -40,44 +39,44 @@ class TrmHaxeClass
 		imports.push('import ' + packageName + ';');
 	}
 	
-	public function addVar(v:TrmHaxeVar, isPrivate=false, isStatic=false) : Void
+	public function addVar(v:HaxeVar, isPrivate=false, isStatic=false) : Void
 	{
 		var s = (isPrivate ? '' : 'public ')
 			  + (isStatic ? 'static ' : '')
-			  + 'var ' + v.name + ' : ' + v.type
-			  + (isStatic && v.defVal != null ? ' = ' + v.defVal : '')
+			  + 'var ' + v.haxeName + ' : ' + v.haxeType
+			  + (isStatic && v.haxeDefVal != null ? ' = ' + v.haxeDefVal : '')
 			  + ";";
 		vars.push(s);
  	}
 	
-	public function addVarGetter(v:TrmHaxeVarGetter, isPrivate = false, isStatic = false, isInline = false) : Void
+	public function addVarGetter(v:HaxeVarGetter, isPrivate = false, isStatic = false, isInline = false) : Void
 	{
 		var s = "\n\t"
 		      + (isPrivate ? '' : 'public ')
 			  + (isStatic ? 'static ' : '')
-			  + 'var ' + v.name + '(' + v.name + '_getter, null)' + ' : ' + v.type
+			  + 'var ' + v.haxeName + '(' + v.haxeName + '_getter, null)' + ' : ' + v.haxeType
 			  + ";\n";
 		
 		s += (isInline ? '\tinline ' : '\t')
-		   + "function " + v.name + "_getter() : " + v.type + "\n"
+		   + "function " + v.haxeName + "_getter() : " + v.haxeType + "\n"
 		   + "\t{\n"
-		   + TrmTools.indent(v.body.trim(), '\t\t') + '\n'
+		   + indent(v.haxeBody.trim(), '\t\t') + '\n'
 		   + "\t}";
 		
 		vars.push(s);
 	}
 	
-	public function addMethod(name:String, vars:Iterable<TrmHaxeVar>, retType:String, body:String, isPrivate=false, isStatic=false) : Void
+	public function addMethod(name:String, vars:Iterable<HaxeVar>, retType:String, body:String, isPrivate=false, isStatic=false) : Void
 	{
 		var header = 
 				(isPrivate ? '' : 'public ')
 			  + (isStatic ? 'static  ' : '')
 			  + 'function ' + name + '('
-			  + Lambda.map(vars, function(v:TrmHaxeVar) { return v.name + ":" + v.type + (v.defVal != null ? '=' + v.defVal : ''); } ).join(', ')
+			  + Lambda.map(vars, function(v:HaxeVar) { return v.haxeName + ":" + v.haxeType + (v.haxeDefVal != null ? '=' + v.haxeDefVal : ''); } ).join(', ')
 			  + ') : ' + retType;
 		var s = header + '\n'
 			  + '\t{\n'
-			  + TrmTools.indent(body.trim(), '\t\t') + '\n'
+			  + indent(body.trim(), '\t\t') + '\n'
 			  + '\t}';
 		methods.push(s);
  	}
@@ -89,7 +88,7 @@ class TrmHaxeClass
 	
 	public function toString() : String
 	{
-		var clas = TrmTools.splitFullClassName(fullClassName);
+		var clas = splitFullClassName(fullClassName);
 		
 		var s = 'package ' + clas.packageName + ';\n'
 			  + '\n'
@@ -101,5 +100,25 @@ class TrmHaxeClass
 			  + (customs.length > 0 ? '\t' + customs.join('\n\n\t') + '\n' : '')
 			  + '}';
 		return s;
+	}
+	
+	function indent(text:String, ind = "\t") : String
+    {
+        if (text == '') return '';
+		return ind + text.replace("\n", "\n" + ind);
+    }
+	
+	function splitFullClassName(fullClassName:String) : { packageName:String, className:String }
+	{
+		var packageName = '';
+		var className = fullClassName;
+		
+		if (fullClassName.lastIndexOf('.') != -1)
+		{
+			packageName = fullClassName.substr(0, fullClassName.lastIndexOf('.'));
+			className = fullClassName.substr(fullClassName.lastIndexOf('.') + 1);
+		}
+		
+		return { packageName:packageName, className:className };
 	}
 }
