@@ -32,11 +32,11 @@ class HaqTemplateManager<Template:HaqTemplate>
 		var path = getFullPath(pack.replace(".", "/")) + '/';
 		for (file in FileSystem.readDirectory(path))
 		{
-			if (file != "support" && FileSystem.isDirectory(path + file))
+			if (file != HaqDefines.folders.support && FileSystem.isDirectory(path + file))
 			{
 				var fullTag = pack + "." + file;
 				
-				if (!templates.exists(fullTag))
+				if (!templates.exists(fullTag) && isTemplateExists(fullTag))
 				{
 					var template = parseTemplate(fullTag);
 					if (template != null)
@@ -55,6 +55,23 @@ class HaqTemplateManager<Template:HaqTemplate>
 				}
 			}
 		}
+	}
+	
+	function isTemplateExists(fullTag:String)
+	{
+		var localPath = fullTag.replace(".", "/");
+		var path = getFullPath(localPath);
+		if (FileSystem.exists(path) && FileSystem.isDirectory(path))
+		{
+			if (
+				FileSystem.exists(getFullPath(localPath + '/template.html'))
+			 || FileSystem.exists(getFullPath(localPath + '/Client.hx'))
+			 || FileSystem.exists(getFullPath(localPath + '/Server.hx'))
+			) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	function parseTemplate(fullTag:String) : Template

@@ -3,6 +3,7 @@ package haquery.tools;
 import haquery.server.FileSystem;
 import haquery.tools.HaqTemplate;
 
+using haquery.StringTools;
 using haquery.HashTools;
 
 class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
