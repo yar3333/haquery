@@ -174,15 +174,6 @@ class Tasks
         log.finishOk();
     }
     
-    function genTrm()
-    {
-        log.start("Generate template related mapping classes");
-        
-        TrmGenerator.run(project.classPaths);
-        
-        log.finishOk();
-    }
-    
 	public function preBuild()
     {
         log.start("Do pre-build step");
@@ -191,6 +182,15 @@ class Tasks
 		
 		genImports();
 		try { saveLibFolder(); } catch (e:Dynamic) { }
+        
+        log.finishOk();
+    }
+	
+    public function genTrm()
+    {
+        log.start("Generate template related mapping classes");
+        
+        TrmGenerator.run(project.classPaths);
         
         log.finishOk();
     }
