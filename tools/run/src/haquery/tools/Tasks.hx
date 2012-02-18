@@ -9,24 +9,29 @@ import neko.FileSystem;
 import neko.zip.Uncompress;
 
 import haquery.server.db.HaqDb;
-import haquery.tools.orm.OrmGenerator;
 import haquery.server.HaqDefines;
+import haquery.tools.orm.OrmGenerator;
+import haquery.tools.trm.TrmGenerator;
 
 using haquery.StringTools;
 
 class Tasks 
 {
-    var log : hant.Log;
-    var hant : hant.Tasks;
 	var exeDir : String;
+    
+	var log : Log;
+    var hant : Hant;
 	var project : FlashDevelopProject;
+	var componentFileKind : ComponentFileKind;
     
     public function new(exeDir:String)
     {
-        log = new hant.Log(2);
-        hant = new hant.Tasks(log);
 		this.exeDir = exeDir.replace('\\', '/');
+        
+		log = new Log(2);
+        hant = new Hant(log, this.exeDir);
 		project = new FlashDevelopProject('.', this.exeDir);
+		componentFileKind = new ComponentFileKind(this.exeDir);
     }
     
     function genImports()
@@ -38,7 +43,11 @@ class Tasks
         for (path in project.classPaths)
         {
             fo.writeString("// " + path + "\n");
-            genImportsInner(fo, path);
+			fo.writeString("#if php\n");
+			fo.writeString(Lambda.map(hant.findFiles(path, componentFileKind.isServerFile), callback(file2import, path)).join('\n'));
+			fo.writeString("\n#else\n");
+			fo.writeString(Lambda.map(hant.findFiles(path, componentFileKind.isClientFile), callback(file2import, path)).join('\n'));
+			fo.writeString("\n#end\n");
             fo.writeString("\n");
         }
         
@@ -47,65 +56,6 @@ class Tasks
         log.finishOk();
     }
     
-    function genImportsInner(fo:FileOutput, srcPath:String)
-    {
-        var serverImports = hant.findFiles(srcPath, isServerFile);
-        var clientImports = hant.findFiles(srcPath, isClientFile);
-        
-        fo.writeString("#if php\n");
-        fo.writeString(Lambda.map(serverImports, callback(file2import, srcPath)).join('\n'));
-        fo.writeString("\n#else\n");
-        fo.writeString(Lambda.map(clientImports, callback(file2import, srcPath)).join('\n'));
-        fo.writeString("\n#end\n");
-    }
-    
-    function isServerFile(path:String)
-    {
-        if (path == exeDir + "tools") return false;
-		
-		if (FileSystem.isDirectory(path))
-        {
-            return !path.endsWith('.svn');
-        }
-        return path.endsWith('/Server.hx') || path.endsWith('/Bootstrap.hx');
-    }
-    
-    function isClientFile(path:String)
-    {
-		if (path == exeDir + "tools") return false;
-		
-        if (FileSystem.isDirectory(path))
-        {
-            return !path.endsWith('.svn');
-        }
-        return path.endsWith('/Client.hx');
-    }
-    
-    function isSupportFile(path:String)
-    {
-		if (path == exeDir + "tools"
-		 || path == exeDir + "run.n"
-		 || path == exeDir + "restorefiletime.exe"
-		 || path == exeDir + "readme.txt"
-		 || path == exeDir + "haxelib.xml"
-		) return false;
-		
-		if (FileSystem.isDirectory(path))
-		{
-			return !path.endsWith(".svn");
-		}
-		return !path.endsWith(".hx") && !path.endsWith(".hxproj");
-    }
-    
-	function isSupportFileWithoutComponents(path:String) : Bool
-	{
-		if (isSupportFile(path))
-		{
-			return path != exeDir + "haquery/components";
-		}
-		return false;
-	}
-	
     function file2import(base:String, file:String) : String
     {
         if (file.startsWith(base))
@@ -115,19 +65,6 @@ class Tasks
         
         return "import " + Path.withoutExtension(file).replace('/', '.') + ';';
     }
-    
-    function isNotSvn(path:String)
-    {
-        if (FileSystem.isDirectory(path))
-        {
-            return !path.endsWith('.svn');
-        }
-        return true;
-    }
-    
-	
-	
-    // -------------------------------------------------------------------------------
 	
 	function buildJs()
     {
@@ -152,12 +89,13 @@ class Tasks
         params.push(clientPath + "/haquery.js");
         params.push('-main'); params.push('Main');
         params.push('-debug');
+        params.push('-D'); params.push('noEmbedJS');
         hant.run("haxe", params);
         
 		if (FileSystem.exists(clientPath + "/haquery.js")
 		 && FileSystem.exists(clientPath + "/haquery.js.old"))
 		{
-			restoreFileTime(clientPath + "/haquery.js.old", clientPath + "/haquery.js");
+			hant.restoreFileTime(clientPath + "/haquery.js.old", clientPath + "/haquery.js");
 			hant.deleteFile(clientPath + "/haquery.js.old");
 		}
 		
@@ -231,7 +169,7 @@ class Tasks
 			,database : re.matched(5)
 		});
 		
-		OrmGenerator.make(destBasePath);
+		OrmGenerator.run(destBasePath);
         
         log.finishOk();
     }
@@ -240,7 +178,7 @@ class Tasks
     {
         log.start("Generate template related mapping classes");
         
-        haquery.tools.trm.TrmGenerator.run(project.classPaths);
+        TrmGenerator.run(project.classPaths);
         
         log.finishOk();
     }
@@ -259,14 +197,12 @@ class Tasks
 	
 	function saveLibFolder()
 	{
-		var binPath = project.binPath;
+		log.start("Save file times of the " + project.binPath + "/lib folder");
 
-		log.start("Save " + binPath + "/lib folder");
-
-		if (FileSystem.exists(binPath + "/lib"))
+		if (FileSystem.exists(project.binPath + "/lib"))
 		{
-			hant.deleteDirectory(binPath + "/lib.old");
-			hant.rename(binPath + "/lib", binPath + "/lib.old");
+			hant.deleteDirectory(project.binPath + "/lib.old");
+			hant.rename(project.binPath + "/lib", project.binPath + "/lib.old");
 		}
 
 		log.finishOk();
@@ -274,14 +210,12 @@ class Tasks
 
 	function loadLibFolder()
 	{
-		var binPath = project.binPath;
-		
-		log.start("Load file times to " + binPath + "/lib");
+		log.start("Load file times to " + project.binPath + "/lib");
 
-		if (FileSystem.exists(binPath + "/lib"))
+		if (FileSystem.exists(project.binPath + "/lib"))
 		{
-			restoreFileTime(binPath + "/lib.old", binPath + "/lib");
-			hant.deleteDirectory(binPath + "/lib.old");
+			hant.restoreFileTime(project.binPath + "/lib.old", project.binPath + "/lib");
+			hant.deleteDirectory(project.binPath + "/lib.old");
 		}
 
 		log.finishOk();
@@ -299,7 +233,7 @@ class Tasks
         
         for (path in project.classPaths)
         {
-            hant.copyFolderContent(path, project.binPath, !skipComponents ? isSupportFile : isSupportFileWithoutComponents);
+            hant.copyFolderContent(path, project.binPath, !skipComponents ? componentFileKind.isSupportFile : componentFileKind.isSupportFileWithoutComponents);
         }
 		
 		loadLibFolder();
@@ -307,16 +241,6 @@ class Tasks
         log.finishOk();
     }
 	
-	function restoreFileTime(fromPath:String, toPath:String)
-	{
-		log.start("Restore file time '" + fromPath + "' => '" + toPath + "' (" + exeDir + ")");
-		
-		hant.run(exeDir + "restorefiletime.exe", [ fromPath.replace('/', '\\'), toPath.replace('/', '\\') ]);
-		
-		log.finishOk();
-	}
-	
-    
     public function getHaxePath()
     {
         var r = Sys.getEnv('HAXEPATH');

@@ -1,4 +1,4 @@
-package hant;
+package haquery.tools;
 
 import neko.Lib;
 
