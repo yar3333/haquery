@@ -21,6 +21,7 @@ class HaqTemplateManager<Template:HaqTemplate>
 	}
 	
 	#if (php || neko)
+	
 	function fillTemplates()
 	{
 		fillTemplatesBySearch(HaqDefines.folders.pages);
@@ -28,33 +29,48 @@ class HaqTemplateManager<Template:HaqTemplate>
 	
 	function fillTemplatesBySearch(pack:String)
 	{
-		var path = getFullPath(pack.replace(".", "/"));
+		var path = getFullPath(pack.replace(".", "/")) + '/';
 		for (file in FileSystem.readDirectory(path))
 		{
-			if (FileSystem.isDirectory(path + "/" + file))
+			if (file != "support" && FileSystem.isDirectory(path + file))
 			{
 				var fullTag = pack + "." + file;
-				var template = parseTemplate(fullTag);
-				if (template != null)
+				
+				if (!templates.exists(fullTag))
 				{
-					templates.set(fullTag, template);
+					var template = parseTemplate(fullTag);
+					if (template != null)
+					{
+						templates.set(fullTag, template);
+					}
+					if ((pack.replace(".", "/") + "/").startsWith(HaqDefines.folders.pages + '/'))
+					{
+						fillTemplatesBySearch(fullTag);
+					}
+					
+					for (importPack in template.imports)
+					{
+						fillTemplatesBySearch(importPack);
+					}
 				}
-				fillTemplatesBySearch(fullTag);
 			}
 		}
 	}
-	#elseif js
-	function fillTemplates()
-	{
-		throw "This method must be overriden.";
-	}
-	#end
 	
 	function parseTemplate(fullTag:String) : Template
 	{
 		throw "This method must be overriten.";
 		return null;
 	}
+	
+	#elseif js
+	
+	function fillTemplates()
+	{
+		throw "This method must be overriden.";
+	}
+	
+	#end
 	
 	public function findTemplate(parentFullTag:String, tag:String) : Template
 	{

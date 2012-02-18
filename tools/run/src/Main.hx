@@ -23,14 +23,14 @@ class Main
 			return 1;
 		}
 		
-		var haquery = new Tasks(exeDir);
+		var tasks = new Tasks(exeDir);
         
         switch (args.length > 0 ? args[0] : '')
         {
             case 'gen-orm': 
-				if (args.length > 0)
+				if (args.length > 1)
 				{
-					haquery.genOrm(args[0], 'src');
+					tasks.genOrm(args[1], 'src');
 				}
 				else
 				{
@@ -38,8 +38,11 @@ class Main
 					return 1;
 				}
             
+            case 'gen-trm': 
+				tasks.genTrm();
+			
 			case 'pre-build': 
-                haquery.preBuild();
+                tasks.preBuild();
             
             case 'post-build': 
 				var skipJS = false;
@@ -61,13 +64,13 @@ class Main
 						return 1;
 					}
 				}
-				haquery.postBuild(skipJS, skipComponents);
+				tasks.postBuild(skipJS, skipComponents);
                 
             case 'install':
-                haquery.install();
+                tasks.install();
             
             case 'uninstall':
-                haquery.uninstall();
+                tasks.uninstall();
             
             default:
 				Lib.println("HaQuery building support and deploying tool.");
