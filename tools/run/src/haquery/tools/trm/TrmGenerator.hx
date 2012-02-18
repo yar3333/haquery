@@ -40,7 +40,7 @@ class TrmGenerator
 	
 	function generate(fullTag:String)
 	{
-		trace("TrmGenerator.makeForComponent('" + fullTag + "')");
+		trace("TrmGenerator.generate('" + fullTag + "')");
 		
 		/*var componentPath = fullTag.replace(".", "/") + "/";
 		var classPath = findFile(classPaths, componentPath);

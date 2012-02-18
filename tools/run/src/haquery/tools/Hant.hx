@@ -1,4 +1,4 @@
-package hant;
+package haquery.tools;
 
 import neko.FileSystem;
 import neko.io.File;
@@ -8,13 +8,15 @@ import neko.io.Process;
 
 using StringTools;
 
-class Tasks 
+class Hant 
 {
     var log : Log;
+	var exeDir : String;
     
-    public function new(log:Log)
+    public function new(log:Log, exeDir:String)
     {
         this.log = log;
+		this.exeDir = exeDir;
     }
     
     public function findFiles(path:String, include:String->Bool) : Array<String>
@@ -235,4 +237,10 @@ class Tasks
         
         return content;
     }*/
+	
+	public function restoreFileTime(fromPath:String, toPath:String)
+	{
+		run(exeDir + "restorefiletime.exe", [ fromPath.replace('/', '\\'), toPath.replace('/', '\\') ]);
+	}
+	
 }
