@@ -1,6 +1,6 @@
 package haquery.tools.orm;
 
-import haquery.tools.orm.OrmHaxeClass;
+import haquery.tools.orm.HaxeClass;
 import haquery.server.db.HaqDbDriver;
 
 using haquery.StringTools;
@@ -10,26 +10,6 @@ class OrmTools
 	public static function capitalize(s:String) : String
 	{
 		return s.length == 0 ? s : s.substr(0, 1).toUpperCase() + s.substr(1);
-	}
-	
-	public static function indent(text:String, ind = "\t") : String
-    {
-        if (text == '') return '';
-		return ind + text.replace("\n", "\n" + ind);
-    }
-	
-	public static function splitFullClassName(fullClassName:String) : { packageName:String, className:String }
-	{
-		var packageName = '';
-		var className = fullClassName;
-		
-		if (fullClassName.lastIndexOf('.') != -1)
-		{
-			packageName = fullClassName.substr(0, fullClassName.lastIndexOf('.'));
-			className = fullClassName.substr(fullClassName.lastIndexOf('.') + 1);
-		}
-		
-		return { packageName:packageName, className:className };
 	}
 	
 	static function sqlTypeCheck(checked:String, type:String) : Bool
@@ -56,37 +36,36 @@ class OrmTools
 		return 'String';
 	}
 	
-	public static function createVar(haxeName:String, haxeType:String, haxeDefVal:String = null) : OrmHaxeVar
+	public static function createVar(haxeName:String, haxeType:String, haxeDefVal:String = null) : HaxeVar
 	{
 		return {
-			 name : null
+			 haxeName : haxeName
+			,haxeType : haxeType
+			,haxeDefVal : haxeDefVal
+			,name : null
 			,type : null
 			,isNull : false
 			,isKey : false
 			,isAutoInc : false
-			
-			,haxeName : haxeName
-			,haxeType : haxeType
-			,haxeDefVal : haxeDefVal
 		};
 	}
 	
-	static function field2var(f:HaqDbTableFieldData) : OrmHaxeVar
+	static function field2var(f:HaqDbTableFieldData) : HaxeVar
 	{ 
 		return {
-			 name : f.name
+			haxeName : f.name
+			,haxeType : sqlType2haxeType(f.type)
+			,haxeDefVal : (f.name == 'position' ? 'null' : null)
+			
+			,name : f.name
 			,type : f.type
 			,isNull : f.isNull
 			,isKey : f.isKey
 			,isAutoInc : f.isAutoInc
-			
-			,haxeName : f.name
-			,haxeType : sqlType2haxeType(f.type)
-			,haxeDefVal : (f.name == 'position' ? 'null':null)
 		};
 	}
 	
-	public static function fields2vars(fields:Iterable<HaqDbTableFieldData>) : List<OrmHaxeVar>
+	public static function fields2vars(fields:Iterable<HaqDbTableFieldData>) : List<HaxeVar>
 	{
 		return Lambda.map(fields, OrmTools.field2var);
 	}
