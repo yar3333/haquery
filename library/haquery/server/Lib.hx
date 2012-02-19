@@ -12,7 +12,6 @@ private typedef HaxeLib = php.Lib;
 private typedef HaxeLib = neko.Lib;
 #end
 
-import haquery.server.HaqInternals;
 import haquery.server.HaqConfig;
 import haquery.server.HaqRouter;
 import haquery.server.HaqBootstrap;
@@ -102,7 +101,7 @@ class Lib
     {
         if (Lib.isPostback)
 		{
-			HaqInternals.addAjaxResponse("haquery.client.Lib.redirect('" + StringTools.addcslashes(url) + "');");
+			HaqSystem.addAjaxResponse("haquery.client.Lib.redirect('" + StringTools.addcslashes(url) + "');");
 		}
         else
 		{
@@ -114,7 +113,7 @@ class Lib
 	{
         if (Lib.isPostback)
 		{
-			HaqInternals.addAjaxResponse("window.location.reload(true);");
+			HaqSystem.addAjaxResponse("window.location.reload(true);");
 		}
         else
 		{

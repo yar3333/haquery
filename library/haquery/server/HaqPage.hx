@@ -41,8 +41,7 @@ class HaqPage extends HaqComponent
 			insertInitBlock(
 				  "<script>\n"
 				+ "    if(typeof haquery=='undefined') alert('" + HaqDefines.haqueryClientFilePath + " must be loaded!');\n"
-				+ "    " + manager.getDynamicClientCode(fullTag).replace('\n', '\n    ') + '\n'
-				+ "    haquery.client.Lib.run();\n"
+				+ "    " + manager.getDynamicClientCode(this).replace('\n', '\n    ') + '\n'
 				+ "</script>"
 			);
 		}

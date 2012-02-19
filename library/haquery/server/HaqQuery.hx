@@ -26,7 +26,7 @@ class HaqQuery
     
     function jQueryCall(method)
     {
-        HaqInternals.addAjaxResponse("$('" + query.replace('#', '#' + prefixID) + "')." + method + ";");
+        HaqSystem.addAjaxResponse("$('" + query.replace('#', '#' + prefixID) + "')." + method + ";");
     }
     
 	function globalizeClassName(className:String) : String
@@ -86,7 +86,7 @@ class HaqQuery
         
 		if (Lib.isPostback)
 		{
-			HaqInternals.addAjaxResponse ("$('" + query.replace('#', '#' + prefixID) + "').removeAttr('" + name + "');");
+			jQueryCall("removeAttr('" + name + "')");
 		}
         
 		return this;

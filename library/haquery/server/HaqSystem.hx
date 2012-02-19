@@ -11,9 +11,16 @@ using haquery.StringTools;
 
 class HaqSystem
 {
+	static var ajaxResponse = "";
+
 	public static function run(pageFullTag:String, pageID:String, isPostback:Bool)
 	{
 		new HaqSystem(pageFullTag, pageID, isPostback);
+	}
+	
+	public static function addAjaxResponse(jsCode:String) 
+	{
+		ajaxResponse += jsCode + "\n";
 	}
 	
 	function new(pageFullTag:String, pageID:String, isPostback:Bool)
@@ -108,7 +115,7 @@ class HaqSystem
         
         Web.setHeader('Content-Type', 'text/plain; charset=utf-8');
         
-        return 'HAQUERY_OK' + Serializer.run(result) + "\n" + HaqInternals.getAjaxResponse();
+        return 'HAQUERY_OK' + Serializer.run(result) + "\n" + ajaxResponse;
     }
 	
 	function callElemEventHandler(component:HaqComponent, method:String) : { success:Bool, result:Dynamic }
