@@ -1,5 +1,5 @@
-package components.haquery.alternative;
+package haquery.components.alternative;
 
-class Client extends components.haquery.container.Client
+class Client extends haquery.components.container.Client
 {
 }

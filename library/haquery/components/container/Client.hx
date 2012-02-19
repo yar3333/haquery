@@ -1,4 +1,4 @@
-package components.haquery.container;
+package haquery.components.container;
 
 import haquery.client.HaqComponent;
 

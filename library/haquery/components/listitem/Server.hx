@@ -1,13 +1,13 @@
-package components.haquery.listitem;
+package haquery.components.listitem;
 
 import haquery.server.HaqComponent;
-import haquery.server.HaqComponentManager;
+import haquery.server.HaqTemplateManager;
 import haquery.server.HaqTemplate;
 import haquery.server.HaqXml;
 
 class Server extends Base
 {
-	override public function construct(manager:HaqComponentManager, fullTag:String, parent:HaqComponent, id:String, doc:HaqXml, params:Hash<String>, parentNode:HaqXmlNodeElement):Void 
+	override public function construct(manager:HaqTemplateManager, fullTag:String, parent:HaqComponent, id:String, doc:HaqXml, params:Hash<String>, parentNode:HaqXmlNodeElement):Void 
 	{
 		var innerHTML = parentNode.innerHTML;
         

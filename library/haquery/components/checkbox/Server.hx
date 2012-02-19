@@ -1,4 +1,4 @@
-package components.haquery.checkbox;
+package haquery.components.checkbox;
 
 import haquery.server.HaqComponent;
 import haquery.server.Lib;
@@ -37,7 +37,7 @@ class Server extends HaqComponent
     {
 		if (text != null)
 		{
-			cast(components.get("text"), components.haquery.literal.Server).text = " " + text;
+			cast(components.get("text"), haquery.components.literal.Server).text = " " + text;
 		}
     }
 	

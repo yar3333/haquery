@@ -1,4 +1,4 @@
-package components.haquery.list;
+package haquery.components.list;
 
 import haquery.HashTools;
 import haquery.server.Lib;

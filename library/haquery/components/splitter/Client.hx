@@ -1,6 +1,6 @@
 #if js
 
-package components.haquery.splitter;
+package haquery.components.splitter;
 
 import haquery.client.Lib;
 import haquery.client.HaqComponent;

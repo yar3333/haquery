@@ -1,11 +1,11 @@
-package components.haquery.tabs;
+package haquery.components.tabs;
 
 import haquery.client.HaqQuery;
 import haquery.client.HaqEvent;
 import haquery.client.HaqComponent;
 import js.JQuery;
 
-class Client extends components.haquery.container.Client
+class Client extends haquery.components.container.Client
 {
     public var active(active_getter, active_setter) : Int;
 

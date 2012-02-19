@@ -1,4 +1,4 @@
-package components.haquery.context;
+package haquery.components.context;
 
 enum ContextPanelPosition
 {

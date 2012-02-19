@@ -1,9 +1,9 @@
-package components.haquery.context;
+package haquery.components.context;
 
 import js.JQuery;
 import haquery.client.HaqEvent;
 
-class Client extends components.haquery.container.Client
+class Client extends haquery.components.container.Client
 {
     public var position : ContextPanelPosition;
     

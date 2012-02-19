@@ -1,6 +1,6 @@
-package components.haquery.context;
+package haquery.components.context;
 
-class Server extends components.haquery.container.Server
+class Server extends haquery.components.container.Server
 {
     public var dataID(dataID_getter, null) : String;
     function dataID_getter() : String

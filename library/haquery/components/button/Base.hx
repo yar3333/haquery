@@ -1,4 +1,4 @@
-package components.haquery.button;
+package haquery.components.button;
 
 #if php
 import haquery.server.HaqComponent;

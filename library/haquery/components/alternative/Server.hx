@@ -1,9 +1,9 @@
-package components.haquery.alternative;
+package haquery.components.alternative;
 
 import haquery.server.Lib;
 import haquery.server.HaqXml;
 
-class Server extends components.haquery.container.Server
+class Server extends haquery.components.container.Server
 {
     public var active : Int;
     

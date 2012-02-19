@@ -1,4 +1,4 @@
-package components.haquery.listitem;
+package haquery.components.listitem;
 
 import haquery.client.HaqElemEventManager;
 
@@ -8,7 +8,7 @@ class Client extends Base
     {
         if (parent != null && parent.parent != null)
         {
-            HaqElemEventManager.connect(parent.parent, this, manager.templates);
+            HaqElemEventManager.connect(parent.parent, this, manager);
         }
     }
 }

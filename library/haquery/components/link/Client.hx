@@ -1,4 +1,4 @@
-package components.haquery.link;
+package haquery.components.link;
 
 import haquery.client.Lib;
 

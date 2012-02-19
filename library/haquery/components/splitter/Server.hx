@@ -1,6 +1,6 @@
 #if php
 
-package components.haquery.splitter;
+package haquery.components.splitter;
 
 import haquery.server.Lib;
 import haquery.server.HaqComponent;

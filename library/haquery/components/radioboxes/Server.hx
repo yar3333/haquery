@@ -1,4 +1,4 @@
-package components.haquery.radioboxes;
+package haquery.components.radioboxes;
 
 import haquery.server.HaqDefines;
 import haquery.server.HaqXml;
@@ -7,7 +7,7 @@ import php.Web;
 
 using haquery.StringTools;
 
-class Server extends components.haquery.container.Server
+class Server extends haquery.components.container.Server
 {
     public var value(value_getter, value_setter) : String;
     
