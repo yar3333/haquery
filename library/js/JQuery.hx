@@ -199,8 +199,13 @@ typedef JqEvent = {
 	function animate( properties : { }, ?duration : Int, ?callb : Void -> Void ) : JQuery;
 	function delay( duration : Int, ?queueName : String ) : JQuery;
 	function hide( ?duration : Int, ?call : Void -> Void ) : JQuery;
+	
+	@:overload(function(?duration : String, ?call : Void -> Void):js.JQuery{})
 	function fadeIn( ?duration : Int, ?call : Void -> Void ) : JQuery;
+	
+	@:overload(function(?duration : String, ?call : Void -> Void):js.JQuery{})
 	function fadeOut( ?duration : Int, ?call : Void -> Void ) : JQuery;
+	
 	function fadeTo( duration : Int, opacity : Float, ?call : Void -> Void ) : JQuery;
 	function fadeToggle( ?duration : Int, ?call : Void -> Void ) : JQuery;
 	function show( ?duration : Int, ?call : Void -> Void ) : JQuery;
