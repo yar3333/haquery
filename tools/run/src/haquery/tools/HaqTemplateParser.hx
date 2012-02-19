@@ -53,7 +53,7 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 		return null;
 	}
 	
-	function getClassName(shortClassName:String)
+	function getGlobalClassName(shortClassName:String)
 	{
 		var localClassName = getLocalClassName(shortClassName);
 		if (localClassName != null)
@@ -63,7 +63,7 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 		
 		if (config.extend != null && config.extend != "")
 		{
-			return cast(getParentParser(), HaqTemplateParser).getClassName(shortClassName);
+			return cast(getParentParser(), HaqTemplateParser).getGlobalClassName(shortClassName);
 		}
 		
 		return null;
@@ -71,13 +71,13 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 	
 	public function getServerClassName()
 	{
-		var r = getClassName("Server");
+		var r = getGlobalClassName("Server");
 		return r != null && r != "" ? r : "haquery.server.HaqComponent";
 	}
 	
 	public function getClientClassName()
 	{
-		var r = getClassName("Client");
+		var r = getGlobalClassName("Client");
 		return r != null && r != ""  ? r : "haquery.client.HaqComponent";
 	}
 	

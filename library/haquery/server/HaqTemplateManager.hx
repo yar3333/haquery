@@ -57,7 +57,12 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		if (!FileSystem.exists(templatesCacheServerFilePath))
 		{
 			fillTemplatesBySearch(HaqDefines.folders.pages);
-			File.putContent(templatesCacheServerFilePath, Serializer.run(templates));
+			
+			// TODO: serialize templates
+			var ser = new Serializer();
+			ser.useCache = true;
+			ser.serialize(templates);
+			File.putContent(templatesCacheServerFilePath, ser.toString());
 		}
 		else
 		{
@@ -65,22 +70,27 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		}
 	}
 	
+	override function parseTemplate(fullTag:String) : HaqTemplate
+	{
+		return new HaqTemplate(fullTag);
+	}
+	
 	public function createPage(pageFullTag:String, attr:Hash<String>) : HaqPage
 	{
 		var template = new HaqTemplate(pageFullTag);
-        return cast newComponent(pageFullTag, null, template.serverClass, '', template.doc, attr, null);
+        return cast newComponent(pageFullTag, null, template.serverClassName, '', template.doc, attr, null);
 	}
 	
 	public function createComponent(parent:HaqComponent, tag:String, id:String, attr:Hash<String>, parentNode:HaqXmlNodeElement) : HaqComponent
 	{
 		var template = findTemplate(parent.fullTag, tag);
-		return newComponent(template.fullTag, parent, template.serverClass, id, template.doc, attr, parentNode);
+		return newComponent(template.fullTag, parent, template.serverClassName, id, template.doc, attr, parentNode);
 	}
 	
-	function newComponent(fulltag:String, parent:HaqComponent, clas:Class<HaqComponent>, id:String, doc:HaqXml, attr:Hash<String>, parentNode:HaqXmlNodeElement) : HaqComponent
+	function newComponent(fulltag:String, parent:HaqComponent, className:String, id:String, doc:HaqXml, attr:Hash<String>, parentNode:HaqXmlNodeElement) : HaqComponent
 	{
         Lib.profiler.begin('newComponent');
-            var r : HaqComponent = Type.createInstance(clas, []);
+            var r : HaqComponent = Type.createInstance(Type.resolveClass(className), []);
             r.construct(this, fulltag, parent, id, doc, attr, parentNode);
         Lib.profiler.end();
 		return r;
@@ -182,20 +192,18 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 	
 	public function createChildComponents(parent:HaqComponent, baseNode:HaqXmlNodeElement)
     {
-		var i = 0;
-		while (i < untyped __call__('count', baseNode.children))
+		for (node in baseNode.children)
         {
-			var node : HaqXmlNodeElement = baseNode.children[i];
-			Lib.assert(node.name!='haq:placeholder');
-			Lib.assert(node.name!='haq:content');
+            trace("Create name = " + node.name);
+			Lib.assert(node.name != 'haq:placeholder');
+			Lib.assert(node.name != 'haq:content');
             
             createChildComponents(parent, node);
             
             if (node.name.startsWith('haq:'))
             {
-                node.component = createComponent(parent, node.name.substr('haq:'.length), node.getAttribute('id'), node.getAttributesAssoc(), node);
+				node.component = createComponent(parent, node.name.substr('haq:'.length), node.getAttribute('id'), node.getAttributesAssoc(), node);
             }
-			i++;
         }
     }
 	
@@ -217,9 +225,9 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 	public function prepareDocToRender(prefixID:String, baseNode:HaqXmlNodeElement) : Void
     {
 		var i = 0;
-		while (i < untyped __call__('count', baseNode.children))
+		while (i < baseNode.children.length)
         {
-            var node : HaqXmlNodeElement = baseNode.children[i];
+            var node = baseNode.children[i];
             if (node.name.startsWith('haq:'))
             {
                 if (node.component == null)

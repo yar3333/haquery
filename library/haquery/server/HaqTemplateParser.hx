@@ -51,7 +51,7 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser
 	
 	function parseConfig(path:String) : HaqTemplateConfig
 	{
-		if (path!=null && FileSystem.exists(path))
+		if (path != null && FileSystem.exists(path))
 		{
 			var r = { extend:null, imports:new Array<String>() };
 			var xml = new HaqXml(File.getContent(path));
@@ -215,12 +215,12 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser
 		return FileSystem.exists(path) ? path : null;
 	}
 	
-	public function getServerHandlers(clas:Class<HaqComponent>=null) : Hash<Array<String>>
+	public function getServerHandlers(className:String=null) : Hash<Array<String>>
 	{
         Lib.profiler.begin('parseServerHandlers');
-            var serverMethods = [ 'click','change' ];   // server events
+			var serverMethods = [ 'click','change' ];   // server events
             var serverHandlers : Hash<Array<String>> = new Hash<Array<String>>();
-            var tempObj = Type.createEmptyInstance(clas != null ? clas : getClass());
+            var tempObj = Type.createEmptyInstance(Type.resolveClass(className != null ? className : getClassName()));
             for (field in Reflect.fields(tempObj))
             {
                 if (Reflect.isFunction(Reflect.field(tempObj, field)))

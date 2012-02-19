@@ -10,18 +10,18 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 	public function createPage(pageFullTag:String) : HaqPage
     {
 		var template = new HaqTemplate(pageFullTag);
-		return cast newComponent(pageFullTag, null, template.clientClass, '', null);
+		return cast newComponent(pageFullTag, null, template.clientClassName, '', null);
     }
 	
 	public function createComponent(parent:HaqComponent, tag:String, id:String, factoryInitParams:Array<Dynamic>=null) : HaqComponent
     {
 		var template = findTemplate(parent.fullTag, tag);
-		return newComponent(template.fullTag, parent, template.clientClass, id, factoryInitParams);
+		return newComponent(template.fullTag, parent, template.clientClassName, id, factoryInitParams);
     }
 	
-	function newComponent(fulltag:String, parent:HaqComponent, clas:Class<HaqComponent>, id:String, factoryInitParams:Array<Dynamic>=null) : HaqComponent
+	function newComponent(fulltag:String, parent:HaqComponent, className:String, id:String, factoryInitParams:Array<Dynamic>=null) : HaqComponent
 	{
-        var r : HaqComponent = Type.createInstance(clas, []);
+        var r : HaqComponent = Type.createInstance(Type.resolveClass(className), []);
         r.construct(this, fulltag, parent, id, factoryInitParams);
 		return r;
 	}	

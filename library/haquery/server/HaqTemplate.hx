@@ -8,7 +8,7 @@ class HaqTemplate extends haquery.base.HaqTemplate
 	
 	public var doc(default, null) : HaqXml;
 	public var css(default, null) : String;
-	public var serverClass(default, null) : Class<HaqComponent>;
+	public var serverClassName(default, null) : String;
 	public var serverHandlers(default, null) : Hash<Array<String>>;
 	
 	public var lastTemplateDocModified : Date;
@@ -27,8 +27,8 @@ class HaqTemplate extends haquery.base.HaqTemplate
 		doc = docAndCss.doc;
 		css = docAndCss.css;
 		
-		serverClass = cast parser.getClass();
-		serverHandlers = parser.getServerHandlers(serverClass);
+		serverClassName = parser.getClassName();
+		serverHandlers = parser.getServerHandlers(serverClassName);
 	}
 	
 	public function getSupportFilePath(relPath:String)
