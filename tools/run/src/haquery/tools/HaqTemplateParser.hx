@@ -18,8 +18,18 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 		super(fullTag);
 	}
 	
-	override function getFullPath(path:String)
+	override function getParentParser() : haquery.server.HaqTemplateParser
 	{
+		return new HaqTemplateParser(classPaths, config.extend);
+	}
+	
+	override function getFullPath(path:String) : String
+	{
+		if (path.startsWith("./"))
+		{
+			path = path.substr(2);
+		}
+		
 		var i = classPaths.length - 1;
 		while (i >= 0)
 		{
@@ -58,7 +68,7 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 		
 		if (config.extend != null && config.extend != "")
 		{
-			return new HaqTemplateParser(classPaths, config.extend).getClassName(shortClassName);
+			return cast(getParentParser(), HaqTemplateParser).getClassName(shortClassName);
 		}
 		
 		return null;
@@ -76,31 +86,19 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 		return r != null && r != ""  ? r : "haquery.client.HaqComponent";
 	}
 	
-	public function getTrmSuperClassName()
-	{
-		if (config.extend != null && config.extend != "")
-		{
-			return new HaqTemplateParser(classPaths, config.extend).getClassName("Template");
-		}
-		return null;
-	}
-	
-	public function getDocTextAndLastMod() : { text:String, lastMod:Date }
+	public function getDocLastMod() : Date
 	{
 		var docFilePath = getFullPath(fullTag.replace(".", "/") + "/template.html");
-		var text = docFilePath != null ? File.getContent(docFilePath) : "";
 		var lastMod = docFilePath != null ? FileSystem.stat(docFilePath).mtime : MIN_DATE;
 		if (config.extend != null && config.extend != "")
 		{
-			var parentDocTextAndLastMod = new HaqTemplateParser(classPaths, config.extend).getDocTextAndLastMod();
-			text = parentDocTextAndLastMod.text + text;
-			if (parentDocTextAndLastMod.lastMod.getTime() > lastMod.getTime())
+			var parentDocLastMod = cast(getParentParser(), HaqTemplateParser).getDocLastMod();
+			if (parentDocLastMod.getTime() > lastMod.getTime())
 			{
-				lastMod = parentDocTextAndLastMod.lastMod;
+				lastMod = parentDocLastMod;
 			}
-			
 		}
-		return { text:text, lastMod:lastMod };
+		return lastMod;
 	}
 	
 	public function hasLocalServerClass() : Bool

@@ -69,7 +69,12 @@ class FlashDevelopProject
 			{
 				if (elem.name == 'class' && elem.has.path)
 				{
-					r.push(elem.att.path.replace('\\', '/'));
+					var path = elem.att.path.trim().replace('\\', '/').rtrim('/');
+					if (path == "")
+					{
+						path = ".";
+					}
+					r.push(path + "/");
 				}
 			}
 		}

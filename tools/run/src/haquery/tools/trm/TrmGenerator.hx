@@ -39,12 +39,7 @@ class TrmGenerator
 	
 	function generate(fullTag:String)
 	{
-		trace("TrmGenerator.generate('" + fullTag + "')");
-		
-		/*var componentPath = fullTag.replace(".", "/") + "/";
-		var classPath = findFile(classPaths, componentPath);
-		var destFilePath = classPath + "Template.hx";
-		var componentData = getComponentData(classPaths, fullTag);*/
+		//trace("Generate TRM for " + fullTag);
 		
 		var template = manager.templates.get(fullTag);
 		
@@ -52,12 +47,11 @@ class TrmGenerator
 		{
 			if (!FileSystem.exists(template.trmFilePath) || FileSystem.stat(template.trmFilePath).mtime.getTime() < template.docLastMod.getTime())
 			{
-				var haxeClass = new HaxeClass(fullTag + ".Template", template.trmSuperClassName);
+				var haxeClass = new HaxeClass(fullTag + ".Template");
 				
 				haxeClass.addVar(createVar("component", "#if php haquery.server.HaqComponent #else haquery.client.HaqComponent #end"), true);
 				
-				var doc = new HaqXml(template.docText);
-				var templateVars = getTemplateVars(fullTag, doc);
+				var templateVars = getTemplateVars(fullTag, template.doc);
 				if (templateVars.length > 0)
 				{
 					if (isFirstPrint)
@@ -161,6 +155,12 @@ class TrmGenerator
 				if (child.name.startsWith("haq:"))
 				{
 					var template = manager.findTemplate(fullTag, child.name.substr("haq:".length));
+					if (template == null)
+					{
+						trace("Component not found: fullTag = " + fullTag + ", tag = " + child.name.substr("haq:".length));
+						Lib.assert(template != null);
+					}
+					
 					type = "#if php " + template.serverClassName + " #else " + template.clientClassName + " #end";
 					body = "return cast component.components.get('" + componentID + "');";
 				}

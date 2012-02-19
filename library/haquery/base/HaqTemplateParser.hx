@@ -26,7 +26,7 @@ class HaqTemplateParser
 	
 	function getParentParser() : TemplateParser
 	{
-		return new TemplateParser(config.extend);
+		return cast Type.createInstance(Type.getClass(this), [ config.extend ]);
 	}
 	
 	function isPage() : Bool
