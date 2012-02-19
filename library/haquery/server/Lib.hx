@@ -64,9 +64,9 @@ class Lib
 				var route = router.getRoute(Web.getParams().get('route'));
                 switch (route)
 				{
-					case HaqRouteType.file(path): 
+					case HaqRoute.file(path): 
 						loadBootstraps(path);
-					case HaqRouteType.page(path, fullTag, pageID): 
+					case HaqRoute.page(path, fullTag, pageID): 
 						loadBootstraps(path);
 				}
                 
@@ -84,9 +84,9 @@ class Lib
                 
 				switch (route)
 				{
-					case HaqRouteType.file(path): 
+					case HaqRoute.file(path): 
 						untyped __call__('require', route.path);
-					case HaqRouteType.page(path, fullTag, pageID): 
+					case HaqRoute.page(path, fullTag, pageID): 
 						HaqSystem.run(fullTag, pageID, isPostback);
 				}                
             profiler.end();

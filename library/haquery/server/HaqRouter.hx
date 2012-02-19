@@ -13,7 +13,7 @@ import neko.io.Path;
 
 using haquery.StringTools;
 
-enum HaqRouteType
+enum HaqRoute
 {
 	file(path:String);
 	page(path:String, fullTag:String, pageID:String);
@@ -23,7 +23,7 @@ class HaqRouter
 {
 	public function new() {}
 	
-	public function getRoute(url:String) : HaqRouteType
+	public function getRoute(url:String) : HaqRoute
 	{
 		if (url == 'index.php' || url == 'index')
 		{
@@ -39,7 +39,7 @@ class HaqRouter
 		
 		if (FileSystem.exists(url) && url.endsWith('.php'))
 		{
-			return HaqRouteType.file(url);
+			return HaqRoute.file(url);
 		}
 		else
 		{
@@ -73,7 +73,7 @@ class HaqRouter
 				Sys.exit(0);
 			}
 			
-			return HaqRouteType.page(path, path.replace("/", "."), pageID);
+			return HaqRoute.page(path, path.replace("/", "."), pageID);
 		}
 	}
 	
