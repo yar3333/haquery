@@ -16,7 +16,11 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser
 	
 	override function getConfig() : HaqTemplateConfig
 	{
-		// TODO: client getConfig()
-		return null;
+		return HaqInternals.getTemplateConfig(fullTag);
+	}
+	
+	public function getServerHandlers() : Hash<Array<String>>
+	{
+		return HaqInternals.getServerHandlers(fullTag);
 	}
 }

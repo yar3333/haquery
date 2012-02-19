@@ -7,16 +7,6 @@ using haquery.StringTools;
 
 class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 {
-	var tag_elemID_serverHandlers : Hash<Hash<Array<String>>>;
-	var id_tag : Hash<String>;
-	
-	public function new(tag_elemID_serverHandlers:Hash<Hash<Array<String>>>, id_tag:Hash<String>) : Void
-	{
-		super();
-		this.tag_elemID_serverHandlers = tag_elemID_serverHandlers;
-		this.id_tag = id_tag;
-	}
-	
 	public function createPage(pageFullTag:String) : HaqPage
     {
 		var template = new HaqTemplate(pageFullTag);
@@ -40,11 +30,11 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 	{
 		var r : Array<{ id:String, tag:String }> = new Array<{ id:String, tag:String }>();
 		var re = new EReg('^' + parent.prefixID + '[^' + HaqDefines.DELIMITER + ']+$', '');
-		for (fullID in id_tag.keys())
+		for (fullID in HaqInternals.getComponentIDs().keys())
 		{
 			if (re.match(fullID))
 			{
-				r.push({ id: fullID.substr(parent.prefixID.length), tag: id_tag.get(fullID) });
+				r.push({ id: fullID.substr(parent.prefixID.length), tag: HaqInternals.getComponentIDs().get(fullID) });
 			}
 		}
 		return r;

@@ -16,5 +16,6 @@ class HaqTemplate extends haquery.base.HaqTemplate
 		super(fullTag, parser.getImports());
 		
 		clientClass = parser.getClass();
+		serverHandlers = parser.getServerHandlers();
 	}
 }

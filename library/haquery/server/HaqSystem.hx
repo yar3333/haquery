@@ -45,7 +45,7 @@ class HaqSystem
             Lib.profiler.end();
 
             Lib.profiler.begin('page');
-				var page = manager.createPage(route.className, params);
+				var page = manager.createPage(route.path.replace("/", "."), params);
             Lib.profiler.end();
             
 			var html : String;
