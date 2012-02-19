@@ -2,7 +2,7 @@ package haquery.client;
 
 class HaqTemplate extends haquery.base.HaqTemplate
 { 
-	public var clientClass(default, null) : Class<HaqComponent>;
+	public var clientClassName(default, null) : String;
 	
 	/**
 	 * elemID => handlers
@@ -15,7 +15,7 @@ class HaqTemplate extends haquery.base.HaqTemplate
 		
 		super(fullTag, parser.getImports());
 		
-		clientClass = parser.getClass();
+		clientClassName = parser.getClassName();
 		serverHandlers = parser.getServerHandlers();
 	}
 }

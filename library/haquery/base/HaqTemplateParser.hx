@@ -1,12 +1,8 @@
 package haquery.base;
 
 #if (php || neko)
-private typedef Component = haquery.server.HaqComponent;
-private typedef Page = haquery.server.HaqPage;
 private typedef TemplateParser = haquery.server.HaqTemplateParser;
 #elseif js
-private typedef Component = haquery.client.HaqComponent;
-private typedef Page = haquery.client.HaqPage;
 private typedef TemplateParser = haquery.client.HaqTemplateParser;
 #end
 
@@ -40,21 +36,25 @@ class HaqTemplateParser
 		return null;
 	}
 	
-	public function getClass() : Class<Component>
+	public function getClassName() : String
 	{
 		var className = fullTag + "." + getShortClassName();
 		var clas = Type.resolveClass(className);
 		if (clas != null)
 		{
-			return cast clas;
+			return className;
 		}
 		
 		if (config.extend != null && config.extend != "")
 		{
-			return getParentParser().getClass();
+			return getParentParser().getClassName();
 		}
 		
-		return isPage() ? cast(Page, Component) : Component;
+		#if (php || neko)
+		return isPage() ? "haquery.server.HaqPage" : "haquery.server.HaqComponent";
+		#elseif js
+		return isPage() ? "haquery.client.HaqPage" : "haquery.client.HaqComponent";
+		#end
 	}
 	
 	function getConfig() : HaqTemplateConfig
