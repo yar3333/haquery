@@ -1,5 +1,5 @@
 <config>
 	<extend>
-		<component package="components.haquery.button" />
+		<component package="haquery.components.button" />
 	</extend>
 </config>

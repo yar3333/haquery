@@ -1,5 +1,5 @@
 <config>
 	<imports>
-		<components package="components.haquery" />
+		<components package="haquery.components" />
 	</imports>
 </config>
