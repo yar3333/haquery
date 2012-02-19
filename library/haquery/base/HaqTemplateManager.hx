@@ -18,7 +18,7 @@ class HaqTemplateManager<Template:HaqTemplate>
 	
 	function fillTemplates()
 	{
-		fillTemplatesBySearch(HaqDefines.folders.pages);
+		throw "This method must be overriten.";
 	}
 	
 	function fillTemplatesBySearch(pack:String)

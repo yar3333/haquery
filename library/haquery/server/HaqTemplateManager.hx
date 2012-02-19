@@ -1,6 +1,7 @@
 package haquery.server;
 
 import haxe.Serializer;
+import haxe.Unserializer;
 
 import haquery.server.HaqComponent;
 import haquery.server.HaqTemplate;
@@ -36,13 +37,24 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		
 		registeredScripts = [];
 		registeredStyles = [];
-		
-		if (FileSystem.exists(HaqDefines.haqueryClientFilePath))
+	}
+	
+	override function fillTemplates()
+	{
+		if (!FileSystem.exists(HaqDefines.folders.temp))
 		{
-			// TODO: sure, what this is be done one time
-			var fapp = File.append(HaqDefines.haqueryClientFilePath, false);
-			fapp.writeString(getStaticTemplateDataForHaqueryClientFile());
-			fapp.close();
+			FileSystem.createDirectory(HaqDefines.folders.temp);
+		}
+		
+		var templatesCacheFilePath = HaqDefines.folders.temp + "/templates.cache";
+		if (!FileSystem.exists(templatesCacheFilePath))
+		{
+			fillTemplatesBySearch(HaqDefines.folders.pages);
+			File.putContent(templatesCacheFilePath, Serializer.run(templates));
+		}
+		else
+		{
+			templates = Unserializer.run(templatesCacheFilePath);
 		}
 	}
 	
@@ -254,7 +266,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
         }
     }
 	
-	public function getSystemInitClientCode() : String
+	public function getDynamicClientCode(pageFullTag:String) : String
     {
 		var s = '';
 		
@@ -297,9 +309,8 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
         return s;
     }
 	
-	function getStaticTemplateDataForHaqueryClientFile() : String
+	public function getStaticClientCode() : String
 	{
-		// TODO: getStaticTemplateDataForHaqueryClientFile()
 		return "";
 	}
 }

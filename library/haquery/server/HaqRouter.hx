@@ -15,17 +15,15 @@ using haquery.StringTools;
 
 enum HaqRouteType
 {
-	file;
-	page;
+	file(path:String);
+	page(path:String, fullTag:String, pageID:String);
 }
 
-class HaqRoute
+class HaqRouter
 {
-	public var routeType(default,null) : HaqRouteType;
-	public var path(default,null) : String;
-	public var pageID(default,null) : String;
+	public function new() {}
 	
-	public function new(url:String) : Void
+	public function getRoute(url:String) : HaqRouteType
 	{
 		if (url == 'index.php' || url == 'index')
 		{
@@ -41,16 +39,15 @@ class HaqRoute
 		
 		if (FileSystem.exists(url) && url.endsWith('.php'))
 		{
-			routeType = HaqRouteType.file;
-			path = url;
+			return HaqRouteType.file(url);
 		}
 		else
 		{
-			routeType = HaqRouteType.page;
-			
 			url = url.trim('/');
 			if (url == '') url = 'index';
-			path = HaqDefines.folders.pages + '/' + url;
+			var path = HaqDefines.folders.pages + '/' + url;
+			
+			var pageID = null;
             
             if (isPageExist(path + '/index'))
             {
@@ -75,6 +72,8 @@ class HaqRoute
                 Lib.print("<h1>File not found (404)</h1>");
 				Sys.exit(0);
 			}
+			
+			return HaqRouteType.page(path, path.replace("/", "."), pageID);
 		}
 	}
 	

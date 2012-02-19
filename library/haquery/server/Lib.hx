@@ -14,7 +14,7 @@ private typedef HaxeLib = neko.Lib;
 
 import haquery.server.HaqInternals;
 import haquery.server.HaqConfig;
-import haquery.server.HaqRoute;
+import haquery.server.HaqRouter;
 import haquery.server.HaqBootstrap;
 import haquery.server.HaqSystem;
 import haquery.server.db.HaqDb;
@@ -60,8 +60,15 @@ class Lib
                 
                 isPostback = Web.getParams().get('HAQUERY_POSTBACK') != null;
                 
-                var route = new HaqRoute(Web.getParams().get('route'));
-                loadBootstraps(route.path);
+                var router = new HaqRouter();
+				var route = router.getRoute(Web.getParams().get('route'));
+                switch (route)
+				{
+					case HaqRouteType.file(path): 
+						loadBootstraps(path);
+					case HaqRouteType.page(path, fullTag, pageID): 
+						loadBootstraps(path);
+				}
                 
                 #if php
 				if (Lib.config.autoSessionStart)
@@ -75,15 +82,13 @@ class Lib
                     HaqDb.connect(Lib.config.db);
                 }
                 
-                if (route.routeType == HaqRouteType.file)
-                {
-                    untyped __call__('require', route.path);
-                }
-                else
-                {
-                    var system = new HaqSystem(route, isPostback);
-                }
-        
+				switch (route)
+				{
+					case HaqRouteType.file(path): 
+						untyped __call__('require', route.path);
+					case HaqRouteType.page(path, fullTag, pageID): 
+						HaqSystem.run(fullTag, pageID, isPostback);
+				}                
             profiler.end();
             profiler.traceResults();
         }

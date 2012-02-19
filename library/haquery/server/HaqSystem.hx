@@ -3,41 +3,31 @@ package haquery.server;
 import haxe.Serializer;
 import haxe.Unserializer;
 
-import haquery.server.FileSystem;
-#if php
-import php.io.File;
-import php.io.Path;
-import php.Sys;
-#elseif neko
-import neko.io.File;
-import neko.io.Path;
-import neko.Sys;
-#end
-
 import haquery.server.Web;
 import haquery.server.Lib;
-//import haquery.server.HaqComponent;
-//import haquery.server.HaqProfiler;
-import haquery.server.HaqRoute;
 import haquery.server.HaqDefines;
-//import haquery.server.HaqTemplate;
 
 using haquery.StringTools;
 
 class HaqSystem
 {
-	public function new(route:HaqRoute, isPostback:Bool) : Void
+	public static function run(pageFullTag:String, pageID:String, isPostback:Bool)
+	{
+		new HaqSystem(pageFullTag, pageID, isPostback);
+	}
+	
+	function new(pageFullTag:String, pageID:String, isPostback:Bool)
     {
         trace(null);
 		
         Lib.profiler.begin("system");
 
-            trace("HAQUERY SYSTEM Start route.pagePath = " + route.path #if php +  ", HTTP_HOST = " + Web.getHttpHost() #end + ", clientIP = " + Web.getClientIP() + ", pageID = " + route.pageID);
+            trace("HAQUERY SYSTEM Start pageFullTag = " + pageFullTag #if php +  ", HTTP_HOST = " + Web.getHttpHost() #end + ", clientIP = " + Web.getClientIP() + ", pageID = " + pageID);
             
             var params = Web.getParams();
-            if (route.pageID != null)
+            if (pageID != null)
             {
-                params.set('pageID', route.pageID);
+                params.set('pageID', pageID);
             }
 
             Lib.profiler.begin('manager');
@@ -45,7 +35,7 @@ class HaqSystem
             Lib.profiler.end();
 
             Lib.profiler.begin('page');
-				var page = manager.createPage(route.path.replace("/", "."), params);
+				var page = manager.createPage(pageFullTag, params);
             Lib.profiler.end();
             
 			var html : String;

@@ -1,6 +1,8 @@
 package haquery.tools;
 
 import haquery.server.FileSystem;
+import haquery.server.HaqDefines;
+
 import haquery.tools.HaqTemplate;
 
 using haquery.StringTools;
@@ -14,6 +16,11 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 	{
 		this.classPaths = classPaths;
 		super();
+	}
+	
+	override function fillTemplates()
+	{
+		fillTemplatesBySearch(HaqDefines.folders.pages);
 	}
 	
 	override function parseTemplate(fullTag:String) : HaqTemplate

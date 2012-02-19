@@ -39,11 +39,4 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		}
 		return r;
 	}
-    
-    /*public function getSupportUrl(tag : String)
-    {
-        var className = Type.getClassName(templates.get(tag).clas);
-        var n = className.lastIndexOf('.');
-        return '/' + className.substr(0, n).replace('.', '/') + '/' + HaqDefines.folders.support + '/';
-    }*/
 }
