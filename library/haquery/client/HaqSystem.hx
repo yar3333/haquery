@@ -8,7 +8,7 @@ class HaqSystem
     
     public function new() : Void
 	{
-		var manager = new HaqTemplateManager(HaqInternals.serverHandlers, HaqInternals.id_tag);
+		var manager = new HaqTemplateManager();
         page = manager.createPage(HaqInternals.pageFullTag);
 	}
 }

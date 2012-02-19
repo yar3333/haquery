@@ -2,52 +2,59 @@
 
 package haquery.client;
 
-import haxe.Unserializer;
-import js.Lib;
-import js.Dom;
-
 class HaqInternals 
 {
-	public static var templates(default, null) : Hash<HaqTemplate>;
+    /**
+     * Setted by the server.
+     */
+	public static var pageFullTag(default, null) : String;
 	
-    private static var tags : Array<Array<String>>;
-	public static var id_tag(id_tag_getter, null) : Hash<String>;
-	static var id_tag_cached : Hash<String>;
-	static function id_tag_getter() : Hash<String>
+	/**
+	 * Setted by the server.
+	 * 
+	 * fullTag => { 
+	 * 					  config: [ extend, import_0, import_1, ... ]
+	 * 					, ids: [ compID_0, compID_1, ... ]
+	 * 					, serverHandlers: { 
+	 * 											  elemID_0 => [ event_00, event_01, ... ]
+	 * 											, elemID_1 => [ event_10, event_11, ... ]
+	 * 											, ...
+	 * 									  }
+	 * 			  }
+	 */
+	static var components(default, null) : Hash<{ config:Array<String>, ids:Array<String>, serverHandlers:Hash<Array<String>> }>;
+	
+	static var componentIDs_cached : Hash<String>;
+	
+	/**
+	 * @return componentID => fullTag
+	 */
+	public static function getComponentIDs() : Hash<String>
 	{
-		if (id_tag_cached == null)
+		if (componentIDs_cached == null)
 		{
-			id_tag_cached = new Hash<String>();
-			for (tagAndIDs in tags)
+			componentIDs_cached = new Hash<String>();
+			for (fullTag in components.keys())
 			{
-				var tag = tagAndIDs[0];
-				var ids : Array<String> = tagAndIDs[1].split(',');
-				if (ids.length == 1 && ids[0] == '') ids = [];
-				for (id in ids)
+				for (id in components.get(fullTag).ids)
 				{
-					id_tag_cached.set(id, tag);
+					componentIDs_cached.set(id, fullTag);
 				}
 			}
 		}
-		return id_tag_cached;
+		return componentIDs_cached;
+	}
+	
+	public static function getServerHandlers(fullTag:String) : Hash<Array<String>>
+	{
+		return components.get(fullTag).serverHandlers;
 	}
     
-	/**
-	 * fullTag =>
-	 */
-    static var serializedServerHandlers : String;
-	public static var serverHandlers(serverHandlers_getter, null) : Hash<Hash<Array<String>>>;
-    static var serverHandlers_cached : Hash<Hash<Array<String>>>;
-    static function serverHandlers_getter() : Hash<Hash<Array<String>>>
-    {
-        if (serverHandlers_cached == null)
-        {
-            serverHandlers_cached = Unserializer.run(serializedServerHandlers);
-        }
-        return serverHandlers_cached;
-    }
-    
-    public static var pageFullTag(default, null) : String;
+	public static function getTemplateConfig(fullTag:String) : HaqTemplateConfig
+	{
+		var component = components.get(fullTag);
+		return { extend:component.config[0], imports:component.config.slice(1) };
+	}
 }
 
 #end

@@ -23,7 +23,6 @@ class HaqRoute
 {
 	public var routeType(default,null) : HaqRouteType;
 	public var path(default,null) : String;
-	public var className(default,null) : String;
 	public var pageID(default,null) : String;
 	
 	public function new(url:String) : Void
@@ -47,6 +46,8 @@ class HaqRoute
 		}
 		else
 		{
+			routeType = HaqRouteType.page;
+			
 			url = url.trim('/');
 			if (url == '') url = 'index';
 			path = HaqDefines.folders.pages + '/' + url;
@@ -74,18 +75,12 @@ class HaqRoute
                 Lib.print("<h1>File not found (404)</h1>");
 				Sys.exit(0);
 			}
-			
-			className = path.replace('/', '.') + '.Server';
-			if (Type.resolveClass(className) == null)
-            {
-                className = 'haquery.server.HaqPage';
-            }
 		}
 	}
 	
-    static function isPageExist(path:String) : Bool
+    function isPageExist(path:String) : Bool
 	{
 		path = path.trim('/') + '/';
-		return (FileSystem.exists(path + 'template.html') || Type.resolveClass(path.replace('/', '.') + 'Server') != null);
+		return FileSystem.exists(path + 'template.html') || FileSystem.exists(path + 'Server.hx') || FileSystem.exists(path + 'Client.hx');
 	}
 }
