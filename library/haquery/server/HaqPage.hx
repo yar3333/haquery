@@ -1,8 +1,6 @@
 package haquery.server;
 
-import haquery.server.Lib;
 import haquery.server.HaqComponent;
-import haquery.server.HaqXml;
 import haquery.server.FileSystem;
 
 using haquery.StringTools;
@@ -42,7 +40,7 @@ class HaqPage extends HaqComponent
 			insertInitBlock(
 				  "<script>\n"
 				+ "    if(typeof haquery=='undefined') alert('" + HaqDefines.haqueryClientFilePath + " must be loaded!');\n"
-				+ "    " + manager.getSystemInitClientCode().replace('\n', '\n    ') + '\n'
+				+ "    " + manager.getDynamicClientCode(fullTag).replace('\n', '\n    ') + '\n'
 				+ "    haquery.client.Lib.run();\n"
 				+ "</script>"
 			);
