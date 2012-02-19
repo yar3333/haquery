@@ -1,11 +1,5 @@
 package haquery.base;
 	
-#if (php || neko)
-typedef Page = haquery.server.HaqPage
-#elseif js
-typedef Page = haquery.client.HaqPage
-#end
-
 import  haquery.server.FileSystem;
 
 using haquery.StringTools;
@@ -61,12 +55,12 @@ class HaqTemplateManager<Template:HaqTemplate>
 	{
 		var localPath = fullTag.replace(".", "/");
 		var path = getFullPath(localPath);
-		if (FileSystem.exists(path) && FileSystem.isDirectory(path))
+		if (path != null && FileSystem.exists(path) && FileSystem.isDirectory(path))
 		{
 			if (
-				FileSystem.exists(getFullPath(localPath + '/template.html'))
-			 || FileSystem.exists(getFullPath(localPath + '/Client.hx'))
-			 || FileSystem.exists(getFullPath(localPath + '/Server.hx'))
+				getFullPath(localPath + '/template.html') != null
+			 || getFullPath(localPath + '/Client.hx') != null
+			 || getFullPath(localPath + '/Server.hx') != null
 			) {
 				return true;
 			}
@@ -91,6 +85,8 @@ class HaqTemplateManager<Template:HaqTemplate>
 	
 	public function findTemplate(parentFullTag:String, tag:String) : Template
 	{
+		//trace("findTemplate " + parentFullTag + ", " + tag);
+		
 		var packageName = getPackageByFullTag(parentFullTag);
 		
 		var template = templates.get(packageName + '.' + tag);

@@ -9,9 +9,12 @@ class HaqTemplate extends haquery.base.HaqTemplate
 	 */
 	public var serverHandlers(default, null) : Hash<Array<String>>;
 	
-	public function new(imports:Array<String>, clientClassName:String)
+	public function new(fullTag:String)
 	{
-		super(imports);
-		this.clientClass = Type.resolveClass(clientClassName);
+		var parser = new HaqTemplateParser(fullTag);
+		
+		super(fullTag, parser.getImports());
+		
+		clientClass = parser.getClass();
 	}
 }

@@ -16,17 +16,17 @@ import neko.Sys;
 
 import haquery.server.Web;
 import haquery.server.Lib;
-import haquery.server.HaqComponent;
-import haquery.server.HaqProfiler;
+//import haquery.server.HaqComponent;
+//import haquery.server.HaqProfiler;
 import haquery.server.HaqRoute;
 import haquery.server.HaqDefines;
-import haquery.server.HaqTemplate;
+//import haquery.server.HaqTemplate;
 
 using haquery.StringTools;
 
 class HaqSystem
 {
-    public function new(route:HaqRoute, isPostback:Bool) : Void
+	public function new(route:HaqRoute, isPostback:Bool) : Void
     {
         trace(null);
 		
@@ -84,7 +84,7 @@ class HaqSystem
         var componentID = Web.getParams().get('HAQUERY_COMPONENT');
         var method = Web.getParams().get('HAQUERY_METHOD');
         
-        var component : HaqComponent = page.findComponent(componentID);
+        var component = page.findComponent(componentID);
         
 		var result = null;
 		

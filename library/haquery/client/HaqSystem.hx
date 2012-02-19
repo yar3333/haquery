@@ -1,7 +1,6 @@
 package haquery.client;
 
-import haquery.client.HaqComponentManager;
-import haquery.client.HaqTemplates;
+import haquery.client.HaqTemplateManager;
 
 class HaqSystem 
 {
@@ -9,8 +8,7 @@ class HaqSystem
     
     public function new() : Void
 	{
-		var templates = new HaqTemplates(HaqInternals.componentsFolders, HaqInternals.serverHandlers);
-		var manager = new HaqComponentManager(templates, HaqInternals.id_tag);
-        page = manager.createPage();
+		var manager = new HaqTemplateManager(HaqInternals.serverHandlers, HaqInternals.id_tag);
+        page = manager.createPage(HaqInternals.pageFullTag);
 	}
 }

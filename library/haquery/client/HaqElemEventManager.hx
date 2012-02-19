@@ -42,7 +42,7 @@ class HaqElemEventManager
         return r;
     }
 	
-    public static function connect(componentWithHandlers:HaqComponent, componentWithEvents:HaqComponent, templates:HaqTemplates)
+    public static function connect(componentWithHandlers:HaqComponent, componentWithEvents:HaqComponent, manager:HaqTemplateManager)
     {
         var elems:Array<HtmlDom> = getComponentElems(componentWithEvents);
         
@@ -55,7 +55,7 @@ class HaqElemEventManager
                 var needHandler = Reflect.isFunction(Reflect.field(componentWithHandlers, elemID + "_" + eventName));
                 if (!needHandler)
                 {
-                    var serverHandlers = templates.get(componentWithHandlers.tag).elemID_serverHandlers;
+                    var serverHandlers = manager.templates.get(componentWithHandlers.fullTag).serverHandlers;
                     if (serverHandlers != null && serverHandlers.get(elemID) != null 
                      && Lambda.has(serverHandlers.get(elemID), eventName)
                     ) {
@@ -65,18 +65,18 @@ class HaqElemEventManager
                 if (needHandler)
                 {
                     new JQuery(elem).bind(eventName, function(e:JqEvent) {
-                        elemEventHandler(componentWithHandlers, componentWithEvents, elem, templates, e); 
+                        elemEventHandler(componentWithHandlers, componentWithEvents, elem, manager, e); 
                     });
                 }
             }
         }
     }
 
-    static function elemEventHandler(componentWithHandlers:HaqComponent, componentWithEvents:HaqComponent, elem:HtmlDom, templates:HaqTemplates, e:JqEvent)
+    static function elemEventHandler(componentWithHandlers:HaqComponent, componentWithEvents:HaqComponent, elem:HtmlDom, manager:HaqTemplateManager, e:JqEvent)
     {
 		if (callClientElemEventHandlers(componentWithHandlers, componentWithEvents, elem, e))
 		{
-			var serverHandlers = templates.get(componentWithHandlers.tag).elemID_serverHandlers;
+			var serverHandlers = manager.templates.get(componentWithHandlers.fullTag).serverHandlers;
 			callServerElemEventHandlers(elem.id, e.type, serverHandlers);
 		}
     }

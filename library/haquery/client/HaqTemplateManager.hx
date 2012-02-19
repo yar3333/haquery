@@ -1,90 +1,40 @@
 package haquery.client;
 
-import js.Lib;
 import haquery.client.HaqComponent;
 import haquery.client.HaqTemplate;
 
 using haquery.StringTools;
 
-// TODO: client HaqTemplateManager
 class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 {
-	var componentsFolders : Array<String>;
 	var tag_elemID_serverHandlers : Hash<Hash<Array<String>>>;
 	var id_tag : Hash<String>;
 	
-	public function new(componentsFolders:Array<String>, tag_elemID_serverHandlers:Hash<Hash<Array<String>>>, id_tag:Hash<String>) : Void
+	public function new(tag_elemID_serverHandlers:Hash<Hash<Array<String>>>, id_tag:Hash<String>) : Void
 	{
-		this.componentsFolders = componentsFolders;
+		super();
 		this.tag_elemID_serverHandlers = tag_elemID_serverHandlers;
 		this.id_tag = id_tag;
 	}
 	
-	public function get(tag:String) : HaqTemplate
-	{
-		var r : HaqTemplate = { elemID_serverHandlers : tag_elemID_serverHandlers.get(tag), clas : null };
-		
-		var i = componentsFolders.length - 1;
-		while (i >= 0)
-		{
-			var folder = componentsFolders[i];
-			var className = folder.replace('/', '.') + tag + '.Client';
-			var clas : Class<HaqComponent> = untyped Type.resolveClass(className);
-			if (clas != null)
-			{
-				r.clas = clas;
-				break;
-			}
-			i--;
-		}
-		if (r.clas == null) r.clas = untyped Type.resolveClass('haquery.client.HaqComponent');
-		
-		return r; 
-	}
+	public function createPage(pageFullTag:String) : HaqPage
+    {
+		var template = new HaqTemplate(pageFullTag);
+		return cast newComponent(pageFullTag, null, template.clientClass, '', null);
+    }
 	
 	public function createComponent(parent:HaqComponent, tag:String, id:String, factoryInitParams:Array<Dynamic>=null) : HaqComponent
     {
-		var pageClass : Class<HaqComponent>;
-		if (parent != null)
-		{
-			pageClass = templates.get(tag).clas;
-		}
-		else
-		{
-            var standardPageClass : Class<HaqComponent> = untyped Type.resolveClass('haquery.client.HaqPage');
-            var pagePath = HaqInternals.pagePackage;
-			pageClass = untyped Type.resolveClass(pagePath + '.Client');
-			if (pageClass == null) 
-            {
-                pageClass = standardPageClass;
-            }
-            else
-            {
-                if (!HaqTools.isClassHasSuperClass(pageClass, standardPageClass))
-                {
-                    throw "Class '" + Type.getClassName(pageClass) + "' must be inherited from '" + Type.getClassName(standardPageClass) + "'.";
-                }
-            }
-		}
-		
-		var component : HaqComponent = untyped Type.createInstance(pageClass, []);
-        if (Reflect.isFunction(Reflect.field(component, 'construct')))
-        {
-            component.construct(this, parent, tag, id, templates.get(tag).elemID_serverHandlers, factoryInitParams);
-        }
-        else
-        {
-            throw "Component client class '" + Type.getClassName(pageClass) + "' must be inherited from class 'haquery.client.HaqComponent'.";
-        }
-
-        return component;
+		var template = findTemplate(parent.fullTag, tag);
+		return newComponent(template.fullTag, parent, template.clientClass, id, factoryInitParams);
     }
-    
-	public function createPage() : HaqPage
-    {
-		var page : HaqPage = cast(createComponent(null, '', ''), HaqPage);
-        return page;
-    }
+	
+	function newComponent(fulltag:String, parent:HaqComponent, clas:Class<HaqComponent>, id:String, factoryInitParams:Array<Dynamic>=null) : HaqComponent
+	{
+        var r : HaqComponent = Type.createInstance(clas, []);
+        r.construct(this, fulltag, parent, id, factoryInitParams);
+		return r;
+	}	
 	
 	public function getChildComponents(parent:HaqComponent) : Array<{ id:String, tag:String }>
 	{
@@ -100,10 +50,10 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		return r;
 	}
     
-    public function getSupportUrl(tag : String)
+    /*public function getSupportUrl(tag : String)
     {
         var className = Type.getClassName(templates.get(tag).clas);
         var n = className.lastIndexOf('.');
         return '/' + className.substr(0, n).replace('.', '/') + '/' + HaqDefines.folders.support + '/';
-    }
+    }*/
 }
