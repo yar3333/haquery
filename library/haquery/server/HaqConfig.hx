@@ -8,11 +8,6 @@ class HaqConfig
 {
     public var db : { type:String, host:String, user:String, pass:String, database:String };
 	
-    /**
-     * Path to layout file (null if layout not need).
-     */
-	public var layout : String;
-    
 	public var autoSessionStart : Bool;
 
     public var autoDatabaseConnect : Bool;
@@ -51,7 +46,6 @@ class HaqConfig
 			,pass : null
 			,database : null
 		};
-        layout = null;
 		autoSessionStart = true;
 		autoDatabaseConnect = true;
 		sqlTraceLevel = 1;

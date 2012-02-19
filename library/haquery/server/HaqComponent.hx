@@ -4,7 +4,6 @@ import haquery.Std;
 
 import haquery.server.HaqXml;
 import haquery.server.Lib;
-//import haquery.server.HaqTemplateManager;
 
 using haquery.StringTools;
 

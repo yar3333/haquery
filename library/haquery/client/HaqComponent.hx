@@ -2,21 +2,21 @@
 
 package haquery.client;
 
-import js.Lib;
+import haquery.client.Lib;
 import haquery.client.HaqQuery;
 
 class HaqComponent extends haquery.base.HaqComponent
 {
-    var manager : HaqComponentManager;
+    var manager : HaqTemplateManager;
 	
-	var serverHandlers(default,null) : Hash<Array<String>>;
+	//var serverHandlers(default,null) : Hash<Array<String>>;
     
-	public function construct(fullTag:String, manager:HaqComponentManager, parent:HaqComponent, tag:String,  id:String, serverHandlers:Hash<Array<String>>, factoryInitParams:Array<Dynamic>=null) : Void
+	public function construct(manager:HaqTemplateManager, fullTag:String, parent:HaqComponent, id:String, /*serverHandlers:Hash<Array<String>>,*/ factoryInitParams:Array<Dynamic>=null) : Void
 	{
-		super.commonConstruct(fullTag, parent, tag, id);
+		super.commonConstruct(fullTag, parent, id);
 		
 		this.manager = manager;
-        this.serverHandlers = serverHandlers;
+        //this.serverHandlers = serverHandlers;
         
 		connectElemEventHandlers();
         createEvents();
@@ -30,7 +30,7 @@ class HaqComponent extends haquery.base.HaqComponent
 			}
 			else
 			{
-				throw "Client class of the " + tag + " component must contain method factoryInit() to be instanceable on the client via factory component.";
+				throw "Client class of the " + fullTag + " component must contain method factoryInit() to be instanceable on the client via factory component.";
 			}
 		}
 		
@@ -60,7 +60,7 @@ class HaqComponent extends haquery.base.HaqComponent
     
     private function connectElemEventHandlers() : Void
     {
-		HaqElemEventManager.connect(this, this, manager.templates);
+		HaqElemEventManager.connect(this, this, manager);
     }
 	
 	/**

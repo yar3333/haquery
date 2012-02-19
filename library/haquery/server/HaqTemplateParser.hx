@@ -2,7 +2,6 @@ package haquery.server;
 
 import haquery.server.HaqDefines;
 import haquery.server.HaqComponent;
-import haquery.server.HaqPage;
 import haquery.server.HaqXml;
 
 #if php
@@ -16,84 +15,24 @@ import neko.io.File;
 
 using haquery.StringTools;
 
-class HaqTemplateParser
+class HaqTemplateParser extends haquery.base.HaqTemplateParser
 {
-	var fullTag : String;
-	var config : HaqTemplateConfig;
-	
 	public function new(fullTag:String)
 	{
-		this.fullTag = fullTag;
-		config = getConfig();
+		super(fullTag);
 	}
 	
-	public function getFullTag() : String
+	override function getShortClassName() : String
 	{
-		return fullTag;
+		return "Server";
 	}
 	
-	function isPage() : Bool
-	{
-		return fullTag.startsWith(HaqDefines.folders.pages.replace("/", "."));
-	}
-	
-	public function getClass() : Class<HaqComponent>
-	{
-		var className = fullTag + ".Server";
-		var clas = Type.resolveClass(className);
-		if (clas != null)
-		{
-			return cast clas;
-		}
-		
-		if (config.extend != null)
-		{
-			return new HaqTemplateParser(config.extend).getClass();
-		}
-		
-		return isPage() ? cast(HaqPage, HaqComponent) : HaqComponent;
-	}
-	
-	function getRawTemplateHtml() : String
-	{
-		var html = "";
-		
-		var path = getFullPath(fullTag.replace(".", "/") + "/template.html");
-		if (FileSystem.exists(path))
-		{
-			html = File.getContent(path);
-		}
-		
-		if (config.extend != null)
-		{
-			html = new HaqTemplateParser(config.extend).getDocAndCss() + html;
-		}
-		
-		return html;
-	}
-	
-	public function getSupportFilePath(fileName:String) : String
-	{
-		var path = getFullPath(fullTag.replace('.', '/') + '/' + HaqDefines.folders.support + '/' + fileName);
-		if (FileSystem.exists(path))
-		{
-			return path;
-		}
-		
-		if (config.extend != null)
-		{
-			return getSupportFilePath(fileName);
-		}
-		
-		return null;
-	}
-	
-	function getConfig() : HaqTemplateConfig
+	override function getConfig() : HaqTemplateConfig
 	{
 		var pathParts = fullTag.split(".");
 		pathParts.unshift("");
 		
-		var r = { extend:null, imports:new Array<String>() };
+		var r = { extend : null, imports : new Array<String>() };
 		
 		var basePath = ".";
 		for (pathPart in pathParts)
@@ -112,7 +51,7 @@ class HaqTemplateParser
 	
 	function parseConfig(path:String) : HaqTemplateConfig
 	{
-		if (FileSystem.exists(path))
+		if (path!=null && FileSystem.exists(path))
 		{
 			var r = { extend:null, imports:new Array<String>() };
 			var xml = new HaqXml(File.getContent(path));
@@ -140,59 +79,37 @@ class HaqTemplateParser
 		return null;
 	}
 	
-	public function getDocAndCss() : { doc:HaqXml, css:String }
+	public function getSupportFilePath(fileName:String) : String
 	{
-		return isPage() ? getPageDocAndCss() : getComponentDocAndCss();
+		var path = getFullPath(fullTag.replace('.', '/') + '/' + HaqDefines.folders.support + '/' + fileName);
+		if (path != null)
+		{
+			return path;
+		}
+		
+		if (config.extend != null)
+		{
+			return getParentParser().getSupportFilePath(fileName);
+		}
+		
+		return null;
 	}
 	
-	function getPageDocAndCss() : { doc:HaqXml, css:String }
+	public function getDocAndCss() : { doc:HaqXml, css:String }
 	{
-		var pageText = getRawTemplateHtml();
-        
-        var pageDoc = new HaqXml(pageText);
-        
-        if (Lib.config.layout == null || Lib.config.layout == "") return { doc:pageDoc, css:"" };
-        
-        if (!FileSystem.exists(Lib.config.layout))
-        {
-            throw "Layout file '" + Lib.config.layout + "' not found.";
-        }
-        
-        var layoutDoc = new HaqXml(File.getContent(Lib.config.layout));
-        
-        var placeholders = layoutDoc.find('haq:placeholder');
-        var contents = pageDoc.find('>haq:content');
-        for (ph in placeholders)
-        {
-            var content : HaqXmlNodeElement = null;
-            for (c in contents) 
-            {
-                if (c.getAttribute('id') == ph.getAttribute('id'))
-                {
-                    content = c;
-                    break;
-                }
-            }
-            if (content != null) ph.parent.replaceChildWithInner(ph, content);
-            else                 ph.parent.replaceChildWithInner(ph, ph);
-        }
-        
-		return { doc:layoutDoc, css:"" };
-	}	
-	
-	function getComponentDocAndCss() : { doc:HaqXml, css:String }
-	{
-		var text = getRawTemplateHtml();
+        var text = getDocText();
 		
-        var reSupportFileUrl = new EReg("~/([-_/\\.a-zA-Z0-9]*)", "");
+		var reSupportFileUrl = new EReg("~/([-_/\\.a-zA-Z0-9]*)", "");
         text = reSupportFileUrl.customReplace(text, function(re)
         {
             var f = getSupportFilePath(re.matched(1));
             return f != null ? '/' + f : re.matched(0);
         });
-		
+
 		var doc = new HaqXml(text);
-		
+        
+		resolvePlaceHolders(doc);
+        
 		var css = '';
 		var i = 0; 
 		while (i < doc.children.length)
@@ -223,6 +140,49 @@ class HaqTemplateParser
 		return { doc:doc, css:css };
 	}
 	
+	function getDocText() : String
+	{
+		var text = "";
+		
+		if (config.extend != null && config.extend != "" )
+		{
+			text += getParentParser().getDocText();
+		}
+		
+		var path = getFullPath(fullTag.replace(".", "/") + "/template.html");
+		if (path != null)
+		{
+			text += File.getContent(path);
+		}
+		
+		return text;
+	}
+	
+	function resolvePlaceHolders(doc:HaqXml)
+	{
+        var placeholders = doc.find('haq:placeholder');
+        var contents = doc.find('>haq:content');
+        for (ph in placeholders)
+        {
+            var content : HaqXmlNodeElement = null;
+            for (c in contents) 
+            {
+                if (c.getAttribute('id') == ph.getAttribute('id'))
+                {
+                    content = c;
+                    break;
+                }
+            }
+            if (content != null) ph.parent.replaceChildWithInner(ph, content);
+            else                 ph.parent.replaceChildWithInner(ph, ph);
+        }
+		
+		for (c in doc.find('>haq:content'))
+		{
+			c.remove();
+		}
+	}
+	
 	function globalizeCssClassNames(text:String) : String
 	{
 		var blocks = new EReg("(?:[/][*].*?[*][/])|(?:[{].*?[}])|([^{]+)|(?:[{])", "s");
@@ -245,14 +205,9 @@ class HaqTemplateParser
 	/**
 	 * May be overriten.
 	 */
-	function getFullPath(path:String)
+	function getFullPath(path:String) : String
 	{
-		return path;
-	}
-	
-	public function getImports() : Array<String>
-	{
-		return config.imports;
+		return FileSystem.exists(path) ? path : null;
 	}
 	
 	public function getServerHandlers(clas:Class<HaqComponent>=null) : Hash<Array<String>>
@@ -260,7 +215,7 @@ class HaqTemplateParser
         Lib.profiler.begin('parseServerHandlers');
             var serverMethods = [ 'click','change' ];   // server events
             var serverHandlers : Hash<Array<String>> = new Hash<Array<String>>();
-            var tempObj = Type.createEmptyInstance(clas!=null ? clas : getClass());
+            var tempObj = Type.createEmptyInstance(clas != null ? clas : getClass());
             for (field in Reflect.fields(tempObj))
             {
                 if (Reflect.isFunction(Reflect.field(tempObj, field)))

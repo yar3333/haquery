@@ -47,10 +47,7 @@ class HaqInternals
         return serverHandlers_cached;
     }
     
-    public static var pageFullID : String;
-	
-	
-	
+    public static var pageFullTag(default, null) : String;
 }
 
 #end

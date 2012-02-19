@@ -4,8 +4,6 @@ class HaqTemplate extends haquery.base.HaqTemplate
 {
 	var parser : HaqTemplateParser;
 	
-	public var fullTag(fullTag_getter, null) : String;
-	
 	public var doc(default, null) : HaqXml;
 	public var css(default, null) : String;
 	public var serverClass(default, null) : Class<HaqComponent>;
@@ -19,23 +17,18 @@ class HaqTemplate extends haquery.base.HaqTemplate
 	{
 		parser = new HaqTemplateParser(fullTag);
 		
+		super(fullTag, parser.getImports());
+		
 		var docAndCss = parser.getDocAndCss();
 		doc = docAndCss.doc;
 		css = docAndCss.css;
 		
-		serverClass = parser.getClass();
+		serverClass = cast parser.getClass();
 		serverHandlers = parser.getServerHandlers(serverClass);
-		
-		super(parser.getImports());
 	}
 	
 	public function getSupportFilePath(relPath:String)
 	{
 		return parser.getSupportFilePath(relPath);
-	}
-	
-	public inline function fullTag_getter() : String
-	{
-		return parser.getFullTag();
 	}
 }
