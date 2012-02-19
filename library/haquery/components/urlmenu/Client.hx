@@ -1,4 +1,4 @@
-package components.haquery.urlmenu;
+package haquery.components.urlmenu;
 
 import haquery.client.HaqInternals;
 import haquery.client.HaqQuery;
@@ -6,7 +6,7 @@ import haquery.client.Lib;
 import js.Dom;
 import haquery.client.HaqComponent;
 
-class Client extends components.haquery.container.Client
+class Client extends haquery.components.container.Client
 {
     function init()
     {

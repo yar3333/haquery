@@ -1,4 +1,4 @@
-package components.haquery.waiter;
+package haquery.components.waiter;
 
 import haquery.server.HaqComponent;
 

@@ -1,4 +1,4 @@
-package components.haquery.shadow;
+package haquery.components.shadow;
 
 import haquery.client.HaqComponent;
 import js.Lib;

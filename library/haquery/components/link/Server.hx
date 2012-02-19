@@ -1,4 +1,4 @@
-package components.haquery.link;
+package haquery.components.link;
 
 class Server extends Base
 {

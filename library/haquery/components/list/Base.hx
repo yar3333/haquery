@@ -1,4 +1,4 @@
-package components.haquery.list;
+package haquery.components.list;
 
 #if php
 import haquery.server.HaqComponent;

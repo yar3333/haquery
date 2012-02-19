@@ -1,9 +1,9 @@
-package components.haquery.uploader;
+package haquery.components.uploader;
 
 #if php
-typedef Container = components.haquery.container.Server;
+typedef Container = haquery.components.container.Server;
 #else
-typedef Container = components.haquery.container.Client;
+typedef Container = haquery.components.container.Client;
 #end
 
 class Base extends Container

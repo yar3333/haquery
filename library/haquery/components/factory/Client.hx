@@ -1,4 +1,4 @@
-package components.haquery.factory;
+package haquery.components.factory;
 
 import haquery.client.HaqDefines;
 import haquery.client.HaqElemEventManager;

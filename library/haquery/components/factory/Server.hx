@@ -1,4 +1,4 @@
-package components.haquery.factory;
+package haquery.components.factory;
 
 import haquery.server.Lib;
 import haquery.server.HaqComponent;
@@ -22,7 +22,7 @@ class Server extends Base
 	function preRender()
     {
         q('#component').val(component);
-		q('#template').val(Serializer.run(manager.findTemplate(this, component).doc.toString()));
+		q('#template').val(Serializer.run(manager.findTemplate(fullTag, component).doc.toString()));
 	}
 	
     override function callElemEventHandler(elemID:String, eventName:String) : Dynamic

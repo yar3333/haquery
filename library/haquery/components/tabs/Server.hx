@@ -1,4 +1,4 @@
-package components.haquery.tabs;
+package haquery.components.tabs;
 
 import haquery.server.HaqComponent;
 import haquery.server.HaqQuery;
@@ -6,7 +6,7 @@ import haquery.server.Lib;
 import php.Lib;
 import haquery.server.HaqXml;
 
-class Server extends components.haquery.container.Server
+class Server extends haquery.components.container.Server
 {
     public var active : Int;
     

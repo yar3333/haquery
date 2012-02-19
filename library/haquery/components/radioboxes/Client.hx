@@ -1,10 +1,10 @@
-package components.haquery.radioboxes;
+package haquery.components.radioboxes;
 
 import js.Dom;
 import haquery.client.HaqEvent;
 import haquery.client.HaqQuery;
 
-class Client extends components.haquery.container.Client
+class Client extends haquery.components.container.Client
 {
     public var value(value_getter, value_setter) : String;
     
