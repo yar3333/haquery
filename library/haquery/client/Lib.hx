@@ -11,7 +11,7 @@ using haquery.StringTools;
 
 class Lib
 {
-    static public function run() : Void
+    static public function run(pageFullTag:String)
     {
         if (Firebug.detect())
 		{
@@ -22,7 +22,8 @@ class Lib
 		{
 			haxe.Log.trace = haquery.client.Lib.trace;
 		}
-        var system = new HaqSystem();
+        
+		HaqSystem.run(pageFullTag);
     }
 	
     static public function redirect(url:String) : Void

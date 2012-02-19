@@ -43,11 +43,6 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 		return null;
 	}
 	
-	public inline function getExtend()
-	{
-		return config.extend;
-	}
-	
 	function getLocalClassName(shortClassName:String) : String
 	{
 		var fullClassName = fullTag + "." + shortClassName;

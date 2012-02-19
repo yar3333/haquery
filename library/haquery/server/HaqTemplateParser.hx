@@ -95,6 +95,11 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser
 		return null;
 	}
 	
+	public function getExtend() : String
+	{
+		return config.extend;
+	}
+	
 	public function getDocAndCss() : { doc:HaqXml, css:String }
 	{
         var text = getDocText();

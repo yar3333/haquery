@@ -37,6 +37,13 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		
 		registeredScripts = [];
 		registeredStyles = [];
+		
+		var templatesCacheClientFilePath = HaqDefines.folders.temp + "/templates-cache-client.js";
+		if (!FileSystem.exists(templatesCacheClientFilePath))
+		{
+			File.putContent(templatesCacheClientFilePath, getStaticClientCode());
+		}
+		registerScript(null, "/" + templatesCacheClientFilePath);
 	}
 	
 	override function fillTemplates()
@@ -46,15 +53,15 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 			FileSystem.createDirectory(HaqDefines.folders.temp);
 		}
 		
-		var templatesCacheFilePath = HaqDefines.folders.temp + "/templates.cache";
-		if (!FileSystem.exists(templatesCacheFilePath))
+		var templatesCacheServerFilePath = HaqDefines.folders.temp + "/templates-cache-server.dat";
+		if (!FileSystem.exists(templatesCacheServerFilePath))
 		{
 			fillTemplatesBySearch(HaqDefines.folders.pages);
-			File.putContent(templatesCacheFilePath, Serializer.run(templates));
+			File.putContent(templatesCacheServerFilePath, Serializer.run(templates));
 		}
 		else
 		{
-			templates = Unserializer.run(templatesCacheFilePath);
+			templates = Unserializer.run(templatesCacheServerFilePath);
 		}
 	}
 	
@@ -266,51 +273,62 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
         }
     }
 	
-	public function getDynamicClientCode(pageFullTag:String) : String
+	function fillTagIDs(com:HaqComponent, destTagIDs:Hash<Array<String>>) : Hash<Array<String>>
+	{
+		if (com.visible)
+		{
+			if (!destTagIDs.exists(com.fullTag))
+			{
+				destTagIDs.set(com.fullTag, []);
+			}
+			destTagIDs.get(com.fullTag).push(com.fullID);
+		}
+		
+		for (subCom in com.components)
+		{
+			fillTagIDs(subCom, destTagIDs);
+		}
+		
+		return destTagIDs;
+	}
+	
+	function array2json(a:Iterable<String>) : String
+	{
+		return "[" + Lambda.map(a, function(s) return "'" + s + "'").join(",") + "]";
+	}
+	
+	public function getDynamicClientCode(page:HaqPage) : String
     {
-		var s = '';
+		var tagIDs = fillTagIDs(page, new Hash<Array<String>>());
 		
-        // TODO: getSystemInitClientCode
+		var s = "haquery.client.HaqInternals.tagIDs = haquery.HashTools.hashify({\n"
+		      + Lambda.map(tagIDs.keysIterable(), function(tag) {
+					return "'" + tag + "':" + array2json(tagIDs.get(tag));
+				}).join(",\n")
+			  + "\n});\n";
 		
-		/*
-		s += "haquery.client.HaqInternals.componentCollections = [ " + Lambda.map(collections, function(c) return "'" + c + "'").join(', ') + " ];\n";
-        
-        var tags = templates.keys();
-        s += "haquery.client.HaqInternals.tags = [\n";
-        var tagComponents = getTagComponents(page);
-        for (tag in tagComponents.keys())
-        {
-            var components = tagComponents.get(tag);
-            var visibledComponents =  Lambda.filter(components, function (x) {
-                while (x != null)
-                {
-                    if (!x.visible) return false;
-                    x = x.parent;
-                }
-                return true;
-            });
-			var ids =  Lambda.map(visibledComponents, function(x) { return x.fullID; } ).join(',');
-			s += "    ['" + tag + "', '" + ids + "'],\n";
-        }
-        s = s.rtrim("\n,") + "\n];\n";
-		
-		var pageClassName = Type.getClassName(Type.getClass(page));
-		var pageTemplate = new HaqTemplate(new PageTemplateParser(pageClassName));
-		var serverHandlers = new Hash<Hash<Array<String>>>();
-        serverHandlers.set('', pageTemplate.serverHandlers);
-        for (tag in tags)
-        {
-            serverHandlers.set(tag, templates.get(tag).serverHandlers);
-        }
-        s += "haquery.client.HaqInternals.serializedServerHandlers = \"" + Serializer.run(serverHandlers) + "\";\n";
-        s += "haquery.client.HaqInternals.pagePackage = \"" + pageClassName + "\";";
-		*/
+		s += "haquery.client.Lib.run('" + page.fullTag + "');\n";
 
         return s;
     }
 	
 	public function getStaticClientCode() : String
 	{
-		return "";
+		var s = "haquery.client.HaqInternals.templates = haquery.HashTools.hashify({\n"
+		      + Lambda.map(templates.keysIterable(), function(tag) {
+					var t = templates.get(tag);
+					return "'" + tag + "':"
+						 + "{" 
+							 + "config:" + array2json([t.extend].concat(t.imports)) 
+							 + ", "
+							 + "serverHandlers:haquery.HashTools.hashify({" 
+								+ Lambda.map(t.serverHandlers.keysIterable(), function(elemID) {
+									return "'" + elemID + "':" + array2json(t.serverHandlers.get(elemID));
+								  }).join(",")
+							 + "})"
+						 + "}";
+				}).join(",\n")
+			  + "\n});\n";
+		return s;
 	}
 }

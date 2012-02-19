@@ -6,9 +6,14 @@ class HaqSystem
 {
 	public static var page : HaqPage;
     
-    public function new() : Void
+    public static function run(pageFullTag:String)
+	{
+		new HaqSystem(pageFullTag);
+	}
+	
+	function new(pageFullTag)
 	{
 		var manager = new HaqTemplateManager();
-        page = manager.createPage(HaqInternals.pageFullTag);
+        page = manager.createPage(pageFullTag);
 	}
 }

@@ -4,6 +4,8 @@ class HaqTemplate extends haquery.base.HaqTemplate
 {
 	var parser : HaqTemplateParser;
 	
+	public var extend(default, null) : String;
+	
 	public var doc(default, null) : HaqXml;
 	public var css(default, null) : String;
 	public var serverClass(default, null) : Class<HaqComponent>;
@@ -18,6 +20,8 @@ class HaqTemplate extends haquery.base.HaqTemplate
 		parser = new HaqTemplateParser(fullTag);
 		
 		super(fullTag, parser.getImports());
+		
+		extend = parser.getExtend();
 		
 		var docAndCss = parser.getDocAndCss();
 		doc = docAndCss.doc;

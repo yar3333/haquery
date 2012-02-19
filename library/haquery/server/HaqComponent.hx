@@ -130,7 +130,7 @@ class HaqComponent extends haquery.base.HaqComponent
             ? "haquery.client.HaqSystem.page.findComponent('" + fullID + "')." + method
             : "haquery.client.HaqSystem.page." + method;
         
-        HaqInternals.addAjaxResponse(HaqTools.getCallClientFunctionString(funcName, params) + ';');
+        HaqSystem.addAjaxResponse(HaqTools.getCallClientFunctionString(funcName, params) + ';');
     }
 	
 	/**
@@ -144,7 +144,7 @@ class HaqComponent extends haquery.base.HaqComponent
             ? "haquery.client.HaqSystem.page.findComponent('" + fullID + "')." + method
             : "haquery.client.HaqSystem.page." + method;
         
-        HaqInternals.addAjaxResponse(HaqTools.getCallClientFunctionString(funcName, params) + ';');
+        HaqSystem.addAjaxResponse(HaqTools.getCallClientFunctionString(funcName, params) + ';');
 	}
     
     public function callElemEventHandler(elemID:String, eventName:String) : Dynamic
