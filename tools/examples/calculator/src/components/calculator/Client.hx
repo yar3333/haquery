@@ -1,7 +1,7 @@
 package components.calculator;
 
-import js.jQuery.JQuery;
-import js.Lib;
+import js.JQuery;
+import haquery.client.Lib;
 import haquery.client.HaqComponent;
 
 using StringTools;
@@ -37,11 +37,11 @@ class Client extends HaqComponent
 		isError = false;
 		
 		q("#calculator .calculator-buttons").bind(
-            "selectstart mousedown", function() { return false; }
+            "selectstart mousedown", untyped function(e) { return false; }
         ); // ie + ff
 
-        if (JQueryStatic.browser.opera) bindKeysForOpera();
-        else                            bindKeysForIEAndFF();
+        if (JQuery.browser.opera) bindKeysForOpera();
+        else                      bindKeysForIEAndFF();
 
         this.update();
     }
@@ -158,17 +158,26 @@ class Client extends HaqComponent
         var i = 1;
 		while (i < stack.length)
         {
-            var needPar = i>1 && getOperPriority(stack[i-2].text) < getOperPriority(stack[i].text);
-            if (needPar) history = "(" + history + ")";
+            var needPar = i > 1 && getOperPriority(stack[i - 2].text) < getOperPriority(stack[i].text);
+            if (needPar)
+			{
+				history = "(" + history + ")";
+			}
             history += " " + stack[i].text;
-            if (i + 1 < stack.length) history += " " + stack[i + 1].text;
+            if (i + 1 < stack.length)
+			{
+				history += " " + stack[i + 1].text;
+			}
 			i += 2;
         }
 
         var old = this.historyTextArea.html();
-        if (old!="") old += JQueryStatic.browser.msie ? "<br>" : "\r\n";
-		historyTextArea.html(old+history+" = "+ number2text(fixed));
-        historyTextArea.scrollTop(historyTextArea.get(0).scrollHeight);
+        if (old != "")
+		{
+			old += JQuery.browser.msie ? "<br>" : "\r\n";
+		}
+		historyTextArea.html(old + history + " = " + number2text(fixed));
+        historyTextArea.scrollTop(historyTextArea[0].scrollHeight);
     }
 
     //==========================================================================
@@ -256,7 +265,7 @@ class Client extends HaqComponent
 
     function showBlocked()
     {
-        this.q('#number').fadeOut('fast').fadeIn('fast');
+        q('#number').fadeOut('fast').fadeIn('fast');
     }
 
     function addNum(n)
