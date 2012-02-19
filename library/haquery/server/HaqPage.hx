@@ -2,6 +2,7 @@ package haquery.server;
 
 import haquery.server.HaqComponent;
 import haquery.server.FileSystem;
+import haquery.server.HaqXml;
 
 using haquery.StringTools;
 
