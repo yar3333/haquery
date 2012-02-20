@@ -75,41 +75,6 @@ class StringTools
 
 	public static inline function isEOF( c : Int ) : Bool { return HaxeStringTools.isEOF(c); }
     
-    public static function unescape(s:String) : String
-    {
-        #if php
-		untyped __php__("
-			$text = explode('%u', $s);
-			$r = '';
-			for ($i = 0; $i < count($text); $i++)
-			{
-				$r .= pack('H*', $text[$i]);
-			}
-			$r = mb_convert_encoding($r, 'UTF-8', 'UTF-16');
-		");
-		return untyped __var__('r');
-        #else
-        return untyped __js__('unescape(s)');
-        #end
-    }
-
-    public static function escape(s:String) : String
-    {
-        #if php
-		untyped __php__("
-			$text = mb_convert_encoding($s, 'UTF-16', 'UTF-8');
-			$r = '';
-			for ($i = 0; $i < mb_strlen($text, 'UTF-16'); $i++)
-			{
-				$r .= '%u'.bin2hex(mb_substr($text, $i, 1, 'UTF-16'));
-			}
-		");
-		return untyped __var__('r');
-        #else
-        return untyped __js__('escape(s)');
-        #end
-    }
-	
 	#if (php || js)
 	public static inline function jsonDecode(s : String) : Dynamic
 	{
