@@ -8,7 +8,7 @@ class Server extends Base
     public var filter : String;
     var event_upload : HaqEvent;
 
-    function preRender() : Void
+    function preRender()
     {
         q('#form').attr('target', prefixID + 'frame');
         q('#frame').attr('name', prefixID + 'frame');

@@ -34,6 +34,8 @@ class HaqPage extends HaqComponent
     
 	override public function render():String 
 	{
+        forEachComponent('preRender');
+		
 		if (!disableSystemHtmlInserts)
 		{
 			insertStyles(manager.getRegisteredStyles());
