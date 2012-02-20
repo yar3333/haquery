@@ -100,18 +100,18 @@ class HaqComponent extends haquery.base.HaqComponent
      */
     public function q(?query:Dynamic=null) : HaqQuery
     {
-        var prefixCssClass = fullTag != "" ? fullTag.replace(".", "_") + HaqDefines.DELIMITER : "";
+        var prefixCssClass = fullTag.replace(".", "_") + HaqDefines.DELIMITER;
 		
 		if (query == null) return new HaqQuery(prefixCssClass, prefixID, '', null);
         if (Type.getClass(query) == haquery.server.HaqQuery) return query;
-		if (Type.getClass(query) ==  HaqXmlNodeElement)
+		if (Type.getClass(query) == HaqXmlNodeElement)
 		{
 			Lib.assert(!Lib.isPostback, "Calling of the HaqComponent.q() with HaqXmlNodeElement parameter do not possible on the postback.");
 			return new HaqQuery(prefixCssClass, prefixID, "", [ query ]);
 		}
         if (Type.getClassName(Type.getClass(query)) != 'String')
 		{
-			throw "HaqComponent.q() error - 'query' parameter must be a string or HaqQuery.";
+			throw "HaqComponent.q() error - 'query' parameter must be a String, HaqQuery or HaqXmlNodeElement.";
 		}
         
         var nodes = doc.find(query);

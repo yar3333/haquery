@@ -67,21 +67,19 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 	
 	public function createPage(pageFullTag:String, attr:Hash<String>) : HaqPage
 	{
-		var template = new HaqTemplate(pageFullTag);
-        return cast newComponent(pageFullTag, null, template.serverClassName, '', template.doc, attr, null);
+        return cast newComponent(templates.get(pageFullTag), null, '', attr, null);
 	}
 	
 	public function createComponent(parent:HaqComponent, tag:String, id:String, attr:Hash<String>, parentNode:HaqXmlNodeElement) : HaqComponent
 	{
-		var template = findTemplate(parent.fullTag, tag);
-		return newComponent(template.fullTag, parent, template.serverClassName, id, template.doc, attr, parentNode);
+		return newComponent(findTemplate(parent.fullTag, tag), parent, id, attr, parentNode);
 	}
 	
-	function newComponent(fulltag:String, parent:HaqComponent, className:String, id:String, doc:HaqXml, attr:Hash<String>, parentNode:HaqXmlNodeElement) : HaqComponent
+	function newComponent(template:HaqTemplate, parent:HaqComponent, id:String, attr:Hash<String>, parentNode:HaqXmlNodeElement) : HaqComponent
 	{
         Lib.profiler.begin('newComponent');
-            var r : HaqComponent = Type.createInstance(Type.resolveClass(className), []);
-            r.construct(this, fulltag, parent, id, doc, attr, parentNode);
+            var r : HaqComponent = Type.createInstance(Type.resolveClass(template.serverClassName), []);
+			r.construct(this, template.fullTag, parent, id, template.doc, attr, parentNode);
         Lib.profiler.end();
 		return r;
 	}
@@ -184,7 +182,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
     {
 		for (node in baseNode.children)
         {
-            trace("Create name = " + node.name);
+            //trace("Create name = " + node.name);
 			Lib.assert(node.name != 'haq:placeholder');
 			Lib.assert(node.name != 'haq:content');
             

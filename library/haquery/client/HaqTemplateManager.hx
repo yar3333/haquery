@@ -9,7 +9,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 {
 	public function createPage(pageFullTag:String) : HaqPage
     {
-		var template = new HaqTemplate(pageFullTag);
+		var template = templates.get(pageFullTag);
 		return cast newComponent(pageFullTag, null, template.clientClassName, '', null);
     }
 	

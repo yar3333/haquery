@@ -42,7 +42,7 @@ class HaqQuery
         this.nodes = nodes != null ? nodes : [];
     }
 	
-    public function __toString()
+    public function toString()
     {
         return nodes.join('');
     }
@@ -330,7 +330,10 @@ class HaqQuery
             }
         }
         
-        if (Lib.isPostback) jQueryCall('val("' + val + '")');
+        if (Lib.isPostback)
+		{
+			jQueryCall('val("' + val + '")');
+		}
 
         return this;
     }
@@ -363,7 +366,10 @@ class HaqQuery
 			}
 			else
 			{
-				if (untyped !__physeq__(val, '') && !__physeq__(val, null)) sStyles =  name + ": " + val + "; " + sStyles;
+				if (val != null && val != '')
+				{
+					sStyles =  name + ": " + val + "; " + sStyles;
+				}
 			}
             nodes[0].setAttribute('style', sStyles);
         }

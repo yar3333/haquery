@@ -211,7 +211,7 @@ class Lib
         for (i in 1...folders.length + 1)
         {
             var className = folders.slice(0, i).join('.') + '.Bootstrap';
-            var clas : Class<HaqBootstrap> = untyped Type.resolveClass(className);
+            var clas : Class<HaqBootstrap> = cast Type.resolveClass(className);
             if (clas != null)
             {
                 var b : HaqBootstrap = Type.createInstance(clas, []);

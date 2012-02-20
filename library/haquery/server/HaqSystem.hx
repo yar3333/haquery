@@ -65,7 +65,6 @@ class HaqSystem
     function renderPage(page:HaqPage) : String
     {
         Lib.profiler.begin('renderPage');
-            page.forEachComponent('preRender');
             var html : String = page.render();
         Lib.profiler.end();
 
