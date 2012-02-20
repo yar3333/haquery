@@ -5,6 +5,7 @@ import haquery.Std;
 import haquery.server.HaqXml;
 import haquery.server.Lib;
 
+using haquery.server.HaqComponentTools;
 using haquery.StringTools;
 
 class HaqComponent extends haquery.base.HaqComponent
@@ -57,7 +58,7 @@ class HaqComponent extends haquery.base.HaqComponent
 	
 	function loadFieldValues(params:Hash<String>) : Void
 	{
-		var fields = manager.getFieldsToLoadParams(this);
+		var fields = getFieldsToLoadParams();
 		
 		for (k in params.keys())
 		{
@@ -87,7 +88,7 @@ class HaqComponent extends haquery.base.HaqComponent
     {
         if (Lib.config.isTraceComponent) trace("render " + fullID);
 		
-		manager.prepareDocToRender(prefixID, doc);
+		prepareDocToRender(doc);
 
         var r = doc.toString().trim("\r\n");
         return r;
