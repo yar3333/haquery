@@ -1,5 +1,6 @@
 package haquery.base;
 
+import haxe.Serializer;
 import Type;
 import haquery.StringTools;
 
@@ -42,12 +43,12 @@ class HaqTools
                 return Std.string(v);
             
             case ValueType.TObject:
-                return 'haquery.StringTools.unescape("' + StringTools.escape(v) + '")';
+                return 'haxe.Unserializer.run("' + Serializer.run(v) + '")';
             
             case ValueType.TClass(clas):
                 if (Type.getClassName(clas) == 'String')
                 {
-                    return 'haquery.StringTools.unescape("' + StringTools.escape(v) + '")';
+                    return 'haxe.Unserializer.run("' + Serializer.run(v) + '")';
                 }
                 if (Type.getClassName(clas) == 'Date')
                 {
