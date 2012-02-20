@@ -31,7 +31,7 @@ class HaqQuery
     
 	function globalizeClassName(className:String) : String
 	{
-        return ~/\b~/.replace(className, prefixCssClass);
+        return ~/[~]/.replace(className, prefixCssClass);
 	}
     
 	public function new(prefixCssClass:String, prefixID:String, query:String, nodes:Array<HaqXmlNodeElement>)
