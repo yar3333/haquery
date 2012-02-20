@@ -14,12 +14,12 @@ class HaqTemplateManager<Template:HaqTemplate>
 		fillTemplates();
 	}
 	
-	#if (php || neko)
-	
 	function fillTemplates()
 	{
 		throw "This method must be overriten.";
 	}
+	
+	#if (php || neko)
 	
 	function fillTemplatesBySearch(pack:String)
 	{
@@ -74,22 +74,11 @@ class HaqTemplateManager<Template:HaqTemplate>
 		return null;
 	}
 	
-	#elseif js
-	
-	function fillTemplates()
-	{
-		throw "This method must be overriden.";
-	}
-	
 	#end
 	
 	public function findTemplate(parentFullTag:String, tag:String) : Template
 	{
-		//trace("findTemplate " + parentFullTag + ", " + tag);
-		
-		var packageName = getPackageByFullTag(parentFullTag);
-		
-		var template = templates.get(packageName + '.' + tag);
+		var template = templates.get(getPackageByFullTag(parentFullTag) + '.' + tag);
 		if (template == null)
 		{
 			for (importPackage in templates.get(parentFullTag).imports)

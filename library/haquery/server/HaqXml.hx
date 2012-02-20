@@ -80,25 +80,21 @@ class HaqXmlNodeElement extends HaqXmlNode
     public var nodes : Array<HaqXmlNode>;
     public var children : Array<HaqXmlNodeElement>;
     
-    public var component : Dynamic;
-
     public function getPrevSiblingElement() : HaqXmlNodeElement
     {
         if (parent == null) return null;
-        var siblings : Array<HaqXmlNodeElement> = parent.children;
-        var n = Lambda.indexOf(siblings, this);
-        if (n >= 0) return null;
-        if (n > 0) return siblings[n-1];
+        var n = Lambda.indexOf(parent.children, this);
+        if (n < 0) return null;
+        if (n > 0) return parent.children[n - 1];
         return null;
     }
 
     public function getNextSiblingElement() : HaqXmlNodeElement
     {
         if (parent == null) return null;
-        var siblings = this.parent.children;
-        var n = Lambda.indexOf(siblings, this);
-        if (n <= 0) return null;
-        if (n + 1 < siblings.length) return siblings[n + 1];
+        var n = Lambda.indexOf(parent.children, this);
+        if (n < 0) return null;
+        if (n + 1 < parent.children.length) return parent.children[n + 1];
         return null;
     }
     
@@ -124,16 +120,16 @@ class HaqXmlNodeElement extends HaqXmlNode
         }
         else
         {
-            var n = Lambda.indexOf(nodes,beforeNode);
+            var n = Lambda.indexOf(nodes, beforeNode);
             if (n >= 0)
             {
-                nodes.splice(n, 0);
+                nodes.insert(n, node);
                 if (Type.getClass(node) == HaqXmlNodeElement)
                 {
                     n = Lambda.indexOf(children, cast(beforeNode, HaqXmlNodeElement));
                     if (n >= 0)
                     {
-                        children.splice(n, 0);
+                        children.insert(n, cast(node, HaqXmlNodeElement));
                     }
                 }
             }

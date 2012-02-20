@@ -7,34 +7,40 @@ using haquery.StringTools;
 
 class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 {
+	override function fillTemplates()
+	{
+		for (fullTag in HaqInternals.templates.keys())
+		{
+			templates.set(fullTag, new HaqTemplate(fullTag));
+		}
+	}
+	
 	public function createPage(pageFullTag:String) : HaqPage
     {
-		var template = templates.get(pageFullTag);
-		return cast newComponent(pageFullTag, null, template.clientClassName, '', null);
+		return cast newComponent(templates.get(pageFullTag), null, '', null);
     }
 	
 	public function createComponent(parent:HaqComponent, tag:String, id:String, factoryInitParams:Array<Dynamic>=null) : HaqComponent
     {
-		var template = findTemplate(parent.fullTag, tag);
-		return newComponent(template.fullTag, parent, template.clientClassName, id, factoryInitParams);
+		return newComponent(tag.indexOf(".") < 0 ? findTemplate(parent.fullTag, tag) : templates.get(tag), parent, id, factoryInitParams);
     }
 	
-	function newComponent(fulltag:String, parent:HaqComponent, className:String, id:String, factoryInitParams:Array<Dynamic>=null) : HaqComponent
+	function newComponent(template:HaqTemplate, parent:HaqComponent, id:String, factoryInitParams:Array<Dynamic>=null) : HaqComponent
 	{
-        var r : HaqComponent = Type.createInstance(Type.resolveClass(className), []);
-        r.construct(this, fulltag, parent, id, factoryInitParams);
+        var r : HaqComponent = Type.createInstance(Type.resolveClass(template.clientClassName), []);
+        r.construct(this, template.fullTag, parent, id, factoryInitParams);
 		return r;
 	}	
 	
-	public function getChildComponents(parent:HaqComponent) : Array<{ id:String, tag:String }>
+	public function getChildComponents(parent:HaqComponent) : Array<{ id:String, fullTag:String }>
 	{
-		var r : Array<{ id:String, tag:String }> = new Array<{ id:String, tag:String }>();
+		var r = new Array<{ id:String, fullTag:String }>();
 		var re = new EReg('^' + parent.prefixID + '[^' + HaqDefines.DELIMITER + ']+$', '');
 		for (fullID in HaqInternals.getComponentIDs().keys())
 		{
 			if (re.match(fullID))
 			{
-				r.push({ id: fullID.substr(parent.prefixID.length), tag: HaqInternals.getComponentIDs().get(fullID) });
+				r.push({ id: fullID.substr(parent.prefixID.length), fullTag: HaqInternals.getComponentIDs().get(fullID) });
 			}
 		}
 		return r;

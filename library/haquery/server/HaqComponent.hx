@@ -15,12 +15,12 @@ class HaqComponent extends haquery.base.HaqComponent
     /**
      * HTML between component's open and close tags (where component inserted).
      */
-    var parentNode : HaqXmlNodeElement;
+    public var parentNode(default, null) : HaqXmlNodeElement;
 
     /**
      * template.html as DOM tree.
      */
-    var doc : HaqXml;
+    public var doc(default, null) : HaqXml;
     
     /**
      * Need render?
@@ -88,10 +88,46 @@ class HaqComponent extends haquery.base.HaqComponent
     {
         if (Lib.config.isTraceComponent) trace("render " + fullID);
 		
-		prepareDocToRender(doc);
-
-        var r = doc.toString().trim("\r\n");
-        return r;
+		if (visible)
+		{
+			expandDocElemIDs();
+			
+			for (child in components)
+			{
+				child.render();
+			}
+			
+			var text = doc.toString().trim(" \t\r\n");
+			
+			if (parentNode != null)
+			{
+				var prev = parentNode.getPrevSiblingNode();
+					
+				if (Type.getClass(prev) == HaqXmlNodeText)
+				{
+					var re : EReg = new EReg('(?:^|\n)([ ]+)$', 's');
+					if (re.match(cast(prev, HaqXmlNodeText).text))
+					{
+						text = text.replace("\n", "\n" + re.matched(1));
+					}
+				}
+			}
+			
+			if (parentNode != null && parentNode.parent != null)
+			{
+				parentNode.parent.replaceChild(parentNode, new HaqXmlNodeText(text));
+			}
+			
+			return text;
+		}
+		else
+		{
+			if (parentNode != null)
+			{
+				parentNode.remove();
+			}
+			return "";
+		}
     }
 
     /**

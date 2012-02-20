@@ -39,10 +39,9 @@ class HaqComponent extends haquery.base.HaqComponent
 	
 	public function createChildComponents() : Void
 	{
-		var childComponentsData = manager.getChildComponents(this);
-		for (component in childComponentsData)
+		for (component in manager.getChildComponents(this))
 		{
-			manager.createComponent(this, component.tag, component.id);
+			manager.createComponent(this, component.fullTag, component.id);
 		}
 	}
 	
