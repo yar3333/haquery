@@ -27,7 +27,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		registeredStyles = [];
 		
 		var templatesCacheClientFilePath = HaqDefines.folders.temp + "/templates-cache-client.js";
-		if (!Lib.config.isCacheTemplates || !FileSystem.exists(templatesCacheClientFilePath))
+		if (!Lib.config.useCache || !FileSystem.exists(templatesCacheClientFilePath))
 		{
 			File.putContent(templatesCacheClientFilePath, getStaticClientCode());
 		}
@@ -42,11 +42,11 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		}
 		
 		var templatesCacheServerFilePath = HaqDefines.folders.temp + "/templates-cache-server.dat";
-		if (!Lib.config.isCacheTemplates || !FileSystem.exists(templatesCacheServerFilePath))
+		if (!Lib.config.useCache || !FileSystem.exists(templatesCacheServerFilePath))
 		{
 			fillTemplatesBySearch(HaqDefines.folders.pages);
 			
-			if (Lib.config.isCacheTemplates)
+			if (Lib.config.useCache)
 			{
 				var ser = new Serializer();
 				ser.useCache = true;
@@ -127,28 +127,6 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		}
 	}
 	
-	function generatePackageCssFile(pack:String, fullTags:Array<String>, forceUpdate = false) : String
-	{
-		var basePath = HaqDefines.folders.temp + '/styles/';
-		if (!FileSystem.exists(basePath))
-		{
-			FileSystem.createDirectory(basePath);
-		}
-		
-		var path = basePath + pack + '.css';
-		
-		var text = "";
-		for (fullTag in fullTags)
-		{
-			var template = templates.get(fullTag);
-			text += "/* " + fullTag + "*/\n" + template.css + "\n\n";
-		}
-		
-		File.putContent(path, text);
-		
-		return path;
-	}
-	
 	public function getRegisteredStyles() : Array<String>
 	{
 		var packageStyles = [];
@@ -158,6 +136,31 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 			packageStyles.push(generatePackageCssFile(pack, usedPackages.get(pack)));
 		}
 		return packageStyles.concat(registeredStyles);
+	}
+	
+	function generatePackageCssFile(pack:String, fullTags:Array<String>, forceUpdate = false) : String
+	{
+		var basePath = HaqDefines.folders.temp + '/styles/';
+		var cssFilePath = basePath + pack + '.css';
+		
+		if (!Lib.config.useCache || !FileSystem.exists(cssFilePath))
+		{
+			if (!FileSystem.exists(basePath))
+			{
+				FileSystem.createDirectory(basePath);
+			}
+			
+			var text = "";
+			for (fullTag in fullTags)
+			{
+				var template = templates.get(fullTag);
+				text += "/* " + fullTag + "*/\n" + template.css + "\n\n";
+			}
+			
+			File.putContent(cssFilePath, text);
+		}
+		
+		return cssFilePath;
 	}
 	
 	public function getRegisteredScripts() : Array<String>
