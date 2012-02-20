@@ -129,62 +129,36 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 	
 	public function getRegisteredStyles() : Array<String>
 	{
-		var packageStyles = [];
-		var usedPackages = getPackages();
-		for (pack in usedPackages.keys())
-		{
-			packageStyles.push(generatePackageCssFile(pack, usedPackages.get(pack)));
-		}
-		return packageStyles.concat(registeredStyles);
+		return [ generateStylesFile() ].concat(registeredStyles);
 	}
 	
-	function generatePackageCssFile(pack:String, fullTags:Array<String>, forceUpdate = false) : String
+	function generateStylesFile() : String
 	{
-		var basePath = HaqDefines.folders.temp + '/styles/';
-		var cssFilePath = basePath + pack + '.css';
+		var path = HaqDefines.folders.temp + '/templates-cache-client.css';
 		
-		if (!Lib.config.useCache || !FileSystem.exists(cssFilePath))
+		if (!Lib.config.useCache || !FileSystem.exists(path))
 		{
-			if (!FileSystem.exists(basePath))
+			if (!FileSystem.exists(HaqDefines.folders.temp))
 			{
-				FileSystem.createDirectory(basePath);
+				FileSystem.createDirectory(HaqDefines.folders.temp);
 			}
 			
 			var text = "";
-			for (fullTag in fullTags)
+			for (fullTag in templates.keys())
 			{
 				var template = templates.get(fullTag);
 				text += "/* " + fullTag + "*/\n" + template.css + "\n\n";
 			}
 			
-			File.putContent(cssFilePath, text);
+			File.putContent(path, text);
 		}
 		
-		return cssFilePath;
+		return path;
 	}
 	
 	public function getRegisteredScripts() : Array<String>
 	{
 		return registeredScripts;
-	}
-	
-	/**
-	 * 
-	 * @return package => [ fullTag0, fullTag1, ... ]
-	 */
-	function getPackages() : Hash<Array<String>>
-	{
-		var r = new Hash<Array<String>>();
-		for (fullTag in templates.keys())
-		{
-			var pack = getPackageByFullTag(fullTag);
-			if (!r.exists(pack))
-			{
-				r.set(pack, []);
-			}
-			r.get(pack).push(fullTag);
-		}
-		return r;
 	}
 	
 	public function createChildComponents(parent:HaqComponent, baseNode:HaqXmlNodeElement)
