@@ -206,8 +206,8 @@ class HaqXmlTest extends haxe.unit.TestCase
         this.assertEquals(1, nodes.length);
 		this.assertTrue(Type.getClass(nodes[0]) == HaqXmlNodeElement);
         
-		var node : HaqXmlNodeElement = nodes[0];
-        this.assertEquals("m", node.getAttribute('id'));
+		var nodeM = nodes[0];
+        this.assertEquals("m", nodeM.getAttribute('id'));
         
 		var prev = node.getPrevSiblingNode();
 		this.assertTrue(Type.getClass(prev) == HaqXmlNodeText);
