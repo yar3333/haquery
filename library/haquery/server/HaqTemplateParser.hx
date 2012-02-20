@@ -220,25 +220,20 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser
 	
 	function globalizeCssClassNamesInStyles(text:String) : String
 	{
-		var reBlocks = new EReg("(?:[/][*].*?[*][/])|(?:[{].*?[}])|([^{]+)|(?:[{])", "s");
-		
-		var reCssClassName = new EReg("[.]([~]+)", "s");
+		var blocks = new EReg("(?:[/][*].*?[*][/])|(?:[{].*?[}])|([^{]+)|(?:[{])", "s");
 		
 		var r = "";
-		while (reBlocks.match(text))
+		while (blocks.match(text))
 		{
-			if (reBlocks.matched(1) != null)
+			if (blocks.matched(1) != null)
 			{
-				r += reCssClassName.customReplace(
-					     reBlocks.matched(0)
-						,function(re) return "." + getCssClassPrefix(re.matched(1).length)
-					 );
+				r += blocks.matched(0).replace(".~",  "." + getCssClassPrefix());
 			}
 			else
 			{
-				r += reBlocks.matched(0);
+				r += blocks.matched(0);
 			}
-			text = text.substr(reBlocks.matchedPos().pos + reBlocks.matchedPos().len);
+			text = text.substr(blocks.matchedPos().pos + blocks.matchedPos().len);
 		}
 		
 		return r;
@@ -246,20 +241,12 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser
 	
 	function globalizeCssClassNamesInHtmlClassAttribute(text:String) : String
 	{
-		return ~/[~]+/.customReplace(
-					     text
-						,function(re) return getCssClassPrefix(re.matched(0).length)
-			        );
+		return ~/[~]/.replace(text, getCssClassPrefix());
 	}
 	
-	function getCssClassPrefix(level:Int) : String
+	function getCssClassPrefix()
 	{
-		Lib.assert(level > 0);
-		if (level == 1)
-		{
-			return fullTag != "" ? fullTag.replace(".", "_") + HaqDefines.DELIMITER : "";
-		}
-		return getParentParser().getCssClassPrefix(level - 1);
+		return fullTag != "" ? fullTag.replace(".", "_") + HaqDefines.DELIMITER : "";
 	}
 	
 	/**
