@@ -2,7 +2,7 @@
 
 package components.button;
 
-class Template extends haquery.components.button.Template
+class Template
 {
 	var component : #if php haquery.server.HaqComponent #else haquery.client.HaqComponent #end;
 	

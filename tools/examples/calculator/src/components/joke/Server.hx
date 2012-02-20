@@ -10,7 +10,7 @@ class Server extends HaqComponent
         "I'll be calc.",
         "The price is good, the calculator is death!",
         "The village of battery? So take that!",
-        "НNeed to calculate the square of the circle? This is not a problem.",
+        "Need to calculate the square of the circle? This is not a problem.",
         "Now banana.",
         "Year 2300. I think - I think, therefore I exist."
      ];

@@ -8,7 +8,8 @@ class Client extends haquery.components.button.Client
 	 */
     override function b_click()
     {
-        super.b_click();
+        trace("b_click()");
+		super.b_click();
         return false;
     }
 }
