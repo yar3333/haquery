@@ -1,14 +1,18 @@
 package pages.index;
 
-import js.Lib;
 import components.calculator.Client;
 import haquery.client.HaqPage;
+import haquery.client.Lib;
 
 class Client extends HaqPage
 {
-    public function init()
+    var template : Template;
+	
+	public function init()
     {
-		var calculator : components.calculator.Client = cast components.get('calc');
-		calculator.setHistoryTextArea(q('#history'));
+		var history = q('#history');
+		trace(history.size());
+		Lib.assert(history.size() == 1);
+		template.calc.setHistoryTextArea(history);
     }
 }
