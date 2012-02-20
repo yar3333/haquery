@@ -1,5 +1,5 @@
 <style>
-	.calculator
+	.~c
 	{
 		margin: 14px auto;
 		width: 228px;
@@ -7,18 +7,18 @@
 		background: url(~/calculator-fon.png) no-repeat;
 	}
 
-	.calculator div
+	.~c div
 	{
 		float: left;
 	}
 
-	.calculator-history, .calculator-number
+	.~history, .~number
 	{
 		text-align: right;
 		font-family: Tahoma;
 	}
 
-	.calculator-history
+	.~history
 	{
 		width: 177px;
 		margin-left: 25px;
@@ -30,7 +30,7 @@
 		white-space: nowrap;
 	}
 
-	.calculator-memory
+	.~memory
 	{
 		float:left;
 		font-size: 13px;
@@ -40,45 +40,43 @@
 		visibility: hidden;
 	}
 
-	.calculator-number
+	.~number
 	{
 		width: 168px;
 		color: #556;
 		font-size: 22px;
 	}
 
-	.calculator-number.calculator-number-small
+	.~number.~number-small
 	{
 		font-size: 16px;
 		padding-top: 6px;
 	}
-	.calculator-number.calculator-number-tiny
+	.~number.~number-tiny
 	{
 		font-size: 11px;
 		padding-top: 10px;
 	}
 
-	.calculator-buttons
+	.~buttons
 	{
-		padding-top: 12px;
-		padding-left: 19px;
-		padding-bottom: 8px;
+		padding: 12px 0 8px 19px;
 	}
 
-	.calculator-buttons .button
+	.~buttons .components_button-b
 	{
 		margin-right: 5px;
 		margin-bottom: 5px;
 	}
 </style>
 
-<div id="calculator" class="calculator">
-    <div id="history" class="calculator-history">&nbsp;</div>
+<div id="calculator" class="~c">
+    <div id="history" class="~history">&nbsp;</div>
     <div style="height: 27px">
-        <div id="memory" class="calculator-memory">M</div>
-        <div id="number" class="calculator-number">0</div>
+        <div id="memory" class="~memory">M</div>
+        <div id="number" class="~number">0</div>
     </div>
-    <div class="calculator-buttons">
+    <div class="~buttons">
         <haq:button id="bt_MC" cssClass="button-mem" text="MC" />
         <haq:button id="bt_MR" cssClass="button-mem" text="MR" />
         <haq:button id="bt_MS" cssClass="button-mem" text="MS" />
