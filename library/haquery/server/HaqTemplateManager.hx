@@ -16,20 +16,8 @@ using haquery.HashTools;
 
 class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 {
-    static var baseComponentFields : List<String> = null;
-	
 	var registeredScripts : Array<String>;
 	var registeredStyles : Array<String>;
-	
-	static function __init__() : Void
-	{
-		var emptyComponent = Type.createEmptyInstance(HaqComponent);
-		baseComponentFields = Lambda.filter(
-			 Reflect.fields(emptyComponent)
-			,function(field) return !Reflect.isFunction(Reflect.field(emptyComponent, field))
-		);
-		baseComponentFields.push('template');
-	}
 	
 	public function new()
 	{
@@ -39,7 +27,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		registeredStyles = [];
 		
 		var templatesCacheClientFilePath = HaqDefines.folders.temp + "/templates-cache-client.js";
-		if (!FileSystem.exists(templatesCacheClientFilePath))
+		if (!Lib.config.isCacheTemplates || !FileSystem.exists(templatesCacheClientFilePath))
 		{
 			File.putContent(templatesCacheClientFilePath, getStaticClientCode());
 		}
@@ -54,15 +42,17 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		}
 		
 		var templatesCacheServerFilePath = HaqDefines.folders.temp + "/templates-cache-server.dat";
-		if (!FileSystem.exists(templatesCacheServerFilePath))
+		if (!Lib.config.isCacheTemplates || !FileSystem.exists(templatesCacheServerFilePath))
 		{
 			fillTemplatesBySearch(HaqDefines.folders.pages);
 			
-			// TODO: serialize templates
-			var ser = new Serializer();
-			ser.useCache = true;
-			ser.serialize(templates);
-			File.putContent(templatesCacheServerFilePath, ser.toString());
+			if (Lib.config.isCacheTemplates)
+			{
+				var ser = new Serializer();
+				ser.useCache = true;
+				ser.serialize(templates);
+				File.putContent(templatesCacheServerFilePath, ser.toString());
+			}
 		}
 		else
 		{
@@ -207,80 +197,6 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
         }
     }
 	
-	public function getFieldsToLoadParams(component:HaqComponent) : Hash<String>
-    {
-        var r : Hash<String> = new Hash<String>(); // fieldname => FieldName
-        for (field in Reflect.fields(component))
-        {
-            if (!Reflect.isFunction(Reflect.field(component, field))
-			 && (field == 'visible' || !Lambda.has(baseComponentFields, field))
-             && !field.startsWith('event_')
-            ) {
-                r.set(field.toLowerCase(), field);
-            }
-        }
-        return r;
-    }
-
-	public function prepareDocToRender(prefixID:String, baseNode:HaqXmlNodeElement) : Void
-    {
-		var i = 0;
-		while (i < baseNode.children.length)
-        {
-            var node = baseNode.children[i];
-            if (node.name.startsWith('haq:'))
-            {
-                if (node.component == null)
-                {
-                    trace("Component is null: " + node.name);
-                    Lib.assert(false);
-                }
-                
-                if (node.component.visible)
-                {
-                    prepareDocToRender(prefixID, node);
-                    
-                    var text : String = node.component.render().trim();
-                    var prev = node.getPrevSiblingNode();
-                    
-                    if (Type.getClass(prev) == HaqXmlNodeText)
-                    {
-                        var re : EReg = new EReg('(?:^|\n)([ ]+)$', 's');
-                        if (re.match(cast(prev, HaqXmlNodeText).text))
-                        {
-                            text = text.replace("\n", "\n" + re.matched(1));
-                        }
-                    }
-                    node.parent.replaceChild(node, new HaqXmlNodeText(text));
-                }
-                else
-                {
-                    node.remove();
-                    i--;
-                }
-            }
-            else
-            {
-                prepareDocToRender(prefixID, node);
-                var nodeID = node.getAttribute('id');
-                if (nodeID != null && nodeID != '')
-				{
-					node.setAttribute('id', prefixID + nodeID);
-				}
-                if (node.name == 'label')
-                {
-                    var nodeFor = node.getAttribute('for');
-                    if (nodeFor != null && nodeFor != '')
-					{
-						node.setAttribute('for', prefixID + nodeFor);
-					}
-                }
-            }
-			
-			i++;
-        }
-    }
-	
 	function fillTagIDs(com:HaqComponent, destTagIDs:Hash<Array<String>>) : Hash<Array<String>>
 	{
 		if (com.visible)
@@ -320,7 +236,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
         return s;
     }
 	
-	public function getStaticClientCode() : String
+	function getStaticClientCode() : String
 	{
 		var s = "haquery.client.HaqInternals.templates = haquery.HashTools.hashify({\n"
 		      + Lambda.map(templates.keysIterable(), function(tag) {
