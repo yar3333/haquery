@@ -36,7 +36,7 @@ class Client extends HaqComponent
 		text = "";
 		isError = false;
 		
-		q("#calculator .calculator-buttons").bind(
+		q("#calculator .~buttons").bind(
             "selectstart mousedown", untyped function(e) { return false; }
         ); // ie + ff
 
@@ -417,10 +417,10 @@ class Client extends HaqComponent
 
         var s = text!="" ? text : number2text(fixed);
 
-        if (s.length<=12 && !isError) q("#number").removeClass("calculator-number-small calculator-number-tiny");
+        if (s.length<=12 && !isError) q("#number").removeClass("~number-small ~number-tiny");
         else
         {
-            q("#number").addClass(s.length<=20 ? "calculator-number-small" : "calculator-number-tiny");
+            q("#number").addClass(s.length<=20 ? "~number-small" : "~number-tiny");
         }
         q("#number").html(s);
     }
