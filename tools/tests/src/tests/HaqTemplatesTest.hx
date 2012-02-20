@@ -3,7 +3,7 @@ package tests;
 import haxe.unit.TestCase;
 import php.FileSystem;
 import haquery.server.HaqComponent;
-import haquery.server.HaqComponentManager;
+import haquery.server.HaqTemplateManager;
 import haquery.server.Lib;
 import haquery.server.HaqDefines;
 
@@ -13,26 +13,34 @@ class HaqTemplatesTest extends TestCase
 {
 	public function testEmpty()
 	{
-		var manager = new HaqComponentManager("pages.index", null);
+		var manager = new HaqTemplateManager();
+		assertTrue(manager != null);
 	}
 	
 	public function testComponentsSet0()
 	{
-		var manager = new HaqComponentManager("pages.test0", null);
+		var manager = new HaqTemplateManager();
 		assertTrue(manager != null);
 		
-		if (manager != null)
-		{
-			var template = manager.templates.get("components.set0.text");
-			assertEquals("text component template file", template.doc.innerHTML);
-			assertEquals("", template.css);
-			assertEquals("components/set0/text/support/suptest.txt", template.getSupportFilePath("suptest.txt"));
-		}
+		var page = manager.createPage("pages.test0", null);
+		assertTrue(page != null);
+		
+		var template = manager.findTemplate(page.fullTag, "text");
+		assertTrue(template != null);
+
+		assertEquals("text component template file", template.doc.innerHTML);
+		assertEquals("", template.css);
+		assertEquals("components/set0/text/support/suptest.txt", template.getSupportFilePath("suptest.txt"));
 	}
 	
 	public function testComponentsSet1()
 	{
-		var manager = new HaqComponentManager("pages.test1", null);
+		var manager = new HaqTemplateManager();
+		assertTrue(manager != null);
+		
+		var page = manager.createPage("pages.test1", null);
+		assertTrue(page != null);
+		
 		var template = manager.templates.get("components.set1.randnum");
 		assertTrue(template != null);
 		
@@ -42,17 +50,39 @@ class HaqTemplatesTest extends TestCase
 	
 	public function testComponentsSet1CreateRandNum()
 	{
-		var manager = new HaqComponentManager("pages.test1", null);
-        var template = manager.templates.get("components.set1.randnum");
-		assertTrue(template != null);
-        assertEquals("components.set1.randnum.Server", Type.getClassName(template.serverClass));
+		var manager = new HaqTemplateManager();
+		assertTrue(manager != null);
+        
+		var page = manager.createPage("pages.test1", null);
+		assertTrue(page != null);
 		
-		var randnum : HaqComponent = manager.createComponent(manager.page, "randnum", "rn", null, null);
+		var template = manager.templates.get("components.set1.randnum");
+		assertTrue(template != null);
+        assertEquals("components.set1.randnum.Server", template.serverClassName);
+		
+		var randnum = manager.createComponent(page, "randnum", "rn", null, null);
 		assertTrue(randnum != null);
 		assertEquals("components.set1.randnum.Server", Type.getClassName(Type.getClass(randnum)));
 		
 		randnum.forEachComponent("preRender");
 		var html = randnum.render();
 		assertEquals(StringTools.htmlEscape("<div id='rn-n'>123</div>"), StringTools.htmlEscape(html.trim(" \t\r\n")));
+	}
+	
+	public function testPlaceHolders()
+	{
+		var manager = new HaqTemplateManager();
+		assertTrue(manager != null);
+		
+		var template = manager.templates.get("pages.test2");
+		assertTrue(template != null);
+        assertEquals("0b2ac", template.doc.innerHTML);
+        //assertEquals(0, template.doc.children.length);
+        
+		var page = manager.createPage("pages.test2", null);
+		assertTrue(page != null);
+		
+		//trace("RESULT = " + page.render());
+		
 	}
 }
