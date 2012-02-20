@@ -1,5 +1,5 @@
 <config>
     <imports>
-        <collection package="components.set1" />
+        <components package="components.set1" />
     </imports>
 </config>

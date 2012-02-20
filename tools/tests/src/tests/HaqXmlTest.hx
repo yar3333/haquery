@@ -214,7 +214,45 @@ class HaqXmlTest extends haxe.unit.TestCase
         this.assertEquals("\n        ", cast(prev, HaqXmlNodeText).text);
     }
 	
-    /*public function testSpeed()
+	public function testStyle()
+	{
+		var html = "
+<style>
+    .randnum
+    {
+        color: blue;
+    }
+</style>
+
+<div id='n'>0</div>
+";
+
+		var xml = new HaqXml(html);
+		assertEquals(2, xml.children.length);
+        
+		var nodes = xml.find("#n");
+        assertEquals(1, nodes.length);
+		assertTrue(Type.getClass(nodes[0]) == HaqXmlNodeElement);
+	}
+	
+	public function testReplaceChildWithInner()
+	{
+		var xml = new HaqXml("b<ph>c</ph>d<con>e</con>");
+		
+		var nodesPH = xml.find("ph");
+		assertEquals(1, nodesPH.length);
+		assertEquals(0, nodesPH[0].children.length);
+		
+		var nodesCON = xml.find("con");
+		assertEquals(1, nodesCON.length);
+		assertEquals(0, nodesCON[0].children.length);
+		
+		xml.replaceChildWithInner(nodesPH[0], nodesCON[0]);
+		assertEquals("bed<con>e</con>", xml.innerHTML);
+		assertEquals(1, xml.children.length);
+	}
+    
+	/*public function testSpeed()
     {
         str = php.io.File.getContent('xmlTest-in.html');
         loops = 200;
