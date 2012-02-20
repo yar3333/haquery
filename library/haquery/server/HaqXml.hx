@@ -229,12 +229,11 @@ class HaqXmlNodeElement extends HaqXmlNode
     public function find(selector:String) : Array<HaqXmlNodeElement>
     {
         var parsedSelectors : Array<Array<CssSelector>> = HaqXmlParser.parseCssSelector(selector);
-		
 
         var resNodes = new Array<HaqXmlNodeElement>();
         for (s in parsedSelectors)
         {
-            for (node in this.children)
+            for (node in children)
             {
                 var nodesToAdd = node.findInner(s);
                 for (nodeToAdd in nodesToAdd)
@@ -257,7 +256,7 @@ class HaqXmlNodeElement extends HaqXmlNode
 		}
         
         var nodes = [];
-        if (selectors[0].type ==' ') 
+        if (selectors[0].type == ' ') 
         {
             for (child in children) 
             {
@@ -267,9 +266,12 @@ class HaqXmlNodeElement extends HaqXmlNode
 		
         if (isSelectorTrue(selectors[0]))
         {
-            if (selectors.length==1)
+            if (selectors.length == 1)
             {
-                if (this.parent != null) nodes.push(this);
+                if (this.parent != null)
+				{
+					nodes.push(this);
+				}
 
             }
             else
@@ -303,7 +305,7 @@ class HaqXmlNodeElement extends HaqXmlNode
         
         for (i in 0...nodes.length)
         {
-            if (nodes[i]==node)
+            if (nodes[i] == node)
             {
                 nodes[i] = newNode;
                 break;
@@ -332,17 +334,17 @@ class HaqXmlNodeElement extends HaqXmlNode
     {
         var nodeContainer : HaqXmlNodeElement = Unserializer.run(nodeContainer.serialize());
         
-        for (n in nodeContainer.nodes ) n.parent = this;
+        for (n in nodeContainer.nodes)
+		{
+			n.parent = this;
+		}
         
         for (i in 0...nodes.length)
         {
             if (nodes[i] == node)
             {
-                //array_splice(nodes, i, 1, nodeContainer.nodes);
 				var lastNodes = nodes.slice(i + 1, nodes.length);
-				nodes = nodes.slice(0, i);
-				nodes = nodes.concat(nodeContainer.nodes);
-				nodes = nodes.concat(lastNodes);
+				nodes = (i != 0 ? nodes.slice(0, i) : []).concat(nodeContainer.nodes).concat(lastNodes);
                 break;
             }
         }
@@ -351,15 +353,13 @@ class HaqXmlNodeElement extends HaqXmlNode
         {
             if (children[i] == node)
             {
-				//array_splice(children, i, 1, nodeContainer.children);
 				var lastChildren = children.slice(i + 1, children.length);
-				children = children.slice(0, i);
-				children = children.concat(nodeContainer.children);
-				children = children.concat(lastChildren);
+				children = (i != 0 ? children.slice(0, i) : []).concat(nodeContainer.children).concat(lastChildren);
                 break;
             }
         }
     }
+	
 	public function removeChild(node:HaqXmlNode)
     {
         var n = Lambda.indexOf(nodes, node);
@@ -369,7 +369,10 @@ class HaqXmlNodeElement extends HaqXmlNode
 			if (Type.getClass(node) == HaqXmlNodeElement)
 			{
 				n = Lambda.indexOf(children, cast(node, HaqXmlNodeElement));
-				if (n >= 0 ) children.splice(n, 1);
+				if (n >= 0 )
+				{
+					children.splice(n, 1);
+				}
 			}
         }
     }
@@ -398,14 +401,15 @@ class HaqXml extends HaqXmlNodeElement
     {
         super('', new Hash());
         var nodes = HaqXmlParser.parse(str);
-        for (node in nodes) this.addChild(node);
+        for (node in nodes)
+		{
+			addChild(node);
+		}
     }
 }
 
 class HaqXmlNodeText extends HaqXmlNode
 {
-    /**
-     */
     public var text : String;
 
     public function new(text) : Void
@@ -417,16 +421,6 @@ class HaqXmlNodeText extends HaqXmlNode
     {
         return this.text;
     }
-
-    /*public function serialize()
-    {
-        return Serializer.run(this.text);
-    }
-
-    public function unserialize(serialized)
-    {
-        this.text = Unserializer.run(serialized);
-    }*/
 }
 
 class HaqXmlAttribute
@@ -627,9 +621,6 @@ class HaqXmlParser
         return elem;
     }
 
-    /**
-     * @return HaqXmlAttribute[]
-     */
     private static function parseAttrs(str:String) : Hash<HaqXmlAttribute>
     {
         var attributes = new Hash<HaqXmlAttribute>();

@@ -120,7 +120,7 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser
 		while (i < doc.children.length)
 		{
 			var node : HaqXmlNodeElement = doc.children[i];
-			if (node.name=='style' && !node.hasAttribute('id'))
+			if (node.name == 'style' && !node.hasAttribute('id'))
 			{
 				if (node.getAttribute('type') == "text/less")
 				{
@@ -136,7 +136,6 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser
 				}
 				
 				node.remove();
-				doc.children.splice(i, 1);
 				i--;
 			}
 			i++;
@@ -178,8 +177,14 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser
                     break;
                 }
             }
-            if (content != null) ph.parent.replaceChildWithInner(ph, content);
-            else                 ph.parent.replaceChildWithInner(ph, ph);
+            if (content != null)
+			{
+				ph.parent.replaceChildWithInner(ph, content);
+			}
+            else
+			{
+				ph.parent.replaceChildWithInner(ph, ph);
+			}
         }
 		
 		for (c in doc.find('>haq:content'))
