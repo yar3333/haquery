@@ -79,7 +79,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 	{
         Lib.profiler.begin('newComponent');
             var r : HaqComponent = Type.createInstance(Type.resolveClass(template.serverClassName), []);
-			r.construct(this, template.fullTag, parent, id, template.doc, attr, parentNode);
+			r.construct(this, template.fullTag, parent, id, template.getDocCopy(), attr, parentNode);
         Lib.profiler.end();
 		return r;
 	}
@@ -129,7 +129,13 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 	
 	function generatePackageCssFile(pack:String, fullTags:Array<String>, forceUpdate = false) : String
 	{
-		var path = HaqDefines.folders.temp + '/styles/' + pack + '.css';
+		var basePath = HaqDefines.folders.temp + '/styles/';
+		if (!FileSystem.exists(basePath))
+		{
+			FileSystem.createDirectory(basePath);
+		}
+		
+		var path = basePath + pack + '.css';
 		
 		var text = "";
 		for (fullTag in fullTags)
@@ -190,7 +196,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
             
             if (node.name.startsWith('haq:'))
             {
-				node.component = createComponent(parent, node.name.substr('haq:'.length), node.getAttribute('id'), node.getAttributesAssoc(), node);
+				createComponent(parent, node.name.substr('haq:'.length), node.getAttribute('id'), node.getAttributesAssoc(), node);
             }
         }
     }
@@ -204,11 +210,11 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 				destTagIDs.set(com.fullTag, []);
 			}
 			destTagIDs.get(com.fullTag).push(com.fullID);
-		}
-		
-		for (subCom in com.components)
-		{
-			fillTagIDs(subCom, destTagIDs);
+			
+			for (subCom in com.components)
+			{
+				fillTagIDs(subCom, destTagIDs);
+			}
 		}
 		
 		return destTagIDs;

@@ -1,4 +1,5 @@
 package haquery.server;
+import haxe.Unserializer;
 
 class HaqTemplate extends haquery.base.HaqTemplate
 {
@@ -6,7 +7,8 @@ class HaqTemplate extends haquery.base.HaqTemplate
 	
 	public var extend(default, null) : String;
 	
-	public var doc(default, null) : HaqXml;
+	var serializedDoc(default, null) : String;
+	
 	public var css(default, null) : String;
 	public var serverClassName(default, null) : String;
 	public var serverHandlers(default, null) : Hash<Array<String>>;
@@ -24,11 +26,16 @@ class HaqTemplate extends haquery.base.HaqTemplate
 		extend = parser.getExtend();
 		
 		var docAndCss = parser.getDocAndCss();
-		doc = docAndCss.doc;
+		serializedDoc = docAndCss.doc.serialize();
 		css = docAndCss.css;
 		
 		serverClassName = parser.getClassName();
 		serverHandlers = parser.getServerHandlers(serverClassName);
+	}
+	
+	public function getDocCopy() : HaqXml
+	{
+		return Unserializer.run(serializedDoc);
 	}
 	
 	public function getSupportFilePath(relPath:String)

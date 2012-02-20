@@ -91,7 +91,7 @@ class HaqPage extends HaqComponent
                     child = child.getNextSiblingElement();
                 }
             }
-            head.addChild(new HaqXmlNodeText('    ' + text + '\n    '), child);
+            head.addChild(new HaqXmlNodeText(text + '\n        '), child);
         }
         else
         {

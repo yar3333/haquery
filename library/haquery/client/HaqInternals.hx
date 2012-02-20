@@ -2,6 +2,8 @@
 
 package haquery.client;
 
+import haquery.HashTools; /* do not remove this import */
+
 class HaqInternals 
 {
 	/**
@@ -16,7 +18,7 @@ class HaqInternals
 	 * 									  }
 	 * 			  }
 	 */
-	static var templates(default, null) : Hash<{ config:Array<String>, serverHandlers:Hash<Array<String>> }>;
+	public static var templates(default, null) : Hash<{ config:Array<String>, serverHandlers:Hash<Array<String>> }>;
 	
 	/**
 	 * Setted by the server.
