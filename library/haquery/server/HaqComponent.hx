@@ -103,9 +103,12 @@ class HaqComponent extends haquery.base.HaqComponent
     {
 		if (!visible)
 		{
-			for (child in customRenderComponents)
+			if (customRenderComponents != null)
 			{
-				child.visible = false;
+				for (child in customRenderComponents)
+				{
+					child.visible = false;
+				}
 			}
 			
 			return "";
@@ -119,9 +122,12 @@ class HaqComponent extends haquery.base.HaqComponent
 			HaqComponentTools.expandDocElemIDs(parent.prefixID, parentNode);
 		}
 		
-		for (child in customRenderComponents)
+		if (customRenderComponents != null)
 		{
-			child.parentNode.parent.replaceChild(child.parentNode, new HaqXmlNodeText(child.render()));
+			for (child in customRenderComponents)
+			{
+				child.parentNode.parent.replaceChild(child.parentNode, new HaqXmlNodeText(child.render()));
+			}
 		}
 		
 		for (child in components)
@@ -132,9 +138,13 @@ class HaqComponent extends haquery.base.HaqComponent
 			}
 		}
 		
-		var text = doc.innerHTML.replace("{content}", parentNode.innerHTML).trim(" \t\r\n");
+		var text = doc.innerHTML;
+		if (parentNode != null)
+		{
+			text = text.replace("{content}", parentNode.innerHTML);
+		}
 		
-		return text;
+		return text.trim(" \t\r\n");
     }
 
     /**
