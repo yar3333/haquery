@@ -14,7 +14,7 @@ class Server extends Base
         {
 			for (i in 0...length)
 			{
-				manager.createComponent(this, component, "c" + Std.string(i), null, parentNode);
+				manager.createComponent(this, component, "c" + Std.string(i), null, parentNode, false);
 			}
         }
 	}
@@ -22,7 +22,7 @@ class Server extends Base
 	function preRender()
     {
         q('#component').val(component);
-		q('#template').val(Serializer.run(manager.findTemplate(fullTag, component).getDocCopy().toString()));
+		q('#template').val(Serializer.run(manager.findTemplateDeep(this, component).getDocCopy().toString()));
 	}
 	
     override function callElemEventHandler(elemID:String, eventName:String) : Dynamic

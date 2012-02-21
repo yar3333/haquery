@@ -1,16 +1,43 @@
 package haquery.components.container;
 
 import haquery.server.HaqComponent;
+import haquery.server.HaqXml;
 
-using haquery.server.HaqComponentTools;
 using haquery.StringTools;
+using haquery.server.HaqComponentTools;
 
 class Server extends HaqComponent
 {
-    override public function render():String 
+    var customRenderComponents : Array<HaqComponent>;
+	
+	function new()
+	{
+		super();
+	}
+	
+	override function createChildComponents()
+	{
+		if (parentNode != null)
+		{
+			customRenderComponents = manager.createDocComponents(parent, parentNode, true);
+		}
+		
+		if (doc != null)
+		{
+			manager.createDocComponents(this, doc, false);
+		}
+	}
+	
+	override public function render():String 
     {
-        expandDocElemIDs();
-        
-        return doc.toString().trim("\r\n").replace("{content}", parentNode.innerHTML);
+        if (!visible) return "";
+		
+		for (child in customRenderComponents)
+		{
+			child.parentNode.parent.replaceChild(child.parentNode, new HaqXmlNodeText(child.render()));
+		}
+		var text = super.render().replace("{content}", parentNode.innerHTML);
+		
+		return text;
     }
 }

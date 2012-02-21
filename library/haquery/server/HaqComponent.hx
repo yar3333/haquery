@@ -1,12 +1,11 @@
 package haquery.server;
 
-import haquery.base.HaqCssGlobalizer;
 import haquery.Std;
-
+import haquery.server.HaqCssGlobalizer;
 import haquery.server.HaqXml;
 import haquery.server.Lib;
+import haquery.server.HaqComponentTools;
 
-using haquery.server.HaqComponentTools;
 using haquery.StringTools;
 
 class HaqComponent extends haquery.base.HaqComponent
@@ -28,21 +27,23 @@ class HaqComponent extends haquery.base.HaqComponent
      */
     public var visible : Bool;
 	
+	public var isCustomRender : Bool;
+	
     public function new() : Void
 	{
 		super();
 		visible = true;
 	}
     
-    public function construct(manager:HaqTemplateManager, fullTag:String, parent:HaqComponent, id:String, doc:HaqXml, params:Hash<String>, parentNode:HaqXmlNodeElement) : Void
+    public function construct(manager:HaqTemplateManager, fullTag:String, parent:HaqComponent, id:String, doc:HaqXml, params:Hash<String>, parentNode:HaqXmlNodeElement, isCustomRender:Bool) : Void
     {
 		super.commonConstruct(fullTag, parent, id);
         
 		this.manager = manager;
         this.doc = doc;
         this.parentNode = parentNode;
+		this.isCustomRender = isCustomRender;
 		
-		// loading params to object fields
 		if (params != null)
 		{
 			loadFieldValues(params);
@@ -59,7 +60,7 @@ class HaqComponent extends haquery.base.HaqComponent
 	
 	function loadFieldValues(params:Hash<String>) : Void
 	{
-		var fields = getFieldsToLoadParams();
+		var fields = HaqComponentTools.getFieldsToLoadParams(this);
 		
 		for (k in params.keys())
 		{
@@ -82,53 +83,50 @@ class HaqComponent extends haquery.base.HaqComponent
 	
 	function createChildComponents()
 	{
-		if (doc != null) manager.createChildComponents(this, doc);
+		if (parentNode != null)
+		{
+			manager.createDocComponents(parent, parentNode, false);
+		}
+		
+		if (doc != null)
+		{
+			manager.createDocComponents(this, doc, false);
+		}
 	}
 
     public function render() : String
     {
-        if (Lib.config.isTraceComponent) trace("render " + fullID);
+		if (!visible) return "";
+        
+		if (Lib.config.isTraceComponent) trace("render " + fullID);
 		
-		if (visible)
+		HaqComponentTools.expandDocElemIDs(prefixID, doc);
+		
+		for (child in components)
 		{
-			expandDocElemIDs();
-			
-			for (child in components)
+			if (!isCustomRender)
 			{
-				child.render();
+				child.parentNode.parent.replaceChild(child.parentNode, new HaqXmlNodeText(child.render()));
 			}
-			
-			var text = doc.toString().trim(" \t\r\n");
-			
-			if (parentNode != null)
+		}
+		
+		var text = doc.toString().trim(" \t\r\n");
+		
+		/*if (parentNode != null)
+		{
+			var prev = parentNode.getPrevSiblingNode();
+				
+			if (Type.getClass(prev) == HaqXmlNodeText)
 			{
-				var prev = parentNode.getPrevSiblingNode();
-					
-				if (Type.getClass(prev) == HaqXmlNodeText)
+				var re : EReg = new EReg('(?:^|\n)([ ]+)$', 's');
+				if (re.match(cast(prev, HaqXmlNodeText).text))
 				{
-					var re : EReg = new EReg('(?:^|\n)([ ]+)$', 's');
-					if (re.match(cast(prev, HaqXmlNodeText).text))
-					{
-						text = text.replace("\n", "\n" + re.matched(1));
-					}
+					text = text.replace("\n", "\n" + re.matched(1));
 				}
 			}
-			
-			if (parentNode != null && parentNode.parent != null)
-			{
-				parentNode.parent.replaceChild(parentNode, new HaqXmlNodeText(text));
-			}
-			
-			return text;
-		}
-		else
-		{
-			if (parentNode != null)
-			{
-				parentNode.remove();
-			}
-			return "";
-		}
+		}*/
+		
+		return text;
     }
 
     /**

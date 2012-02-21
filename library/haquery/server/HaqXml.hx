@@ -296,7 +296,7 @@ class HaqXmlNodeElement extends HaqXmlNode
     
     public function replaceChild(node:HaqXmlNodeElement, newNode:HaqXmlNode)
     {
-        newNode = Unserializer.run(newNode.serialize());
+		//newNode = Unserializer.run(newNode.serialize());
         newNode.parent = this;
         
         for (i in 0...nodes.length)
@@ -328,7 +328,7 @@ class HaqXmlNodeElement extends HaqXmlNode
     
     public function replaceChildWithInner(node:HaqXmlNodeElement,  nodeContainer:HaqXmlNodeElement)
     {
-        var nodeContainer : HaqXmlNodeElement = Unserializer.run(nodeContainer.serialize());
+        //nodeContainer : HaqXmlNodeElement = Unserializer.run(nodeContainer.serialize());
         
         for (n in nodeContainer.nodes)
 		{
