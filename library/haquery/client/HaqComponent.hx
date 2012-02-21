@@ -5,6 +5,7 @@ package haquery.client;
 import haquery.client.Lib;
 import haquery.client.HaqCssGlobalizer;
 import haquery.client.HaqQuery;
+import js.JQuery;
 
 using haquery.StringTools;
 
@@ -48,19 +49,21 @@ class HaqComponent extends haquery.base.HaqComponent
 		}
 	}
 	
-	public function q(selector:String, ?base:Dynamic) : HaqQuery
+	public function q(?arg:Dynamic, ?base:Dynamic) : HaqQuery
 	{
-		var prefixCssClass = fullTag.replace(".", "_") + HaqDefines.DELIMITER;
-		
-		if (selector != null && prefixID != '')
+		if (arg != null && arg != "" && Type.getClass(arg) == String)
 		{
-			selector = selector.replace('#', '#' + prefixID);
+			var selector : String = arg;
+			if (selector != null && prefixID != '')
+			{
+				selector = selector.replace('#', '#' + prefixID);
+			}
+			var cssGlobalizer = new HaqCssGlobalizer(fullTag);
+			selector = cssGlobalizer.selector(selector);
+			arg = selector;
 		}
 		
-		var cssGlobalizer = new HaqCssGlobalizer(fullTag);
-		selector = cssGlobalizer.selector(selector);
-		
-		var jq = new HaqQuery(selector, base);
+		var jq = new HaqQuery(arg, base);
 		
 		untyped 
 		{
