@@ -56,7 +56,11 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		}
 		else
 		{
-			templates = Unserializer.run(templatesCacheServerFilePath);
+			templates = Unserializer.run(File.getContent(templatesCacheServerFilePath));
+			for (t in templates.keys())
+			{
+				trace("loaded " + t);
+			}
 		}
 	}
 	
@@ -67,19 +71,29 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 	
 	public function createPage(pageFullTag:String, attr:Hash<String>) : HaqPage
 	{
-        return cast newComponent(templates.get(pageFullTag), null, '', attr, null);
+        var template = templates.get(pageFullTag);
+		if (template == null)
+		{
+			throw "HAQUERY ERROR could't find page '" + pageFullTag + "'.";
+		}
+		return cast newComponent(template, null, '', attr, null, false);
 	}
 	
-	public function createComponent(parent:HaqComponent, tag:String, id:String, attr:Hash<String>, parentNode:HaqXmlNodeElement) : HaqComponent
+	public function createComponent(parent:HaqComponent, tag:String, id:String, attr:Hash<String>, parentNode:HaqXmlNodeElement, isCustomRender:Bool) : HaqComponent
 	{
-		return newComponent(findTemplate(parent.fullTag, tag), parent, id, attr, parentNode);
+        var template = findTemplateDeep(parent, tag);
+		if (template == null)
+		{
+			throw "HAQUERY ERROR could't find component '" + tag + "' for parent '" + parent.fullTag + "'.";
+		}
+		return newComponent(template, parent, id, attr, parentNode, isCustomRender);
 	}
 	
-	function newComponent(template:HaqTemplate, parent:HaqComponent, id:String, attr:Hash<String>, parentNode:HaqXmlNodeElement) : HaqComponent
+	function newComponent(template:HaqTemplate, parent:HaqComponent, id:String, attr:Hash<String>, parentNode:HaqXmlNodeElement, isCustomRender:Bool) : HaqComponent
 	{
         Lib.profiler.begin('newComponent');
             var r : HaqComponent = Type.createInstance(Type.resolveClass(template.serverClassName), []);
-			r.construct(this, template.fullTag, parent, id, template.getDocCopy(), attr, parentNode);
+			r.construct(this, template.fullTag, parent, id, template.getDocCopy(), attr, parentNode, isCustomRender);
         Lib.profiler.end();
 		return r;
 	}
@@ -161,21 +175,26 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		return registeredScripts;
 	}
 	
-	public function createChildComponents(parent:HaqComponent, baseNode:HaqXmlNodeElement)
+	public function createDocComponents(parent:HaqComponent, baseNode:HaqXmlNodeElement, isCustomRender:Bool) : Array<HaqComponent>
     {
+		var r = [];
+		
 		for (node in baseNode.children)
         {
-            //trace("Create name = " + node.name);
 			Lib.assert(node.name != 'haq:placeholder');
 			Lib.assert(node.name != 'haq:content');
             
-            createChildComponents(parent, node);
-            
             if (node.name.startsWith('haq:'))
             {
-				createComponent(parent, node.name.substr('haq:'.length), node.getAttribute('id'), node.getAttributesAssoc(), node);
+				r.push(createComponent(parent, node.name.substr('haq:'.length), node.getAttribute('id'), node.getAttributesAssoc(), node, isCustomRender));
             }
+			else
+			{
+				r = r.concat(createDocComponents(parent, node, isCustomRender));
+			}
         }
+		
+		return r;
     }
 	
 	function fillTagIDs(com:HaqComponent, destTagIDs:Hash<Array<String>>) : Hash<Array<String>>

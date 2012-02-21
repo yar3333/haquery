@@ -44,6 +44,9 @@
     <hidden path="run.exe" />
     <hidden path="run.n" />
     <hidden path="restorefiletime.exe" />
+    <hidden path="runwaiter.exe" />
+    <hidden path="runwaiter.exe.config" />
+    <hidden path="runwaiter.pdb" />
   </hiddenPaths>
   <!-- Executed before build -->
   <preBuildCommand />

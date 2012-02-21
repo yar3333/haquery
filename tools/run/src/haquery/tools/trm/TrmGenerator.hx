@@ -168,7 +168,11 @@ class TrmGenerator
 				r.push({ haxeName:componentID, haxeType:type, haxeBody:body });
 			}
 			
-			r = r.concat(getTemplateVars(fullTag, child));
+			// TODO: if node is a component, which inherited from templater
+			if (child.name != "haq:list")
+			{
+				r = r.concat(getTemplateVars(fullTag, child));
+			}
 		}
 		return r;
 	}

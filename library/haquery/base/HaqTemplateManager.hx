@@ -94,6 +94,24 @@ class HaqTemplateManager<Template:HaqTemplate>
 		return template;
 	}
 	
+	public function findTemplateDeep(parent:HaqComponent, tag:String) : Template
+	{
+		var template = findTemplate(parent.fullTag, tag);
+		
+		if (template == null)
+		{
+			var par = parent.parent;
+			while (par != null)
+			{
+				template = findTemplate(par.fullTag, tag);
+				if (template != null) break;
+				par = par.parent;
+			}
+		}
+		
+		return template;
+	}
+	
 	function getPackageByFullTag(fullTag:String)
 	{
 		var n = fullTag.lastIndexOf('.');

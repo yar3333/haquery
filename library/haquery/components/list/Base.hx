@@ -1,12 +1,6 @@
 package haquery.components.list;
 
-#if php
-import haquery.server.HaqComponent;
-#else
-import haquery.client.HaqComponent;
-#end
-
-class Base extends HaqComponent
+class Base extends #if (php || neko) haquery.components.templater.Server #else haquery.components.templater.Client #end
 {
 	public var length(length_getter, null) : Int;
     

@@ -7,7 +7,7 @@ import haquery.server.HaqXml;
 
 class Server extends Base
 {
-	override public function construct(manager:HaqTemplateManager, fullTag:String, parent:HaqComponent, id:String, doc:HaqXml, params:Hash<String>, parentNode:HaqXmlNodeElement):Void 
+	override public function construct(manager:HaqTemplateManager, fullTag:String, parent:HaqComponent, id:String, doc:HaqXml, params:Hash<String>, parentNode:HaqXmlNodeElement, isCustomRender:Bool):Void 
 	{
 		var innerHTML = parentNode.innerHTML;
         
@@ -37,7 +37,7 @@ class Server extends Base
             xml = new HaqXml('XML parse error.');
         }
         
-        super.construct(manager, fullTag, parent, id, xml, params, null);
+        super.construct(manager, fullTag, parent, id, xml, params, null, isCustomRender);
 	}
     
     override function callElemEventHandler(elemID:String, eventName:String) : Dynamic

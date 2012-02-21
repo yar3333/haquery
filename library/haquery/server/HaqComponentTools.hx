@@ -33,12 +33,7 @@ class HaqComponentTools
         return r;
     }
 	
-	public static function expandDocElemIDs(component:HaqComponent)
-	{
-		expandDocElemIDsInner(component.prefixID, component.doc);
-	}
-	
-	static function expandDocElemIDsInner(prefixID:String, baseNode:HaqXmlNodeElement) : Void
+	public static function expandDocElemIDs(prefixID:String, baseNode:HaqXmlNodeElement) : Void
     {
 		for (node in baseNode.children)
         {
@@ -58,7 +53,7 @@ class HaqComponentTools
 					}
                 }
 				
-                expandDocElemIDsInner(prefixID, node);
+                expandDocElemIDs(prefixID, node);
             }
         }
     }
