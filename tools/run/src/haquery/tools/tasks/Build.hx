@@ -5,6 +5,7 @@ import haquery.server.io.File;
 import haquery.server.io.FileOutput;
 import haquery.server.io.Path;
 import haquery.server.HaqDefines;
+import neko.Lib;
 
 import haquery.tools.trm.TrmGenerator;
 
@@ -92,7 +93,10 @@ class Build
 			,'-debug'
 			,'-D', 'noEmbedJS'
 		]);
-        hant.run(haxePath + "haxe.exe", params);
+		
+		Lib.println("\n" + haxePath.replace("/", "\\") + "haxe.exe " + params.join(" "));
+		hant.run(haxePath + "haxe.exe", params);
+		
         
 		if (FileSystem.exists(clientPath + "/haquery.js")
 		 && FileSystem.exists(clientPath + "/haquery.js.old"))

@@ -205,8 +205,8 @@ class Hant
 		
 		var p : Process = new Process(exeDir + "runwaiter.exe", [ "5000", fileName ].concat(args));
 		var r = p.exitCode();
-		Lib.println(p.stdout.readAll().toString()); 
-		Lib.println(p.stderr.readAll().toString()); 
+		Lib.print(p.stdout.readAll().toString().replace("\r\n", "\n")); 
+		Lib.print(p.stderr.readAll().toString().replace("\r\n", "\n")); 
 		p.close();
 		if (r != 0)
 		{
