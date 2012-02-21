@@ -209,14 +209,14 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser
 	public function getServerHandlers(className:String=null) : Hash<Array<String>>
 	{
         Lib.profiler.begin('parseServerHandlers');
-			var serverMethods = [ 'click','change' ];   // server events
-            var serverHandlers : Hash<Array<String>> = new Hash<Array<String>>();
-            var tempObj = Type.createEmptyInstance(Type.resolveClass(className != null ? className : getClassName()));
-            for (field in Reflect.fields(tempObj))
+			var serverMethods = [ 'click', 'change' ];   // server events
+            var serverHandlers = new Hash<Array<String>>();
+            var obj = Type.createEmptyInstance(Type.resolveClass(className != null ? className : getClassName()));
+            for (field in Type.getInstanceFields(Type.getClass(obj)))
             {
-                if (Reflect.isFunction(Reflect.field(tempObj, field)))
+                if (Reflect.isFunction(Reflect.field(obj, field)))
                 {
-                    var n = field.lastIndexOf("_");
+					var n = field.lastIndexOf("_");
 					if (n > 0 && Lambda.has(serverMethods, field.substr(n + 1)))
                     {
                         var nodeID = field.substr(0, n);
