@@ -27,7 +27,10 @@ class Server extends haquery.components.container.Server
             var i = 0;
             for (child in buttons)
             {
-                if (i == active) new HaqQuery("", prefixID, "", [child]).addClass('active');
+                if (i == active)
+				{
+					q(child).addClass('active');
+				}
                 i++;
             }
             
@@ -35,7 +38,10 @@ class Server extends haquery.components.container.Server
             var j = 0;
             for (child in panels)
             {
-                if (j == active) new HaqQuery("", prefixID, "", [child]).addClass('active');
+                if (j == active)
+				{
+					q(child).addClass('active');
+				}
                 j++;
             }
         }

@@ -3,8 +3,8 @@
 package haquery.client;
 
 import haquery.client.Lib;
-//import haquery.client.HaqQuery;
-import js.JQuery;
+import haquery.client.HaqCssGlobalizer;
+import haquery.client.HaqQuery;
 
 using haquery.StringTools;
 
@@ -54,37 +54,34 @@ class HaqComponent extends haquery.base.HaqComponent
 		
 		if (selector != null && prefixID != '')
 		{
-			selector = StringTools.replace(selector, '#', '#' + prefixID);
+			selector = selector.replace('#', '#' + prefixID);
 		}
 		
-		var jq = new JQuery(selector, base);
+		var cssGlobalizer = new HaqCssGlobalizer(fullTag);
+		selector = cssGlobalizer.selector(selector);
 		
-		untyped __js__("
-jq.haqueryPrefixCssClass = prefixCssClass;
+		var jq = new HaqQuery(selector, base);
+		
+		untyped 
+		{
+			jq.haqueryAddClass = jq.addClass;
+			jq.addClass = function(name)
+			{
+				return jq.haqueryAddClass(cssGlobalizer.className(name));
+			};
+			
+			jq.haqueryRemoveClass = jq.removeClass;
+			jq.removeClass = function(name)
+			{
+				return jq.haqueryRemoveClass(cssGlobalizer.className(name));
+			};
 
-jq.globalizeClassName = function(className)
-{
-	return className.replace(/~/, this.haqueryPrefixCssClass);
-};
-
-var oldAddClass = jq.addClass;
-jq.addClass = function(name)
-{
-	return oldAddClass.call(this, this.globalizeClassName(name));
-}
-
-var oldRemoveClass = jq.removeClass;
-jq.removeClass = function(name)
-{
-	return oldRemoveClass.call(this, this.globalizeClassName(name));
-}
-
-var oldHasClass = jq.hasClass;
-jq.hasClass = function(name)
-{
-	return oldHasClass.call(this, this.globalizeClassName(name));
-}
-		");
+			jq.haqueryHasClass = jq.hasClass;
+			jq.hasClass = function(name)
+			{
+				return jq.haqueryHasClass(cssGlobalizer.className(name));
+			};
+		}
 		
 		return jq;
 	}

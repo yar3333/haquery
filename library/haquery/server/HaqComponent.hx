@@ -1,5 +1,6 @@
 package haquery.server;
 
+import haquery.base.HaqCssGlobalizer;
 import haquery.Std;
 
 import haquery.server.HaqXml;
@@ -136,23 +137,39 @@ class HaqComponent extends haquery.base.HaqComponent
      */
     public function q(?query:Dynamic=null) : HaqQuery
     {
-        var prefixCssClass = fullTag.replace(".", "_") + HaqDefines.DELIMITER;
+		if (Type.getClass(query) == haquery.server.HaqQuery)
+		{
+			return query;
+		}
 		
-		if (query == null) return new HaqQuery(prefixCssClass, prefixID, '', null);
-        if (Type.getClass(query) == haquery.server.HaqQuery) return query;
+		var cssGlobalizer = new HaqCssGlobalizer(fullTag);
+		
+		if (query == null)
+		{
+			return new HaqQuery(cssGlobalizer, prefixID, '', null);
+		}
+        
+		
 		if (Type.getClass(query) == HaqXmlNodeElement)
 		{
 			Lib.assert(!Lib.isPostback, "Calling of the HaqComponent.q() with HaqXmlNodeElement parameter do not possible on the postback.");
-			return new HaqQuery(prefixCssClass, prefixID, "", [ query ]);
+			return new HaqQuery(cssGlobalizer, prefixID, "", [ query ]);
 		}
-        if (Type.getClassName(Type.getClass(query)) != 'String')
+		
+		if (Type.getClass(query) == Array)
 		{
-			throw "HaqComponent.q() error - 'query' parameter must be a String, HaqQuery or HaqXmlNodeElement.";
+			Lib.assert(!Lib.isPostback, "Calling of the HaqComponent.q() with Array parameter do not possible on the postback.");
+			return new HaqQuery(cssGlobalizer, prefixID, "", query);
 		}
         
-        var nodes = doc.find(query);
+		if (Type.getClass(query) == String)
+		{
+			
+			var nodes = doc.find(cssGlobalizer.selector(query));
+			return new HaqQuery(cssGlobalizer, prefixID, query, nodes);
+		}
         
-        return new HaqQuery(prefixCssClass, prefixID, query, nodes);
+		throw "HaqComponent.q() error - 'query' parameter must be a String, HaqQuery or HaqXmlNodeElement.";
     }
 
     /**
