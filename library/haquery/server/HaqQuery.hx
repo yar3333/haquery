@@ -1,5 +1,6 @@
 package haquery.server;
 
+import haquery.base.HaqCssGlobalizer;
 import haquery.server.Lib;
 import haquery.server.HaqXml;
 import haquery.Std;
@@ -11,8 +12,8 @@ using haquery.StringTools;
  */
 class HaqQuery
 {
-    public var prefixCssClass : String;
-    public var prefixID : String;
+    public var cssGlobalizer(default, null) : HaqCssGlobalizer;
+    public var prefixID(default, null) : String;
     
     /**
      * Original CSS-selector.
@@ -29,14 +30,9 @@ class HaqQuery
         HaqSystem.addAjaxResponse("$('" + query.replace('#', '#' + prefixID) + "')." + method + ";");
     }
     
-	function globalizeClassName(className:String) : String
-	{
-        return ~/[~]/.replace(className, prefixCssClass);
-	}
-    
-	public function new(prefixCssClass:String, prefixID:String, query:String, nodes:Array<HaqXmlNodeElement>)
+	public function new(cssGlobalizer:HaqCssGlobalizer, prefixID:String, query:String, nodes:Array<HaqXmlNodeElement>)
     {
-        this.prefixCssClass = prefixCssClass;
+        this.cssGlobalizer = cssGlobalizer;
 		this.prefixID = prefixID;
         this.query = query;
         this.nodes = nodes != null ? nodes : [];
@@ -94,7 +90,7 @@ class HaqQuery
 
     public function addClass(cssClass:String) : HaqQuery
     {
-        cssClass = globalizeClassName(cssClass);
+        cssClass = cssGlobalizer.className(cssClass);
 		
 		var classes = ~/\s+/.split(cssClass);
         for (node in nodes)
@@ -120,7 +116,7 @@ class HaqQuery
 
     public function hasClass(cssClass:String) : Bool
     {
-        cssClass = globalizeClassName(cssClass);
+        cssClass = cssGlobalizer.className(cssClass);
         
 		var classes = ~/\s+/.split(cssClass);
         for (node in nodes)
@@ -142,7 +138,7 @@ class HaqQuery
 
     public function removeClass(cssClass:String) : HaqQuery
     {
-        cssClass = globalizeClassName(cssClass);
+        cssClass = cssGlobalizer.className(cssClass);
         
 		var classes = ~/\s+/.split(cssClass);
         for (node in nodes)

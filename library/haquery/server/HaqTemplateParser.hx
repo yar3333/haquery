@@ -1,5 +1,6 @@
 package haquery.server;
 
+import haquery.server.HaqCssGlobalizer;
 import haquery.server.HaqDefines;
 import haquery.server.HaqComponent;
 import haquery.server.HaqXml;
@@ -114,6 +115,8 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser
 		var doc = new HaqXml(text);
         
 		resolvePlaceHolders(doc);
+		
+		var cssGlobalizer = new HaqCssGlobalizer(fullTag);
         
 		var css = '';
 		var i = 0; 
@@ -125,14 +128,14 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser
 				if (node.getAttribute('type') == "text/less")
 				{
 					#if php
-					css += globalizeCssClassNamesInStyles(new Lessc().parse(node.innerHTML));
+					css += new Lessc().parse(cssGlobalizer.styles(node.innerHTML));
 					#else
 					css += "\n// Lessc supported for the php target only.\n\n";
 					#end
 				}
 				else
 				{
-					css += globalizeCssClassNamesInStyles(node.innerHTML);
+					css += cssGlobalizer.styles(node.innerHTML);
 				}
 				
 				node.remove();
@@ -141,7 +144,7 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser
 			i++;
 		}
 		
-		globalizeCssClassNamesInDoc(doc);
+		cssGlobalizer.doc(doc);
 		
 		return { doc:doc, css:css };
 	}
@@ -193,60 +196,6 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser
 		{
 			c.remove();
 		}
-	}
-	
-	function globalizeCssClassNamesInDoc(baseNode:HaqXmlNodeElement)
-	{
-		for (node in baseNode.children)
-		{
-			if (node.name.startsWith("haq:"))
-			{
-				if (node.hasAttribute("cssClass"))
-				{
-					node.setAttribute("cssClass", globalizeCssClassNamesInHtmlClassAttribute(node.getAttribute("cssClass")));
-				}
-			}
-			else
-			{
-				if (node.hasAttribute("class"))
-				{
-					node.setAttribute("class", globalizeCssClassNamesInHtmlClassAttribute(node.getAttribute("class")));
-				}
-			}
-			
-			globalizeCssClassNamesInDoc(node);
-		}
-	}
-	
-	function globalizeCssClassNamesInStyles(text:String) : String
-	{
-		var blocks = new EReg("(?:[/][*].*?[*][/])|(?:[{].*?[}])|([^{]+)|(?:[{])", "s");
-		
-		var r = "";
-		while (blocks.match(text))
-		{
-			if (blocks.matched(1) != null)
-			{
-				r += blocks.matched(0).replace(".~",  "." + getCssClassPrefix());
-			}
-			else
-			{
-				r += blocks.matched(0);
-			}
-			text = text.substr(blocks.matchedPos().pos + blocks.matchedPos().len);
-		}
-		
-		return r;
-	}
-	
-	function globalizeCssClassNamesInHtmlClassAttribute(text:String) : String
-	{
-		return ~/[~]/.replace(text, getCssClassPrefix());
-	}
-	
-	function getCssClassPrefix()
-	{
-		return fullTag != "" ? fullTag.replace(".", "_") + HaqDefines.DELIMITER : "";
 	}
 	
 	/**
