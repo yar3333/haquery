@@ -10,8 +10,6 @@ using haquery.StringTools;
 
 class HaqComponent extends haquery.base.HaqComponent
 {
-    var manager : HaqTemplateManager;
-    
     /**
      * HTML between component's open and close tags (where component inserted).
      */
@@ -27,7 +25,15 @@ class HaqComponent extends haquery.base.HaqComponent
      */
     public var visible : Bool;
 	
-	public var isCustomRender : Bool;
+	/**
+	 * If true, then parent must skip this component on render (component will be rendered by another component).
+	 */
+	public var isCustomRender(default, null) : Bool;
+	
+    /**
+     * These components must rendered by this component.
+     */
+	var customRenderComponents : Array<HaqComponent>;
 	
     public function new() : Void
 	{
@@ -37,9 +43,8 @@ class HaqComponent extends haquery.base.HaqComponent
     
     public function construct(manager:HaqTemplateManager, fullTag:String, parent:HaqComponent, id:String, doc:HaqXml, params:Hash<String>, parentNode:HaqXmlNodeElement, isCustomRender:Bool) : Void
     {
-		super.commonConstruct(fullTag, parent, id);
+		super.commonConstruct(manager, fullTag, parent, id);
         
-		this.manager = manager;
         this.doc = doc;
         this.parentNode = parentNode;
 		this.isCustomRender = isCustomRender;
@@ -85,7 +90,7 @@ class HaqComponent extends haquery.base.HaqComponent
 	{
 		if (parentNode != null)
 		{
-			manager.createDocComponents(parent, parentNode, false);
+			customRenderComponents = manager.createDocComponents(parent, parentNode, true);
 		}
 		
 		if (doc != null)
@@ -96,11 +101,28 @@ class HaqComponent extends haquery.base.HaqComponent
 
     public function render() : String
     {
-		if (!visible) return "";
+		if (!visible)
+		{
+			for (child in customRenderComponents)
+			{
+				child.visible = false;
+			}
+			
+			return "";
+		}
         
 		if (Lib.config.isTraceComponent) trace("render " + fullID);
 		
 		HaqComponentTools.expandDocElemIDs(prefixID, doc);
+		if (parent != null && parentNode != null)
+		{
+			HaqComponentTools.expandDocElemIDs(parent.prefixID, parentNode);
+		}
+		
+		for (child in customRenderComponents)
+		{
+			child.parentNode.parent.replaceChild(child.parentNode, new HaqXmlNodeText(child.render()));
+		}
 		
 		for (child in components)
 		{
@@ -110,21 +132,7 @@ class HaqComponent extends haquery.base.HaqComponent
 			}
 		}
 		
-		var text = doc.toString().trim(" \t\r\n");
-		
-		/*if (parentNode != null)
-		{
-			var prev = parentNode.getPrevSiblingNode();
-				
-			if (Type.getClass(prev) == HaqXmlNodeText)
-			{
-				var re : EReg = new EReg('(?:^|\n)([ ]+)$', 's');
-				if (re.match(cast(prev, HaqXmlNodeText).text))
-				{
-					text = text.replace("\n", "\n" + re.matched(1));
-				}
-			}
-		}*/
+		var text = doc.innerHTML.replace("{content}", parentNode.innerHTML).trim(" \t\r\n");
 		
 		return text;
     }

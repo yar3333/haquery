@@ -5,7 +5,7 @@ import haquery.client.HaqEvent;
 import haquery.client.HaqComponent;
 import js.JQuery;
 
-class Client extends haquery.components.container.Client
+class Client extends HaqComponent
 {
     public var active(active_getter, active_setter) : Int;
 
@@ -16,7 +16,7 @@ class Client extends haquery.components.container.Client
         var tabs = q('#tabs>*:eq(0)>*').get();
 		for (i in 0...tabs.length)
 		{
-			new JQuery(tabs[i]).click(function(e)
+			q(tabs[i]).click(function(e)
             {
                 self.active = i;
             });
@@ -30,7 +30,7 @@ class Client extends haquery.components.container.Client
         var panels = q('#tabs>*:eq(1)>*').get();
 		for (i in 0...panels.length)
 		{
-			if (new JQuery(panels[i]).hasClass('active')) return i;
+			if (q(panels[i]).hasClass('active')) return i;
 		}
         return -1;
     }

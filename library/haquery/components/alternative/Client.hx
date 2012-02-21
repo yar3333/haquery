@@ -1,5 +1,7 @@
 package haquery.components.alternative;
 
-class Client extends haquery.components.container.Client
+import haquery.client.HaqComponent;
+
+class Client extends HaqComponent
 {
 }
