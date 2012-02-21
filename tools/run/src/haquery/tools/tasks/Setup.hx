@@ -16,13 +16,15 @@ using haquery.StringTools;
 class Setup 
 {
 	var exeDir : String;
+	var haxePath:String;
 	
 	var log : Log;
     var hant : Hant;
     
-	public function new(exeDir:String)
+	public function new(exeDir:String, haxePath:String)
 	{
-		this.exeDir = exeDir.replace('\\', '/');
+		this.exeDir = exeDir.replace('\\', '/').rtrim('/') + '/';
+		this.haxePath = haxePath.replace('\\', '/').rtrim('/') + '/';
         
 		log = new Log(2);
         hant = new Hant(log, this.exeDir);
@@ -61,7 +63,6 @@ class Setup
     {
         log.start('Install HaxeMod');
         
-        var haxePath = getHaxePath();
         if (!FileSystem.exists(haxePath + 'std.original'))
         {
             hant.rename(haxePath + 'std', haxePath + 'std.original');
@@ -99,8 +100,6 @@ class Setup
     {
         log.start('Uninstall HaxeMod');
         
-        var haxePath = getHaxePath();
-        
         if (FileSystem.exists(haxePath + 'std.original'))
         {
             hant.deleteDirectory(haxePath + 'std');
@@ -125,28 +124,4 @@ class Setup
 			fout.close();
 		}
 	}
-	
-    public function getHaxePath()
-    {
-        var r = Sys.getEnv('HAXEPATH');
-        
-        if (r == null)
-        {
-            throw "HaXe not found (HAXEPATH environment variable not set).";
-        }
-		
-		r = r.replace("\\", "/");
-        while (r.endsWith('/'))
-        {
-            r = r.substr(0, r.length - 1);
-        }
-        r += '/';
-        
-        if (!FileSystem.exists(r + 'haxe.exe'))
-        {
-            throw "HaXe not found (file '" + r + "haxe.exe' does not exist).";
-        }
-        
-        return r;
-    }
 }

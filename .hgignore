@@ -26,3 +26,8 @@ tools/run.net/run_exe/run_exe.suo
 tools/tests/bin
 tools/tests/src/Imports.hx
 tools/trm/src/Imports.hx
+tools/runwaiter/obj
+library/runwaiter.exe.config
+library/runwaiter.pdb
+tools/runwaiter/restorefiletime.suo
+tools/runwaiter/runwaiter.suo
