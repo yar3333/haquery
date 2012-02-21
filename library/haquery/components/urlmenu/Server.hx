@@ -1,14 +1,14 @@
 package haquery.components.urlmenu;
 
 import haquery.server.HaqComponent;
-import php.Web;
 import haquery.server.HaqXml;
 import haquery.server.HaqQuery;
 import haquery.server.Lib;
+import haquery.server.Web;
 
 using haquery.StringTools;
 
-class Server extends haquery.components.container.Server
+class Server extends HaqComponent
 {
     public var base : String;
     public var cssClass : String;

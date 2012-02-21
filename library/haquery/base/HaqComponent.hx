@@ -4,11 +4,13 @@ package haquery.base;
 import haquery.server.HaqEvent;
 import haquery.server.Lib;
 import haquery.server.HaqTemplate;
+import haquery.server.HaqTemplateManager;
 private typedef Component = haquery.server.HaqComponent;
 #elseif js
 import haquery.client.HaqEvent;
 import haquery.client.Lib;
 import haquery.client.HaqTemplate;
+import haquery.client.HaqTemplateManager;
 private typedef Component = haquery.client.HaqComponent;
 #end
 
@@ -16,7 +18,9 @@ using haquery.StringTools;
 
 class HaqComponent
 {
-    public var parent(default,null) : Component;
+    public var manager(default,null) : HaqTemplateManager;
+	
+	public var parent(default,null) : Component;
 
     /**
      * Component package name (for example: 'components.haquery.button').
@@ -71,10 +75,11 @@ class HaqComponent
 		}
 	}
 	
-	function commonConstruct(fullTag:String, parent:Component, id:String) 
+	function commonConstruct(manager:HaqTemplateManager, fullTag:String, parent:Component, id:String) 
 	{
 		if (id == null || id == '') id = parent != null ? parent.getNextAnonimID() : '';
 		
+		this.manager = manager;
 		this.fullTag = fullTag;
 		this.parent = parent;
 		this.id = id;

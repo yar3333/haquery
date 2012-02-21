@@ -1,9 +1,10 @@
 package haquery.components.alternative;
 
+import haquery.server.HaqComponent;
 import haquery.server.Lib;
 import haquery.server.HaqXml;
 
-class Server extends haquery.components.container.Server
+class Server extends HaqComponent
 {
     public var active : Int;
     

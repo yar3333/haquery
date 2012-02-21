@@ -11,14 +11,10 @@ using haquery.StringTools;
 
 class HaqComponent extends haquery.base.HaqComponent
 {
-    var manager : HaqTemplateManager;
-	
 	public function construct(manager:HaqTemplateManager, fullTag:String, parent:HaqComponent, id:String, factoryInitParams:Array<Dynamic>=null) : Void
 	{
-		super.commonConstruct(fullTag, parent, id);
+		super.commonConstruct(manager, fullTag, parent, id);
 		
-		this.manager = manager;
-        
 		connectElemEventHandlers();
         createEvents();
 		createChildComponents();

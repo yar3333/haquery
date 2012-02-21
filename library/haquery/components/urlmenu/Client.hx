@@ -6,7 +6,7 @@ import haquery.client.Lib;
 import js.Dom;
 import haquery.client.HaqComponent;
 
-class Client extends haquery.components.container.Client
+class Client extends HaqComponent
 {
     function init()
     {
