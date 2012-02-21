@@ -40,6 +40,11 @@ class ComponentFileKind
 		if (path == exeDir + "tools"
 		 || path == exeDir + "run.n"
 		 || path == exeDir + "restorefiletime.exe"
+		 || path == exeDir + "restorefiletime.exe.config"
+		 || path == exeDir + "restorefiletime.pdb"
+		 || path == exeDir + "runwaiter.exe"
+		 || path == exeDir + "runwaiter.exe.config"
+		 || path == exeDir + "runwaiter.pdb"
 		 || path == exeDir + "readme.txt"
 		 || path == exeDir + "haxelib.xml"
 		) return false;

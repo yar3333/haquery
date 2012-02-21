@@ -233,4 +233,9 @@ class HaqComponent extends haquery.base.HaqComponent
 	{
 		manager.registerStyle(fullID, url);
 	}
+	
+	function getSupportPath()
+	{
+		return manager.templates.get(fullTag).getSupportFilePath("");
+	}
 }

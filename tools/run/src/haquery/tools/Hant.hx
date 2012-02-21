@@ -6,7 +6,7 @@ import neko.Sys;
 import neko.Lib;
 import neko.io.Process;
 
-using StringTools;
+using haquery.StringTools;
 
 class Hant 
 {
@@ -69,7 +69,10 @@ class Hant
     
     public function copyFolderContent(fromFolder:String, toFolder:String, include:String->Bool)
     {
-        log.start("Copy directory '" + fromFolder + "' => '" + toFolder + "'");
+        fromFolder = fromFolder.replace('\\', '/').rtrim('/');
+        toFolder = toFolder.replace('\\', '/').rtrim('/');
+		
+		log.start("Copy directory '" + fromFolder + "' => '" + toFolder + "'");
         try
         {
             for (file in FileSystem.readDirectory(fromFolder))
@@ -198,20 +201,18 @@ class Hant
 	
 	public function run(fileName:String, args:Array<String>) : Int
 	{
-		try
+		fileName = fileName.replace("/", "\\");
+		
+		var p : Process = new Process(exeDir + "runwaiter.exe", [ "5000", fileName ].concat(args));
+		var r = p.exitCode();
+		Lib.println(p.stdout.readAll().toString()); 
+		Lib.println(p.stderr.readAll().toString()); 
+		p.close();
+		if (r != 0)
 		{
-			var p : Process = new Process(fileName, args);
-			var r = p.exitCode();
-			Lib.println(p.stdout.readAll().toString()); 
-			Lib.println(p.stderr.readAll().toString()); 
-			p.close();
-			return r;
+			Lib.println("runwaiter error: " + r);
 		}
-		catch (e:Dynamic)
-		{
-			Lib.println("Error: file '" + fileName + "' not found. Maybe you need to add directory to the PATH system environment variable.");
-			throw e;
-		}
+		return r;
 	}
     
     /*public function getWindowsRegistryValue(key:String) : String

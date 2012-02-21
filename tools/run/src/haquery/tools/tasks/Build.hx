@@ -5,22 +5,28 @@ import haquery.server.io.File;
 import haquery.server.io.FileOutput;
 import haquery.server.io.Path;
 import haquery.server.HaqDefines;
+
 import haquery.tools.trm.TrmGenerator;
+
+import haquery.tools.FlashDevelopProject;
+import haquery.tools.ComponentFileKind;
 
 using haquery.StringTools;
 
 class Build 
 {
 	var exeDir : String;
+	var haxePath : String;
     
 	var log : Log;
     var hant : Hant;
 	var project : FlashDevelopProject;
 	var componentFileKind : ComponentFileKind;
 
-	public function new(exeDir:String) 
+	public function new(exeDir:String, haxePath:String) 
 	{
-		this.exeDir = exeDir.replace('\\', '/');
+		this.exeDir = exeDir.replace('\\', '/').rtrim('/') + '/';
+		this.haxePath = haxePath.replace('\\', '/').rtrim('/') + '/';
         
 		log = new Log(2);
         hant = new Hant(log, this.exeDir);
@@ -78,13 +84,15 @@ class Build
         {
             params.push('-cp'); params.push(path);
         }
-		params.push("-lib"); params.push("HaQuery");
-        params.push('-js');
-        params.push(clientPath + "/haquery.js");
-        params.push('-main'); params.push('Main');
-        params.push('-debug');
-        params.push('-D'); params.push('noEmbedJS');
-        hant.run("haxe", params);
+		
+		params = params.concat([ 
+			 "-lib", "HaQuery"
+			,"-js", clientPath + "/haquery.js"
+			,'-main', 'Main'
+			,'-debug'
+			,'-D', 'noEmbedJS'
+		]);
+        hant.run(haxePath + "haxe.exe", params);
         
 		if (FileSystem.exists(clientPath + "/haquery.js")
 		 && FileSystem.exists(clientPath + "/haquery.js.old"))
