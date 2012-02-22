@@ -16,11 +16,15 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 {
 	var classPaths : Array<String>;
 	
+	var isFirstPrint : Bool;
+	
 	public function new(classPaths:Array<String>)
 	{
 		super();
 		
 		this.classPaths = classPaths;
+		
+		isFirstPrint = true;
 		
 		fillTemplates(HaqDefines.folders.pages);
 	}
@@ -66,7 +70,12 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		}
 		else
 		{
-			Lib.println("run warning: package '" + pack + "' not found.");
+			if (isFirstPrint)
+			{
+				Lib.print("\n  ");
+				isFirstPrint = false;
+			}
+			Lib.print("WARNING: imported components package '" + pack + "' not found.\n  ");
 		}
 	}
 	

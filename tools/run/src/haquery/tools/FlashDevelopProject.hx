@@ -2,6 +2,7 @@ package haquery.tools;
 
 import haquery.server.FileSystem;
 import haquery.server.io.File;
+import haquery.Std;
 
 using haquery.StringTools;
 
@@ -9,6 +10,7 @@ class FlashDevelopProject
 {
 	public var binPath(default, null) : String;
 	public var classPaths(default, null) : Array<String>;
+	public var isDebug(default, null) : Bool;
 	
 	public function new(dir:String, exeDir:String) 
 	{
@@ -22,6 +24,7 @@ class FlashDevelopProject
 		
 		binPath = getBinPath(xml);
 		classPaths = getClassPaths(xml, exeDir);
+		isDebug = getIsDebug(xml);
 	}
 	
 	function findProjectFile(dir:String) : String
@@ -81,4 +84,20 @@ class FlashDevelopProject
         
 		return r;
     }
+	
+	function getIsDebug(xml:Xml) : Bool
+	{
+		var fast = new haxe.xml.Fast(xml.firstElement());
+		if (fast.hasNode.build)
+		{
+			for (elem in fast.node.build.elements)
+			{
+				if (elem.name == 'option' && elem.has.enabledebug)
+				{
+					return Std.bool(elem.att.enabledebug);
+				}
+			}
+		}
+		return true;
+	}
 }

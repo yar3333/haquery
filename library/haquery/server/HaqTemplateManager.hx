@@ -1,8 +1,5 @@
 package haquery.server;
 
-import haxe.Serializer;
-import haxe.Unserializer;
-
 import haquery.server.HaqComponent;
 import haquery.server.HaqTemplate;
 import haquery.server.HaqXml;
@@ -10,7 +7,6 @@ import haquery.server.Lib;
 import haquery.server.io.File;
 import haquery.server.HaqTemplateParser;
 import haquery.server.FileSystem;
-import haquery.base.HaqTemplateParser.HaqTemplateNotFoundException;
 
 using haquery.StringTools;
 using haquery.HashTools;
@@ -60,10 +56,10 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		}
 		else
 		{
-			return Unserializer.run(File.getContent(templateCachePath));
+			return HaqTemplate.unserialize(File.getContent(templateCachePath));
 		}
 	}
-
+	
 	function fillTemplates()
 	{
 		var globalLastMod = MIN_DATE;

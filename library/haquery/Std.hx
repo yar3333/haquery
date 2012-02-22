@@ -1,5 +1,7 @@
 package haquery;
 
+import Type.ValueType;
+
 class Std 
 {
 	public static inline function is( v : Dynamic, t : Dynamic ) : Bool { return HaxeStd.is(v, t);  }
@@ -11,6 +13,24 @@ class Std
 	
     public static function bool(v:Dynamic) : Bool
     {
-		return v != false && v != null && v != 0 && v != "" && v != "0" && v != "false" && v != "off";
+		if ( v == false || v == null || v == 0 || v == "" || v == "0")
+		{
+			return false;
+		}
+		
+		switch (Type.typeof(v))
+		{
+			case ValueType.TClass(c):
+				if (c == String)
+				{
+					if (v.toLowerCase() == "false" || v.toLowerCase() == "off")
+					{
+						return false;
+					}
+				}
+			default:
+		}
+		
+		return true;
     }
 }

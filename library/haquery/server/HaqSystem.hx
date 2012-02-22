@@ -86,25 +86,18 @@ class HaqSystem
 		
 		if (component != null)
 		{
-			if (Reflect.hasField(component, method))
+			var r = callElemEventHandler(component, method);
+			if (!r.success)
 			{
-				var r = callElemEventHandler(component, method);
-				if (!r.success)
-				{
-					r = callSharedMethod(component, method, Unserializer.run(Web.getParams().get('HAQUERY_PARAMS')));
-				}
-				if (r.success)
-				{
-					result = r.result;
-				}
-				else
-				{
-					throw "Method " + method + "() of the " + component.fullTag + " component's server class must exists and marked @shared to be callable from the client.";
-				}
+				r = callSharedMethod(component, method, Unserializer.run(Web.getParams().get('HAQUERY_PARAMS')));
+			}
+			if (r.success)
+			{
+				result = r.result;
 			}
 			else
 			{
-				throw "Method '" + componentID + "#" + method + "' not found.";
+				throw "Method " + method + "() of the " + component.fullTag + " component's server class must exists and marked @shared to be callable from the client.";
 			}
 		}
 		else

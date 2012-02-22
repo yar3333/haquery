@@ -40,7 +40,15 @@ class Server extends Base
         super.construct(manager, fullTag, parent, id, xml, params, null, isCustomRender);
 	}
     
-    override function callElemEventHandler(elemID:String, eventName:String) : Dynamic
+	override function createChildComponents()
+	{
+		if (doc != null)
+		{
+			manager.createDocComponents(this, doc, false);
+		}
+	}
+	
+	override function callElemEventHandler(elemID:String, eventName:String) : Dynamic
     {
         if (parent != null && parent.parent != null)
         {

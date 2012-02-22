@@ -56,10 +56,10 @@ class TrmGenerator
 				{
 					if (isFirstPrint)
 					{
-						Lib.print("\n  ");
+						Lib.print("\n    ");
 						isFirstPrint = false;
 					}
-					Lib.print(fullTag + "\n  ");
+					Lib.print(fullTag + "\n    ");
 					
 					for (templateVar in templateVars)
 					{

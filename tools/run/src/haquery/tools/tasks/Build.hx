@@ -92,11 +92,16 @@ class Build
 			 "-lib", "HaQuery"
 			,"-js", clientPath + "/haquery.js"
 			,'-main', 'Main'
-			,'-debug'
-			,'-D', 'noEmbedJS'
 		]);
 		
-		Lib.println("\n" + haxePath.replace("/", "\\") + "haxe.exe " + params.join(" "));
+		if (project.isDebug)
+		{
+			params.push("-debug");
+		}
+		
+		params = params.concat([ '-D', 'noEmbedJS' ]);		
+		
+		Lib.print("\n    " + haxePath.replace("/", "\\") + "haxe.exe " + params.join(" ") + "\n  ");
 		hant.run(haxePath + "haxe.exe", params);
 		
         
