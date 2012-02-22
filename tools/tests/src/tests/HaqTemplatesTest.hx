@@ -28,7 +28,7 @@ class HaqTemplatesTest extends TestCase
 		var template = manager.findTemplate(page.fullTag, "text");
 		assertTrue(template != null);
 
-		assertEquals("text component template file", template.doc.innerHTML);
+		assertEquals("text component template file", template.getDocCopy().innerHTML);
 		assertEquals("", template.css);
 		assertEquals("components/set0/text/support/suptest.txt", template.getSupportFilePath("suptest.txt"));
 	}
@@ -41,10 +41,10 @@ class HaqTemplatesTest extends TestCase
 		var page = manager.createPage("pages.test1", null);
 		assertTrue(page != null);
 		
-		var template = manager.templates.get("components.set1.randnum");
+		var template = manager.get("components.set1.randnum");
 		assertTrue(template != null);
 		
-		var html = template.doc.innerHTML;
+		var html = template.getDocCopy().innerHTML;
         assertEquals(StringTools.htmlEscape("<div id='n'>0</div>"), StringTools.htmlEscape(html.trim(" \t\r\n")));
 	}
 	
@@ -56,11 +56,11 @@ class HaqTemplatesTest extends TestCase
 		var page = manager.createPage("pages.test1", null);
 		assertTrue(page != null);
 		
-		var template = manager.templates.get("components.set1.randnum");
+		var template = manager.get("components.set1.randnum");
 		assertTrue(template != null);
         assertEquals("components.set1.randnum.Server", template.serverClassName);
 		
-		var randnum = manager.createComponent(page, "randnum", "rn", null, null);
+		var randnum = manager.createComponent(page, "randnum", "rn", null, null, false);
 		assertTrue(randnum != null);
 		assertEquals("components.set1.randnum.Server", Type.getClassName(Type.getClass(randnum)));
 		
@@ -74,9 +74,9 @@ class HaqTemplatesTest extends TestCase
 		var manager = new HaqTemplateManager();
 		assertTrue(manager != null);
 		
-		var template = manager.templates.get("pages.test2");
+		var template = manager.get("pages.test2");
 		assertTrue(template != null);
-        assertEquals("0b2ac", template.doc.innerHTML);
+        assertEquals("0b2ac", template.getDocCopy().innerHTML);
         //assertEquals(0, template.doc.children.length);
         
 		var page = manager.createPage("pages.test2", null);
