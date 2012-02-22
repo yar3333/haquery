@@ -25,7 +25,7 @@ class Server extends Base
 		var i = 0;
         for (consts in constsList)
         {
-            manager.createComponent(this, 'listitem', Std.string(i), cast HashTools.hashify(consts), parentNode, false);
+            manager.createComponent(this, 'listitem', Std.string(i), cast HashTools.hashify(consts), parentNode, true);
             i++;
         }
 		q('#length').val(Std.string(i));

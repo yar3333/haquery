@@ -45,9 +45,11 @@ class HaqTemplate extends haquery.base.HaqTemplate
 	
 	public function serialize() : String
 	{
-		var ser = new Serializer();
-		ser.useCache = true;
-		ser.serialize(this);
-		return ser.toString();
+		return Serializer.run(this);
+	}
+	
+	public static function unserialize(s:String) : HaqTemplate
+	{
+		return Unserializer.run(s);
 	}
 }
