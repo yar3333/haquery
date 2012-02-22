@@ -97,8 +97,13 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		return r;
 	}
 	
-	public function getFullTags() : Array<String>
+	public function getLastMods() : Hash<Date>
 	{
-		return Lambda.array(templates.keysIterable());
+		var r = new Hash<Date>();
+		for (fullTag in templates.keys())
+		{
+			r.set(fullTag, templates.get(fullTag).lastMod);
+		}
+		return r;
 	}
 }

@@ -31,11 +31,6 @@ class HaqConfig
      */
     public var filterTracesByIP : String;
 
-    /**
-     * Set to true for production. Cache will be saved to the temp folder.
-     */
-	public var useCache : Bool;
-	
 	/**
      * User-defined data.
      */
@@ -55,7 +50,6 @@ class HaqConfig
 		sqlTraceLevel = 1;
 		isTraceComponent = false;
 		filterTracesByIP = '';
-		useCache = false;
 		custom = new Hash<Dynamic>();
 	}
 }

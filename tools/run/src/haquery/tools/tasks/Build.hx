@@ -14,6 +14,7 @@ import haquery.tools.FlashDevelopProject;
 import haquery.tools.ComponentFileKind;
 
 using haquery.StringTools;
+using haquery.HashTools;
 
 class Build 
 {
@@ -119,21 +120,26 @@ class Build
 		
 		genImports();
 		
-		saveFullTags(manager.getFullTags());
+		saveLastMods(manager.getLastMods());
 		
 		try { saveLibFolder(); } catch (e:Dynamic) { }
         
         log.finishOk();
     }
 	
-	function saveFullTags(fullTags:Array<String>)
+	function saveLastMods(lastMods:Hash<Date>)
 	{
 		var serverPath = project.binPath + '/haquery/server';
 		if (!FileSystem.exists(serverPath))
 		{
 			FileSystem.createDirectory(serverPath);
 		}
-		File.putContent(serverPath + "/templates.dat", fullTags.join("\n"));
+		File.putContent(
+			 serverPath + "/templates.dat"
+			,Lambda.map(lastMods.keysIterable(), function(fullTag) {
+				return fullTag + "\t" + Math.round(lastMods.get(fullTag).getTime()/1000000.0);
+			}
+		).join("\n"));
 	}
 	
     public function genTrm(?manager:HaqTemplateManager)
