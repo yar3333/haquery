@@ -6,6 +6,12 @@ class Template
 {
 	var component : #if php haquery.server.HaqComponent #else haquery.client.HaqComponent #end;
 	
+	public var filter(filter_getter, null) : #if php haquery.server.HaqQuery #else haquery.client.HaqQuery #end;
+	inline function filter_getter() : #if php haquery.server.HaqQuery #else haquery.client.HaqQuery #end
+	{
+		return component.q('#filter');
+	}
+	
 	public var frame(frame_getter, null) : #if php haquery.server.HaqQuery #else haquery.client.HaqQuery #end;
 	inline function frame_getter() : #if php haquery.server.HaqQuery #else haquery.client.HaqQuery #end
 	{

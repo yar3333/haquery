@@ -6,6 +6,12 @@ class Template
 {
 	var component : #if php haquery.server.HaqComponent #else haquery.client.HaqComponent #end;
 	
+	public var dataID(dataID_getter, null) : #if php haquery.server.HaqQuery #else haquery.client.HaqQuery #end;
+	inline function dataID_getter() : #if php haquery.server.HaqQuery #else haquery.client.HaqQuery #end
+	{
+		return component.q('#dataID');
+	}
+	
 	public var p(p_getter, null) : #if php haquery.server.HaqQuery #else haquery.client.HaqQuery #end;
 	inline function p_getter() : #if php haquery.server.HaqQuery #else haquery.client.HaqQuery #end
 	{

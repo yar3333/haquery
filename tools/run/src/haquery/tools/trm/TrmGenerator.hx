@@ -31,7 +31,7 @@ class TrmGenerator
 		
 		isFirstPrint = true;
 		
-		for (fullTag in manager.getFullTags())
+		for (fullTag in manager.getLastMods().keys())
 		{
 			generate(fullTag);
 		}
@@ -45,7 +45,7 @@ class TrmGenerator
 		
 		if (template.hasLocalServerClass || template.hasLocalClientClass)
 		{
-			if (!FileSystem.exists(template.trmFilePath) || FileSystem.stat(template.trmFilePath).mtime.getTime() < template.docLastMod.getTime())
+			//if (!FileSystem.exists(template.trmFilePath) || FileSystem.stat(template.trmFilePath).mtime.getTime() < template.docLastMod.getTime())
 			{
 				var haxeClass = new HaxeClass(fullTag + ".Template");
 				

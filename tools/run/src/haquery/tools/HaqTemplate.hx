@@ -5,7 +5,7 @@ import haquery.server.HaqXml;
 class HaqTemplate extends haquery.base.HaqTemplate
 {
 	public var doc(default, null) : HaqXml; 
-	public var docLastMod(default, null) : Date;
+	//public var docLastMod(default, null) : Date;
 	
 	public var serverClassName(default, null) : String;
 	public var clientClassName(default, null) : String;
@@ -15,6 +15,8 @@ class HaqTemplate extends haquery.base.HaqTemplate
 		
 	public var trmFilePath(default, null) : String;
 	
+	public var lastMod(default, null) : Date;
+	
 	public function new(classPaths:Array<String>, fullTag:String) 
 	{
 		var parser = new HaqTemplateParser(classPaths, fullTag);
@@ -22,7 +24,7 @@ class HaqTemplate extends haquery.base.HaqTemplate
 		super(fullTag, parser.getImports());
 		
 		doc = parser.getDocAndCss().doc;
-		docLastMod = parser.getDocLastMod();
+		//docLastMod = parser.getDocLastMod();
 		
 		serverClassName = parser.getServerClassName();
 		clientClassName = parser.getClientClassName();
@@ -31,5 +33,7 @@ class HaqTemplate extends haquery.base.HaqTemplate
 		hasLocalClientClass = parser.hasLocalClientClass();
 		
 		trmFilePath = parser.getTrmFilePath();
+		
+		lastMod = parser.getLastMod();
 	}
 }

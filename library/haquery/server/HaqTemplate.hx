@@ -1,4 +1,6 @@
 package haquery.server;
+
+import haxe.Serializer;
 import haxe.Unserializer;
 
 class HaqTemplate extends haquery.base.HaqTemplate
@@ -13,9 +15,7 @@ class HaqTemplate extends haquery.base.HaqTemplate
 	public var serverClassName(default, null) : String;
 	public var serverHandlers(default, null) : Hash<Array<String>>;
 	
-	public var lastTemplateDocModified : Date;
-	public var lastServerCodeModified : Date;
-	public var lastClientCodeModified : Date;
+	public var lastMod : Date;
 	
 	public function new(fullTag:String) 
 	{
@@ -41,5 +41,13 @@ class HaqTemplate extends haquery.base.HaqTemplate
 	public function getSupportFilePath(relPath:String)
 	{
 		return parser.getSupportFilePath(relPath);
+	}
+	
+	public function serialize() : String
+	{
+		var ser = new Serializer();
+		ser.useCache = true;
+		ser.serialize(this);
+		return ser.toString();
 	}
 }
