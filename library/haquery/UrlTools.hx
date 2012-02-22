@@ -4,7 +4,7 @@ using haquery.StringTools;
 
 private typedef Params = List<{name:String, value:String}>;
 
-class UrlParam
+class UrlTools
 {
     static function parse(url:String) : { prefix:String, params:Params }
 	{
@@ -43,12 +43,12 @@ class UrlParam
 		return url;
 	}
 	
-    public static function exists(url:String, name:String) : Bool
+    public static function isParamExist(url:String, name:String) : Bool
     {
 		return Lambda.exists(parse(url).params, function(param) return param.name == name);
     }
     
-	public static function set(url:String, name:String, value:Dynamic) : String
+	public static function setParam(url:String, name:String, value:Dynamic) : String
     {
 		var data = parse(url);
 		for (param in data.params)
@@ -63,7 +63,7 @@ class UrlParam
 		return combine(data.prefix, data.params);
     }
     
-    public static function get(url:String, name:String, defValue:String=null) : String
+    public static function getParam(url:String, name:String, defValue:String=null) : String
     {
 		var data = parse(url);
 		for (param in data.params)
@@ -76,13 +76,13 @@ class UrlParam
 		return defValue;
     }
 	
-    public static function getInt(url:String, name:String, defValue:Int=0) : Int
+    public static function getParamInt(url:String, name:String, defValue:Int=0) : Int
     {
-		var r = Std.parseInt(get(url, name, Std.string(defValue)));
+		var r = Std.parseInt(getParam(url, name, Std.string(defValue)));
 		return r != null ? r : defValue;
     }
     
-    public static function remove(url:String, name : String) : String
+    public static function removeParam(url:String, name : String) : String
     {
 		var data = parse(url);
 		data.params = Lambda.filter(data.params, function(param) return param.name != name);
