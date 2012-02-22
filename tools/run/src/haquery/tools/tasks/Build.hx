@@ -85,7 +85,10 @@ class Build
         var params = new Array<String>();
         for (path in project.classPaths)
         {
-            params.push('-cp'); params.push(path);
+            if (path != exeDir)
+			{
+				params.push('-cp'); params.push(path.rtrim('/'));
+			}
         }
 		
 		params = params.concat([ 
