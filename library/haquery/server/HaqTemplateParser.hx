@@ -14,6 +14,8 @@ import neko.FileSystem;
 import neko.io.File;
 #end
 
+import haquery.base.HaqTemplateParser.HaqTemplateNotFoundException;
+
 using haquery.StringTools;
 
 class HaqTemplateParser extends haquery.base.HaqTemplateParser
@@ -21,6 +23,28 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser
 	public function new(fullTag:String)
 	{
 		super(fullTag);
+	}
+	
+	override function isTemplateExist(fullTag:String) : Bool
+	{
+		var localPath = fullTag.replace(".", "/");
+		if (getFullPath(localPath + '/template.html') != null || Type.resolveClass(fullTag + ".Server") != null)
+		{
+			return true;
+		}
+		return false;
+	}
+	
+	override function getParentParser() : HaqTemplateParser
+	{
+		try
+		{
+			return new HaqTemplateParser(config.extend);
+		}
+		catch (e:HaqTemplateNotFoundException)
+		{
+			return null;
+		}
 	}
 	
 	override function getShortClassName() : String
@@ -88,9 +112,10 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser
 			return path;
 		}
 		
-		if (config.extend != null)
+		var parentParser = getParentParser();
+		if (parentParser != null)
 		{
-			return getParentParser().getSupportFilePath(fileName);
+			return parentParser.getSupportFilePath(fileName);
 		}
 		
 		return null;
@@ -153,9 +178,10 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser
 	{
 		var text = "";
 		
-		if (config.extend != null && config.extend != "" )
+		var parentParser = getParentParser();
+		if (parentParser != null)
 		{
-			text += getParentParser().getDocText();
+			text += parentParser.getDocText();
 		}
 		
 		var path = getFullPath(fullTag.replace(".", "/") + "/template.html");

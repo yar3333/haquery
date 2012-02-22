@@ -1,3 +1,5 @@
+#if (php || neko)
+
 package haquery.server.db;
 
 import haquery.server.db.HaqDbDriver;
@@ -54,4 +56,4 @@ class HaqDb
     }
 }
 
-
+#end

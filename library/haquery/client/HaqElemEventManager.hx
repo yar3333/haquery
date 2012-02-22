@@ -55,7 +55,7 @@ class HaqElemEventManager
                 var needHandler = Reflect.isFunction(Reflect.field(componentWithHandlers, elemID + "_" + eventName));
                 if (!needHandler)
                 {
-                    var serverHandlers = manager.templates.get(componentWithHandlers.fullTag).serverHandlers;
+                    var serverHandlers = manager.get(componentWithHandlers.fullTag).serverHandlers;
                     if (serverHandlers != null && serverHandlers.get(elemID) != null 
                      && Lambda.has(serverHandlers.get(elemID), eventName)
                     ) {
@@ -76,7 +76,7 @@ class HaqElemEventManager
     {
 		if (callClientElemEventHandlers(componentWithHandlers, componentWithEvents, elem, e))
 		{
-			var serverHandlers = manager.templates.get(componentWithHandlers.fullTag).serverHandlers;
+			var serverHandlers = manager.get(componentWithHandlers.fullTag).serverHandlers;
 			callServerElemEventHandlers(elem.id, e.type, serverHandlers);
 		}
     }

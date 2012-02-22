@@ -7,8 +7,10 @@ using haquery.StringTools;
 
 class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 {
-	override function fillTemplates()
+	public function new()
 	{
+		super();
+		
 		for (fullTag in HaqInternals.templates.keys())
 		{
 			templates.set(fullTag, new HaqTemplate(fullTag));
@@ -17,12 +19,12 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 	
 	public function createPage(pageFullTag:String) : HaqPage
     {
-		return cast newComponent(templates.get(pageFullTag), null, '', null);
+		return cast newComponent(get(pageFullTag), null, '', null);
     }
 	
 	public function createComponent(parent:HaqComponent, tag:String, id:String, factoryInitParams:Array<Dynamic>=null) : HaqComponent
     {
-		return newComponent(tag.indexOf(".") < 0 ? findTemplateDeep(parent, tag) : templates.get(tag), parent, id, factoryInitParams);
+		return newComponent(tag.indexOf(".") < 0 ? findTemplateDeep(parent, tag) : get(tag), parent, id, factoryInitParams);
     }
 	
 	function newComponent(template:HaqTemplate, parent:HaqComponent, id:String, factoryInitParams:Array<Dynamic>=null) : HaqComponent

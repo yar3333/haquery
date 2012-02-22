@@ -16,22 +16,22 @@ using haquery.HashTools;
 
 class TrmGenerator
 {
-	var isFirstPrint : Bool; 
-	
 	var manager : HaqTemplateManager;
 	
-	public static function run(classPaths:Array<String>)
+	var isFirstPrint : Bool; 
+	
+	public static function run(manager:HaqTemplateManager)
 	{
-		new TrmGenerator(classPaths);
+		new TrmGenerator(manager);
 	}
 	
-	function new(classPaths:Array<String>)
+	function new(manager:HaqTemplateManager)
     {
+		this.manager = manager;
+		
 		isFirstPrint = true;
 		
-		manager = new HaqTemplateManager(classPaths);
-		
-		for (fullTag in manager.templates.keys())
+		for (fullTag in manager.getFullTags())
 		{
 			generate(fullTag);
 		}
@@ -41,7 +41,7 @@ class TrmGenerator
 	{
 		//trace("Generate TRM for " + fullTag);
 		
-		var template = manager.templates.get(fullTag);
+		var template = manager.get(fullTag);
 		
 		if (template.hasLocalServerClass || template.hasLocalClientClass)
 		{

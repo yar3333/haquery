@@ -4,6 +4,8 @@ import haquery.server.FileSystem;
 import haquery.server.io.File;
 import haquery.server.HaqDefines;
 
+import haquery.base.HaqTemplateParser.HaqTemplateNotFoundException;
+
 using StringTools;
 
 class HaqTemplateParser extends haquery.server.HaqTemplateParser
@@ -18,9 +20,33 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 		super(fullTag);
 	}
 	
+	override function isTemplateExist(fullTag:String) : Bool
+	{
+		var localPath = fullTag.replace(".", "/");
+		var path = getFullPath(localPath);
+		if (path != null && FileSystem.isDirectory(path))
+		{
+			if (
+				getFullPath(localPath + '/template.html') != null
+			 || getFullPath(localPath + '/Client.hx') != null
+			 || getFullPath(localPath + '/Server.hx') != null
+			) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	override function getParentParser() : haquery.server.HaqTemplateParser
 	{
-		return new HaqTemplateParser(classPaths, config.extend);
+		try
+		{
+			return new HaqTemplateParser(classPaths, config.extend);
+		}
+		catch (e:HaqTemplateNotFoundException)
+		{
+			return null;
+		}
 	}
 	
 	override function getFullPath(path:String) : String
@@ -61,9 +87,10 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 			return localClassName;
 		}
 		
-		if (config.extend != null && config.extend != "")
+		var parentParser = getParentParser();
+		if (parentParser != null)
 		{
-			return cast(getParentParser(), HaqTemplateParser).getGlobalClassName(shortClassName);
+			return cast(parentParser, HaqTemplateParser).getGlobalClassName(shortClassName);
 		}
 		
 		return null;
@@ -85,9 +112,10 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 	{
 		var docFilePath = getFullPath(fullTag.replace(".", "/") + "/template.html");
 		var lastMod = docFilePath != null ? FileSystem.stat(docFilePath).mtime : MIN_DATE;
-		if (config.extend != null && config.extend != "")
+		var parentParser = getParentParser();
+		if (parentParser != null)
 		{
-			var parentDocLastMod = cast(getParentParser(), HaqTemplateParser).getDocLastMod();
+			var parentDocLastMod = cast(parentParser, HaqTemplateParser).getDocLastMod();
 			if (parentDocLastMod.getTime() > lastMod.getTime())
 			{
 				lastMod = parentDocLastMod;

@@ -5,6 +5,7 @@ import haquery.server.io.File;
 import haquery.server.io.FileOutput;
 import haquery.server.io.Path;
 import haquery.server.HaqDefines;
+import haquery.tools.HaqTemplateManager;
 import neko.Lib;
 
 import haquery.tools.trm.TrmGenerator;
@@ -112,19 +113,34 @@ class Build
     {
         log.start("Do pre-build step");
         
-		genTrm();
+		var manager = new HaqTemplateManager(project.classPaths);
+		
+		genTrm(manager);
 		
 		genImports();
+		
+		saveFullTags(manager.getFullTags());
+		
 		try { saveLibFolder(); } catch (e:Dynamic) { }
         
         log.finishOk();
     }
 	
-    public function genTrm()
+	function saveFullTags(fullTags:Array<String>)
+	{
+		var serverPath = project.binPath + '/haquery/server';
+		if (!FileSystem.exists(serverPath))
+		{
+			FileSystem.createDirectory(serverPath);
+		}
+		File.putContent(serverPath + "/templates.dat", fullTags.join("\n"));
+	}
+	
+    public function genTrm(?manager:HaqTemplateManager)
     {
         log.start("Generate template related mapping classes");
         
-        TrmGenerator.run(project.classPaths);
+        TrmGenerator.run(manager!=null ? manager : new HaqTemplateManager(project.classPaths));
         
         log.finishOk();
     }

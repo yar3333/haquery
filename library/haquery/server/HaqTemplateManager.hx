@@ -10,6 +10,7 @@ import haquery.server.Lib;
 import haquery.server.io.File;
 import haquery.server.HaqTemplateParser;
 import haquery.server.FileSystem;
+import haquery.base.HaqTemplateParser.HaqTemplateNotFoundException;
 
 using haquery.StringTools;
 using haquery.HashTools;
@@ -26,6 +27,8 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		registeredScripts = [];
 		registeredStyles = [];
 		
+		fillTemplates();
+		
 		var templatesCacheClientFilePath = HaqDefines.folders.temp + "/templates-cache-client.js";
 		if (!Lib.config.useCache || !FileSystem.exists(templatesCacheClientFilePath))
 		{
@@ -34,7 +37,12 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		registerScript(null, "/" + templatesCacheClientFilePath);
 	}
 	
-	override function fillTemplates()
+	override function newTemplate(fullTag:String) : HaqTemplate
+	{
+		return new HaqTemplate(fullTag); 
+	}
+
+	function fillTemplates()
 	{
 		if (!FileSystem.exists(HaqDefines.folders.temp))
 		{
@@ -44,7 +52,10 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		var templatesCacheServerFilePath = HaqDefines.folders.temp + "/templates-cache-server.dat";
 		if (!Lib.config.useCache || !FileSystem.exists(templatesCacheServerFilePath))
 		{
-			fillTemplatesBySearch(HaqDefines.folders.pages);
+			for (fullTag in File.getContent("haquery/server/templates.dat").split("\n"))
+			{
+				templates.set(fullTag, null);
+			}
 			
 			if (Lib.config.useCache)
 			{
@@ -57,21 +68,12 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		else
 		{
 			templates = Unserializer.run(File.getContent(templatesCacheServerFilePath));
-			for (t in templates.keys())
-			{
-				trace("loaded " + t);
-			}
 		}
-	}
-	
-	override function parseTemplate(fullTag:String) : HaqTemplate
-	{
-		return new HaqTemplate(fullTag);
 	}
 	
 	public function createPage(pageFullTag:String, attr:Hash<String>) : HaqPage
 	{
-        var template = templates.get(pageFullTag);
+        var template = get(pageFullTag);
 		if (template == null)
 		{
 			throw "HAQUERY ERROR could't find page '" + pageFullTag + "'.";
@@ -107,7 +109,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		
 		if (!url.startsWith("http://") && !url.startsWith("/") && !url.startsWith("<"))
 		{
-			url = '/' + templates.get(fullTag).getSupportFilePath(url);
+			url = '/' + get(fullTag).getSupportFilePath(url);
 		}
 		
 		return url;
@@ -160,7 +162,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 			var text = "";
 			for (fullTag in templates.keys())
 			{
-				var template = templates.get(fullTag);
+				var template = get(fullTag);
 				text += "/* " + fullTag + "*/\n" + template.css + "\n\n";
 			}
 			
@@ -240,7 +242,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 	{
 		var s = "haquery.client.HaqInternals.templates = haquery.HashTools.hashify({\n"
 		      + Lambda.map(templates.keysIterable(), function(tag) {
-					var t = templates.get(tag);
+					var t = get(tag);
 					return "'" + tag + "':"
 						 + "{" 
 							 + "config:" + array2json([t.extend].concat(t.imports)) 
