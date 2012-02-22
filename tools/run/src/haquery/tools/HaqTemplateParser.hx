@@ -108,22 +108,6 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 		return r != null && r != ""  ? r : "haquery.client.HaqComponent";
 	}
 	
-	/*public function getDocLastMod() : Date
-	{
-		var docFilePath = getFullPath(fullTag.replace(".", "/") + "/template.html");
-		var lastMod = docFilePath != null ? FileSystem.stat(docFilePath).mtime : MIN_DATE;
-		var parentParser = getParentParser();
-		if (parentParser != null)
-		{
-			var parentDocLastMod = cast(parentParser, HaqTemplateParser).getDocLastMod();
-			if (parentDocLastMod.getTime() > lastMod.getTime())
-			{
-				lastMod = parentDocLastMod;
-			}
-		}
-		return lastMod;
-	}*/
-	
 	public function hasLocalServerClass() : Bool
 	{
 		return getLocalClassName("Server") != null;
@@ -134,9 +118,14 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 		return getLocalClassName("Client") != null;
 	}
 	
-	public function getTrmFilePath() : String
+	public function getTrmServerFilePath() : String
 	{
-		return getFullPath(fullTag.replace('.', '/')) + "/Template.hx";
+		return getFullPath(fullTag.replace('.', '/')) + "/TemplateServer.hx";
+	}
+	
+	public function getTrmClientFilePath() : String
+	{
+		return getFullPath(fullTag.replace('.', '/')) + "/TemplateClient.hx";
 	}
 	
 	public function getLastMod() : Date

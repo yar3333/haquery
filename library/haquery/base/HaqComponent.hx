@@ -63,7 +63,11 @@ class HaqComponent
 					var lastPointPos = className.lastIndexOf(".");
 					if (lastPointPos > 0)
 					{
-						var templateClassName = className.substr(0, lastPointPos) + ".Template";
+						#if (php || neko)
+						var templateClassName = className.substr(0, lastPointPos) + ".TemplateServer";
+						#elseif js
+						var templateClassName = className.substr(0, lastPointPos) + ".TemplateClient";
+						#end
 						var templateClass = Type.resolveClass(templateClassName);
 						if (templateClass != null)
 						{
