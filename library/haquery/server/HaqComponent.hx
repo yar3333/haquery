@@ -132,8 +132,11 @@ class HaqComponent extends haquery.base.HaqComponent
 		
 		for (child in components)
 		{
-			if (!isCustomRender)
+			if (!child.isCustomRender)
 			{
+				Lib.assert(child != null);
+				Lib.assert(child.parentNode != null);
+				Lib.assert(child.parentNode.parent != null);
 				child.parentNode.parent.replaceChild(child.parentNode, new HaqXmlNodeText(child.render()));
 			}
 		}
@@ -252,6 +255,6 @@ class HaqComponent extends haquery.base.HaqComponent
 	
 	function getSupportPath()
 	{
-		return manager.templates.get(fullTag).getSupportFilePath("");
+		return manager.get(fullTag).getSupportFilePath("");
 	}
 }

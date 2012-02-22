@@ -1,89 +1,55 @@
 package haquery.base;
 	
-import  haquery.server.FileSystem;
+#if (php || neko)
+import haquery.server.FileSystem;
+import haquery.server.Lib;
+#end
 
 using haquery.StringTools;
 
 class HaqTemplateManager<Template:HaqTemplate>
 {
-	public var templates(default, null) : Hash<Template>;
+	var templates(default, null) : Hash<Template>;
 	
 	public function new()
 	{
 		templates = new Hash<Template>();
-		fillTemplates();
 	}
 	
-	function fillTemplates()
+	public function get(fullTag:String) : Template
 	{
-		throw "This method must be overriten.";
+		#if (php || neko)
+		if (templates.exists(fullTag))
+		{
+			var r = templates.get(fullTag);
+			if (r == null)
+			{
+				r = newTemplate(fullTag);
+				templates.set(fullTag, r);
+			}
+			return r;
+		}
+		return null;
+		#elseif js
+		return templates.get(fullTag);
+		#end
 	}
 	
 	#if (php || neko)
-	
-	function fillTemplatesBySearch(pack:String)
+	function newTemplate(fullTag:String) : Template
 	{
-		var path = getFullPath(pack.replace(".", "/")) + '/';
-		for (file in FileSystem.readDirectory(path))
-		{
-			if (file != HaqDefines.folders.support && FileSystem.isDirectory(path + file))
-			{
-				var fullTag = pack + "." + file;
-				
-				if (!templates.exists(fullTag) && isTemplateExists(fullTag))
-				{
-					var template = parseTemplate(fullTag);
-					if (template != null)
-					{
-						templates.set(fullTag, template);
-					}
-					if ((pack.replace(".", "/") + "/").startsWith(HaqDefines.folders.pages + '/'))
-					{
-						fillTemplatesBySearch(fullTag);
-					}
-					
-					for (importPack in template.imports)
-					{
-						fillTemplatesBySearch(importPack);
-					}
-				}
-			}
-		}
+		return null; 
 	}
-	
-	function isTemplateExists(fullTag:String)
-	{
-		var localPath = fullTag.replace(".", "/");
-		var path = getFullPath(localPath);
-		if (path != null && FileSystem.exists(path) && FileSystem.isDirectory(path))
-		{
-			if (
-				getFullPath(localPath + '/template.html') != null
-			 || getFullPath(localPath + '/Client.hx') != null
-			 || getFullPath(localPath + '/Server.hx') != null
-			) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	function parseTemplate(fullTag:String) : Template
-	{
-		throw "This method must be overriten.";
-		return null;
-	}
-	
 	#end
 	
 	public function findTemplate(parentFullTag:String, tag:String) : Template
 	{
-		var template = templates.get(getPackageByFullTag(parentFullTag) + '.' + tag);
+		var template = get(getPackageByFullTag(parentFullTag) + '.' + tag);
 		if (template == null)
 		{
-			for (importPackage in templates.get(parentFullTag).imports)
+			for (importPackage in get(parentFullTag).imports)
 			{
-				template = templates.get(importPackage + '.' + tag);
+				template = get(importPackage + '.' + tag);
 				if (template != null)
 				{
 					break;
@@ -120,10 +86,5 @@ class HaqTemplateManager<Template:HaqTemplate>
 			return fullTag.substr(0, n);
 		}
 		return '';
-	}
-	
-	function getFullPath(path:String)
-	{
-		return path;
 	}
 }

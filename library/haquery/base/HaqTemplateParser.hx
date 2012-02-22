@@ -6,8 +6,12 @@ private typedef TemplateParser = haquery.server.HaqTemplateParser;
 private typedef TemplateParser = haquery.client.HaqTemplateParser;
 #end
 
-
 using haquery.StringTools;
+
+class HaqTemplateNotFoundException
+{
+	public function new() {}
+}
 
 class HaqTemplateParser
 {
@@ -16,13 +20,25 @@ class HaqTemplateParser
 	
 	public function new(fullTag:String)
 	{
+		if (fullTag == null || fullTag == "" || !isTemplateExist(fullTag))
+		{
+			throw new HaqTemplateNotFoundException();
+		}
+		
 		this.fullTag = fullTag;
 		config = getConfig();
 	}
 	
+	function isTemplateExist(fullTag:String) : Bool
+	{
+		throw "This method must be overriden.";
+		return false;
+	}
+	
 	function getParentParser() : TemplateParser
 	{
-		return cast Type.createInstance(Type.getClass(this), [ config.extend ]);
+		throw "This method must be overriden.";
+		return null;
 	}
 	
 	function isPage() : Bool
@@ -45,9 +61,10 @@ class HaqTemplateParser
 			return className;
 		}
 		
-		if (config.extend != null && config.extend != "")
+		var parentParser = getParentParser();
+		if (parentParser != null)
 		{
-			return getParentParser().getClassName();
+			return parentParser.getClassName();
 		}
 		
 		#if (php || neko)

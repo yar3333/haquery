@@ -1,5 +1,7 @@
 package haquery.client;
 
+import haquery.base.HaqTemplateParser.HaqTemplateNotFoundException;
+
 using haquery.StringTools;
 
 class HaqTemplateParser extends haquery.base.HaqTemplateParser
@@ -7,6 +9,23 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser
 	public function new(fullTag:String)
 	{
 		super(fullTag);
+	}
+	
+	override function isTemplateExist(fullTag:String) : Bool
+	{
+		return HaqInternals.templates.exists(fullTag);
+	}
+	
+	override function getParentParser() : HaqTemplateParser
+	{
+		try
+		{
+			return new HaqTemplateParser(config.extend);
+		}
+		catch (e:HaqTemplateNotFoundException)
+		{
+			return null;
+		}
 	}
 	
 	override function getShortClassName() : String

@@ -1,3 +1,5 @@
+#if (php || neko)
+
 package haquery.server.db;
 
 #if php
@@ -39,3 +41,5 @@ interface HaqDbDriver
 	function getForeignKeys(table:String) : Array<HaqDbTableForeignKey>;
 	function getUniques(table:String) : Hash<Array<String>>;
 }
+
+#end
