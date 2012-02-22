@@ -37,37 +37,51 @@ class Build
 		componentFileKind = new ComponentFileKind(this.exeDir);
 	}
 	
-    function genImports()
+    function genImports(manager:HaqTemplateManager)
     {
         log.start("Generate imports to 'src/Imports.hx'");
         
         var fo = File.write("src/Imports.hx", false);
         
-        for (path in project.classPaths)
-        {
-            fo.writeString("// " + path + "\n");
-			fo.writeString("#if php\n");
-			fo.writeString(Lambda.map(hant.findFiles(path, componentFileKind.isServerFile), callback(file2import, path)).join('\n'));
-			fo.writeString("\n#else\n");
-			fo.writeString(Lambda.map(hant.findFiles(path, componentFileKind.isClientFile), callback(file2import, path)).join('\n'));
-			fo.writeString("\n#end\n");
-            fo.writeString("\n");
-        }
+        var serverClassNames = new Hash<Int>();
+        var clientClassNames = new Hash<Int>();
+		for (fullTag in manager.getLastMods().keys())
+		{
+			serverClassNames.set(manager.get(fullTag).serverClassName, 1);
+			clientClassNames.set(manager.get(fullTag).clientClassName, 1);
+		}
+		
+		var arrServerClassNames = Lambda.array(serverClassNames.keysIterable());
+		arrServerClassNames.sort(strcmp);
+		
+		var arrClientClassNames = Lambda.array(clientClassNames.keysIterable());
+		arrClientClassNames.sort(strcmp);
+		
+		fo.writeString("#if (php || neko)\n\n");
+		fo.writeString(Lambda.map(findBootstrapClassNames(HaqDefines.folders.pages), function(s) return "import " + s + ";").join('\n'));
+		fo.writeString("\n");
+		fo.writeString("\n");
+		fo.writeString(Lambda.map(arrServerClassNames, function(s) return "import " + s + ";").join('\n'));
+		fo.writeString("\n\n#elseif js\n\n");
+		fo.writeString(Lambda.map(arrClientClassNames, function(s) return "import " + s + ";").join('\n'));
+		fo.writeString("\n\n#end\n");
         
         fo.close();
         
         log.finishOk();
     }
     
-    function file2import(base:String, file:String) : String
+    function strcmp(a:String, b:String) : Int
     {
-        if (file.startsWith(base))
-        {
-            file = file.substr(base.length + 1);
-        }
-        
-        return "import " + Path.withoutExtension(file).replace('/', '.') + ';';
+        if (a == b) return 0;
+		return a < b ? -1 : 1;
     }
+	
+	function findBootstrapClassNames(path:String) : List<String>
+	{
+		var files = hant.findFiles('src/' + path, function(s) return s.endsWith("/Bootstrap.hx"));
+		return Lambda.map(files, function(s) return s.substr('src/'.length, s.length - 'src/'.length - ".hx".length).replace("/", "."));
+	}
 	
 	function buildJs()
     {
@@ -126,7 +140,7 @@ class Build
 		
 		genTrm(manager);
 		
-		genImports();
+		genImports(manager);
 		
 		saveLastMods(manager.getLastMods());
 		
