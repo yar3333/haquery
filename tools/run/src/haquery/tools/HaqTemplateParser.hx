@@ -5,6 +5,8 @@ import haquery.server.io.File;
 import haquery.server.HaqDefines;
 
 import haquery.base.HaqTemplateParser.HaqTemplateNotFoundException;
+import haquery.base.HaqTemplateParser.HaqTemplateNotFoundCriticalException;
+import haquery.base.HaqTemplateParser.HaqTemplateRecursiveExtendException;
 
 using StringTools;
 
@@ -14,10 +16,10 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 	
 	var classPaths : Array<String>;
 	
-	public function new(classPaths:Array<String>, fullTag:String)
+	public function new(classPaths:Array<String>, fullTag:String, childFullTags:Array<String>)
 	{
 		this.classPaths = classPaths;
-		super(fullTag);
+		super(fullTag, childFullTags);
 	}
 	
 	override function isTemplateExist(fullTag:String) : Bool
@@ -39,13 +41,14 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 	
 	override function getParentParser() : haquery.server.HaqTemplateParser
 	{
-		try
+		if (config.extend == null || config.extend == "") return null; 
+		try 
 		{
-			return new HaqTemplateParser(classPaths, config.extend);
+			return new HaqTemplateParser(classPaths, config.extend, childFullTags.concat([fullTag]));
 		}
 		catch (e:HaqTemplateNotFoundException)
 		{
-			return null;
+			throw new HaqTemplateNotFoundCriticalException(e.toString());
 		}
 	}
 	

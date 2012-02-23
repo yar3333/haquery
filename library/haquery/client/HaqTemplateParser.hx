@@ -18,6 +18,8 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser
 	
 	override function getParentParser() : HaqTemplateParser
 	{
+		if (config.extend == null || config.extend == "") return null; 
+		
 		try
 		{
 			return new HaqTemplateParser(config.extend);

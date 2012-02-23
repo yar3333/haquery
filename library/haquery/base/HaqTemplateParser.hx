@@ -8,9 +8,23 @@ private typedef TemplateParser = haquery.client.HaqTemplateParser;
 
 using haquery.StringTools;
 
-class HaqTemplateNotFoundException
+class HaqTemplateException
 {
-	public function new() {}
+	var message : String;
+	public function new(message:String) { this.message = message; }
+	public function toString() { return message; }
+}
+
+class HaqTemplateNotFoundException extends HaqTemplateException
+{
+}
+
+class HaqTemplateNotFoundCriticalException extends HaqTemplateException
+{
+}
+
+class HaqTemplateRecursiveExtendException extends HaqTemplateException
+{
 }
 
 class HaqTemplateParser
@@ -22,7 +36,7 @@ class HaqTemplateParser
 	{
 		if (fullTag == null || fullTag == "" || !isTemplateExist(fullTag))
 		{
-			throw new HaqTemplateNotFoundException();
+			throw new HaqTemplateNotFoundException("Component not found [ " + fullTag + " ].");
 		}
 		
 		this.fullTag = fullTag;

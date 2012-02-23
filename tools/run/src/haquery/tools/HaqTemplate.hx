@@ -19,7 +19,7 @@ class HaqTemplate extends haquery.base.HaqTemplate
 	
 	public function new(classPaths:Array<String>, fullTag:String) 
 	{
-		var parser = new HaqTemplateParser(classPaths, fullTag);
+		var parser = new HaqTemplateParser(classPaths, fullTag, []);
 		
 		super(fullTag, parser.getImports());
 		

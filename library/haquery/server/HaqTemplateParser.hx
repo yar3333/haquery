@@ -15,14 +15,25 @@ import neko.io.File;
 #end
 
 import haquery.base.HaqTemplateParser.HaqTemplateNotFoundException;
+import haquery.base.HaqTemplateParser.HaqTemplateNotFoundCriticalException;
+import haquery.base.HaqTemplateParser.HaqTemplateRecursiveExtendException;
 
 using haquery.StringTools;
 
 class HaqTemplateParser extends haquery.base.HaqTemplateParser
 {
-	public function new(fullTag:String)
+	var childFullTags : Array<String>;
+	
+	public function new(fullTag:String, childFullTags:Array<String>)
 	{
 		super(fullTag);
+		
+		if (Lambda.has(childFullTags, fullTag))
+		{
+			throw new HaqTemplateRecursiveExtendException(childFullTags.join(" - ") + " - " + fullTag);
+		}
+		
+		this.childFullTags = childFullTags;
 	}
 	
 	override function isTemplateExist(fullTag:String) : Bool
@@ -37,13 +48,14 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser
 	
 	override function getParentParser() : HaqTemplateParser
 	{
-		try
+		if (config.extend == null || config.extend == "") return null; 
+		try 
 		{
-			return new HaqTemplateParser(config.extend);
+			return new HaqTemplateParser(config.extend, childFullTags.concat([fullTag]));
 		}
 		catch (e:HaqTemplateNotFoundException)
 		{
-			return null;
+			throw new HaqTemplateNotFoundCriticalException(e.toString());
 		}
 	}
 	
@@ -66,7 +78,10 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser
 			var c = parseConfig(getFullPath(basePath + "config.xml"));
 			if (c != null)
 			{
-				r.extend = c.extend;
+				if (c.extend != null)
+				{
+					r.extend = c.extend;
+				}
 				r.imports = c.imports.concat(r.imports);
 			}
 		}

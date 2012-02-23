@@ -1,12 +1,15 @@
 package haquery.tools.tasks;
 
+import neko.Lib;
 import haquery.server.FileSystem;
 import haquery.server.io.File;
 import haquery.server.io.FileOutput;
 import haquery.server.io.Path;
 import haquery.server.HaqDefines;
 import haquery.tools.HaqTemplateManager;
-import neko.Lib;
+
+import haquery.base.HaqTemplateParser.HaqTemplateNotFoundException;
+import haquery.base.HaqTemplateParser.HaqTemplateRecursiveExtendException;
 
 import haquery.tools.trm.TrmGenerator;
 
@@ -136,26 +139,30 @@ class Build
     {
         log.start("Do pre-build step");
         
-		var manager = new HaqTemplateManager(project.classPaths);
-		
-		genTrm(manager);
-		
-		genImports(manager);
-		
-		saveLastMods(manager.getLastMods());
-		
-		try { saveLibFolder(); } catch (e:Dynamic) { }
-        
-        log.finishOk();
+		try
+		{
+			var manager = new HaqTemplateManager(project.classPaths);
+			genTrm(manager);
+			genImports(manager);
+			saveLastMods(manager.getLastMods());
+			try { saveLibFolder(); } catch (e:Dynamic) { }
+			
+			log.finishOk();
+		}
+		catch (e:HaqTemplateNotFoundException)
+		{
+			log.finishFail("ERROR: component not found [ " + e.toString() + " ].");
+		}
+		catch (e:HaqTemplateRecursiveExtendException)
+		{
+			log.finishFail("ERROR: recursive extend detected [ " + e.toString() + " ].");
+		}
     }
 	
 	function saveLastMods(lastMods:Hash<Date>)
 	{
 		var serverPath = project.binPath + '/haquery/server';
-		if (!FileSystem.exists(serverPath))
-		{
-			FileSystem.createDirectory(serverPath);
-		}
+		hant.createDirectory(serverPath);
 		File.putContent(
 			 serverPath + "/templates.dat"
 			,Lambda.map(lastMods.keysIterable(), function(fullTag) {
