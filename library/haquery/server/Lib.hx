@@ -84,7 +84,7 @@ class Lib
 				switch (route)
 				{
 					case HaqRoute.file(path): 
-						untyped __call__('require', route.path);
+						untyped __call__('require', path);
 					case HaqRoute.page(path, fullTag, pageID): 
 						HaqSystem.run(fullTag, pageID, isPostback);
 				}                
