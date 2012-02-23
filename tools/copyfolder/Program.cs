@@ -24,11 +24,6 @@ namespace copyfolder
 
         static void copyFolderContent(string fromFolder, string toFolder)
         {
-            if (!Directory.Exists(toFolder))
-            {
-                Directory.CreateDirectory(toFolder);
-            }
-            
             foreach (var dir in Directory.GetDirectories(fromFolder))
             {
                 if (include(dir))
@@ -44,6 +39,10 @@ namespace copyfolder
                     var destFile = toFolder + '\\' + Path.GetFileName(file);
                     if (!File.Exists(destFile) || File.GetLastWriteTime(file) > File.GetLastWriteTime(destFile))
                     {
+                        if (!Directory.Exists(toFolder))
+                        {
+                            Directory.CreateDirectory(toFolder);
+                        }
                         File.Copy(file, destFile, true);
                     }
                 }
