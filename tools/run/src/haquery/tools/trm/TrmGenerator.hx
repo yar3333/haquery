@@ -46,7 +46,7 @@ class TrmGenerator
 			var serverVars = getTemplateVars(fullTag, template.doc, "haquery.server.HaqQuery", true);
 			if (serverVars.length > 0 && template.hasLocalServerClass)
 			{
-				print(fullTag + ".TemplateServer");
+				//print(fullTag + ".TemplateServer");
 				generateTrmClass(serverVars, fullTag + ".TemplateServer", template.trmServerFilePath, "haquery.server.HaqComponent", "(php || neko)");
 			}
 			else
@@ -57,7 +57,7 @@ class TrmGenerator
 			var clientVars = getTemplateVars(fullTag, template.doc, "haquery.client.HaqQuery", false);
 			if (clientVars.length > 0 && template.hasLocalClientClass)
 			{
-				print(fullTag + ".TemplateClient");
+				//print(fullTag + ".TemplateClient");
 				generateTrmClass(clientVars, fullTag + ".TemplateClient", template.trmClientFilePath, "haquery.client.HaqComponent", "js");
 			}
 			else
@@ -105,12 +105,6 @@ class TrmGenerator
 				if (child.name.startsWith("haq:"))
 				{
 					var template = manager.findTemplate(fullTag, child.name.substr("haq:".length));
-					if (template == null)
-					{
-						trace("Component not found: fullTag = " + fullTag + ", tag = " + child.name.substr("haq:".length));
-						Lib.assert(template != null);
-					}
-					
 					type = isServer ? template.serverClassName : template.clientClassName;
 					body = "return cast component.components.get('" + componentID + "');";
 				}

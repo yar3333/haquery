@@ -5,6 +5,8 @@ import haquery.server.FileSystem;
 import haquery.server.Lib;
 #end
 
+import haquery.base.HaqTemplateParser.HaqTemplateNotFoundException;
+
 using haquery.StringTools;
 
 class HaqTemplateManager<Template:HaqTemplate>
@@ -45,6 +47,7 @@ class HaqTemplateManager<Template:HaqTemplate>
 	public function findTemplate(parentFullTag:String, tag:String) : Template
 	{
 		var template = get(getPackageByFullTag(parentFullTag) + '.' + tag);
+		
 		if (template == null)
 		{
 			for (importPackage in get(parentFullTag).imports)
