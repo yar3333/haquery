@@ -69,44 +69,17 @@ class Hant
     
     public function copyFolderContent(fromFolder:String, toFolder:String, include:String->Bool)
     {
-        fromFolder = fromFolder.replace('\\', '/').rtrim('/');
+		fromFolder = fromFolder.replace('\\', '/').rtrim('/');
         toFolder = toFolder.replace('\\', '/').rtrim('/');
 		
 		log.start("Copy directory '" + fromFolder + "' => '" + toFolder + "'");
-        try
-        {
-            for (file in FileSystem.readDirectory(fromFolder))
-            {
-                if (include(fromFolder + '/' + file))
-                {
-                    if (FileSystem.isDirectory(fromFolder + '/' + file))
-                    {
-                        copyFolderContent(fromFolder + '/' + file, toFolder + '/' + file, include);
-                    }
-                    else
-                    {
-                        if (!FileSystem.exists(toFolder)) createDirectory(toFolder);
-                        
-                        try
-                        {
-                            copyFile(fromFolder + '/' + file, toFolder + '/' + file);
-                        }
-                        catch (message:String)
-                        {
-                            Lib.println(message);
-                        }
-                    }
-                }
-            }
-            log.finishOk();
-        }
-        catch (message:String)
-        {
-            log.finishFail(message);
-        }
+        
+		run(exeDir + "copyfolder.exe", [ fromFolder.replace("/", "\\"), toFolder.replace("/", "\\") ]);
+		
+		log.finishOk();
     }
     
-    public function copyFile(src:String, dst:String)
+    /*public function copyFile(src:String, dst:String)
     {
         log.start("Copy file '" + src + "' => '" + dst + "'");
         try
@@ -118,7 +91,7 @@ class Hant
         {
             log.finishFail(message);
         }
-    }
+    }*/
     
     public function rename(path:String, newpath:String)
     {
@@ -199,21 +172,39 @@ class Hant
         }
     }
 	
-	public function run(fileName:String, args:Array<String>) : Int
+	function run(fileName:String, args:Array<String>) : Int
 	{
-		fileName = fileName.replace("/", "\\");
+		Lib.print(fileName.replace("/", "\\") + " " + args.join(" ") + " ");
 		
-		var p : Process = new Process(exeDir + "runwaiter.exe", [ "5000", fileName ].concat(args));
+		var p = new Process(fileName.replace("/", "\\"), args);
 		var r = p.exitCode();
-		Lib.print(p.stdout.readAll().toString().replace("\r\n", "\n")); 
-		Lib.print(p.stderr.readAll().toString().replace("\r\n", "\n")); 
+		var out = (p.stdout.readAll().toString().replace("\r\n", "\n") + p.stderr.readAll().toString().replace("\r\n", "\n")).trim();
+		if (out != "")
+		{
+			Lib.println("\n" + out); 
+		}
 		p.close();
 		if (r != 0)
 		{
-			Lib.println("runwaiter error: " + r);
+			Lib.println("run error: " + r);
 		}
 		return r;
 	}
+	
+	public function runWaiter(fileName:String, args:Array<String>, waitTimeMS:Int) : Int
+	{
+		return run(exeDir + "runwaiter.exe", [ Std.string(waitTimeMS), fileName.replace("/", "\\") ].concat(args));
+	}
+	
+	/*public function runCmd(fileName:String, args:Array<String>)
+	{
+		var env = Sys.environment();
+		if (!env.exists("ComSpec") || !FileSystem.exists(env.get("ComSpec")))
+		{
+			throw "Command processor not found (please, set 'ComSpec' environment variable).";
+		}
+		return run(env.get("ComSpec"), [ "/C", fileName.replace("/", "\\") ].concat(args));
+	}*/
     
     /*public function getWindowsRegistryValue(key:String) : String
     {
