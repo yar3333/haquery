@@ -139,24 +139,37 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 			var path = getFullPath(localPath + "/" + file);
 			if (path != null)
 			{
-				var lastMod =  FileSystem.stat(path).mtime;
-				if (lastMod.getTime() > r.getTime())
-				{
-					r = lastMod;
-				}
+				r = maxDate(r, FileSystem.stat(path).mtime);
 			}
 		}
+		
+		r = maxDate(r, getConfigLastMod(localPath));
 		
 		var parentParser = getParentParser();
 		if (parentParser != null)
 		{
-			var parentLastMod = cast(parentParser, HaqTemplateParser).getLastMod();
-			if (parentLastMod.getTime() > r.getTime())
-			{
-				r = parentLastMod;
-			}
+			r = maxDate(r, cast(parentParser, HaqTemplateParser).getLastMod());
+			r = maxDate(r, getConfigLastMod(parentParser.fullTag.replace(".", "/")));
 		}
 		
 		return r;
+	}
+	
+	function getConfigLastMod(localPath:String) : Date
+	{
+		if (localPath == null || localPath == "") return MIN_DATE;
+		
+		var configPath = getFullPath(localPath + '/config.xml');
+		var lastMod = configPath != null ? FileSystem.stat(configPath).mtime : MIN_DATE;
+		
+		var parts = localPath.split('/');
+		if (parts.length <= 1) return lastMod;
+		
+		return maxDate(lastMod, getConfigLastMod(parts.slice(0, parts.length - 1).join('/')));
+	}
+	
+	function maxDate(a:Date, b:Date) : Date 
+	{
+		return a.getTime() > b.getTime() ? a : b;
 	}
 }
