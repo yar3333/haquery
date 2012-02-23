@@ -121,9 +121,7 @@ class Build
 		
 		params = params.concat([ '-D', 'noEmbedJS' ]);		
 		
-		Lib.print("\n    " + haxePath.replace("/", "\\") + "haxe.exe " + params.join(" ") + "\n  ");
-		hant.run(haxePath + "haxe.exe", params);
-		
+		hant.runWaiter(haxePath + "haxe.exe", params, 5000);
         
 		if (FileSystem.exists(clientPath + "/haquery.js")
 		 && FileSystem.exists(clientPath + "/haquery.js.old"))

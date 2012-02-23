@@ -31,3 +31,8 @@ library/runwaiter.exe.config
 library/runwaiter.pdb
 tools/runwaiter/restorefiletime.suo
 tools/runwaiter/runwaiter.suo
+tools/copyfolder/obj
+library/copyfolder.pdb
+library/copyfolder.exe.config
+tools/copyfolder/restorefiletime.suo
+tools/copyfolder/copyfolder.suo
