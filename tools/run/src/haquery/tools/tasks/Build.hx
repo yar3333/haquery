@@ -164,7 +164,7 @@ class Build
 		File.putContent(
 			 serverPath + "/templates.dat"
 			,Lambda.map(lastMods.keysIterable(), function(fullTag) {
-				return fullTag + "\t" + Math.round(lastMods.get(fullTag).getTime()/1000000.0);
+				return fullTag + "\t" + Math.round(lastMods.get(fullTag).getTime()/10000.0);
 			}
 		).join("\n"));
 	}

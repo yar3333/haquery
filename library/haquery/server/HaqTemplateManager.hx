@@ -68,7 +68,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 			var ft_lm = fullTagAndLastMod.split("\t");
 			
 			var fullTag = ft_lm[0];
-			var lastMod = Date.fromTime(Std.parseInt(ft_lm[1]) * 1000000);
+			var lastMod = Date.fromTime(Std.parseInt(ft_lm[1]) * 10000.0);
 			
 			templates.set(fullTag, null);
 			lastMods.set(fullTag, lastMod);
