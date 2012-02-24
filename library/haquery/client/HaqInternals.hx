@@ -1,5 +1,3 @@
-#if js
-
 package haquery.client;
 
 import haquery.HashTools; /* do not remove this import */
@@ -57,5 +55,3 @@ class HaqInternals
 		return { extend:component.config[0], imports:component.config.slice(1) };
 	}
 }
-
-#end
