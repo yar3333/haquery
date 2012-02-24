@@ -38,6 +38,6 @@ class Server extends Base
         {
             r += component.render().trim() + "\n";
         }
-        return super.render() + '\n' + r;
+        return r + "\n" + super.render();
     }
 }
