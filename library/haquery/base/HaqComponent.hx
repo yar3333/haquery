@@ -54,28 +54,10 @@ class HaqComponent
 		components = new Hash<Component>();
 		nextAnonimID = 0;
 		
-		switch (Type.typeof(this))
+		var templateClass = HaqComponentTools.getTemplateClass(Type.getClass(this));
+		if (templateClass != null)
 		{
-			case ValueType.TClass(cls):
-				if (Lambda.has(Type.getInstanceFields(cls), "template"))
-				{
-					var className : String = Type.getClassName(cls);
-					var lastPointPos = className.lastIndexOf(".");
-					if (lastPointPos > 0)
-					{
-						#if (php || neko)
-						var templateClassName = className.substr(0, lastPointPos) + ".TemplateServer";
-						#elseif js
-						var templateClassName = className.substr(0, lastPointPos) + ".TemplateClient";
-						#end
-						var templateClass = Type.resolveClass(templateClassName);
-						if (templateClass != null)
-						{
-							Reflect.setField(this, "template", Type.createInstance(templateClass, [this]));
-						}
-					}
-				}
-			default:
+			Reflect.setField(this, "template", Type.createInstance(templateClass, [this]));
 		}
 	}
 	
