@@ -1,5 +1,3 @@
-#if js
-
 package haquery.client;
 
 import haquery.client.Lib;
@@ -98,5 +96,3 @@ class HaqComponent extends haquery.base.HaqComponent
 		HaqElemEventManager.callServerMethod(fullID, method, params, callbackFunc);
 	}
 }
-
-#end
