@@ -4,7 +4,7 @@ import haquery.base.HaqTemplateParser.HaqTemplateNotFoundException;
 
 using haquery.StringTools;
 
-class HaqTemplateParser extends haquery.base.HaqTemplateParser
+class HaqTemplateParser extends haquery.base.HaqTemplateParser<HaqTemplateConfig>
 {
 	public function new(fullTag:String)
 	{

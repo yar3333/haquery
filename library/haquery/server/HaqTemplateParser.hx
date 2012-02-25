@@ -20,7 +20,7 @@ import haquery.base.HaqTemplateParser.HaqTemplateRecursiveExtendException;
 
 using haquery.StringTools;
 
-class HaqTemplateParser extends haquery.base.HaqTemplateParser
+class HaqTemplateParser extends haquery.base.HaqTemplateParser<HaqTemplateConfig>
 {
 	var childFullTags : Array<String>;
 	
@@ -69,33 +69,38 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser
 		var pathParts = fullTag.split(".");
 		pathParts.unshift("");
 		
-		var r = { extend : null, imports : new Array<String>() };
+		var r = parseConfig(null);
 		
 		var basePath = ".";
 		for (pathPart in pathParts)
 		{
-			basePath += pathPart + '/';
-			var c = parseConfig(getFullPath(basePath + "config.xml"));
-			if (c != null)
+			basePath += pathPart + "/";
+			var configPath = getFullPath(basePath + "config.xml");
+			if (configPath != null)
 			{
-				if (c.extend != null)
-				{
-					r.extend = c.extend;
-				}
-				r.imports = c.imports.concat(r.imports);
+				var c = parseConfig(new HaqXml(File.getContent(configPath)));
+				loadChildConfigDataToParent(r, c);
 			}
 		}
 		
 		return r;
 	}
 	
-	function parseConfig(path:String) : HaqTemplateConfig
+	function loadChildConfigDataToParent(parent:HaqTemplateConfig, child:HaqTemplateConfig) : Void
 	{
-		if (path != null && FileSystem.exists(path))
+		if (child.extend != null)
 		{
-			var r = { extend:null, imports:new Array<String>() };
-			var xml = new HaqXml(File.getContent(path));
-			
+			parent.extend = child.extend;
+		}
+		parent.imports = child.imports.concat(parent.imports);
+	}
+	
+	function parseConfig(xml:HaqXml) : HaqTemplateConfig
+	{
+		var r = new HaqTemplateConfig();
+		
+		if (xml != null)
+		{
 			var extendNodes = xml.find(">config>extend>component");
 			if (extendNodes.length > 0)
 			{
@@ -113,10 +118,9 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser
 					r.imports.push(importComponentNode.getAttribute("package"));
 				}
 			}
-			
-			return r;
 		}
-		return null;
+		
+		return r;
 	}
 	
 	public function getSupportFilePath(fileName:String) : String
@@ -211,7 +215,10 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser
 	function resolvePlaceHolders(doc:HaqXml)
 	{
         var placeholders = doc.find('haq:placeholder');
-        var contents = doc.find('>haq:content');
+        
+		var contents = doc.find('>haq:content');
+		contents.reverse();
+		
         for (ph in placeholders)
         {
             var content : HaqXmlNodeElement = null;

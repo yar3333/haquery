@@ -8,6 +8,8 @@ import haquery.base.HaqTemplateParser.HaqTemplateNotFoundException;
 import haquery.base.HaqTemplateParser.HaqTemplateNotFoundCriticalException;
 import haquery.base.HaqTemplateParser.HaqTemplateRecursiveExtendException;
 
+import haquery.server.HaqXml;
+
 using StringTools;
 
 class HaqTemplateParser extends haquery.server.HaqTemplateParser
@@ -50,6 +52,32 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 		{
 			throw new HaqTemplateNotFoundCriticalException(e.toString());
 		}
+	}
+	
+	override function loadChildConfigDataToParent(parent:haquery.server.HaqTemplateConfig, child:haquery.server.HaqTemplateConfig) : Void
+	{
+		super.loadChildConfigDataToParent(parent, child);
+		
+		cast(parent, HaqTemplateConfig).force = cast(parent, HaqTemplateConfig).force.concat(cast(child, HaqTemplateConfig).force);
+	}
+	
+	override function parseConfig(xml:HaqXml) : haquery.server.HaqTemplateConfig
+	{
+		var b = super.parseConfig(xml);
+		
+		var r = new HaqTemplateConfig();
+		r.extend = b.extend;
+		r.imports = b.imports;
+		
+		if (xml != null)
+		{
+			for (node in xml.find(">config>force>component"))
+			{
+				r.force.push(node.getAttribute("package"));
+			}
+		}
+		
+		return r;
 	}
 	
 	override function getFullPath(path:String) : String
@@ -174,5 +202,10 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 	function maxDate(a:Date, b:Date) : Date 
 	{
 		return a.getTime() > b.getTime() ? a : b;
+	}
+	
+	public function getForcedComponents() : Array<String>
+	{
+		return cast(config, HaqTemplateConfig).force;
 	}
 }

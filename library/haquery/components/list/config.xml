@@ -1,0 +1,5 @@
+<config>
+	<force>
+		<component package="haquery.components.listitem" />
+	</force>
+</config>

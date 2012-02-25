@@ -17,6 +17,10 @@ class HaqTemplate extends haquery.base.HaqTemplate
 	
 	public var lastMod(default, null) : Date;
 	
+	public var forcedCompnents(default, null) : Array<String>;
+	
+	public var extend(default, null) : String;
+	
 	public function new(classPaths:Array<String>, fullTag:String) 
 	{
 		var parser = new HaqTemplateParser(classPaths, fullTag, []);
@@ -35,5 +39,9 @@ class HaqTemplate extends haquery.base.HaqTemplate
 		trmClientFilePath = parser.getTrmClientFilePath();
 		
 		lastMod = parser.getLastMod();
+		
+		forcedCompnents = parser.getForcedComponents();
+		
+		extend = parser.getExtend();
 	}
 }

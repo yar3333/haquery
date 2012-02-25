@@ -67,14 +67,14 @@ class Hant
         }
     }
     
-    public function copyFolderContent(fromFolder:String, toFolder:String, include:String->Bool)
+    public function copyFolderContent(fromFolder:String, toFolder:String, excludeRegExp:String="")
     {
 		fromFolder = fromFolder.replace('\\', '/').rtrim('/');
         toFolder = toFolder.replace('\\', '/').rtrim('/');
 		
 		log.start("Copy directory '" + fromFolder + "' => '" + toFolder + "'");
         
-		run(exeDir + "copyfolder.exe", [ fromFolder.replace("/", "\\"), toFolder.replace("/", "\\") ]);
+		run(exeDir + "copyfolder.exe", [ fromFolder.replace("/", "\\"), toFolder.replace("/", "\\"), excludeRegExp ]);
 		
 		log.finishOk();
     }
@@ -160,16 +160,19 @@ class Hant
     
     public function deleteFile(path:String)
     {
-        log.start("Delete file '" + path + "'");
-        try
-        {
-            FileSystem.deleteFile(path);
-            log.finishOk();
-        }
-        catch (message:String)
-        {
-            log.finishFail(message);
-        }
+        if (FileSystem.exists(path))
+		{
+			log.start("Delete file '" + path + "'");
+			try
+			{
+				FileSystem.deleteFile(path);
+				log.finishOk();
+			}
+			catch (message:String)
+			{
+				log.finishFail(message);
+			}
+		}
     }
 	
 	function run(fileName:String, args:Array<String>) : Int

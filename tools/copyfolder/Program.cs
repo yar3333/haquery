@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace copyfolder
 {
@@ -9,32 +10,33 @@ namespace copyfolder
     {
         static int Main(string[] args)
         {
-            if (args.Length == 2)
+            if (args.Length == 2 || args.Length == 3)
             {
-                copyFolderContent(args[0].TrimEnd("/\\".ToCharArray()), args[1].TrimEnd("/\\".ToCharArray()));
+                Regex exclude = args.Length > 2 ? new Regex(args[2], RegexOptions.IgnoreCase) : null;
+                copyFolderContent(args[0].TrimEnd("/\\".ToCharArray()), args[1].TrimEnd("/\\".ToCharArray()), exclude);
                 return 0;
             }
             else
             {
                 Console.WriteLine("copyfolder utility to copy folder content.");
-                Console.WriteLine("Usage: copyfolder <from_dir> <to_dir>");
+                Console.WriteLine("Usage: copyfolder <from_dir> <to_dir> [exclude_regular_exprerssion]");
                 return 1;
             }
         }
 
-        static void copyFolderContent(string fromFolder, string toFolder)
+        static void copyFolderContent(string fromFolder, string toFolder, Regex exclude)
         {
             foreach (var dir in Directory.GetDirectories(fromFolder))
             {
-                if (include(dir))
+                if (exclude == null || !exclude.IsMatch(dir.Replace("\\", "/")))
                 {
-                    copyFolderContent(dir, toFolder + '\\' + Path.GetFileName(dir));
+                    copyFolderContent(dir, toFolder + '\\' + Path.GetFileName(dir), exclude);
                 }
             }
 
             foreach (var file in Directory.GetFiles(fromFolder))
             {
-                if (include(file))
+                if (exclude == null || !exclude.IsMatch(file.Replace("\\", "/")))
                 {
                     var destFile = toFolder + '\\' + Path.GetFileName(file);
                     if (!File.Exists(destFile) || File.GetLastWriteTime(file) > File.GetLastWriteTime(destFile))
@@ -47,39 +49,6 @@ namespace copyfolder
                     }
                 }
             }
-        }
-
-        static bool include(string path)
-        {
-            if (path.EndsWith(".hx"))
-            {
-                return false;
-            }
-            
-            var excludeFiles = new string[] {
-                "copyfolder.exe"
-                ,"copyfolder.pdb"
-                ,"copyfolder.exe.config"
-                ,"HaxeEReg.hx"
-                ,"HaxeStd.hx"
-                ,"HaxeStringTools.hx"
-                ,"library.hxproj"
-                ,"restorefiletime.exe"
-                ,"run.n"
-                ,"runwaiter.exe"
-                ,"runwaiter.pdb"
-                ,"runwaiter.exe.config"
-            };
-
-            foreach (var f in excludeFiles)
-            {
-                if (path.EndsWith("\\" + f))
-                {
-                    return false;
-                }
-            }
-            
-            return true;
         }
     }
 }

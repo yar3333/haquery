@@ -27,10 +27,10 @@ class HaqTemplateRecursiveExtendException extends HaqTemplateException
 {
 }
 
-class HaqTemplateParser
+class HaqTemplateParser<TemplateConfig:HaqTemplateConfig>
 {
 	public var fullTag(default, null) : String;
-	var config : HaqTemplateConfig;
+	var config : TemplateConfig;
 	
 	public function new(fullTag:String)
 	{
@@ -88,7 +88,7 @@ class HaqTemplateParser
 		#end
 	}
 	
-	function getConfig() : HaqTemplateConfig
+	function getConfig() : TemplateConfig
 	{
 		throw "This method must be overriden.";
 		return null;
