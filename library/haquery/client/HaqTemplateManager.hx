@@ -24,7 +24,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 	
 	public function createComponent(parent:HaqComponent, tag:String, id:String, factoryInitParams:Array<Dynamic>=null) : HaqComponent
     {
-		return newComponent(tag.indexOf(".") < 0 ? findTemplateDeep(parent, tag) : get(tag), parent, id, factoryInitParams);
+		return newComponent(tag.indexOf(".") < 0 ? findTemplateToInstance(parent, tag) : get(tag), parent, id, factoryInitParams);
     }
 	
 	function newComponent(template:HaqTemplate, parent:HaqComponent, id:String, factoryInitParams:Array<Dynamic>=null) : HaqComponent

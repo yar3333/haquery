@@ -1,5 +1,6 @@
 package haquery.tools.tasks;
 
+import haquery.tools.PackageTree;
 import neko.Lib;
 import haquery.server.FileSystem;
 import haquery.server.io.File;
@@ -14,7 +15,6 @@ import haquery.base.HaqTemplateParser.HaqTemplateRecursiveExtendException;
 import haquery.tools.trm.TrmGenerator;
 
 import haquery.tools.FlashDevelopProject;
-import haquery.tools.ComponentFileKind;
 
 using haquery.StringTools;
 using haquery.HashTools;
@@ -27,7 +27,6 @@ class Build
 	var log : Log;
     var hant : Hant;
 	var project : FlashDevelopProject;
-	var componentFileKind : ComponentFileKind;
 
 	public function new(exeDir:String, haxePath:String) 
 	{
@@ -37,7 +36,6 @@ class Build
 		log = new Log(2);
         hant = new Hant(log, this.exeDir);
 		project = new FlashDevelopProject('.', this.exeDir);
-		componentFileKind = new ComponentFileKind(this.exeDir);
 	}
 	
     function genImports(manager:HaqTemplateManager)
@@ -50,8 +48,11 @@ class Build
         var clientClassNames = new Hash<Int>();
 		for (fullTag in manager.getLastMods().keys())
 		{
-			serverClassNames.set(manager.get(fullTag).serverClassName, 1);
-			clientClassNames.set(manager.get(fullTag).clientClassName, 1);
+			if (!Lambda.has(manager.unusedTemplates, fullTag))
+			{
+				serverClassNames.set(manager.get(fullTag).serverClassName, 1);
+				clientClassNames.set(manager.get(fullTag).clientClassName, 1);
+			}
 		}
 		
 		var arrServerClassNames = Lambda.array(serverClassNames.keysIterable());
@@ -142,7 +143,7 @@ class Build
 			var manager = new HaqTemplateManager(project.classPaths);
 			genTrm(manager);
 			genImports(manager);
-			saveLastMods(manager.getLastMods());
+			saveLastMods(manager);
 			try { saveLibFolder(); } catch (e:Dynamic) { }
 			
 			log.finishOk();
@@ -157,16 +158,19 @@ class Build
 		}
     }
 	
-	function saveLastMods(lastMods:Hash<Date>)
+	function saveLastMods(manager:HaqTemplateManager)
 	{
 		var serverPath = project.binPath + '/haquery/server';
 		hant.createDirectory(serverPath);
+		
+		var lastMods = manager.getLastMods();
 		File.putContent(
 			 serverPath + "/templates.dat"
-			,Lambda.map(lastMods.keysIterable(), function(fullTag) {
-				return fullTag + "\t" + Math.round(lastMods.get(fullTag).getTime()/10000.0);
-			}
-		).join("\n"));
+			,Lambda.map(
+				 Lambda.filter(lastMods.keysIterable(), function(fullTag) return !Lambda.has(manager.unusedTemplates, fullTag))
+				,function(fullTag) return fullTag + "\t" + Math.round(lastMods.get(fullTag).getTime() / 10000.0)
+			 ).join("\n")
+		);
 	}
 	
     public function genTrm(?manager:HaqTemplateManager)
@@ -214,9 +218,27 @@ class Build
 			buildJs();
 		}
         
-        for (path in project.classPaths)
+        var filesToExclude = 
+		[
+			 "(/|^).(svn|hg)$"
+			,".(hx|hxproj)$"
+			,"^" + exeDir + "tools$"
+			,"^" + exeDir + "run.n$"
+			,"^" + exeDir + "(?:restorefiletime|runwaiter|copyfolder).(?:exe|exe.config|pdb)$"
+			,"^" + exeDir + "readme.txt$"
+			,"^" + exeDir + "haxelib.xml$"
+		];
+		
+		var manager = new HaqTemplateManager(project.classPaths);
+		
+		for (path in project.classPaths)
         {
-            hant.copyFolderContent(path, project.binPath, !skipComponents ? componentFileKind.isSupportFile : componentFileKind.isSupportFileWithoutComponents);
+			var strRegExpFileToExclude = Lambda.map(
+				 filesToExclude.concat([ path + (new PackageTree(manager.unusedTemplates).toString()) ])
+				,function(s) return "(?:" + s.replace(".", "[.]") + ")"
+			).join("|");
+			
+			hant.copyFolderContent(path, project.binPath, strRegExpFileToExclude);
         }
 		
 		loadLibFolder();
@@ -228,22 +250,8 @@ class Build
 	
 	function removeTempFiles()
 	{
-		var tempFileNames = [ 
-			 "templates-cache-server.dat"
-			,"templates-cache-client.js"
-			,"templates-cache-client.css"
-		];
-		
-		for (classPath in project.classPaths)
-		{
-			for (file in tempFileNames)
-			{
-				var path = classPath + HaqDefines.folders.temp + "/" + file;
-				if (FileSystem.exists(path))
-				{
-					FileSystem.deleteFile(path);
-				}
-			}
-		}
+		var tempPath = project.binPath + "/" + HaqDefines.folders.temp + "/";
+		hant.deleteFile(tempPath + "templates-cache-client.js");
+		hant.deleteFile(tempPath + "templates-cache-client.css");
 	}
 }

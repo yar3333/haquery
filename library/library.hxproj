@@ -47,6 +47,9 @@
     <hidden path="runwaiter.exe" />
     <hidden path="runwaiter.exe.config" />
     <hidden path="runwaiter.pdb" />
+    <hidden path="copyfolder.exe" />
+    <hidden path="copyfolder.exe.config" />
+    <hidden path="copyfolder.pdb" />
   </hiddenPaths>
   <!-- Executed before build -->
   <preBuildCommand />

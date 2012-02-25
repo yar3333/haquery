@@ -114,7 +114,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 	
 	public function createComponent(parent:HaqComponent, tag:String, id:String, attr:Hash<String>, parentNode:HaqXmlNodeElement, isCustomRender:Bool) : HaqComponent
 	{
-        var template = findTemplateDeep(parent, tag);
+        var template = findTemplateToInstance(parent, tag);
 		if (template == null)
 		{
 			throw "HAQUERY ERROR could't find component '" + tag + "' for parent '" + parent.fullTag + "'.";

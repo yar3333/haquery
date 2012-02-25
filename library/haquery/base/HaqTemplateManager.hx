@@ -63,7 +63,7 @@ class HaqTemplateManager<Template:HaqTemplate>
 		return template;
 	}
 	
-	public function findTemplateDeep(parent:HaqComponent, tag:String) : Template
+	public function findTemplateToInstance(parent:HaqComponent, tag:String) : Template
 	{
 		var template = findTemplate(parent.fullTag, tag);
 		

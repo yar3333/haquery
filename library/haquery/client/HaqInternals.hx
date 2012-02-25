@@ -52,6 +52,9 @@ class HaqInternals
 	public static function getTemplateConfig(fullTag:String) : HaqTemplateConfig
 	{
 		var component = templates.get(fullTag);
-		return { extend:component.config[0], imports:component.config.slice(1) };
+		var r = new HaqTemplateConfig();
+		r.extend = component.config[0];
+		r.imports = component.config.slice(1);
+		return r;
 	}
 }

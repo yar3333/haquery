@@ -8,6 +8,7 @@ import haquery.tools.HaqTemplate;
 import haquery.base.HaqTemplateParser.HaqTemplateNotFoundException;
 
 import haquery.server.Lib;
+import haquery.server.HaqXml;
 
 using haquery.StringTools;
 using haquery.HashTools;
@@ -15,6 +16,8 @@ using haquery.HashTools;
 class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 {
 	var classPaths : Array<String>;
+	
+	public var unusedTemplates(default,null) : Array<String>;
 	
 	var isFirstPrint : Bool;
 	
@@ -27,6 +30,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		isFirstPrint = true;
 		
 		fillTemplates(HaqDefines.folders.pages);
+		unusedTemplates = detectUnusedTemplates();
 	}
 	
 	override function newTemplate(fullTag:String) : HaqTemplate
@@ -77,6 +81,65 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 			}
 			Lib.print("WARNING: imported components package '" + pack + "' not found.\n  ");
 		}
+	}
+	
+	function detectUnusedTemplates() : Array<String>
+	{
+		var usedFullTags = new Hash<Int>();
+		for (fullTag in templates.keys())
+		{
+			if (fullTag.startsWith(HaqDefines.folders.pages.replace("/", ".") + "."))
+			{
+				detectUnusedTemplates_addToUsed(get(fullTag), usedFullTags);
+			}
+		}
+		
+		var r = [];
+		for (fullTag in templates.keys())
+		{
+			if (!usedFullTags.exists(fullTag))
+			{
+				r.push(fullTag);
+			}
+		}
+		return r;
+	}
+	
+	function detectUnusedTemplates_addToUsed(template:HaqTemplate, usedFullTags:Hash<Int>)
+	{
+		if (template != null && !usedFullTags.exists(template.fullTag))
+		{
+			usedFullTags.set(template.fullTag, 1);
+			
+			if (template.extend != null && template.extend != "")
+			{
+				detectUnusedTemplates_addToUsed(get(template.extend), usedFullTags);
+			}
+			
+			for (forceComponent in template.forcedCompnents)
+			{
+				detectUnusedTemplates_addToUsed(get(forceComponent), usedFullTags);
+			}
+			
+			for (tag in detectUnusedTemplates_getDocTags(template.doc))
+			{
+				detectUnusedTemplates_addToUsed(findTemplate(template.fullTag, tag), usedFullTags);
+			}
+		}
+	}
+	
+	function detectUnusedTemplates_getDocTags(doc:HaqXmlNodeElement) : Array<String>
+	{
+		var r = [];
+		for (node in doc.children)
+		{
+			if (node.name.startsWith("haq:"))
+			{
+				r.push(node.name.substr("haq:".length));
+			}
+			r = r.concat(detectUnusedTemplates_getDocTags(node));
+		}
+		return r;
 	}
 	
 	function getFullPath(path:String)
