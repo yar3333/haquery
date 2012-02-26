@@ -6,10 +6,6 @@ class Client extends Base
 {
     var event_click : HaqEvent;
     
-    function factoryInit()
-    {
-    }
-    
     function b_click()
     {
         return enabled ? event_click.call() : false;
