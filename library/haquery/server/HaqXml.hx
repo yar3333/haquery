@@ -61,6 +61,14 @@ class HaqXmlNode
 	{
 		return '';
 	}
+	
+	function hxSerialize(s:Serializer)
+	{
+	}
+	
+	function hxUnserialize(s:Unserializer ) 
+	{
+    }
 }
 
 class HaqXmlNodeElement extends HaqXmlNode
@@ -359,14 +367,14 @@ class HaqXmlNodeElement extends HaqXmlNode
         this.addChild(new HaqXmlNodeText(text));
     }
 	
-	function hxSerialize(s:Serializer)
+	override function hxSerialize(s:Serializer)
 	{
 		s.serialize(name);
 		s.serialize(attributes);
 		s.serialize(nodes);
 	}
 	
-	function hxUnserialize(s:Unserializer ) 
+	override function hxUnserialize(s:Unserializer ) 
 	{
 		name = s.unserialize();
 		attributes = s.unserialize();
@@ -406,6 +414,17 @@ class HaqXmlNodeText extends HaqXmlNode
 	public override function toString()
     {
         return this.text;
+    }
+	
+	
+	override function hxSerialize(s:Serializer)
+	{
+		s.serialize(text);
+	}
+	
+	override function hxUnserialize(s:Unserializer ) 
+	{
+		text = s.unserialize();
     }
 }
 

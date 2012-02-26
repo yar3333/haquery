@@ -46,7 +46,17 @@ class HaqTemplateManager<Template:HaqTemplate>
 	
 	public function findTemplate(parentFullTag:String, tag:String) : Template
 	{
-		var template = get(getPackageByFullTag(parentFullTag) + '.' + tag);
+		if (tag.indexOf(".") >= 0)
+		{
+			return get(tag);
+		}
+		
+		var template : Template = null;
+		
+		if (!parentFullTag.startsWith(HaqDefines.folders.pages.replace("/", ".") + "."))
+		{
+			template = get(getPackageByFullTag(parentFullTag) + '.' + tag);
+		}
 		
 		if (template == null)
 		{
