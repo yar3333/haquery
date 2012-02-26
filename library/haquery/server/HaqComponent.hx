@@ -144,7 +144,8 @@ class HaqComponent extends haquery.base.HaqComponent
 		var text = doc.innerHTML;
 		if (parentNode != null)
 		{
-			text = text.replace("{content}", parentNode.innerHTML);
+			var reInnerContent = new EReg("<innercontent\\s*[/]?>", "i");
+			text = reInnerContent.replace(text, parentNode.innerHTML);
 		}
 		
 		return text.trim(" \t\r\n");

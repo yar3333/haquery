@@ -142,18 +142,14 @@ class HaqXmlNodeElement extends HaqXmlNode
 		
         if (sAttrs != '')
 		{
-			sAttrs = ' '+sAttrs;
+			sAttrs = ' ' + sAttrs;
 		}
         
-        if (this.nodes.length == 0 && (Reflect.hasField(HaqXmlParser.getSelfClosingTags(), name) || name.indexOf(':') >= 0))
+        if (this.nodes.length == 0 && (Reflect.hasField(HaqXmlParser.selfClosingTags, name) || name.indexOf(':') >= 0))
 		{
 			return "<" + name+sAttrs + " />";
 		}
 		
-		for (child in children)
-		{
-			//Lib.println("child.name = " + child.name);
-		}
         var sChildren = Lambda.array(Lambda.map(nodes, function(a) return a.toString())).join('');
 		
         return name!=null && name!='' 
@@ -440,13 +436,13 @@ class HaqXmlAttribute
 
 class HaqXmlParser
 {
-    public static function getSelfClosingTags() { return { img:1, br:1, input:1, meta:1, link:1, hr:1, base:1, embed:1, spacer:1 }; }
-    private static function getRegExpForID() { return '[a-z](?:-?[_a-z0-9])*'; }
+    public static var selfClosingTags = { img:1, br:1, input:1, meta:1, link:1, hr:1, base:1, embed:1, spacer:1, innercontent:1 };
+    static var regExpForID = '[a-z](?:-?[_a-z0-9])*';
 
     static public function parse(str:String) : Array<HaqXmlNode>
     {
-        var reID = getRegExpForID();
-        var reAttr = getRegExpForID() + "\\s*=\\s*(?:'[^']*'|\"[^\"]*\"|[-_a-z0-9]+)" ;
+        var reID = regExpForID;
+        var reAttr = regExpForID + "\\s*=\\s*(?:'[^']*'|\"[^\"]*\"|[-_a-z0-9]+)" ;
 
         var reElementName = reID + "(?::" + reID + ")?";
 		
@@ -600,7 +596,7 @@ class HaqXmlParser
 		
 		var tag = matches[i.i].tagOpen;
         var attrs = matches[i.i].attrs;
-        var isWithClose = matches[i.i].tagEnd != null || Reflect.hasField(getSelfClosingTags(), tag);
+        var isWithClose = matches[i.i].tagEnd != null || Reflect.hasField(selfClosingTags, tag);
 		
         var elem = new HaqXmlNodeElement(tag, parseAttrs(attrs));
         if (!isWithClose)
@@ -621,7 +617,7 @@ class HaqXmlParser
     {
         var attributes = new Hash<HaqXmlAttribute>();
 
-		var re = new EReg("(?<name>" + getRegExpForID() + ")\\s*=\\s*(?<value>'[^']*'|\"[^\"]*\"|[-_a-z0-9]+)" , "is");
+		var re = new EReg("(?<name>" + regExpForID + ")\\s*=\\s*(?<value>'[^']*'|\"[^\"]*\"|[-_a-z0-9]+)" , "is");
 		var parsedStr = str;
         while (parsedStr != null && parsedStr != '' && re.match(parsedStr))
         {
@@ -660,27 +656,27 @@ class HaqXmlParser
     
     private static function parseCssSelectorInner(selector): Array<CssSelector>
     {
-        var reSubSelector = '[.#]?'+/*self.*/getRegExpForID()+'(?::'+/*self.*/getRegExpForID()+')?';
+        var reSubSelector = '[.#]?' + regExpForID + '(?::' + regExpForID + ')?';
         
         var parsedSelectors = [];
 		var reg : EReg = new EReg("(?<type>[ >])(?<selector>(?:" + reSubSelector + ")+|[*])", "is");
 		
 		var strSelector = ' ' + selector;
-        while(reg.match(strSelector))
+        while (reg.match(strSelector))
         {
 			var tags = [];
 			var ids = [];
 			var classes = [];
-			if (reg.matched(2)!='*')
+			if (reg.matched(2) != '*')
 			{
 				var subreg : EReg = new EReg(reSubSelector, "is");
 				var substr = reg.matched(2);
 				while(subreg.match(substr))
 				{
-					var s :String = subreg.matched(0);
-					if      (s.substr(0, 1)=="#") ids.push(s.substr(1));
-					else if (s.substr(0, 1)==".") classes.push(s.substr(1));
-					else                          tags.push( (s.toLowerCase()));
+					var s = subreg.matched(0);
+					if      (s.substr(0, 1) == "#") ids.push(s.substr(1));
+					else if (s.substr(0, 1) == ".") classes.push(s.substr(1));
+					else                            tags.push((s.toLowerCase()));
 					substr = subreg.matchedRight();
 				}
 			}
