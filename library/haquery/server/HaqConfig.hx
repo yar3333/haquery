@@ -35,6 +35,11 @@ class HaqConfig
      * User-defined data.
      */
     public var custom : Hash<Dynamic>;
+	
+	/**
+	 * Change this field to your class instance, if you want to substitute components templates.
+	 */
+	public var templateSelector : HaqTemplateSelector;
     
 	public function new() : Void
 	{
@@ -51,5 +56,6 @@ class HaqConfig
 		isTraceComponent = false;
 		filterTracesByIP = '';
 		custom = new Hash<Dynamic>();
+		templateSelector = new HaqTemplateSelector();
 	}
 }
