@@ -25,9 +25,9 @@ class Tasks
 		new Build(exeDir, getHaxePath()).preBuild();
 	}
 	
-	public function postBuild(skipJS:Bool, skipComponents:Bool)
+	public function postBuild(skipJS:Bool, skipComponents:Bool) : Bool
 	{
-		new Build(exeDir, getHaxePath()).postBuild(skipJS, skipComponents);
+		return new Build(exeDir, getHaxePath()).postBuild(skipJS, skipComponents);
 	}
 	
 	public function install()

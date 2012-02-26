@@ -1,5 +1,6 @@
 package haquery.tools.tasks;
 
+import haquery.tools.JSMin;
 import haquery.tools.PackageTree;
 import neko.Lib;
 import haquery.server.FileSystem;
@@ -87,7 +88,7 @@ class Build
 		return Lambda.map(files, function(s) return s.substr('src/'.length, s.length - 'src/'.length - ".hx".length).replace("/", "."));
 	}
 	
-	function buildJs()
+	function buildJs() : Bool
     {
 		var clientPath = project.binPath + '/haquery/client';
 		
@@ -122,7 +123,7 @@ class Build
 		
 		params = params.concat([ '-D', 'noEmbedJS' ]);		
 		
-		hant.runWaiter(haxePath + "haxe.exe", params, 5000);
+		var r = hant.runWaiter(haxePath + "haxe.exe", params, 5000);
         
 		if (FileSystem.exists(clientPath + "/haquery.js")
 		 && FileSystem.exists(clientPath + "/haquery.js.old"))
@@ -131,7 +132,22 @@ class Build
 			hant.deleteFile(clientPath + "/haquery.js.old");
 		}
 		
-		log.finishOk();
+		if (r == 0)
+		{
+			if (!project.isDebug)
+			{
+				File.putContent(clientPath + "/haquery.js", new JSMin(File.getContent(clientPath + "/haquery.js")).output);
+			}
+			
+			log.finishOk();
+		}
+		else
+		{
+			try { log.finishFail("Post-build interrupted because client compile errors."); }
+			catch (e:Dynamic) {}
+		}
+		
+		return r == 0;
     }
 	
 	public function preBuild()
@@ -209,13 +225,16 @@ class Build
 	}
 	
     
-    public function postBuild(skipJS:Bool, skipComponents:Bool)
+    public function postBuild(skipJS:Bool, skipComponents:Bool) : Bool
     {
         log.start("Do post-build step");
         
 		if (!skipJS)
 		{
-			buildJs();
+			if (!buildJs())
+			{
+				return false;
+			}
 		}
         
         var filesToExclude = 
@@ -246,6 +265,8 @@ class Build
 		removeTempFiles();
         
         log.finishOk();
+		
+		return true;
     }
 	
 	function removeTempFiles()

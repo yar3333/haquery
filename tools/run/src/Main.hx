@@ -64,7 +64,7 @@ class Main
 						return 1;
 					}
 				}
-				tasks.postBuild(skipJS, skipComponents);
+				return tasks.postBuild(skipJS, skipComponents) ? 0 : 1;
                 
             case 'install':
                 tasks.install();

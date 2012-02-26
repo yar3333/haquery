@@ -32,6 +32,9 @@ namespace runwaiter
                 Console.WriteLine("\t1 - arguments invalid or not specified");
                 Console.WriteLine("\t2 - program not found");
                 Console.WriteLine("\t3 - program was killed");
+                Console.WriteLine("\t11 - program exit status 1");
+                Console.WriteLine("\t12 - program exit status 2");
+                Console.WriteLine("\t...");
                 return 1;
             }
         }
@@ -55,7 +58,7 @@ namespace runwaiter
                     p.Kill();
                     return 3;
                 }
-                return 0;
+                return p.ExitCode == 0 ? 0 : p.ExitCode + 10;
             }
             else
             {
