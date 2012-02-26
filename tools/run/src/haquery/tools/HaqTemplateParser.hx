@@ -58,7 +58,7 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 	{
 		super.loadChildConfigDataToParent(parent, child);
 		
-		cast(parent, HaqTemplateConfig).force = cast(parent, HaqTemplateConfig).force.concat(cast(child, HaqTemplateConfig).force);
+		cast(parent, HaqTemplateConfig).requires = cast(parent, HaqTemplateConfig).requires.concat(cast(child, HaqTemplateConfig).requires);
 	}
 	
 	override function parseConfig(xml:HaqXml) : haquery.server.HaqTemplateConfig
@@ -71,9 +71,9 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 		
 		if (xml != null)
 		{
-			for (node in xml.find(">config>force>component"))
+			for (node in xml.find(">config>requires>component"))
 			{
-				r.force.push(node.getAttribute("package"));
+				r.requires.push(node.getAttribute("package"));
 			}
 		}
 		
@@ -204,8 +204,8 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 		return a.getTime() > b.getTime() ? a : b;
 	}
 	
-	public function getForcedComponents() : Array<String>
+	public function getRequires() : Array<String>
 	{
-		return cast(config, HaqTemplateConfig).force;
+		return cast(config, HaqTemplateConfig).requires;
 	}
 }

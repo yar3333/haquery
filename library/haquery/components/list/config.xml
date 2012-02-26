@@ -1,5 +1,5 @@
 <config>
-	<force>
+	<requires>
 		<component package="haquery.components.listitem" />
-	</force>
+	</requires>
 </config>
