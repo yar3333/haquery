@@ -116,9 +116,9 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 				detectUnusedTemplates_addToUsed(get(template.extend), usedFullTags);
 			}
 			
-			for (forceComponent in template.forcedCompnents)
+			for (require in template.requires)
 			{
-				detectUnusedTemplates_addToUsed(get(forceComponent), usedFullTags);
+				detectUnusedTemplates_addToUsed(get(require), usedFullTags);
 			}
 			
 			for (tag in detectUnusedTemplates_getDocTags(template.doc))
