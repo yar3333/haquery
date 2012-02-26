@@ -1,7 +1,7 @@
 package haquery.server;
 
-import haxe.Serializer;
-import haxe.Unserializer;
+import haquery.Serializer;
+import haquery.Unserializer;
 
 class HaqTemplate extends haquery.base.HaqTemplate
 {
@@ -26,11 +26,16 @@ class HaqTemplate extends haquery.base.HaqTemplate
 		extend = parser.getExtend();
 		
 		var docAndCss = parser.getDocAndCss();
-		serializedDoc = docAndCss.doc.serialize();
+		serializedDoc = serializeDoc(docAndCss.doc);
 		css = docAndCss.css;
 		
 		serverClassName = parser.getClassName();
 		serverHandlers = parser.getServerHandlers(serverClassName);
+	}
+	
+	function serializeDoc(doc:HaqXml) : String
+	{
+		return Serializer.run(doc);
 	}
 	
 	public function getDocCopy() : HaqXml

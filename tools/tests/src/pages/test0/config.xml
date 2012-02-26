@@ -2,4 +2,7 @@
     <imports>
         <components package="components.set0" />
     </imports>
+    <requires>
+        <component package="components.set0.text" />
+    </requires>
 </config>
