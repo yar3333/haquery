@@ -1,10 +1,10 @@
-package components.ckeditor;
+package haquery.components.ckeditor;
 
 import haquery.server.Lib;
 import haquery.server.HaqComponent;
 import haquery.server.HaqEvent;
 
-class Server extends haquery.components.container.Server
+class Server extends HaqComponent
 {
     public var text(text_getter, text_setter) : String;
     
@@ -21,6 +21,6 @@ class Server extends haquery.components.container.Server
     
     function preRender()
     {
-		manager.registerScript(tag, 'ckeditor.js');
+		registerScript('ckeditor.js');
     }
 }
