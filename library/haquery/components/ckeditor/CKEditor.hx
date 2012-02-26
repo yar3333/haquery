@@ -1,4 +1,4 @@
-package components.ckeditor;
+package haquery.components.ckeditor;
 
 typedef CKEditorOptions = {
 	var toolbar : Array<Array<String>>;
