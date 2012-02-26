@@ -1,7 +1,5 @@
 package haquery.server;
-
-import haxe.Serializer;
-import haxe.Unserializer;
+import haquery.Serializer;
 
 private typedef CssSelector =
 {
@@ -62,14 +60,6 @@ class HaqXmlNode
 	public function toString() : String
 	{
 		return '';
-	}
-	
-	public function serialize() : String
-	{
-		var ser = new Serializer();
-		ser.useCache = true;
-		ser.serialize(this);
-		return ser.toString();
 	}
 }
 
@@ -156,23 +146,6 @@ class HaqXmlNodeElement extends HaqXmlNode
             ? "<" + name + sAttrs + ">" + sChildren + "</" + name + ">"
             : sChildren;
     }
-
-    /*public function serialize() : String
-    {
-        return Serializer.run( { name : name, attributes:attributes, nodes:nodes  } );
-    }
-
-    public function unserialize(serialized) : Void
-    {
-        var clone : Dynamic = Unserializer.run(serialized);
-		this.name = clone.name;
-		this.attributes = clone.attributes;
-        this.nodes = [];
-        this.children = [];
-		var nodes : Array<HaqXmlNode> = clone.nodes;
-		
-        for (node in nodes) this.addChild(node);
-    }*/
 
 	public function getAttribute(name:String) : String
 	{
@@ -384,6 +357,27 @@ class HaqXmlNodeElement extends HaqXmlNode
         this.nodes = [];
         this.children = [];
         this.addChild(new HaqXmlNodeText(text));
+    }
+	
+	function hxSerialize(s:Serializer)
+	{
+		s.serialize(name);
+		s.serialize(attributes);
+		s.serialize(nodes);
+	}
+	
+	function hxUnserialize(s:Unserializer ) 
+	{
+		name = s.unserialize();
+		attributes = s.unserialize();
+		
+		nodes = [];
+		children = [];
+		var ns : Array<HaqXmlNode> = s.unserialize();
+		for (n in ns)
+		{
+			addChild(n);
+		}
     }
 }
 

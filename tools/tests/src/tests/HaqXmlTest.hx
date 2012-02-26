@@ -1,12 +1,13 @@
 package tests;
 
-import haquery.server.HaqQuery;
 import haxe.Serializer;
-import php.Lib;
-import php.NativeArray;
-import php.NativeString;
+import haquery.server.HaqQuery;
+import haquery.server.Lib;
+import haquery.server.FileSystem;
+import haquery.server.io.File;
 import haquery.server.HaqXml;
 import haquery.server.HaqCssGlobalizer;
+import haxe.Unserializer;
 
 class HaqXmlTest extends haxe.unit.TestCase
 {
@@ -92,7 +93,7 @@ class HaqXmlTest extends haxe.unit.TestCase
 		assertEquals(s, php.io.File.getContent('tests/HaqXmlTest-out.html'));
     }
     
-	public function processSerializationTest(str:String)
+	/*public function processSerializationTest(str:String)
     {
 		var doc = new HaqXml(str);
 		var dstDoc : Array<HaqXmlNodeElement> = cast haxe.Unserializer.run(doc.serialize());
@@ -110,7 +111,7 @@ class HaqXmlTest extends haxe.unit.TestCase
     public function testSerialization3()
     {
         this.processSerializationTest(php.io.File.getContent('tests/HaqXmlTest-in.html'));
-    }
+    }*/
     
     public function testSelectors()
     {
@@ -253,27 +254,30 @@ class HaqXmlTest extends haxe.unit.TestCase
 		assertEquals(1, xml.children.length);
 	}
     
-	/*public function testSpeed()
+	public function testSpeed()
     {
-        str = php.io.File.getContent('xmlTest-in.html');
-        loops = 200;
+        var str = File.getContent('tests/HaqXmlTest-in.html');
+        var loops = 10;
         
-        start = microtime(true);
-        for (i = 0; i < loops; i++)
+        var start = Date.now();
+		for (i in 0...loops)
         {
-            xml = new haquery_models_HaqXml(str);
+            var xml = new HaqXml(str);
         }
-        echo "\nspeed: "+((microtime(true)-start)/loops);
+        print("[time parse: " + ((Date.now().getTime() - start.getTime()) / loops) + "]");
         
-        xml = new haquery_models_HaqXml(str);
-        saved = php.Lib.serialize(xml);
-        start = microtime(true);
-        for (i = 0; i < loops; i++)
+        var xml = new HaqXml(str);
+        var ser = new Serializer();
+		ser.useCache = true;
+		ser.serialize(xml);
+		var saved = ser.toString();
+        start = Date.now();
+        for (i in 0...loops)
         {
-            xml = php.Lib.unserialize(saved);
+            xml = Unserializer.run(saved);
         }
-        echo "\nspeed (unserialize): "+((microtime(true)-start)/loops);
-
-        echo "\n";
-    }*/
+        print("[time unserialize: " + ((Date.now().getTime() - start.getTime()) / loops) + "]");
+		
+		assertTrue(true);
+    }
 }
