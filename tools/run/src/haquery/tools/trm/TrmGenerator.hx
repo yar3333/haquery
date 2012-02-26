@@ -104,7 +104,12 @@ class TrmGenerator
 				var body = "return component.q('#" + componentID + "');";
 				if (child.name.startsWith("haq:"))
 				{
-					var template = manager.findTemplate(fullTag, child.name.substr("haq:".length));
+					var tag = child.name.substr("haq:".length).replace("-", ".");
+					var template = manager.findTemplate(fullTag, tag);
+					if (template == null)
+					{
+						throw "Template not found: '" + tag + "' from '" + fullTag + "'.";
+					}
 					type = isServer ? template.serverClassName : template.clientClassName;
 					body = "return cast component.components.get('" + componentID + "');";
 				}

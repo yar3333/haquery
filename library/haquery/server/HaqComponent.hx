@@ -242,7 +242,7 @@ class HaqComponent extends haquery.base.HaqComponent
 	 */
 	function registerScript(url:String)
 	{
-		manager.registerScript(fullID, url);
+		manager.registerScript(fullTag, url);
 	}
 	
 	/**
@@ -251,7 +251,7 @@ class HaqComponent extends haquery.base.HaqComponent
 	 */
 	function registerStyle(url:String)
 	{
-		manager.registerStyle(fullID, url);
+		manager.registerStyle(fullTag, url);
 	}
 	
 	function getSupportPath()

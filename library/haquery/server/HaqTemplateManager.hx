@@ -105,20 +105,14 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 	public function createPage(pageFullTag:String, attr:Hash<String>) : HaqPage
 	{
         var template = get(pageFullTag);
-		if (template == null)
-		{
-			throw "HAQUERY ERROR could't find page '" + pageFullTag + "'.";
-		}
+		Lib.assert(template != null, "HAQUERY ERROR could't find page '" + pageFullTag + "'.");
 		return cast newComponent(template, null, '', attr, null, false);
 	}
 	
 	public function createComponent(parent:HaqComponent, tag:String, id:String, attr:Hash<String>, parentNode:HaqXmlNodeElement, isCustomRender:Bool) : HaqComponent
 	{
-        var template = tag.indexOf(".") < 0 ? Lib.config.templateSelector.findTemplateToInstance(this, parent, tag) : get(tag);
-		if (template == null)
-		{
-			throw "HAQUERY ERROR could't find component '" + tag + "' for parent '" + parent.fullTag + "'.";
-		}
+        var template = Lib.config.templateSelector.findTemplateToInstance(this, parent, tag);
+		Lib.assert(template != null, "HAQUERY ERROR could't find component '" + tag + "' for parent '" + parent.fullTag + "'.");
 		return newComponent(template, parent, id, attr, parentNode, isCustomRender);
 	}
 	
@@ -140,7 +134,9 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		
 		if (!url.startsWith("http://") && !url.startsWith("/") && !url.startsWith("<"))
 		{
-			url = '/' + get(fullTag).getSupportFilePath(url);
+			var template = get(fullTag);
+			Lib.assert(template != null, "Template '" + fullTag + "' not found.");
+			url = '/' + template.getSupportFilePath(url);
 		}
 		
 		return url;
@@ -195,7 +191,8 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
             
             if (node.name.startsWith('haq:'))
             {
-				r.push(createComponent(parent, node.name.substr('haq:'.length), node.getAttribute('id'), node.getAttributesAssoc(), node, isCustomRender));
+				var tag = node.name.substr('haq:'.length).replace("-", ".");
+				r.push(createComponent(parent, tag, node.getAttribute('id'), node.getAttributesAssoc(), node, isCustomRender));
             }
 			else
 			{
