@@ -43,6 +43,8 @@ class HaqComponent extends haquery.base.HaqComponent
 	
 	public function q(?arg:Dynamic, ?base:Dynamic) : HaqQuery
 	{
+		var cssGlobalizer = new HaqCssGlobalizer(fullTag);
+		
 		if (arg != null && arg != "" && Type.getClass(arg) == String)
 		{
 			var selector : String = arg;
@@ -50,9 +52,7 @@ class HaqComponent extends haquery.base.HaqComponent
 			{
 				selector = selector.replace('#', '#' + prefixID);
 			}
-			var cssGlobalizer = new HaqCssGlobalizer(fullTag);
-			selector = cssGlobalizer.selector(selector);
-			arg = selector;
+			arg = cssGlobalizer.selector(selector);
 		}
 		
 		var jq = new HaqQuery(arg, base);
