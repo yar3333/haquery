@@ -18,13 +18,13 @@ class Server extends HaqComponent
     {
         for  (i in 0...active)
         {
-			if (parentNode.children.length == 0) break;
-            parentNode.children[0].remove();
+			if (innerNode.children.length == 0) break;
+            innerNode.children[0].remove();
         }
         
-        while (parentNode.children.length > 1)
+        while (innerNode.children.length > 1)
         {
-			parentNode.children[1].remove();
+			innerNode.children[1].remove();
         }
     }
 }

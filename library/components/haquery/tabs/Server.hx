@@ -19,7 +19,7 @@ class Server extends HaqComponent
     {
         if (!Lib.isPostback)
         {
-            var buttonsAndPanels = parentNode.children;
+            var buttonsAndPanels = innerNode.children;
             Lib.assert(buttonsAndPanels.length == 2, "tabs component must contain exactly two subelements.");
             
             var buttons = buttonsAndPanels[0].children;
