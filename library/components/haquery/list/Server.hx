@@ -13,7 +13,7 @@ class Server extends Base
         {
 			for (i in 0...length)
 			{
-				manager.createComponent(this, 'listitem', Std.string(i), null, parentNode, false);
+				manager.createComponent(this, 'listitem', Std.string(i), null, innerNode, false);
 			}
         }
 	}
@@ -25,7 +25,7 @@ class Server extends Base
 		var i = 0;
         for (consts in constsList)
         {
-            manager.createComponent(this, 'listitem', Std.string(i), cast HashTools.hashify(consts), parentNode, true);
+            manager.createComponent(this, 'listitem', Std.string(i), cast HashTools.hashify(consts), innerNode, true);
             i++;
         }
 		q('#length').val(Std.string(i));

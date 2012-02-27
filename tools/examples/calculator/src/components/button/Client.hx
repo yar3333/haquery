@@ -1,6 +1,6 @@
 package components.button;
 
-class Client extends haquery.components.button.Client
+class Client extends components.haquery.button.Client
 {
 	/**
 	 * Optimization: disabling server method call.

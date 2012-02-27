@@ -10,6 +10,8 @@ typedef User = {
 
 class Server extends HaqPage
 {
+	var template : TemplateServer;
+	
 	public function init()
 	{
 		if (!Lib.isPostback)
@@ -19,8 +21,7 @@ class Server extends HaqPage
                 ,{ login : "user" }
             ];
             trace("Users count = " + users.length);
-            var list : haquery.components.list.Server = cast components.get('users');
-            list.bind(users);
+            template.list.bind(users);
         }
 	}
     

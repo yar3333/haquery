@@ -4,6 +4,6 @@
 	</extend>
 	<imports>
 		<components package="components" />
-		<components package="haquery.components" />
+		<components package="components.haquery" />
 	</imports>
 </config>

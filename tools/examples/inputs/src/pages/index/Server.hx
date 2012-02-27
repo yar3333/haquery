@@ -5,6 +5,8 @@ import haquery.server.Lib;
 
 class Server extends HaqPage
 {
+	var template : TemplateServer;
+	
 	function preRender()
 	{
 		updateStatus();
@@ -17,8 +19,9 @@ class Server extends HaqPage
 	
 	function updateStatus()
 	{
-		var checkbox : haquery.components.checkbox.Server = cast components.get("awesome");
-		var radioboxes : haquery.components.radioboxes.Server = cast components.get("gender");
-		q('#status').html("check = " + (checkbox.checked ? "true" : "false") + "; radio = " + radioboxes.value);
+		q('#status').html(
+			  "check = " + (template.awesome.checked ? "true" : "false") + "; "
+			+ "radio = " + template.gender.value
+		);
 	}
 }
