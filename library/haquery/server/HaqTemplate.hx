@@ -40,7 +40,10 @@ class HaqTemplate extends haquery.base.HaqTemplate
 	
 	public function getDocCopy() : HaqXml
 	{
-		return Unserializer.run(serializedDoc);
+		Lib.profiler.begin("getDocCopy");
+		var doc = Unserializer.run(serializedDoc);
+		Lib.profiler.end();
+		return doc;
 	}
 	
 	public function getSupportFilePath(relPath:String)

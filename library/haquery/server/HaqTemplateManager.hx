@@ -56,7 +56,10 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		}
 		else
 		{
-			return HaqTemplate.unserialize(File.getContent(templateCachePath));
+			Lib.profiler.begin("newTemplate");
+			var template = HaqTemplate.unserialize(File.getContent(templateCachePath));
+			Lib.profiler.end();
+			return template;
 		}
 	}
 	
