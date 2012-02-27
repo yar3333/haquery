@@ -14,7 +14,7 @@ class Server extends HaqComponent
     
     function getInputElements() : List<HaqXmlNodeElement>
     {
-        var inputs = parentNode.find("input");
+        var inputs = innerNode.find("input");
         return Lambda.filter(inputs, function(input) return input.getAttribute('type').toLowerCase()=='radio');
     }
     

@@ -24,7 +24,7 @@ class Server extends HaqComponent
         var bestDeep = 0;
         var self = this;
         
-        for (node in parentNode.children)
+        for (node in innerNode.children)
         {
             var elem : HaqXmlNodeElement = cast node;
             
