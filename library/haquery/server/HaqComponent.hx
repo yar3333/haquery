@@ -28,12 +28,12 @@ class HaqComponent extends haquery.base.HaqComponent
 	/**
 	 * If true, then parent must skip this component on render (component will be rendered by another component).
 	 */
-	public var isCustomRender(default, null) : Bool;
+	public var isInnerComponent(default, null) : Bool;
 	
     /**
-     * These components must rendered by this component.
+     * These components was declared between <haq:*> and </haq:*> tags of this component.
      */
-	var customRenderComponents : Array<HaqComponent>;
+	var innerComponents : Array<HaqComponent>;
 	
     public function new() : Void
 	{
@@ -41,13 +41,13 @@ class HaqComponent extends haquery.base.HaqComponent
 		visible = true;
 	}
     
-    public function construct(manager:HaqTemplateManager, fullTag:String, parent:HaqComponent, id:String, doc:HaqXml, params:Hash<String>, parentNode:HaqXmlNodeElement, isCustomRender:Bool) : Void
+    public function construct(manager:HaqTemplateManager, fullTag:String, parent:HaqComponent, id:String, doc:HaqXml, params:Hash<String>, parentNode:HaqXmlNodeElement, isInnerComponent:Bool) : Void
     {
 		super.commonConstruct(manager, fullTag, parent, id);
         
         this.doc = doc;
         this.parentNode = parentNode;
-		this.isCustomRender = isCustomRender;
+		this.isInnerComponent = isInnerComponent;
 		
 		if (params != null)
 		{
@@ -99,7 +99,7 @@ class HaqComponent extends haquery.base.HaqComponent
 	{
 		if (parentNode != null)
 		{
-			customRenderComponents = manager.createDocComponents(parent, parentNode, true);
+			innerComponents = manager.createDocComponents(parent, parentNode, true);
 		}
 		
 		if (doc != null)
@@ -112,9 +112,9 @@ class HaqComponent extends haquery.base.HaqComponent
     {
 		if (!visible)
 		{
-			if (customRenderComponents != null)
+			if (innerComponents != null)
 			{
-				for (child in customRenderComponents)
+				for (child in innerComponents)
 				{
 					child.visible = false;
 				}
@@ -131,9 +131,9 @@ class HaqComponent extends haquery.base.HaqComponent
 			HaqComponentTools.expandDocElemIDs(parent.prefixID, parentNode);
 		}
 		
-		if (customRenderComponents != null)
+		if (innerComponents != null)
 		{
-			for (child in customRenderComponents)
+			for (child in innerComponents)
 			{
 				child.parentNode.parent.replaceChild(child.parentNode, new HaqXmlNodeText(child.render()));
 			}
@@ -141,7 +141,7 @@ class HaqComponent extends haquery.base.HaqComponent
 		
 		for (child in components)
 		{
-			if (!child.isCustomRender)
+			if (!child.isInnerComponent)
 			{
 				Lib.assert(child != null);
 				Lib.assert(child.parentNode != null);
