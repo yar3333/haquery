@@ -53,7 +53,7 @@ class HaqTemplateManager<Template:HaqTemplate>
 		
 		var template : Template = null;
 		
-		if (!parentFullTag.startsWith(HaqDefines.folders.pages.replace("/", ".") + "."))
+		if (!parentFullTag.startsWith(HaqDefines.folders.pages + "."))
 		{
 			template = get(getPackageByFullTag(parentFullTag) + '.' + tag);
 		}

@@ -1,5 +1,7 @@
 package haquery.server;
+
 import haquery.Serializer;
+import haquery.Unserializer;
 
 private typedef CssSelector =
 {
@@ -157,7 +159,7 @@ class HaqXmlNodeElement extends HaqXmlNode
 
 	public function getAttribute(name:String) : String
 	{
-		var a = attributes.get(name);
+		var a = attributes.get(name.toLowerCase());
 		return a != null ? a.value : null;
 	}
 
@@ -165,11 +167,11 @@ class HaqXmlNodeElement extends HaqXmlNode
     {
         if (hasAttribute(name))
         {
-			attributes.get(name).value = value;
+			attributes.get(name.toLowerCase()).value = value;
         }
         else
         {
-            attributes.set(name, new HaqXmlAttribute(name, value, '"'));
+            attributes.set(name.toLowerCase(), new HaqXmlAttribute(name, value, '"'));
         }
     }
 
@@ -180,7 +182,7 @@ class HaqXmlNodeElement extends HaqXmlNode
 
     public function hasAttribute(name:String) : Bool
     {
-        return attributes.exists(name);//Lambda.exists(attributes, function(attr) return attr.name == name.toLowerCase() );
+        return attributes.exists(name.toLowerCase());
     }
     
     public var innerHTML(innerHTML_getter, innerHTML_setter) : String;
@@ -274,7 +276,8 @@ class HaqXmlNodeElement extends HaqXmlNode
     public function replaceChild(node:HaqXmlNodeElement, newNode:HaqXmlNode)
     {
 		//newNode = Unserializer.run(newNode.serialize());
-        newNode.parent = this;
+        
+		newNode.parent = this;
         
         for (i in 0...nodes.length)
         {
@@ -374,7 +377,7 @@ class HaqXmlNodeElement extends HaqXmlNode
 		s.serialize(nodes);
 	}
 	
-	override function hxUnserialize(s:Unserializer ) 
+	override function hxUnserialize(s:Unserializer) 
 	{
 		name = s.unserialize();
 		attributes = s.unserialize();
@@ -416,13 +419,12 @@ class HaqXmlNodeText extends HaqXmlNode
         return this.text;
     }
 	
-	
 	override function hxSerialize(s:Serializer)
 	{
 		s.serialize(text);
 	}
 	
-	override function hxUnserialize(s:Unserializer ) 
+	override function hxUnserialize(s:Unserializer) 
 	{
 		text = s.unserialize();
     }
@@ -430,9 +432,9 @@ class HaqXmlNodeText extends HaqXmlNode
 
 class HaqXmlAttribute
 {
-    public var name :String;
-    public var value :String;
-    public var quote :String;
+    public var name : String;
+    public var value : String;
+    public var quote : String;
 
     public function new(name, value, quote) : Void
     {

@@ -1,12 +1,17 @@
 package haquery.server;
 
 import haquery.server.HaqXml;
+import haquery.server.io.File;
 
 using haquery.StringTools;
 
 class HaqConfig
 {
-    public var db : { type:String, host:String, user:String, pass:String, database:String };
+	/**
+     * Database connection string in TYPE://USER:PASS@HOST/DBNAME form.
+	 * For example: mysql://root:123456@localhost/mytestdb 
+     */
+	public var databaseConnectionString : String;
 	
 	public var autoSessionStart : Bool;
 
@@ -41,15 +46,9 @@ class HaqConfig
 	 */
 	public var templateSelector : HaqTemplateSelector;
     
-	public function new() : Void
+	public function new()
 	{
-		db = {
-			 type : null
-			,host : null
-			,user : null
-			,pass : null
-			,database : null
-		};
+		databaseConnectionString = parseDatabaseConnectionString("config.xml");
 		autoSessionStart = true;
 		autoDatabaseConnect = true;
 		sqlTraceLevel = 1;
@@ -57,5 +56,19 @@ class HaqConfig
 		filterTracesByIP = '';
 		custom = new Hash<Dynamic>();
 		templateSelector = new HaqTemplateSelector();
+	}
+	
+    public static function parseDatabaseConnectionString(path) : String
+	{
+		if (FileSystem.exists(path))
+		{
+			var xml = new HaqXml(File.getContent(path));
+			var nodes = xml.find(">config>database");
+			if (nodes.length > 0 && nodes[0].hasAttribute("connectionString"))
+			{
+				return nodes[0].getAttribute("connectionString");
+			}
+		}
+		return null;
 	}
 }

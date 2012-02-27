@@ -1,5 +1,6 @@
 package ;
 
+import haquery.server.HaqConfig;
 import neko.Lib;
 import neko.Sys;
 import haquery.tools.Tasks;
@@ -28,15 +29,7 @@ class Main
         switch (args.length > 0 ? args[0] : '')
         {
             case 'gen-orm': 
-				if (args.length > 1)
-				{
-					tasks.genOrm(args[1], 'src');
-				}
-				else
-				{
-					Lib.println("Database connection string must be specified (format: 'mysql://USER:PASSWORD@HOST/DATABASE').");
-					return 1;
-				}
+				tasks.genOrm(args.length > 1 ? args[1] : HaqConfig.parseDatabaseConnectionString("src/config.xml"), 'src');
             
             case 'gen-trm': 
 				tasks.genTrm();

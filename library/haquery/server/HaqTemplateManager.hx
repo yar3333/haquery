@@ -86,6 +86,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 			{
 				FileSystem.createDirectory(HaqDefines.folders.temp);
 			}
+			trace("HAQUERY update client js file");
 			File.putContent(templatesCacheClientFilePath, getStaticClientCode());
 		}
 		registerScript(null, "/" + templatesCacheClientFilePath);
@@ -97,6 +98,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 			{
 				FileSystem.createDirectory(HaqDefines.folders.temp);
 			}
+			trace("HAQUERY update css styles file");
 			File.putContent(templatesCacheStyleFilePath, getStaticStyles());
 		}
 		registerStyle(null, "/" + templatesCacheStyleFilePath);
