@@ -80,6 +80,6 @@ class HaqRouter
     function isPageExist(path:String) : Bool
 	{
 		path = path.trim('/') + '/';
-		return FileSystem.exists(path + 'template.html') || FileSystem.exists(path + 'Server.hx') || FileSystem.exists(path + 'Client.hx');
+		return FileSystem.exists(path + 'template.html') || Type.resolveClass(path.replace("/", ".") + "Server") != null;
 	}
 }
