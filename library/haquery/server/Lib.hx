@@ -61,31 +61,24 @@ class Lib
                 
                 var router = new HaqRouter();
 				var route = router.getRoute(Web.getParams().get('route'));
-                switch (route)
-				{
-					case HaqRoute.file(path): 
-						loadBootstraps(path);
-					case HaqRoute.page(path, fullTag, pageID): 
-						loadBootstraps(path);
-				}
-                
-                #if php
-				if (config.autoSessionStart)
-                {
-                    Session.start();
-                }
-				#end
 
-                if (config.autoDatabaseConnect && config.databaseConnectionString != null && config.databaseConnectionString != "")
-                {
-                    HaqDb.connect(config.databaseConnectionString);
-                }
-                
 				switch (route)
 				{
 					case HaqRoute.file(path): 
 						untyped __call__('require', path);
+					
 					case HaqRoute.page(path, fullTag, pageID): 
+						loadBootstraps(path);
+						#if php
+						if (config.autoSessionStart)
+						{
+							Session.start();
+						}
+						#end
+						if (config.autoDatabaseConnect && config.databaseConnectionString != null && config.databaseConnectionString != "")
+						{
+							HaqDb.connect(config.databaseConnectionString);
+						}
 						HaqSystem.run(fullTag, pageID, isPostback);
 				}                
             profiler.end();

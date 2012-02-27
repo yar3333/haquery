@@ -21,7 +21,7 @@ class HaqDb
     {
 		if (connection != null) return true;
 		
-		var re = new EReg('^([a-z]+)\\://([_a-zA-Z0-9]+)\\:(.+?)@([_a-zA-Z0-9]+)/([_a-zA-Z0-9]+)$', '');
+		var re = new EReg('^([a-z]+)\\://([_a-zA-Z0-9]+)\\:(.+?)@([_.a-zA-Z0-9]+)/([_a-zA-Z0-9]+)$', '');
 		if (!re.match(connectionString))
 		{
 			Lib.assert(false, "Connection string invalid format.");
