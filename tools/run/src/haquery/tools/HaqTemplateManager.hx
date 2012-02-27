@@ -63,10 +63,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 						}
 						catch (e:HaqTemplateNotFoundException)
 						{
-							if ((pack.replace(".", "/") + "/").startsWith(HaqDefines.folders.pages + '/'))
-							{
-								fillTemplates(fullTag);
-							}
+							fillTemplates(fullTag);
 						}
 					}
 				}
@@ -88,7 +85,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		var usedFullTags = new Hash<Int>();
 		for (fullTag in templates.keys())
 		{
-			if (fullTag.startsWith(HaqDefines.folders.pages.replace("/", ".") + "."))
+			if (fullTag.startsWith(HaqDefines.folders.pages + "."))
 			{
 				detectUnusedTemplates_addToUsed(get(fullTag), usedFullTags);
 			}

@@ -45,21 +45,8 @@ class Tasks
 		var log = new Log(2);
         
 		log.start("Generate object related mapping classes");
-        
-		var re = new EReg('^([a-z]+)\\://([_a-zA-Z0-9]+)\\:(.+?)@([_a-zA-Z0-9]+)/([_a-zA-Z0-9]+)$', '');
-		if (!re.match(databaseConnectionString))
-		{
-			Lib.println("Connection string example: 'mysql://root:123456@localhost/mydb'.");
-			Sys.exit(1);
-		}
 		
-		HaqDb.connect({
-			 type : re.matched(1)
-			,user : re.matched(2)
-			,pass : re.matched(3)
-			,host : re.matched(4)
-			,database : re.matched(5)
-		});
+		HaqDb.connect(databaseConnectionString);
 		
 		OrmGenerator.run(destBasePath);
         

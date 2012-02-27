@@ -70,15 +70,15 @@ class Lib
 				}
                 
                 #if php
-				if (Lib.config.autoSessionStart)
+				if (config.autoSessionStart)
                 {
                     Session.start();
                 }
 				#end
 
-                if (config.autoDatabaseConnect && config.db!=null && config.db.type!=null && config.db.type!="")
+                if (config.autoDatabaseConnect && config.databaseConnectionString != null && config.databaseConnectionString != "")
                 {
-                    HaqDb.connect(Lib.config.db);
+                    HaqDb.connect(config.databaseConnectionString);
                 }
                 
 				switch (route)
@@ -93,7 +93,7 @@ class Lib
         }
         catch (e:Dynamic)
         {
-            haquery.server.Lib.traceException(e);
+            traceException(e);
         }
     }
 	

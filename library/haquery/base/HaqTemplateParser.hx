@@ -57,7 +57,7 @@ class HaqTemplateParser<TemplateConfig:HaqTemplateConfig>
 	
 	function isPage() : Bool
 	{
-		return fullTag.startsWith(HaqDefines.folders.pages.replace("/", "."));
+		return fullTag.startsWith(HaqDefines.folders.pages);
 	}
 	
 	function getShortClassName() : String

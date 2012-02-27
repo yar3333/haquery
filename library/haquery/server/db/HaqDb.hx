@@ -17,15 +17,21 @@ class HaqDb
 {
     static public var connection : HaqDbDriver = null;
 
-    static public function connect(params : { type:String, host:String, user:String, pass:String, database:String }) : Bool
+    static public function connect(connectionString:String) : Bool
     {
 		if (connection != null) return true;
-        
+		
+		var re = new EReg('^([a-z]+)\\://([_a-zA-Z0-9]+)\\:(.+?)@([_a-zA-Z0-9]+)/([_a-zA-Z0-9]+)$', '');
+		if (!re.match(connectionString))
+		{
+			Lib.assert(false, "Connection string invalid format.");
+		}
+		
         Lib.profiler.begin("openDatabase");
             connection = Type.createInstance(
                 Type.resolveClass(
-                    'haquery.server.db.HaqDbDriver_' + params.type), 
-                    [ params.host, params.user, params.pass, params.database ]
+                    'haquery.server.db.HaqDbDriver_' + re.matched(1)), 
+                    [ re.matched(4), re.matched(2), re.matched(3), re.matched(5) ]
                 );
         Lib.profiler.end();
 		
