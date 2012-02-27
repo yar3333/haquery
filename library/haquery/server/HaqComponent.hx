@@ -51,15 +51,24 @@ class HaqComponent extends haquery.base.HaqComponent
 		
 		if (params != null)
 		{
+			Lib.profiler.begin("loadFieldValues");
 			loadFieldValues(params);
+			Lib.profiler.end();
 		}
         
+		Lib.profiler.begin("createEvents");
 		createEvents();
-        createChildComponents();
+		Lib.profiler.end();
+        
+		Lib.profiler.begin("createChildComponents");
+		createChildComponents();
+		Lib.profiler.end();
 		
         if (Reflect.isFunction(Reflect.field(this, 'init')))
         {
+			Lib.profiler.begin("init");
             Reflect.callMethod(this, Reflect.field(this, 'init'), []);
+			Lib.profiler.end();
         }
     }
 	

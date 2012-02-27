@@ -34,7 +34,9 @@ class HaqPage extends HaqComponent
     
 	override public function render():String 
 	{
-        forEachComponent('preRender');
+        Lib.profiler.begin("preRender");
+		forEachComponent('preRender');
+        Lib.profiler.end();
 		
 		if (!disableSystemHtmlInserts)
 		{
