@@ -11,22 +11,17 @@ using haquery.StringTools;
 class HaqComponent extends haquery.base.HaqComponent
 {
     /**
-     * HTML between component's open and close tags (where component inserted).
-     */
-    public var parentNode(default, null) : HaqXmlNodeElement;
-
-    /**
      * template.html as DOM tree.
      */
     public var doc(default, null) : HaqXml;
     
     /**
-     * Need render?
+     * HTML element, which contain this component.
      */
-    public var visible : Bool;
-	
+    public var innerNode(default, null) : HaqXmlNodeElement;
+    
 	/**
-	 * If true, then parent must skip this component on render (component will be rendered by another component).
+	 * True for components declared inside another components (i.e. between tags (<haq:*>...</haq:*>).
 	 */
 	public var isInnerComponent(default, null) : Bool;
 	
@@ -35,18 +30,25 @@ class HaqComponent extends haquery.base.HaqComponent
      */
 	var innerComponents : Array<HaqComponent>;
 	
-    public function new() : Void
+	/**
+     * Need render?
+     */
+    public var visible : Bool;
+    
+	public function new() : Void
 	{
 		super();
+		
+		innerComponents = [];
 		visible = true;
 	}
     
-    public function construct(manager:HaqTemplateManager, fullTag:String, parent:HaqComponent, id:String, doc:HaqXml, params:Hash<String>, parentNode:HaqXmlNodeElement, isInnerComponent:Bool) : Void
+    public function construct(manager:HaqTemplateManager, fullTag:String, parent:HaqComponent, id:String, doc:HaqXml, params:Hash<String>, innerNode:HaqXmlNodeElement, isInnerComponent:Bool) : Void
     {
 		super.commonConstruct(manager, fullTag, parent, id);
         
         this.doc = doc;
-        this.parentNode = parentNode;
+        this.innerNode = innerNode;
 		this.isInnerComponent = isInnerComponent;
 		
 		if (params != null)
@@ -97,9 +99,9 @@ class HaqComponent extends haquery.base.HaqComponent
 	
 	function createChildComponents()
 	{
-		if (parentNode != null)
+		if (innerNode != null)
 		{
-			innerComponents = manager.createDocComponents(parent, parentNode, true);
+			innerComponents = manager.createDocComponents(parent, innerNode, true);
 		}
 		
 		if (doc != null)
@@ -112,12 +114,9 @@ class HaqComponent extends haquery.base.HaqComponent
     {
 		if (!visible)
 		{
-			if (innerComponents != null)
+			for (child in innerComponents)
 			{
-				for (child in innerComponents)
-				{
-					child.visible = false;
-				}
+				child.visible = false;
 			}
 			
 			return "";
@@ -126,17 +125,14 @@ class HaqComponent extends haquery.base.HaqComponent
 		if (Lib.config.isTraceComponent) trace("render " + fullID);
 		
 		HaqComponentTools.expandDocElemIDs(prefixID, doc);
-		if (parent != null && parentNode != null)
+		if (parent != null && innerNode != null)
 		{
-			HaqComponentTools.expandDocElemIDs(parent.prefixID, parentNode);
+			HaqComponentTools.expandDocElemIDs(parent.prefixID, innerNode);
 		}
 		
-		if (innerComponents != null)
+		for (child in innerComponents)
 		{
-			for (child in innerComponents)
-			{
-				child.parentNode.parent.replaceChild(child.parentNode, new HaqXmlNodeText(child.render()));
-			}
+			child.innerNode.parent.replaceChild(child.innerNode, new HaqXmlNodeText(child.render()));
 		}
 		
 		for (child in components)
@@ -144,17 +140,17 @@ class HaqComponent extends haquery.base.HaqComponent
 			if (!child.isInnerComponent)
 			{
 				Lib.assert(child != null);
-				Lib.assert(child.parentNode != null);
-				Lib.assert(child.parentNode.parent != null);
-				child.parentNode.parent.replaceChild(child.parentNode, new HaqXmlNodeText(child.render()));
+				Lib.assert(child.innerNode != null);
+				Lib.assert(child.innerNode.parent != null);
+				child.innerNode.parent.replaceChild(child.innerNode, new HaqXmlNodeText(child.render()));
 			}
 		}
 		
 		var text = doc.innerHTML;
-		if (parentNode != null)
+		if (innerNode != null)
 		{
 			var reInnerContent = new EReg("<innercontent\\s*[/]?>", "i");
-			text = reInnerContent.replace(text, parentNode.innerHTML);
+			text = reInnerContent.replace(text, innerNode.innerHTML);
 		}
 		
 		return text.trim(" \t\r\n");
