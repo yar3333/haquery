@@ -48,7 +48,7 @@ class Tasks
 		
 		HaqDb.connect(databaseConnectionString);
 		
-		OrmGenerator.run(destBasePath);
+		OrmGenerator.run(log, destBasePath);
         
         log.finishOk();
     }

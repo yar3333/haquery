@@ -21,7 +21,7 @@ class HaqDb
     {
 		if (connection != null) return true;
 		
-		var re = new EReg('^([a-z]+)\\://([_a-zA-Z0-9]+)\\:(.+?)@([_.a-zA-Z0-9]+)/([_a-zA-Z0-9]+)$', '');
+		var re = new EReg('^([a-z]+)\\://([_a-zA-Z0-9]+)\\:(.+?)@([_.a-zA-Z0-9]+)(?:[:](\\d+))?/([_a-zA-Z0-9]+)$', '');
 		if (!re.match(connectionString))
 		{
 			Lib.assert(false, "Connection string invalid format.");
@@ -31,7 +31,7 @@ class HaqDb
             connection = Type.createInstance(
                 Type.resolveClass(
                     'haquery.server.db.HaqDbDriver_' + re.matched(1)), 
-                    [ re.matched(4), re.matched(2), re.matched(3), re.matched(5) ]
+                    [ re.matched(4), re.matched(2), re.matched(3), re.matched(6), re.matched(5) != "" ? Std.parseInt(re.matched(5)) : 0 ]
                 );
         Lib.profiler.end();
 		

@@ -19,10 +19,10 @@ class HaqDbDriver_mysql implements HaqDbDriver
 	public var connection(default, null) : Connection;
 	private var database : String;
 	
-	public function new(host:String, user:String, pass:String, database:String) : Void
+	public function new(host:String, user:String, pass:String, database:String, port:Int=0) : Void
     {
 		this.database = database;
-		connection = Mysql.connect( { host:host, user:user, pass:pass, database:database, port:0, socket:'' } );
+		connection = Mysql.connect( { host:host, user:user, pass:pass, database:database, port:port != 0 ? port : 3306, socket:null } );
 		connection.request('set names utf8');
         connection.request("set character_set_client='utf8'");
         connection.request("set character_set_results='utf8'");
@@ -32,8 +32,17 @@ class HaqDbDriver_mysql implements HaqDbDriver
     public function query(sql:String) : ResultSet
     {
         if (Lib.config.sqlTraceLevel >= 2) trace("SQL QUERY: " + sql);
-        var r = connection.request(sql);
-        var errno:Int = untyped __call__('mysql_errno');
+        
+		#if php
+		var r = connection.request(sql);
+		var errno = untyped __call__('mysql_errno');
+		#elseif neko
+		var r = null;
+		var errno = 0;
+		try { r = connection.request(sql); }
+		catch (e:Dynamic) { errno = 1; }
+		#end
+		
         if (errno != 0)
         {
             throw "sql query error:\n"
@@ -53,12 +62,20 @@ class HaqDbDriver_mysql implements HaqDbDriver
 
     public function affectedRows() : Int
     {
-        return untyped __call__('mysql_affected_rows');
+		#if php
+		return untyped __call__('mysql_affected_rows');
+		#elseif neko
+		return -1;
+		#end
     }
 	
 	private function getLastErrorMessage() : String
 	{
+		#if php
 		return untyped __call__('mysql_error');
+		#elseif neko
+		return "";
+		#end
 	}
 
     public function getTables() : Array<String>
