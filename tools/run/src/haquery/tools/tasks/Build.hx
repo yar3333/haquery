@@ -239,23 +239,23 @@ class Build
         
         var filesToExclude = 
 		[
-			 "(/|^).(svn|hg)$"
-			,".(hx|hxproj)$"
-			,"^" + exeDir + "tools$"
-			,"^" + exeDir + "run.n$"
-			,"^" + exeDir + "(?:restorefiletime|runwaiter|copyfolder).(?:exe|exe.config|pdb)$"
-			,"^" + exeDir + "readme.txt$"
-			,"^" + exeDir + "haxelib.xml$"
+			 "(?:/|^).(?:svn|hg)"
+			,".(?:hx|hxproj)"
+			,"^" + exeDir + "tools"
+			,"^" + exeDir + "run.n"
+			,"^" + exeDir + "(?:restorefiletime|runwaiter|copyfolder).(?:exe|exe.config|pdb)"
+			,"^" + exeDir + "readme.txt"
+			,"^" + exeDir + "haxelib.xml"
 		];
 		
 		var manager = new HaqTemplateManager(project.classPaths);
 		
 		for (path in project.classPaths)
         {
-			var strRegExpFileToExclude = Lambda.map(
+			var strRegExpFileToExclude = "(?:" + Lambda.map(
 				 filesToExclude.concat([ path + (new PackageTree(manager.unusedTemplates).toString()) ])
 				,function(s) return "(?:" + s.replace(".", "[.]") + ")"
-			).join("|");
+			).join("|") + ")$";
 			
 			hant.copyFolderContent(path, project.binPath, strRegExpFileToExclude);
         }
