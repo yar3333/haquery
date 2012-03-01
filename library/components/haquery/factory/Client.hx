@@ -22,8 +22,7 @@ class Client extends Base
 		if (factoryInitParams == null) factoryInitParams = [];
 		
 		var doc = new JQuery(template);
-		var nodes : Array<HtmlDom> = cast doc;
-		for (node in nodes)
+		for (node in doc)
 		{
 			prepareDoc(node, "c" + Std.string(length));
 		}
@@ -36,15 +35,16 @@ class Client extends Base
 		length++;
 	}
 	
-	function prepareDoc(node:HtmlDom, childID:String)
+	function prepareDoc(node:JQuery, childID:String)
 	{
-		if (node.id != "")
+		var id = node.attr("id");
+		
+		if (id != "")
 		{
-			node.id = prefixID + childID + HaqDefines.DELIMITER + node.id;
+			node.attr("id", prefixID + childID + HaqDefines.DELIMITER + id);
 		}
 		
-		var nodes : Array<HtmlDom> = cast node.childNodes;
-		for (child in nodes)
+		for (child in node.children())
 		{
 			prepareDoc(child, childID);
 		}
