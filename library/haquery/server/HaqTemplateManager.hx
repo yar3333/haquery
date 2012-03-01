@@ -208,19 +208,19 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		return r;
     }
 	
-	function fillTagIDs(com:HaqComponent, destTagIDs:Hash<Array<String>>) : Hash<Array<String>>
+	function fillTagIDs(component:HaqComponent, destTagIDs:Hash<Array<String>>) : Hash<Array<String>>
 	{
-		if (com.visible)
+		if (component.visible)
 		{
-			if (!destTagIDs.exists(com.fullTag))
+			if (!destTagIDs.exists(component.fullTag))
 			{
-				destTagIDs.set(com.fullTag, []);
+				destTagIDs.set(component.fullTag, []);
 			}
-			destTagIDs.get(com.fullTag).push(com.fullID);
+			destTagIDs.get(component.fullTag).push(component.fullID);
 			
-			for (subCom in com.components)
+			for (child in component.components)
 			{
-				fillTagIDs(subCom, destTagIDs);
+				fillTagIDs(child, destTagIDs);
 			}
 		}
 		
