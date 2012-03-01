@@ -91,7 +91,7 @@ class Client extends Base
         return true;
     }
     
-    function fileUploadComplete(errorCode:Int)
+    @shared function fileUploadComplete(errorCode:Int)
     {
         enabled = true;
         event_complete.call([errorCode]);
