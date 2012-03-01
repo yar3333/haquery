@@ -107,11 +107,11 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		registerStyle(null, "/" + templatesCacheStyleFilePath);
 	}
 	
-	public function createPage(pageFullTag:String, attr:Hash<String>) : HaqPage
+	public function createPage(pageFullTag:String, attr:Hash<String>)
 	{
         var template = get(pageFullTag);
 		Lib.assert(template != null, "HAQUERY ERROR could't find page '" + pageFullTag + "'.");
-		return cast newComponent(template, null, '', attr, null, false);
+		newComponent(template, null, '', attr, null, false);
 	}
 	
 	public function createComponent(parent:HaqComponent, tag:String, id:String, attr:Hash<String>, parentNode:HaqXmlNodeElement, isCustomRender:Bool) : HaqComponent
@@ -125,6 +125,10 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 	{
         Lib.profiler.begin('newComponent');
             var r : HaqComponent = Type.createInstance(Type.resolveClass(template.serverClassName), []);
+			if (parent == null)
+			{
+				HaqSystem.page = cast r;
+			}
 			r.construct(this, template.fullTag, parent, id, template.getDocCopy(), attr, parentNode, isCustomRender);
         Lib.profiler.end();
 		return r;

@@ -5,6 +5,7 @@ import haquery.server.HaqCssGlobalizer;
 import haquery.server.HaqXml;
 import haquery.server.Lib;
 import haquery.server.HaqComponentTools;
+import haxe.Serializer;
 
 using haquery.StringTools;
 
@@ -197,21 +198,6 @@ class HaqComponent extends haquery.base.HaqComponent
 		throw "HaqComponent.q() error - 'query' parameter must be a String, HaqQuery or HaqXmlNodeElement.";
     }
 
-    /**
-	 * Later call of the client method.
-     * @deprecated Use callSharedMethod() instead.
-     */
-	function callClientMethod(method:String, ?params:Array<Dynamic>) : Void
-    {
-		Lib.assert(Lib.isPostback, "HaqComponent.callClientMethod() allowed on the postback only.");
-        
-        var funcName = fullID.length != 0
-            ? "haquery.client.HaqSystem.page.findComponent('" + fullID + "')." + method
-            : "haquery.client.HaqSystem.page." + method;
-        
-        HaqSystem.addAjaxResponse(HaqTools.getCallClientFunctionString(funcName, params) + ';');
-    }
-	
 	/**
 	 * Delayed call client method, marked as @shared.
 	 */
@@ -219,11 +205,10 @@ class HaqComponent extends haquery.base.HaqComponent
 	{
 		Lib.assert(Lib.isPostback, "HaqComponent.callSharedMethod() allowed on the postback only.");
         
-        var funcName = fullID.length != 0
-            ? "haquery.client.HaqSystem.page.findComponent('" + fullID + "')." + method
-            : "haquery.client.HaqSystem.page." + method;
-        
-        HaqSystem.addAjaxResponse(HaqTools.getCallClientFunctionString(funcName, params) + ';');
+        HaqSystem.addAjaxResponse(
+			  "haquery.client.HaqSystem.page." + (fullID != "" ? "findComponent('" + fullID + "')." : "") + method
+			+ "(" + Lambda.map(params, function(p) return "haxe.Unserializer.run('" + Serializer.run(p) + "')").join(",") + ');'
+		);
 	}
     
     public function callElemEventHandler(elemID:String, eventName:String) : Dynamic

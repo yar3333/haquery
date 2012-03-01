@@ -20,6 +20,6 @@ class Server extends Base
         var files = Web.getFiles();
         var file = files.get(prefixID + 'file');
         event_upload.call([file]);
-        callClientMethod('fileUploadComplete', [Type.enumIndex(file.error) ]);
+        callSharedMethod('fileUploadComplete', [ Type.enumIndex(file.error) ]);
     }
 }

@@ -17,9 +17,9 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		}
 	}
 	
-	public function createPage(pageFullTag:String) : HaqPage
+	public function createPage(pageFullTag:String)
     {
-		return cast newComponent(get(pageFullTag), null, '', null);
+		newComponent(get(pageFullTag), null, '', null);
     }
 	
 	public function createComponent(parent:HaqComponent, fullTag:String, id:String, factoryInitParams:Array<Dynamic>=null) : HaqComponent
@@ -30,7 +30,11 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 	function newComponent(template:HaqTemplate, parent:HaqComponent, id:String, factoryInitParams:Array<Dynamic>=null) : HaqComponent
 	{
         var r : HaqComponent = Type.createInstance(Type.resolveClass(template.clientClassName), []);
-        r.construct(this, template.fullTag, parent, id, factoryInitParams);
+        if (parent == null)
+		{
+			HaqSystem.page = cast r;
+		}
+		r.construct(this, template.fullTag, parent, id, factoryInitParams);
 		return r;
 	}	
 	

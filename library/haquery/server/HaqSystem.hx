@@ -11,6 +11,8 @@ using haquery.StringTools;
 
 class HaqSystem
 {
+	public static var page : HaqPage;
+	
 	static var ajaxResponse = "";
 
 	public static function run(pageFullTag:String, pageID:String, isPostback:Bool)
@@ -42,7 +44,7 @@ class HaqSystem
             Lib.profiler.end();
 
             Lib.profiler.begin('page');
-				var page = manager.createPage(pageFullTag, params);
+				manager.createPage(pageFullTag, params);
             Lib.profiler.end();
             
 			var html : String;

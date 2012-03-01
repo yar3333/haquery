@@ -14,6 +14,6 @@ class HaqSystem
 	function new(pageFullTag)
 	{
 		var manager = new HaqTemplateManager();
-        page = manager.createPage(pageFullTag);
+        manager.createPage(pageFullTag);
 	}
 }
