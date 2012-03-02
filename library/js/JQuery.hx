@@ -42,6 +42,7 @@ typedef JqEvent = {
 	var context(default,null) : Dom.HtmlDom;
 	var length(default, null) : Int;
 
+	@:overload(function():Void{})
 	@:overload(function(j:js.JQuery):Void{})
 	@:overload(function(j:js.Dom.HtmlDom):Void{})
 	@:overload(function(html:String, j:js.JQuery):Void{})

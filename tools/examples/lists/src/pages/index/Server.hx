@@ -21,7 +21,7 @@ class Server extends HaqPage
                 ,{ login : "user" }
             ];
             trace("Users count = " + users.length);
-            template.list.bind(users);
+            template.users.bind(users);
         }
 	}
     
