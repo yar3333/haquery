@@ -1,5 +1,6 @@
 package tests;
 
+import haquery.server.HaqSystem;
 import haxe.unit.TestCase;
 import php.FileSystem;
 import haquery.server.HaqComponent;
@@ -22,7 +23,8 @@ class HaqTemplatesTest extends TestCase
 		var manager = new HaqTemplateManager();
 		assertTrue(manager != null);
 		
-		var page = manager.createPage("pages.test0", null);
+		manager.createPage("pages.test0", null);
+		var page = HaqSystem.page;
 		assertTrue(page != null);
 		
 		var template = manager.findTemplate(page.fullTag, "text");
@@ -53,7 +55,8 @@ class HaqTemplatesTest extends TestCase
 		var manager = new HaqTemplateManager();
 		assertTrue(manager != null);
         
-		var page = manager.createPage("pages.test1", null);
+		manager.createPage("pages.test1", null);
+		var page = HaqSystem.page;
 		assertTrue(page != null);
 		
 		var template = manager.get("components.set1.randnum");
