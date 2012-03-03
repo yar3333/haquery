@@ -1,0 +1,8 @@
+<project name='HaQuery' url='http://haquery.com/haquery' license='LGPL'>
+    <user name='yar3333'/>
+    <tag v='js'/>
+    <tag v='php'/>
+    <description>Web framework with PHP and JavaScript target.</description>
+    <version name='3.0'>Improvements and bugfixes.</version>
+    <depends name="HtmlParser"/>
+</project>
