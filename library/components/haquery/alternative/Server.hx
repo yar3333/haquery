@@ -2,7 +2,7 @@ package components.haquery.alternative;
 
 import haquery.server.HaqComponent;
 import haquery.server.Lib;
-import haquery.server.HaqXml;
+import haxe.htmlparser.HtmlParser;
 
 class Server extends HaqComponent
 {

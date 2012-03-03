@@ -1,10 +1,10 @@
 package components.haquery.radioboxes;
 
+import haquery.server.Lib;
+import haquery.server.Web;
 import haquery.server.HaqComponent;
 import haquery.server.HaqDefines;
-import haquery.server.HaqXml;
-import haquery.server.Lib;
-import php.Web;
+import haxe.htmlparser.HtmlNodeElement;
 
 using haquery.StringTools;
 
@@ -12,7 +12,7 @@ class Server extends HaqComponent
 {
     public var value(value_getter, value_setter) : String;
     
-    function getInputElements() : List<HaqXmlNodeElement>
+    function getInputElements() : List<HtmlNodeElement>
     {
         var inputs = innerNode.find("input");
         return Lambda.filter(inputs, function(input) return input.getAttribute('type').toLowerCase()=='radio');

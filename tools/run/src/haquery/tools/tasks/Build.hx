@@ -23,16 +23,14 @@ using haquery.HashTools;
 class Build 
 {
 	var exeDir : String;
-	var haxePath : String;
     
 	var log : Log;
     var hant : Hant;
 	var project : FlashDevelopProject;
 
-	public function new(exeDir:String, haxePath:String) 
+	public function new(exeDir:String) 
 	{
 		this.exeDir = exeDir.replace('\\', '/').rtrim('/') + '/';
-		this.haxePath = haxePath.replace('\\', '/').rtrim('/') + '/';
         
 		log = new Log(2);
         hant = new Hant(log, this.exeDir);
@@ -123,7 +121,7 @@ class Build
 		
 		params = params.concat([ '-D', 'noEmbedJS' ]);		
 		
-		var r = hant.runWaiter(haxePath + "haxe.exe", params, 5000);
+		var r = hant.runWaiter(hant.getHaxePath() + "haxe.exe", params, 5000);
         
 		if (FileSystem.exists(clientPath + "/haquery.js")
 		 && FileSystem.exists(clientPath + "/haquery.js.old"))
@@ -241,11 +239,7 @@ class Build
 		[
 			 "(?:/|^).(?:svn|hg)"
 			,".(?:hx|hxproj)"
-			,"^" + exeDir + "tools"
-			,"^" + exeDir + "run.n"
-			,"^" + exeDir + "(?:restorefiletime|runwaiter|copyfolder).(?:exe|exe.config|pdb)"
-			,"^" + exeDir + "readme.txt"
-			,"^" + exeDir + "haxelib.xml"
+			,"^" + exeDir + "(?:tools|run.n|readme.txt|haxelib.xml|(?:restorefiletime|runwaiter|copyfolder).(?:exe|exe.config|pdb))"
 		];
 		
 		var manager = new HaqTemplateManager(project.classPaths);

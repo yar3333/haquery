@@ -5,4 +5,5 @@
     <description>Web framework with PHP and JavaScript target.</description>
     <version name='3.0'>Improvements and bugfixes.</version>
     <depends name="HtmlParser"/>
+    <depends name="FirePHP"/>
 </project>

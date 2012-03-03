@@ -1,6 +1,6 @@
 package haquery.server;
 
-import haquery.server.HaqXml;
+import haxe.htmlparser.HtmlNodeElement;
 
 using haquery.StringTools;
 
@@ -28,7 +28,7 @@ class HaqCssGlobalizer extends haquery.base.HaqCssGlobalizer
 		return r;
 	}
 	
-	public function doc(baseNode:HaqXmlNodeElement) : HaqXmlNodeElement
+	public function doc(baseNode:HtmlNodeElement) : HtmlNodeElement
 	{
 		for (node in baseNode.children)
 		{

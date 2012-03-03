@@ -175,28 +175,33 @@ class Hant
 		}
     }
 	
-	function run(fileName:String, args:Array<String>) : Int
+	public function run(fileName:String, args:Array<String>) : { exitCode:Int, stdOut:String, stdErr:String }
 	{
-		Lib.print(fileName.replace("/", "\\") + " " + args.join(" ") + " ");
-		
 		var p = new Process(fileName.replace("/", "\\"), args);
-		var r = p.exitCode();
-		var out = (p.stdout.readAll().toString().replace("\r\n", "\n") + p.stderr.readAll().toString().replace("\r\n", "\n")).trim();
-		if (out != "")
-		{
-			Lib.println("\n" + out); 
-		}
+		var exitCode = p.exitCode();
+		var stdOut = p.stdout.readAll().toString().replace("\r\n", "\n");
+		var stdErr = p.stderr.readAll().toString().replace("\r\n", "\n");
 		p.close();
-		if (r != 0)
+		if (exitCode != 0)
 		{
-			Lib.println("run error: " + r);
+			Lib.print(fileName.replace("/", "\\") + " " + args.join(" ") + " ");
+			Lib.println("run error: " + exitCode);
 		}
-		return r;
+		return { exitCode:exitCode, stdOut:stdOut, stdErr:stdErr };
 	}
 	
 	public function runWaiter(fileName:String, args:Array<String>, waitTimeMS:Int) : Int
 	{
-		return run(exeDir + "runwaiter.exe", [ Std.string(waitTimeMS), fileName.replace("/", "\\") ].concat(args));
+		var result = run(exeDir + "runwaiter.exe", [ Std.string(waitTimeMS), fileName.replace("/", "\\") ].concat(args));
+		if (result.stdOut != "")
+		{
+			Lib.print(result.stdOut);
+		}
+		if (result.stdErr != "")
+		{
+			Lib.print(result.stdErr);
+		}
+		return result.exitCode;
 	}
 	
 	/*public function runCmd(fileName:String, args:Array<String>)
@@ -238,4 +243,27 @@ class Hant
 		run(exeDir + "restorefiletime.exe", [ fromPath.replace('/', '\\'), toPath.replace('/', '\\') ]);
 	}
 	
+	public function getHaxePath()
+    {
+        var r = Sys.getEnv('HAXEPATH');
+        
+        if (r == null)
+        {
+            throw "HaXe not found (HAXEPATH environment variable not set).";
+        }
+		
+		r = r.replace("\\", "/");
+        while (r.endsWith('/'))
+        {
+            r = r.substr(0, r.length - 1);
+        }
+        r += '/';
+        
+        if (!FileSystem.exists(r + 'haxe.exe'))
+        {
+            throw "HaXe not found (file '" + r + "haxe.exe' does not exist).";
+        }
+        
+        return r;
+    }
 }

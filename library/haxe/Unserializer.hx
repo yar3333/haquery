@@ -22,7 +22,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
  * DAMAGE.
  */
-package haquery;
+package haxe;
 
 typedef TypeResolver = {
 	function resolveClass( name : String ) : Class<Dynamic>;

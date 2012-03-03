@@ -3,6 +3,7 @@ package haquery.tools;
 import haquery.server.FileSystem;
 import haquery.server.io.File;
 import haquery.Std;
+import neko.Sys;
 
 using haquery.StringTools;
 
@@ -62,9 +63,27 @@ class FlashDevelopProject
     {
         var r = new Array<String>();
         
-		r.push(exeDir);
+		//r.push(exeDir);
 		
 		var fast = new haxe.xml.Fast(xml.firstElement());
+		
+		if (fast.hasNode.haxelib)
+		{
+			var haxelibs = fast.node.haxelib;
+			for (elem in haxelibs.elements)
+			{
+				if (elem.name == 'library' && elem.has.name)
+				{
+					var path = getHaxeLibPath(elem.att.name, exeDir);
+					if (path == "")
+					{
+						path = ".";
+					}
+					r.push(path + "/");
+				}
+			}
+		}
+		
 		if (fast.hasNode.classpaths)
 		{
 			var classpaths = fast.node.classpaths;
@@ -84,6 +103,14 @@ class FlashDevelopProject
         
 		return r;
     }
+	
+	function getHaxeLibPath(name:String, exeDir:String)
+	{
+		var hant = new Hant(new Log(0), exeDir);
+		var haxelib = Sys.environment().get("HAXEPATH").replace("\\", "/").rtrim("/") + "/haxelib.exe";
+		var paths = hant.run(haxelib, [ "path", name ]).stdOut.split("\n");
+		return paths[0].replace("\\", "/").rtrim("/") + "/";
+	}
 	
 	function getIsDebug(xml:Xml) : Bool
 	{

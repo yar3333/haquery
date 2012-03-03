@@ -1,6 +1,6 @@
 package haquery.server;
 
-import haquery.server.HaqXml;
+import haxe.htmlparser.HtmlNodeElement;
 
 using haquery.StringTools;
 
@@ -33,7 +33,7 @@ class HaqComponentTools
         return r;
     }
 	
-	public static function expandDocElemIDs(prefixID:String, baseNode:HaqXmlNodeElement) : Void
+	public static function expandDocElemIDs(prefixID:String, baseNode:HtmlNodeElement) : Void
     {
 		for (node in baseNode.children)
         {
