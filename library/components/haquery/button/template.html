@@ -1,34 +1,27 @@
-<style>
-    .~b
-    {
-        border-collapse: collapse;
-        border: 0;
-        padding: 0;
-        margin: 0 auto;
-        cursor: pointer;
-        background: url(~/bt_r.png) no-repeat top right;
-    }
+<haq:placeholder id="styles">
+    <style>
+        .~c
+        {
+            display: inline-block;
+            border: solid 1px gray;
+            cursor: pointer;
+            background-color: #EEEEEE;
+            border-radius: 6px;
+            line-height: 25px;
+            text-align: center;
+            color: #000;
+            padding: 0 10px;
+            font-size: 13px;
+            font-family: Tahoma;
+        }
 
-    .~b td
-    {
-        background: url(~/bt_l.png) no-repeat;
-    }
-
-    .~b span
-    {
-        line-height: 21px;
-        display: block;
-        text-align: center;
-        padding: 0 8px;
-        font-size: 13px;
-        color: #fff;
-        cursor: pointer;
-    }
+        .~c.disabled
+        {
+            color: gray;
+        }
+    </style>
+</haq:placeholder>
     
-    .~b.disabled span
-    {
-        color: #777;
-    }
-</style>
-
-<table id="b" class="~b"><tr><td><span>OK</span></td></tr></table>
+<haq:placeholder id="html">
+    <span id="c" class="~c">OK</span>
+</haq:placeholder>

@@ -6,10 +6,10 @@ class TemplateClient
 {
 	var component : haquery.client.HaqComponent;
 	
-	public var b(b_getter, null) : haquery.client.HaqQuery;
-	inline function b_getter() : haquery.client.HaqQuery
+	public var c(c_getter, null) : haquery.client.HaqQuery;
+	inline function c_getter() : haquery.client.HaqQuery
 	{
-		return component.q('#b');
+		return component.q('#c');
 	}
 
 	public function new(component:haquery.client.HaqComponent) : Void
