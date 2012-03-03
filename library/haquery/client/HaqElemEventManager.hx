@@ -114,7 +114,7 @@ class HaqElemEventManager
 	public static function callServerMethod(componentID:String, method:String, ?params:Array<Dynamic>, ?callbackFunc:Dynamic->Void) : Void
 	{
 		var sendData = getDataObjectForSendToServer(componentID, method, params);
-		untyped JQuery.post(Lib.window.location.href, sendData, function(data:String) : Void
+		JQuery.post(Lib.window.location.href, sendData, function(data:String) : Void
 		{ 
 			callServerHandlersCallbackFunction(data, callbackFunc);
 		});
