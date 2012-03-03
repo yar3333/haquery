@@ -1,7 +1,7 @@
 package components.haquery.urlmenu;
 
 import haquery.server.HaqComponent;
-import haxe.htmlparser.HtmlParser;
+import haxe.htmlparser.HtmlNodeElement;
 import haquery.server.HaqQuery;
 import haquery.server.Lib;
 import haquery.server.Web;
