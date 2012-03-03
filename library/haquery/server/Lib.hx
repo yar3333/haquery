@@ -4,9 +4,6 @@ import haquery.server.io.File;
 import haxe.Stack;
 
 #if php
-import php.NativeArray;
-import php.Session;
-import php.firePHP.FirePHP;
 private typedef HaxeLib = php.Lib;
 #elseif neko
 private typedef HaxeLib = neko.Lib;
@@ -72,7 +69,7 @@ class Lib
 						#if php
 						if (config.autoSessionStart)
 						{
-							Session.start();
+							php.Session.start();
 						}
 						#end
 						if (config.autoDatabaseConnect && config.databaseConnectionString != null && config.databaseConnectionString != "")
@@ -156,16 +153,16 @@ class Lib
                 {
                     if (text.startsWith('HAXE EXCEPTION'))
                     {
-                        FirePHP.getInstance(true).error(text);
+                        php.FirePHP.getInstance(true).error(text);
                     }
                     else if (text.startsWith('HAQUERY'))
                     {
-                        FirePHP.getInstance(true).info(text);
+                        php.FirePHP.getInstance(true).info(text);
                     }
                     else
                     {
                         text = pos.fileName + ":" + pos.lineNumber + " : " + text;
-                        FirePHP.getInstance(true).warn(text);
+                        php.FirePHP.getInstance(true).warn(text);
                     }
                 }
                 catch (s:String)
@@ -301,10 +298,10 @@ class Lib
 	**/
 	public static inline function unserialize( s : String ) : Dynamic { return HaxeLib.unserialize(s); }
 	
-	public static inline function toPhpArray(a : Array<Dynamic>) : NativeArray { return HaxeLib.toPhpArray(a); }
-	public static inline function toHaxeArray(a : NativeArray) : Array<Dynamic> { return HaxeLib.toHaxeArray(a); }
-	public static inline function hashOfAssociativeArray<T>(arr : NativeArray) : Hash<T> { return HaxeLib.hashOfAssociativeArray(arr); }
-	public static inline function associativeArrayOfHash(hash : Hash<Dynamic>) : NativeArray { return HaxeLib.associativeArrayOfHash(hash); }
+	public static inline function toPhpArray(a : Array<Dynamic>) : php.NativeArray { return HaxeLib.toPhpArray(a); }
+	public static inline function toHaxeArray(a : php.NativeArray) : Array<Dynamic> { return HaxeLib.toHaxeArray(a); }
+	public static inline function hashOfAssociativeArray<T>(arr : php.NativeArray) : Hash<T> { return HaxeLib.hashOfAssociativeArray(arr); }
+	public static inline function associativeArrayOfHash(hash : Hash<Dynamic>) : php.NativeArray { return HaxeLib.associativeArrayOfHash(hash); }
 	
 	/**
 	*  Loads types defined in the specified directory.
