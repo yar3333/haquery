@@ -1,7 +1,8 @@
 package haquery.server;
 
-import haquery.Serializer;
-import haquery.Unserializer;
+import haxe.Serializer;
+import haxe.Unserializer;
+import haxe.htmlparser.HtmlDocument;
 
 class HaqTemplate extends haquery.base.HaqTemplate
 {
@@ -33,12 +34,12 @@ class HaqTemplate extends haquery.base.HaqTemplate
 		serverHandlers = parser.getServerHandlers(serverClassName);
 	}
 	
-	function serializeDoc(doc:HaqXml) : String
+	function serializeDoc(doc:HtmlDocument) : String
 	{
 		return Serializer.run(doc);
 	}
 	
-	public function getDocCopy() : HaqXml
+	public function getDocCopy() : HtmlDocument
 	{
 		Lib.profiler.begin("getDocCopy");
 		var doc = Unserializer.run(serializedDoc);

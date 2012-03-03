@@ -2,7 +2,7 @@ package haquery.tools.trm;
 
 import haquery.server.FileSystem;
 import haquery.server.HaqDefines;
-import haquery.server.HaqXml;
+import haxe.htmlparser.HtmlNodeElement;
 import haquery.server.io.File;
 import haquery.server.Lib;
 
@@ -90,7 +90,7 @@ class TrmGenerator
 		);
 	}
 	
-	function getTemplateVars(fullTag:String, node:HaqXmlNodeElement, queryClassName:String, isServer:Bool) : Array<HaxeVarGetter>
+	function getTemplateVars(fullTag:String, node:HtmlNodeElement, queryClassName:String, isServer:Bool) : Array<HaxeVarGetter>
 	{
 		var r : Array<HaxeVarGetter> = [];
 		var children = node.children;

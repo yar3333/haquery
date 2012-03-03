@@ -8,7 +8,7 @@ import haquery.base.HaqTemplateParser.HaqTemplateNotFoundException;
 import haquery.base.HaqTemplateParser.HaqTemplateNotFoundCriticalException;
 import haquery.base.HaqTemplateParser.HaqTemplateRecursiveExtendException;
 
-import haquery.server.HaqXml;
+import haxe.htmlparser.HtmlDocument;
 
 using StringTools;
 
@@ -61,7 +61,7 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 		cast(parent, HaqTemplateConfig).requires = cast(parent, HaqTemplateConfig).requires.concat(cast(child, HaqTemplateConfig).requires);
 	}
 	
-	override function parseConfig(xml:HaqXml) : haquery.server.HaqTemplateConfig
+	override function parseConfig(xml:HtmlDocument) : haquery.server.HaqTemplateConfig
 	{
 		var b = super.parseConfig(xml);
 		

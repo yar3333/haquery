@@ -22,22 +22,22 @@ class Tasks
     
 	public function preBuild()
 	{
-		new Build(exeDir, getHaxePath()).preBuild();
+		new Build(exeDir).preBuild();
 	}
 	
 	public function postBuild(skipJS:Bool, skipComponents:Bool) : Bool
 	{
-		return new Build(exeDir, getHaxePath()).postBuild(skipJS, skipComponents);
+		return new Build(exeDir).postBuild(skipJS, skipComponents);
 	}
 	
 	public function install()
 	{
-		new Setup(exeDir, getHaxePath()).install();
+		new Setup(exeDir).install();
 	}
 	
 	public function uninstall()
 	{
-		new Setup(exeDir, getHaxePath()).uninstall();
+		new Setup(exeDir).uninstall();
 	}
     
 	public function genOrm(databaseConnectionString:String, destBasePath:String)
@@ -55,30 +55,6 @@ class Tasks
 	
 	public function genTrm()
 	{
-		new Build(exeDir, getHaxePath()).genTrm();
+		new Build(exeDir).genTrm();
 	}
-	
-	function getHaxePath()
-    {
-        var r = Sys.getEnv('HAXEPATH');
-        
-        if (r == null)
-        {
-            throw "HaXe not found (HAXEPATH environment variable not set).";
-        }
-		
-		r = r.replace("\\", "/");
-        while (r.endsWith('/'))
-        {
-            r = r.substr(0, r.length - 1);
-        }
-        r += '/';
-        
-        if (!FileSystem.exists(r + 'haxe.exe'))
-        {
-            throw "HaXe not found (file '" + r + "haxe.exe' does not exist).";
-        }
-        
-        return r;
-    }
 }

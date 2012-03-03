@@ -1,7 +1,7 @@
 package components.haquery.urlmenu;
 
 import haquery.server.HaqComponent;
-import haquery.server.HaqXml;
+import haxe.htmlparser.HtmlParser;
 import haquery.server.HaqQuery;
 import haquery.server.Lib;
 import haquery.server.Web;
@@ -26,7 +26,7 @@ class Server extends HaqComponent
         
         for (node in innerNode.children)
         {
-            var elem : HaqXmlNodeElement = cast node;
+            var elem : HtmlNodeElement = cast node;
             
             var href = elem.getAttribute('href').trim('/');
             if (href == 'index') href = '';

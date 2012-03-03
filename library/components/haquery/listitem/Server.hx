@@ -3,11 +3,12 @@ package components.haquery.listitem;
 import haquery.server.HaqComponent;
 import haquery.server.HaqTemplateManager;
 import haquery.server.HaqTemplate;
-import haquery.server.HaqXml;
+import haxe.htmlparser.HtmlDocument;
+import haxe.htmlparser.HtmlNodeElement;
 
 class Server extends Base
 {
-	override public function construct(manager:HaqTemplateManager, fullTag:String, parent:HaqComponent, id:String, doc:HaqXml, params:Hash<String>, parentNode:HaqXmlNodeElement, isCustomRender:Bool):Void 
+	override public function construct(manager:HaqTemplateManager, fullTag:String, parent:HaqComponent, id:String, doc:HtmlDocument, params:Hash<String>, parentNode:HtmlNodeElement, isCustomRender:Bool):Void 
 	{
 		var innerHTML = parentNode.innerHTML;
         
@@ -29,12 +30,12 @@ class Server extends Base
         var xml = null;
         try
         {
-            xml = new HaqXml(innerHTML);
+            xml = new HtmlDocument(innerHTML);
         }
         catch (e:Dynamic)
         {
             trace("XML parse error:\n" + innerHTML);
-            xml = new HaqXml('XML parse error.');
+            xml = new HtmlDocument('XML parse error.');
         }
         
         super.construct(manager, fullTag, parent, id, xml, params, null, isCustomRender);

@@ -3,7 +3,8 @@ package haquery.server;
 import haquery.server.HaqCssGlobalizer;
 import haquery.server.HaqDefines;
 import haquery.server.HaqComponent;
-import haquery.server.HaqXml;
+import haxe.htmlparser.HtmlDocument;
+import haxe.htmlparser.HtmlNodeElement;
 
 #if php
 import php.FileSystem;
@@ -78,7 +79,7 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser<HaqTemplateConfig
 			var configPath = getFullPath(basePath + "config.xml");
 			if (configPath != null)
 			{
-				var c = parseConfig(new HaqXml(File.getContent(configPath)));
+				var c = parseConfig(new HtmlDocument(File.getContent(configPath)));
 				loadChildConfigDataToParent(r, c);
 			}
 		}
@@ -95,7 +96,7 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser<HaqTemplateConfig
 		parent.imports = child.imports.concat(parent.imports);
 	}
 	
-	function parseConfig(xml:HaqXml) : HaqTemplateConfig
+	function parseConfig(xml:HtmlDocument) : HaqTemplateConfig
 	{
 		var r = new HaqTemplateConfig();
 		
@@ -145,7 +146,7 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser<HaqTemplateConfig
 		return config.extend;
 	}
 	
-	public function getDocAndCss() : { doc:HaqXml, css:String }
+	public function getDocAndCss() : { doc:HtmlDocument, css:String }
 	{
         var text = getDocText();
 		
@@ -156,7 +157,7 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser<HaqTemplateConfig
             return f != null ? '/' + f : re.matched(0);
         });
 
-		var doc = new HaqXml(text);
+		var doc = new HtmlDocument(text);
         
 		resolvePlaceHolders(doc);
 		
@@ -166,7 +167,7 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser<HaqTemplateConfig
 		var i = 0; 
 		while (i < doc.children.length)
 		{
-			var node : HaqXmlNodeElement = doc.children[i];
+			var node : HtmlNodeElement = doc.children[i];
 			if (node.name == 'style' && !node.hasAttribute('id'))
 			{
 				if (node.getAttribute('type') == "text/less")
@@ -212,7 +213,7 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser<HaqTemplateConfig
 		return text;
 	}
 	
-	function resolvePlaceHolders(doc:HaqXml)
+	function resolvePlaceHolders(doc:HtmlDocument)
 	{
         var placeholders = doc.find('haq:placeholder');
         
@@ -221,7 +222,7 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser<HaqTemplateConfig
 		
         for (ph in placeholders)
         {
-            var content : HaqXmlNodeElement = null;
+            var content : HtmlNodeElement = null;
             for (c in contents) 
             {
                 if (c.getAttribute('id') == ph.getAttribute('id'))

@@ -5,7 +5,7 @@ import haquery.server.HaqQuery;
 import haquery.server.Lib;
 import haquery.server.FileSystem;
 import haquery.server.io.File;
-import haquery.server.HaqXml;
+import haxe.htmlparser.HtmlParser;
 import haquery.server.HaqCssGlobalizer;
 import haxe.Unserializer;
 
@@ -17,8 +17,8 @@ class HaqXmlTest extends haxe.unit.TestCase
         this.assertEquals(1, nodes.length);
 
         var node = nodes[0];
-		this.assertTrue(Type.getClass(node) == HaqXmlNodeText);
-        this.assertEquals('abc', cast(node, HaqXmlNodeText).text);
+		this.assertTrue(Type.getClass(node) == HtmlNodeText);
+        this.assertEquals('abc', cast(node, HtmlNodeText).text);
     }
 
     public function testTagWithClose()
@@ -26,9 +26,9 @@ class HaqXmlTest extends haxe.unit.TestCase
 		var nodes = HaqXmlParser.parse("<br p=2 />");
         this.assertEquals(1, nodes.length);
 
-		this.assertTrue(Type.getClass(nodes[0]) == HaqXmlNodeElement);
+		this.assertTrue(Type.getClass(nodes[0]) == HtmlNodeElement);
         
-		var node : HaqXmlNodeElement = cast nodes[0];
+		var node : HtmlNodeElement = cast nodes[0];
         this.assertEquals('br', node.name);
 		
 		this.assertEquals("String", Type.getClassName(Type.getClass("abc")));
@@ -40,9 +40,9 @@ class HaqXmlTest extends haxe.unit.TestCase
         var nodes = HaqXmlParser.parse("<a>abc</a>");
         this.assertEquals(1, nodes.length);
 
-		this.assertTrue(Type.getClass(nodes[0]) == HaqXmlNodeElement);
+		this.assertTrue(Type.getClass(nodes[0]) == HtmlNodeElement);
 		
-        var node : HaqXmlNodeElement = cast nodes[0];
+        var node : HtmlNodeElement = cast nodes[0];
         this.assertEquals('a', node.name);
     }
 
@@ -78,12 +78,12 @@ class HaqXmlTest extends haxe.unit.TestCase
     {
         var nodes = HaqXmlParser.parse("<a><!-- comment<p></p> --></a>");
         this.assertEquals(1, nodes.length);
-        this.assertTrue(Type.getClass(nodes[0]) == HaqXmlNodeElement);
+        this.assertTrue(Type.getClass(nodes[0]) == HtmlNodeElement);
         
-        var node : HaqXmlNodeElement = cast nodes[0];
+        var node : HtmlNodeElement = cast nodes[0];
         var subnodes = node.nodes;
         this.assertEquals(1, subnodes.length);
-        this.assertTrue(Type.getClass(subnodes[0]) == HaqXmlNodeText);
+        this.assertTrue(Type.getClass(subnodes[0]) == HtmlNodeText);
     }
     
     public function testComplexParse()
@@ -95,8 +95,8 @@ class HaqXmlTest extends haxe.unit.TestCase
     
 	/*public function processSerializationTest(str:String)
     {
-		var doc = new HaqXml(str);
-		var dstDoc : Array<HaqXmlNodeElement> = cast haxe.Unserializer.run(doc.serialize());
+		var doc = new HtmlDocument(str);
+		var dstDoc : Array<HtmlNodeElement> = cast haxe.Unserializer.run(doc.serialize());
 		this.assertEquals(str, doc.innerHTML);
     }
 
@@ -115,7 +115,7 @@ class HaqXmlTest extends haxe.unit.TestCase
     
     public function testSelectors()
     {
-        var xml = new HaqXml("<div class='first second'><p id='myp' class='first'><a href='b'>cde</a></p></div>");
+        var xml = new HtmlDocument("<div class='first second'><p id='myp' class='first'><a href='b'>cde</a></p></div>");
         
         var nodes = xml.find('');
         this.assertEquals(0, nodes.length);
@@ -202,18 +202,18 @@ class HaqXmlTest extends haxe.unit.TestCase
 
     public function testSiblings()
     {
-        var xml = new HaqXml("<br />\n        <div id='m'>test</div>");
+        var xml = new HtmlDocument("<br />\n        <div id='m'>test</div>");
         var nodes = xml.find("#m");
 		
         this.assertEquals(1, nodes.length);
-		this.assertTrue(Type.getClass(nodes[0]) == HaqXmlNodeElement);
+		this.assertTrue(Type.getClass(nodes[0]) == HtmlNodeElement);
         
 		var node = nodes[0];
         this.assertEquals("m", node.getAttribute('id'));
         
 		var prev = node.getPrevSiblingNode();
-		this.assertTrue(Type.getClass(prev) == HaqXmlNodeText);
-        this.assertEquals("\n        ", cast(prev, HaqXmlNodeText).text);
+		this.assertTrue(Type.getClass(prev) == HtmlNodeText);
+        this.assertEquals("\n        ", cast(prev, HtmlNodeText).text);
     }
 	
 	public function testStyle()
@@ -229,17 +229,17 @@ class HaqXmlTest extends haxe.unit.TestCase
 <div id='n'>0</div>
 ";
 
-		var xml = new HaqXml(html);
+		var xml = new HtmlDocument(html);
 		assertEquals(2, xml.children.length);
         
 		var nodes = xml.find("#n");
         assertEquals(1, nodes.length);
-		assertTrue(Type.getClass(nodes[0]) == HaqXmlNodeElement);
+		assertTrue(Type.getClass(nodes[0]) == HtmlNodeElement);
 	}
 	
 	public function testReplaceChildWithInner()
 	{
-		var xml = new HaqXml("b<ph>c</ph>d<con>e</con>");
+		var xml = new HtmlDocument("b<ph>c</ph>d<con>e</con>");
 		
 		var nodesPH = xml.find("ph");
 		assertEquals(1, nodesPH.length);
@@ -262,11 +262,11 @@ class HaqXmlTest extends haxe.unit.TestCase
         var start = Date.now();
 		for (i in 0...loops)
         {
-            var xml = new HaqXml(str);
+            var xml = new HtmlDocument(str);
         }
         print("[time parse: " + ((Date.now().getTime() - start.getTime()) / loops) + "]");
         
-        var xml = new HaqXml(str);
+        var xml = new HtmlDocument(str);
         var ser = new Serializer();
 		ser.useCache = true;
 		ser.serialize(xml);

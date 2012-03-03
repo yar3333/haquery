@@ -2,7 +2,7 @@ package haquery.server;
 
 import haquery.base.HaqCssGlobalizer;
 import haquery.server.Lib;
-import haquery.server.HaqXml;
+import haxe.htmlparser.HtmlNodeElement;
 import haquery.Std;
 
 using haquery.StringTools;
@@ -23,14 +23,14 @@ class HaqQuery
     /**
      * Selected XML DOM nodes (elements).
      */
-    public var nodes(default, null) : Array<HaqXmlNodeElement>;
+    public var nodes(default, null) : Array<HtmlNodeElement>;
     
     function jQueryCall(method)
     {
         HaqSystem.addAjaxResponse("$('" + query.replace('#', '#' + prefixID) + "')." + method + ";");
     }
     
-	public function new(cssGlobalizer:HaqCssGlobalizer, prefixID:String, query:String, nodes:Array<HaqXmlNodeElement>)
+	public function new(cssGlobalizer:HaqCssGlobalizer, prefixID:String, query:String, nodes:Array<HtmlNodeElement>)
     {
         this.cssGlobalizer = cssGlobalizer;
 		this.prefixID = prefixID;
@@ -45,7 +45,7 @@ class HaqQuery
 
     public function size() : Int { return nodes.length; }
 
-    public function get(index:Int) : HaqXmlNodeElement
+    public function get(index:Int) : HtmlNodeElement
     {
         return nodes[index];
     }
@@ -219,8 +219,8 @@ class HaqQuery
         {
             if (nodes.length > 0)
             {
-                /* @var $node HaqXmlNodeElement */
-                var node : HaqXmlNodeElement = nodes[0];
+                /* @var $node HtmlNodeElement */
+                var node : HtmlNodeElement = nodes[0];
                 
                 if (Lib.isPostback && node.hasAttribute('id'))
                 {
@@ -397,7 +397,7 @@ class HaqQuery
     /**
      * Call specified function for each selected element.
      */
-    public function each(f:Int->HaqXmlNodeElement->Void)
+    public function each(f:Int->HtmlNodeElement->Void)
     {
         for (i in 0...nodes.length)
         {

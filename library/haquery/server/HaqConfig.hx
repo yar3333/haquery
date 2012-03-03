@@ -1,6 +1,6 @@
 package haquery.server;
 
-import haquery.server.HaqXml;
+import haxe.htmlparser.HtmlDocument;
 import haquery.server.io.File;
 
 using haquery.StringTools;
@@ -62,7 +62,7 @@ class HaqConfig
 	{
 		if (FileSystem.exists(path))
 		{
-			var xml = new HaqXml(File.getContent(path));
+			var xml = new HtmlDocument(File.getContent(path));
 			var nodes = xml.find(">config>database");
 			if (nodes.length > 0 && nodes[0].hasAttribute("connectionString"))
 			{

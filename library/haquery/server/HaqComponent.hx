@@ -2,7 +2,9 @@ package haquery.server;
 
 import haquery.Std;
 import haquery.server.HaqCssGlobalizer;
-import haquery.server.HaqXml;
+import haxe.htmlparser.HtmlDocument;
+import haxe.htmlparser.HtmlNodeElement;
+import haxe.htmlparser.HtmlNodeText;
 import haquery.server.Lib;
 import haquery.server.HaqComponentTools;
 import haxe.Serializer;
@@ -14,12 +16,12 @@ class HaqComponent extends haquery.base.HaqComponent
     /**
      * template.html as DOM tree.
      */
-    public var doc(default, null) : HaqXml;
+    public var doc(default, null) : HtmlDocument;
     
     /**
      * HTML element, which contain this component.
      */
-    public var innerNode(default, null) : HaqXmlNodeElement;
+    public var innerNode(default, null) : HtmlNodeElement;
     
 	/**
 	 * True for components declared inside another components (i.e. between tags (<haq:*>...</haq:*>).
@@ -44,7 +46,7 @@ class HaqComponent extends haquery.base.HaqComponent
 		visible = true;
 	}
     
-    public function construct(manager:HaqTemplateManager, fullTag:String, parent:HaqComponent, id:String, doc:HaqXml, params:Hash<String>, innerNode:HaqXmlNodeElement, isInnerComponent:Bool) : Void
+    public function construct(manager:HaqTemplateManager, fullTag:String, parent:HaqComponent, id:String, doc:HtmlDocument, params:Hash<String>, innerNode:HtmlNodeElement, isInnerComponent:Bool) : Void
     {
 		super.commonConstruct(manager, fullTag, parent, id);
         
@@ -133,7 +135,7 @@ class HaqComponent extends haquery.base.HaqComponent
 		
 		for (child in innerComponents)
 		{
-			child.innerNode.parent.replaceChild(child.innerNode, new HaqXmlNodeText(child.render()));
+			child.innerNode.parent.replaceChild(child.innerNode, new HtmlNodeText(child.render()));
 		}
 		
 		for (child in components)
@@ -143,7 +145,7 @@ class HaqComponent extends haquery.base.HaqComponent
 				Lib.assert(child != null);
 				Lib.assert(child.innerNode != null);
 				Lib.assert(child.innerNode.parent != null);
-				child.innerNode.parent.replaceChild(child.innerNode, new HaqXmlNodeText(child.render()));
+				child.innerNode.parent.replaceChild(child.innerNode, new HtmlNodeText(child.render()));
 			}
 		}
 		
@@ -176,9 +178,9 @@ class HaqComponent extends haquery.base.HaqComponent
 		}
         
 		
-		if (Type.getClass(query) == HaqXmlNodeElement)
+		if (Type.getClass(query) == HtmlNodeElement)
 		{
-			Lib.assert(!Lib.isPostback, "Calling of the HaqComponent.q() with HaqXmlNodeElement parameter do not possible on the postback.");
+			Lib.assert(!Lib.isPostback, "Calling of the HaqComponent.q() with HtmlNodeElement parameter do not possible on the postback.");
 			return new HaqQuery(cssGlobalizer, prefixID, "", [ query ]);
 		}
 		
@@ -195,7 +197,7 @@ class HaqComponent extends haquery.base.HaqComponent
 			return new HaqQuery(cssGlobalizer, prefixID, query, nodes);
 		}
         
-		throw "HaqComponent.q() error - 'query' parameter must be a String, HaqQuery or HaqXmlNodeElement.";
+		throw "HaqComponent.q() error - 'query' parameter must be a String, HaqQuery or HtmlNodeElement.";
     }
 
 	/**

@@ -2,10 +2,10 @@ package haquery.server;
 
 import haquery.server.HaqComponent;
 import haquery.server.HaqTemplate;
-import haquery.server.HaqXml;
+//import haxe.htmlparser.HtmlParser;
 import haquery.server.Lib;
 import haquery.server.io.File;
-import haquery.server.HaqTemplateParser;
+import haxe.htmlparser.HtmlNodeElement;
 import haquery.server.FileSystem;
 
 using haquery.StringTools;
@@ -114,14 +114,14 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		newComponent(template, null, '', attr, null, false);
 	}
 	
-	public function createComponent(parent:HaqComponent, tag:String, id:String, attr:Hash<String>, parentNode:HaqXmlNodeElement, isCustomRender:Bool) : HaqComponent
+	public function createComponent(parent:HaqComponent, tag:String, id:String, attr:Hash<String>, parentNode:HtmlNodeElement, isCustomRender:Bool) : HaqComponent
 	{
         var template = Lib.config.templateSelector.findTemplateToInstance(this, parent, tag);
 		Lib.assert(template != null, "HAQUERY ERROR could't find component '" + tag + "' for parent '" + parent.fullTag + "'.");
 		return newComponent(template, parent, id, attr, parentNode, isCustomRender);
 	}
 	
-	function newComponent(template:HaqTemplate, parent:HaqComponent, id:String, attr:Hash<String>, parentNode:HaqXmlNodeElement, isCustomRender:Bool) : HaqComponent
+	function newComponent(template:HaqTemplate, parent:HaqComponent, id:String, attr:Hash<String>, parentNode:HtmlNodeElement, isCustomRender:Bool) : HaqComponent
 	{
         Lib.profiler.begin('newComponent');
             var r : HaqComponent = Type.createInstance(Type.resolveClass(template.serverClassName), []);
@@ -189,7 +189,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		return registeredScripts;
 	}
 	
-	public function createDocComponents(parent:HaqComponent, baseNode:HaqXmlNodeElement, isCustomRender:Bool) : Array<HaqComponent>
+	public function createDocComponents(parent:HaqComponent, baseNode:HtmlNodeElement, isCustomRender:Bool) : Array<HaqComponent>
     {
 		var r = [];
 		

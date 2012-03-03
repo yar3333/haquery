@@ -1,10 +1,10 @@
 package haquery.tools;
 
-import haquery.server.HaqXml;
+import haxe.htmlparser.HtmlDocument;
 
 class HaqTemplate extends haquery.base.HaqTemplate
 {
-	public var doc(default, null) : HaqXml; 
+	public var doc(default, null) : HtmlDocument; 
 	
 	public var serverClassName(default, null) : String;
 	public var clientClassName(default, null) : String;

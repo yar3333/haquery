@@ -8,7 +8,7 @@ import haquery.tools.HaqTemplate;
 import haquery.base.HaqTemplateParser.HaqTemplateNotFoundException;
 
 import haquery.server.Lib;
-import haquery.server.HaqXml;
+import haxe.htmlparser.HtmlNodeElement;
 
 using haquery.StringTools;
 using haquery.HashTools;
@@ -125,7 +125,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		}
 	}
 	
-	function detectUnusedTemplates_getDocTags(doc:HaqXmlNodeElement) : Array<String>
+	function detectUnusedTemplates_getDocTags(doc:HtmlNodeElement) : Array<String>
 	{
 		var r = [];
 		for (node in doc.children)

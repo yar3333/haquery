@@ -2,7 +2,8 @@ package haquery.server;
 
 import haquery.server.HaqComponent;
 import haquery.server.FileSystem;
-import haquery.server.HaqXml;
+import haxe.htmlparser.HtmlNodeElement;
+import haxe.htmlparser.HtmlNodeText;
 
 using haquery.StringTools;
 
@@ -59,8 +60,8 @@ class HaqPage extends HaqComponent
         var heads = doc.find(">html>head");
         if (heads.length > 0)
         {
-            var head : HaqXmlNodeElement = heads[0];
-            var child : HaqXmlNodeElement = null;
+            var head : HtmlNodeElement = heads[0];
+            var child : HtmlNodeElement = null;
             if (head.children.length > 0)
             {
                 child = head.children[0];
@@ -69,11 +70,11 @@ class HaqPage extends HaqComponent
                     child = child.getNextSiblingElement();
                 }
             }
-            head.addChild(new HaqXmlNodeText(text + '\n        '), child);
+            head.addChild(new HtmlNodeText(text + '\n        '), child);
         }
         else
         {
-            doc.addChild(new HaqXmlNodeText(text + '\n'));
+            doc.addChild(new HtmlNodeText(text + '\n'));
         }
     }
     
@@ -83,8 +84,8 @@ class HaqPage extends HaqComponent
         var heads = doc.find(">html>head");
         if (heads.length > 0)
         {
-            var head : HaqXmlNodeElement = heads[0];
-            var child : HaqXmlNodeElement = null;
+            var head : HtmlNodeElement = heads[0];
+            var child : HtmlNodeElement = null;
             if (head.children.length > 0)
             {
                 child = head.children[0];
@@ -93,11 +94,11 @@ class HaqPage extends HaqComponent
                     child = child.getNextSiblingElement();
                 }
             }
-            head.addChild(new HaqXmlNodeText(text + '\n        '), child);
+            head.addChild(new HtmlNodeText(text + '\n        '), child);
         }
         else
         {
-            doc.addChild(new HaqXmlNodeText(text + '\n'));
+            doc.addChild(new HtmlNodeText(text + '\n'));
         }
     }
     
@@ -107,11 +108,11 @@ class HaqPage extends HaqComponent
         if (bodyes.length > 0)
         {
             var body = bodyes[0];
-            body.addChild(new HaqXmlNodeText("\n        " + text.replace('\n', '\n        ') + '\n    '));
+            body.addChild(new HtmlNodeText("\n        " + text.replace('\n', '\n        ') + '\n    '));
         }
         else
         {
-            doc.addChild(new HaqXmlNodeText("\n" + text + '\n'));
+            doc.addChild(new HtmlNodeText("\n" + text + '\n'));
         }
     }
     

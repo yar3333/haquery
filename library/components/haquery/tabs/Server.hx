@@ -3,7 +3,7 @@ package components.haquery.tabs;
 import haquery.server.HaqComponent;
 import haquery.server.HaqQuery;
 import haquery.server.Lib;
-import haquery.server.HaqXml;
+import haxe.htmlparser.HtmlParser;
 
 class Server extends HaqComponent
 {

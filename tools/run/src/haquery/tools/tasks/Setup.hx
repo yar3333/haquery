@@ -16,15 +16,13 @@ using haquery.StringTools;
 class Setup 
 {
 	var exeDir : String;
-	var haxePath:String;
 	
 	var log : Log;
     var hant : Hant;
     
-	public function new(exeDir:String, haxePath:String)
+	public function new(exeDir:String)
 	{
 		this.exeDir = exeDir.replace('\\', '/').rtrim('/') + '/';
-		this.haxePath = haxePath.replace('\\', '/').rtrim('/') + '/';
         
 		log = new Log(2);
         hant = new Hant(log, this.exeDir);
@@ -63,7 +61,9 @@ class Setup
     {
         log.start('Install HaxeMod');
         
-        if (!FileSystem.exists(haxePath + 'std.original'))
+        var haxePath = hant.getHaxePath();
+		
+		if (!FileSystem.exists(haxePath + 'std.original'))
         {
             hant.rename(haxePath + 'std', haxePath + 'std.original');
 			
@@ -100,7 +100,9 @@ class Setup
     {
         log.start('Uninstall HaxeMod');
         
-        if (FileSystem.exists(haxePath + 'std.original'))
+        var haxePath = hant.getHaxePath();
+        
+		if (FileSystem.exists(haxePath + 'std.original'))
         {
             hant.deleteDirectory(haxePath + 'std');
             hant.rename(haxePath + 'std.original', haxePath + 'std');
