@@ -6,13 +6,13 @@ class Client extends Base
 {
     var event_click : HaqEvent;
     
-    function b_click()
+    function c_click()
     {
         return enabled ? event_click.call() : false;
     }
     
     public function click()
     {
-        q('#b').click();
+        q('#c').click();
     }
 }

@@ -2,7 +2,7 @@ package components.haquery.button;
 
 #if php
 import haquery.server.HaqComponent;
-#else
+#elseif js
 import haquery.client.HaqComponent;
 #end
 
@@ -12,23 +12,13 @@ class Base extends HaqComponent
     
     function enabled_getter() : Bool
     {
-        return !q('#b').hasClass('disabled');
+        return !q('#c').hasClass('disabled');
     }
     
     function enabled_setter(enable : Bool) : Bool
     {
-        if (enable) q('#b').removeClass('disabled');
-        else        q('#b').addClass('disabled');
+        if (enable) q('#c').removeClass('disabled');
+        else        q('#c').addClass('disabled');
         return enable;
-    }
-
-    public function show()
-    {
-        q('#b').css('visibility','visible');
-    }
-    
-    public function hide()
-    {
-        q('#b').css('visibility','hidden');
     }
 }

@@ -1,6 +1,6 @@
 package components.haquery.button;
 
-import php.Lib;
+import haquery.Std;
 import haquery.server.HaqEvent;
 
 class Server extends Base
@@ -9,19 +9,25 @@ class Server extends Base
 
 	public var text : String;
 	public var cssClass : String;
-	public var style : String;
-	public var hidden : Bool;
 	
 	function preRender()
 	{
-		if (text!=null) q('#b span').html(text);
-		if (cssClass!=null) q('#b').addClass(cssClass);
-		if (style!=null) q('#b').attr('style',style);
-		if (hidden) q('#b').css('visibility','hidden');
+        q('#c').html(text);
+        q('#c').addClass(cssClass);
 	}
-
-	function b_click()
+	
+	function c_click()
 	{
         event_click.call();
+	}
+	
+	override function loadFieldValues(params:Hash<String>) 
+	{
+		super.loadFieldValues(params);
+		
+		if (params.exists("enabled"))
+		{
+			enabled = Std.bool(params.get("enabled"));
+		}
 	}
 }
