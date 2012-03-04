@@ -12,10 +12,6 @@ class HaqConfig
 	 * For example: mysql://root:123456@localhost/mytestdb 
      */
 	public var databaseConnectionString : String;
-	
-	public var autoSessionStart : Bool;
-
-    public var autoDatabaseConnect : Bool;
 
     /**
      * Level of tracing SQL:
@@ -48,7 +44,7 @@ class HaqConfig
     
 	public function new()
 	{
-		databaseConnectionString = parseDatabaseConnectionString("config.xml");
+		databaseConnectionString = readDatabaseConnectionString("config.xml");
 		autoSessionStart = true;
 		autoDatabaseConnect = true;
 		sqlTraceLevel = 1;
@@ -58,7 +54,7 @@ class HaqConfig
 		templateSelector = new HaqTemplateSelector();
 	}
 	
-    public static function parseDatabaseConnectionString(path) : String
+    public static function readDatabaseConnectionString(path) : String
 	{
 		if (FileSystem.exists(path))
 		{

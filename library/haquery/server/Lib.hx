@@ -67,12 +67,9 @@ class Lib
 					case HaqRoute.page(path, fullTag, pageID): 
 						loadBootstraps(path);
 						#if php
-						if (config.autoSessionStart)
-						{
-							php.Session.start();
-						}
+						php.Session.start();
 						#end
-						if (config.autoDatabaseConnect && config.databaseConnectionString != null && config.databaseConnectionString != "")
+						if (config.databaseConnectionString != null && config.databaseConnectionString != "")
 						{
 							HaqDb.connect(config.databaseConnectionString);
 						}
@@ -195,7 +192,7 @@ class Lib
     /**
      * Load bootstrap files from current folder to relativePath.
      */
-    private static function loadBootstraps(relativePath:String) : Void
+    static function loadBootstraps(relativePath:String) : Void
     {
         var folders = StringTools.trim(relativePath, '/').split('/');
         for (i in 1...folders.length + 1)
@@ -209,22 +206,6 @@ class Lib
             }
         }
     }
-    
-    /**
-     * Disk path to virtual path (url).
-     */
-    /*static public function path2url(path:String) : String
-    {   
-        var realPath = FileSystem.fullPath('').replace("\\", '/') + '/' + path.trim('/\\');
-        var rootPath:String = StringTools.replace(Web.getDocumentRoot(), "\\", '/');
-        if (!StringTools.startsWith(realPath, rootPath))
-        {
-            throw "Can't resolve path '" + path + "' with realPath = '" + realPath + "' and rootPath = '" + rootPath + "'.";
-        }
-        var n = rootPath.length;
-        var s = realPath.substr(n);
-        return '/' + s.ltrim('/');
-    }*/
     
     static function traceException(e:Dynamic) : Void
     {

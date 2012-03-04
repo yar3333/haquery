@@ -50,12 +50,10 @@
 		
 		<echo message="HaQueryVerison = ${HaQueryVerison}" />
 		
-		<!--
 		<zip destfile="library.zip">
 			<fileset dir="temp" />
 		</zip>
 		
 		<delete dir="temp"/>
-		-->
 	</target>
 </project>
