@@ -5,8 +5,8 @@ import haquery.server.HaqConfig;
 
 class Bootstrap implements HaqBootstrap
 {
-    public function init(config:HaqConfig) : Void
+    public function init(config:HaqConfig)
     {
-       config.addComponentsFolder('components');
+       // your code to config application
     }
 }
