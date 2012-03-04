@@ -51,7 +51,7 @@ typedef JqEvent = {
 
 	// attributes
 	function addClass( className : String ) : JQuery;
-	function removeClass( className : String ) : JQuery;
+	function removeClass( ?className : String ) : JQuery;
 	function hasClass( className : String ) : Bool;
 	function toggleClass( className : String, ?addRemove : Bool ) : JQuery;
 
@@ -61,9 +61,11 @@ typedef JqEvent = {
 	function removeAttr( attr : String ) : JQuery;
 
 	@:overload(function(prop:String,value:String):js.JQuery{})
+	@:overload(function(map:{}):js.JQuery{})
 	function css( prop : String ) : String;
 
 	@:overload(function(html:String):js.JQuery{})
+	@:overload(function(html:js.JQuery):js.JQuery{})
 	function html() : String;
 
 	@:overload(function(value:String):js.JQuery{})
@@ -114,7 +116,8 @@ typedef JqEvent = {
 	function clone( ?withDataAndEvents : Bool ) : JQuery;
 	function closest( selector : String, ?context : JQuery ) : JQuery;
 	function contents() : JQuery;
-	@:overload(function(f : Int -> js.Dom.HtmlDom -> Void):js.JQuery{})
+
+	@:overload(function( f : Int -> js.Dom.HtmlDom -> Void ):js.JQuery{})
 	function each( f : Void -> Void ) : JQuery;
 	function end() : JQuery;
 	function eq( index : Int ) : JQuery;
@@ -130,6 +133,7 @@ typedef JqEvent = {
 	function parent( ?selector : String ) : JQuery;
 	function parents( ?selector : String ) : JQuery;
 	function parentsUntil( ?selector : String ) : JQuery;
+	@:overload(function(value:js.Dom.HtmlDom):js.JQuery{})
 	function not( selector : String ) : JQuery;
 	function prev( ?selector : String ) : JQuery;
 	function prevAll( ?selector : String ) : JQuery;
@@ -198,28 +202,50 @@ typedef JqEvent = {
 	function wrapInner( html : String ) : JQuery;
 
 	// animation
+	@:overload(function(properties:{},?duration:Int,?easing:String,?call:Void->Void) : js.JQuery{})
 	function animate( properties : { }, ?duration : Int, ?callb : Void -> Void ) : JQuery;
+
 	function delay( duration : Int, ?queueName : String ) : JQuery;
+
+	@:overload(function(?duration:Int,?easing:String,?call:Void->Void) : js.JQuery{})
 	function hide( ?duration : Int, ?call : Void -> Void ) : JQuery;
-	
-	@:overload(function(duration : String, ?call : Void -> Void):js.JQuery{})
+
+	@:overload(function(?duration:Int,?easing:String,?call:Void->Void) : js.JQuery{})
 	function fadeIn( ?duration : Int, ?call : Void -> Void ) : JQuery;
-	
-	@:overload(function(duration : String, ?call : Void -> Void):js.JQuery{})
+
+	@:overload(function(?duration:Int,?easing:String,?call:Void->Void) : js.JQuery{})
 	function fadeOut( ?duration : Int, ?call : Void -> Void ) : JQuery;
-	
+
+	@:overload(function(duration:Int,opacity:Float,?easing:String,?call:Void->Void) : js.JQuery{})
 	function fadeTo( duration : Int, opacity : Float, ?call : Void -> Void ) : JQuery;
+
+	@:overload(function(?duration:Int,?easing:String,?call:Void->Void) : js.JQuery{})
 	function fadeToggle( ?duration : Int, ?call : Void -> Void ) : JQuery;
+
+	@:overload(function(?duration:Int,?easing:String,?call:Void->Void) : js.JQuery{})
 	function show( ?duration : Int, ?call : Void -> Void ) : JQuery;
+
+	@:overload(function(?duration:Int,?easing:String,?call:Void->Void) : js.JQuery{})
 	function slideDown( ?duration : Int, ?call : Void -> Void ) : JQuery;
+
+	@:overload(function(?duration:Int,?easing:String,?call:Void->Void) : js.JQuery{})
 	function slideToggle( ?duration : Int, ?call : Void -> Void ) : JQuery;
+
+	@:overload(function(?duration:Int,?easing:String,?call:Void->Void) : js.JQuery{})
 	function slideUp( ?duration : Int, ?call : Void -> Void ) : JQuery;
+
 	function stop( ?clearQueue : Bool, ?jumpToEnd : Bool ) : JQuery;
+
+	@:overload(function(?duration:Int,?easing:String,?call:Void->Void) : js.JQuery{})
 	function toggle( ?duration : Int, ?call : Void -> Void ) : JQuery;
 
 	// Events
 	function blur( ?callb : JqEvent -> Void ) : JQuery;
 	function change( ?callb : JqEvent -> Void ) : JQuery;
+
+	@:overload(function(callb:Void->Void):js.JQuery { } )
+	@:overload(function(callb:js.JQuery.JqEvent->Void):js.JQuery{})
+	@:overload(function(callb:Void->Bool):js.JQuery{})
 	function click( ?callb : JqEvent -> Void ) : JQuery;
 	function dblclick( ?callb : JqEvent -> Void ) : JQuery;
 	function error( ?callb : JqEvent -> Void ) : JQuery;
@@ -244,6 +270,11 @@ typedef JqEvent = {
 	function mouseover( ?callb : JqEvent -> Void ) : JQuery;
 	function mousemove( ?callb : JqEvent -> Void ) : JQuery;
 	function mouseup( ?callb : JqEvent -> Void ) : JQuery;
+
+	// AJAX overloads
+	@:overload(function( url:String, ?data : {}, ?callb : String -> String -> Void ) : js.JQuery {})
+	@:overload(function( url:String, ?data : {}, ?callb : String -> Void ) : js.JQuery {})
+	@:overload(function( url:String, ?data : {}, ?callb : Void -> Void ) : js.JQuery {})
 	function load( ?callb : JqEvent -> Void ) : JQuery;
 	function ready( callb : JqEvent -> Void ) : JQuery;
 	function resize( ?callb : JqEvent -> Void ) : JQuery;
@@ -275,7 +306,10 @@ typedef JqEvent = {
 
 	// other tools
 	function get() : Array<Dom.HtmlDom>;
+
+	@:overload(function(j:js.JQuery):Bool{})
 	function is( selector : String ) : Bool;
+
 	function data<T>( key : String, ?value : T ) : T;
 	function removeData( ?key : String ) : JQuery;
 	function serialize() : String;
@@ -284,15 +318,8 @@ typedef JqEvent = {
 	//	return untyped this["map"](function() return f(cur)).get();
 	//}
 
+	// haXe addition
 	function iterator() : Iterator<JQuery>;
-
-
-	// haxe-additions
-	inline function noBubble( events : String ) : JQuery { return (cast this).bind(events, false); }
-	inline function loadURL( url : String, ?callb : Void -> Void ) : JQuery { return (cast this).load(url,callb); }
-	inline function toggleClick( ?first : Void -> Void, ?second : Void -> Void ) : JQuery { return (cast this).toggle(first, second); }
-
-	inline static function of( d : Dom.HtmlDom ) : JQuery { return new js.JQuery(cast d); }
 
 	/**
 		Return the current JQuery element (in a callback), similar to $(this) in JS.
@@ -305,14 +332,14 @@ typedef JqEvent = {
 	static function contains( parent : Dom.HtmlDom, child : Dom.HtmlDom ) : Bool;
 	static function noConflict( ?removeAll : Bool ) : Void;
 	static function parseJSON( json : String ) : Dynamic;
+	static function globalEval( js : String ) : Void;
 
 
 	//static function parseXML
 	//static function get, post
-	//static function getJSON, getScript, globalEval, grep
+	//static function getJSON, getScript, grep
 	//static function is*, makeArray, map, merge, noop, now, param, proxy, sub, trim, type, unique
 	static function post(url : String, ?params : Dynamic, ?callb : String -> Void) : Void;
-	
 
 	private static inline function getCurrent() : JQuery {
 		return untyped __js__("$(this)");
@@ -320,14 +347,10 @@ typedef JqEvent = {
 
 	private static function __init__() : Void untyped {
 		#if !noEmbedJS
-		haxe.macro.Tools.includeFile("js/jquery-1.5.min.js");
+		haxe.macro.Tools.includeFile("js/jquery-latest.min.js");
 		#end
 		var q : Dynamic = window.jQuery;
 		js.JQuery = q;
-		q.fn.noBubble = q.fn.bind;
-		q.fn.loadURL = q.fn.load;
-		q.fn.toggleClick = q.fn.toggle;
-		q.of = q;
 		q.fn.iterator = function() return { pos : 0, j : __this__, hasNext : function() return __this__.pos < __this__.j.length, next : function() return $(__this__.j[__this__.pos++]) };
 	}
 }
