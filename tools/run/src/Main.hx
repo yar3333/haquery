@@ -29,7 +29,7 @@ class Main
         switch (args.length > 0 ? args[0] : '')
         {
             case 'gen-orm': 
-				tasks.genOrm(args.length > 1 ? args[1] : HaqConfig.parseDatabaseConnectionString("src/config.xml"), 'src');
+				tasks.genOrm(args.length > 1 ? args[1] : HaqConfig.readDatabaseConnectionString("src/config.xml"), 'src');
             
             case 'gen-trm': 
 				tasks.genTrm();

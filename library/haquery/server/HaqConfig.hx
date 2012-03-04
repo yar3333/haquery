@@ -28,7 +28,7 @@ class HaqConfig
     public var isTraceComponent : Bool;
 
     /**
-     * Log only for users from IP.
+     * Log only if access from specified IP.
      */
     public var filterTracesByIP : String;
 
@@ -45,8 +45,6 @@ class HaqConfig
 	public function new()
 	{
 		databaseConnectionString = readDatabaseConnectionString("config.xml");
-		autoSessionStart = true;
-		autoDatabaseConnect = true;
 		sqlTraceLevel = 1;
 		isTraceComponent = false;
 		filterTracesByIP = '';
