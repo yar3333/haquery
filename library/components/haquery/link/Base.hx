@@ -2,7 +2,7 @@ package components.haquery.link;
 
 #if php
 import haquery.server.HaqComponent;
-#else
+#elseif js
 import haquery.client.HaqComponent;
 #end
 
@@ -12,7 +12,7 @@ class Base extends HaqComponent
     
     #if php
     var link : components.haquery.button.Server;
-    #else
+    #elseif js
     var link : components.haquery.button.Client;
     #end
     
@@ -30,15 +30,5 @@ class Base extends HaqComponent
     {
         link.enabled = enable;
         return enable;
-    }
-
-    public function show()
-    {
-        link.show();
-    }
-    
-    public function hide()
-    {
-        link.hide();
     }
 }
