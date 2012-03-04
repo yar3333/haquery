@@ -1,10 +1,6 @@
 package haquery.tools;
 
-import neko.Sys;
-
 import haquery.server.db.HaqDb;
-import haquery.server.FileSystem;
-import haquery.server.Lib;
 import haquery.tools.orm.OrmGenerator;
 import haquery.tools.tasks.Build;
 import haquery.tools.tasks.Setup;
@@ -25,9 +21,9 @@ class Tasks
 		new Build(exeDir).preBuild();
 	}
 	
-	public function postBuild(skipJS:Bool, skipComponents:Bool) : Bool
+	public function postBuild() : Bool
 	{
-		return new Build(exeDir).postBuild(skipJS, skipComponents);
+		return new Build(exeDir).postBuild();
 	}
 	
 	public function install()
@@ -35,11 +31,6 @@ class Tasks
 		new Setup(exeDir).install();
 	}
 	
-	public function uninstall()
-	{
-		new Setup(exeDir).uninstall();
-	}
-    
 	public function genOrm(databaseConnectionString:String, destBasePath:String)
     {
 		var log = new Log(2);

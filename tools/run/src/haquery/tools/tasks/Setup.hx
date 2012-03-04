@@ -33,7 +33,7 @@ class Setup
 		try
 		{
 			installFlashDevelopTemplates();
-			installHaxeMod();
+			installHaxePatch();
 		}
 		catch (e:Dynamic)
 		{
@@ -52,66 +52,24 @@ class Setup
             : Sys.getEnv('USERPROFILE') + '/Local Settings/Application Data';
         var flashDevelopUserDataPath = userLocalPath.replace('\\', '/') + '/FlashDevelop';
         
-		unzip(srcPath, flashDevelopUserDataPath);
+		unzip(srcPath, flashDevelopUserDataPath, false);
         
         log.finishOk();
     }
     
-    function installHaxeMod()
+    function installHaxePatch()
     {
-        log.start('Install HaxeMod');
-        
-        var haxePath = hant.getHaxePath();
+        log.start('Install HaxePatch');
 		
-		if (!FileSystem.exists(haxePath + 'std.original'))
-        {
-            hant.rename(haxePath + 'std', haxePath + 'std.original');
-			
-			var destPath = haxePath + "std";
-			hant.createDirectory(destPath);
-            unzip(exeDir + "tools/haxemod.zip", destPath);
-        }
+		log.print("std/js/_std/EReg.hx\tVersion from haXe 2.08+ (chrome browser bugfixes)");
+		log.print("std/php/_std/Date.hx\tVersion from haXe 2.08+ (microtime() instead time())");
+        
+        unzip(exeDir + "tools/haxepatch.zip", hant.getHaxePath(), true);
         
         log.finishOk();
     }
     
-    public function uninstall()
-    {
-		try
-		{
-			uninstallFlashDevelopTemplates();
-			uninstallHaxeMod();
-		}
-		catch (e:Dynamic)
-		{
-			Lib.println(e);
-			Lib.println("HaQuery uninstallation was aborted. Ensure what you run this program under administrator account.");
-		}
-    }
-    
-    function uninstallFlashDevelopTemplates()
-    {
-        //log.start('Uninstall FlashDevelop templates');
-        
-        //log.finishOk();
-    }
-    
-    function uninstallHaxeMod()
-    {
-        log.start('Uninstall HaxeMod');
-        
-        var haxePath = hant.getHaxePath();
-        
-		if (FileSystem.exists(haxePath + 'std.original'))
-        {
-            hant.deleteDirectory(haxePath + 'std');
-            hant.rename(haxePath + 'std.original', haxePath + 'std');
-        }
-        
-        log.finishOk();
-    }
-    
-    function unzip(zipPath:String, targetPath:String)
+    function unzip(zipPath:String, targetPath:String, isMakeBackup:Bool)
 	{
 		var fin = neko.io.File.read(zipPath, true);
 		var files = neko.zip.Reader.readZip(fin);
@@ -120,6 +78,12 @@ class Setup
 		for (file in files)
 		{
 			hant.createDirectory(targetPath + '/' + Path.directory(file.fileName));
+			
+			if (isMakeBackup && FileSystem.exists(targetPath + '/' + file.fileName))
+			{
+				FileSystem.rename(targetPath + '/' + file.fileName, targetPath + '/' + file.fileName + ".haquery.bak");
+			}
+			
 			var fout = File.write(targetPath + '/' + file.fileName, true);
 			var data = Uncompress.run(file.data);
 			fout.writeBytes(data, 0, data.length);
