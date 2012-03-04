@@ -33,7 +33,7 @@ class HaqPage extends HaqComponent
 		contentType = "text/html; charset=utf-8";
 	}
     
-	override public function render():String 
+	override public function render() : String 
 	{
         Lib.profiler.begin("preRender");
 		forEachComponent('preRender');
