@@ -223,16 +223,13 @@ class Build
 	}
 	
     
-    public function postBuild(skipJS:Bool, skipComponents:Bool) : Bool
+    public function postBuild() : Bool
     {
         log.start("Do post-build step");
         
-		if (!skipJS)
+		if (!buildJs())
 		{
-			if (!buildJs())
-			{
-				return false;
-			}
+			return false;
 		}
         
         var filesToExclude = 

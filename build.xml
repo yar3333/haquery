@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="HaQuery" default="make-zip">
+    <taskdef resource="net/sf/antcontrib/antlib.xml"/>
+    
+	<target name="make-zip">
+		<mkdir dir="temp" />
+		
+		<copy todir="temp">
+			<fileset dir="library">
+				<exclude name="tools\examples\*\bin\**" />
+				<exclude name="*.pdb" />
+				<exclude name="*.exe.config" />
+				<exclude name="*.hxproj" />
+			</fileset>
+		</copy>
+	
+		<mkdir dir="temp\tools" />
+		
+		<zip destfile="temp\tools\haxepatch.zip">
+			<fileset dir="tools\haxepatch" />
+		</zip>
+		
+		<zip destfile="temp\tools\examples.zip">
+			<fileset dir="tools\examples">
+				<exclude name="*\bin\**" />
+			</fileset>
+		</zip>
+	
+		<zip destfile="temp\tools\tests.zip">
+			<fileset dir="tools\tests">
+				<exclude name="bin\**" />
+			</fileset>
+		</zip>
+		
+		<zip destfile="temp\tools\flashdevelop.zip">
+			<fileset dir="tools\flashdevelop" />
+		</zip>
+		
+		<loadfile property="HaQueryVerison" srcfile="temp\haquery\base\HaqDefines.hx">
+			<filterchain>
+				<linecontainsregexp>
+					<regexp pattern="\b(public|static|inline|\s)*\bvar\s+VERSION\s*=\s*[0-9.]+\s*;" />
+				</linecontainsregexp>
+				<deletecharacters chars="\r\n" />
+				<tokenfilter>
+					<replaceregex pattern="[^0-9.]" replace="" flags="g" />
+				</tokenfilter>
+		    </filterchain>     
+		</loadfile>      
+		
+		<echo message="HaQueryVerison = ${HaQueryVerison}" />
+		
+		<!--
+		<zip destfile="library.zip">
+			<fileset dir="temp" />
+		</zip>
+		
+		<delete dir="temp"/>
+		-->
+	</target>
+</project>

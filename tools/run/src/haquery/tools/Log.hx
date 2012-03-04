@@ -62,4 +62,14 @@ class Log
             ? message 
             : messages.get(level + 1) + " (" + message + ")";
     }
+	
+	public function print(message:String)
+	{
+		if (level < verboseLevel)
+		{
+			if (inBlock) Lib.println("");
+			Lib.println(indent(level) + message);
+			inBlock = false;
+		}
+	}
 }
