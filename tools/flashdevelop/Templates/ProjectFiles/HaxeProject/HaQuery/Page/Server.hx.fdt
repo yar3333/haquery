@@ -1,5 +1,3 @@
-#if php
-
 package $(Package);
 
 import haquery.server.Lib;
@@ -7,7 +5,9 @@ import haquery.server.HaqPage;
 
 class $(FileName) extends HaqPage
 {
-	function init()
+    //var template : TemplateServer;
+    
+    function init()
     {
         if (!Lib.isPostback)
         {
@@ -17,12 +17,10 @@ class $(FileName) extends HaqPage
         {
             
         }
-	}
-	
-	function preRender()
+    }
+    
+    function preRender()
     {
         
     }
 }
-
-#end

@@ -3,5 +3,5 @@
 </style>
 
 <div>
-	
+	$(EntryPoint)
 </div>

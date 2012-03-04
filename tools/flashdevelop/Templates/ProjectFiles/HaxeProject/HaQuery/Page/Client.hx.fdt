@@ -1,5 +1,3 @@
-#if js
-
 package $(Package);
 
 import haquery.client.Lib;
@@ -7,10 +5,10 @@ import haquery.client.HaqPage;
 
 class $(FileName) extends HaqPage
 {
-	function init()
+    //var template : TemplateClient;
+    
+    function init()
     {
         $(EntryPoint)
     }
 }
-
-#end

@@ -1,1 +1,2 @@
-@ant
+@call ant.bat
+@pause
