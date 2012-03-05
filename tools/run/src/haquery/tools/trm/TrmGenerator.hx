@@ -46,7 +46,6 @@ class TrmGenerator
 			var serverVars = getTemplateVars(fullTag, template.doc, "haquery.server.HaqQuery", true);
 			if (serverVars.length > 0 && template.hasLocalServerClass)
 			{
-				//print(fullTag + ".TemplateServer");
 				generateTrmClass(serverVars, fullTag + ".TemplateServer", template.trmServerFilePath, "haquery.server.HaqComponent");
 			}
 			else
@@ -57,7 +56,6 @@ class TrmGenerator
 			var clientVars = getTemplateVars(fullTag, template.doc, "haquery.client.HaqQuery", false);
 			if (clientVars.length > 0 && template.hasLocalClientClass)
 			{
-				//print(fullTag + ".TemplateClient");
 				generateTrmClass(clientVars, fullTag + ".TemplateClient", template.trmClientFilePath, "haquery.client.HaqComponent");
 			}
 			else

@@ -1,6 +1,7 @@
 package ;
 
 import haquery.server.HaqConfig;
+import haquery.tools.FlashDevelopProject;
 import neko.Lib;
 import neko.Sys;
 import haquery.tools.Tasks;
@@ -15,7 +16,6 @@ class Main
         
 		if (args.length > 0)
 		{
-			
 			Sys.setCwd(args.pop());
 		}
 		else
@@ -29,7 +29,8 @@ class Main
         switch (args.length > 0 ? args[0] : '')
         {
             case 'gen-orm': 
-				tasks.genOrm(args.length > 1 ? args[1] : HaqConfig.readDatabaseConnectionString("src/config.xml"), 'src');
+				var project = new FlashDevelopProject("", exeDir);
+				tasks.genOrm(args.length > 1 ? args[1] : HaqConfig.readDatabaseConnectionString(project.srcPath + "config.xml"), project.srcPath);
             
             case 'gen-trm': 
 				tasks.genTrm();

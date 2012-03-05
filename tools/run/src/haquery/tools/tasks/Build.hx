@@ -1,21 +1,17 @@
 package haquery.tools.tasks;
 
-import haquery.tools.JSMin;
-import haquery.tools.PackageTree;
-import neko.Lib;
 import haquery.server.FileSystem;
 import haquery.server.io.File;
-import haquery.server.io.FileOutput;
 import haquery.server.io.Path;
 import haquery.server.HaqDefines;
 import haquery.tools.HaqTemplateManager;
+import haquery.tools.JSMin;
+import haquery.tools.PackageTree;
+import haquery.tools.FlashDevelopProject;
+import haquery.tools.trm.TrmGenerator;
 
 import haquery.base.HaqTemplateParser.HaqTemplateNotFoundException;
 import haquery.base.HaqTemplateParser.HaqTemplateRecursiveExtendException;
-
-import haquery.tools.trm.TrmGenerator;
-
-import haquery.tools.FlashDevelopProject;
 
 using haquery.StringTools;
 using haquery.HashTools;
@@ -37,11 +33,11 @@ class Build
 		project = new FlashDevelopProject('.', this.exeDir);
 	}
 	
-    function genImports(manager:HaqTemplateManager)
+    function genImports(manager:HaqTemplateManager, srcPath:String)
     {
-        log.start("Generate imports to 'src/Imports.hx'");
+        log.start("Generate imports to '" + srcPath + "Imports.hx'");
         
-        var fo = File.write("src/Imports.hx", false);
+        var fo = File.write(srcPath + "Imports.hx", false);
         
         var serverClassNames = new Hash<Int>();
         var clientClassNames = new Hash<Int>();
@@ -61,7 +57,7 @@ class Build
 		arrClientClassNames.sort(strcmp);
 		
 		fo.writeString("#if (php || neko)\n\n");
-		fo.writeString(Lambda.map(findBootstrapClassNames(HaqDefines.folders.pages), function(s) return "import " + s + ";").join('\n'));
+		fo.writeString(Lambda.map(findBootstrapClassNames(HaqDefines.folders.pages, srcPath), function(s) return "import " + s + ";").join('\n'));
 		fo.writeString("\n");
 		fo.writeString("\n");
 		fo.writeString(Lambda.map(arrServerClassNames, function(s) return "import " + s + ";").join('\n'));
@@ -80,10 +76,10 @@ class Build
 		return a < b ? -1 : 1;
     }
 	
-	function findBootstrapClassNames(path:String) : List<String>
+	function findBootstrapClassNames(path:String, srcPath:String) : List<String>
 	{
-		var files = hant.findFiles('src/' + path, function(s) return s.endsWith("/Bootstrap.hx"));
-		return Lambda.map(files, function(s) return s.substr('src/'.length, s.length - 'src/'.length - ".hx".length).replace("/", "."));
+		var files = hant.findFiles(srcPath + path, function(s) return s.endsWith("/Bootstrap.hx"));
+		return Lambda.map(files, function(s) return s.substr(srcPath.length, s.length - srcPath.length - ".hx".length).replace("/", "."));
 	}
 	
 	function buildJs() : Bool
@@ -156,7 +152,7 @@ class Build
 		{
 			var manager = new HaqTemplateManager(project.classPaths);
 			genTrm(manager);
-			genImports(manager);
+			genImports(manager, project.srcPath);
 			saveLastMods(manager);
 			try { saveLibFolder(); } catch (e:Dynamic) { }
 			
