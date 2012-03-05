@@ -79,7 +79,7 @@ class FlashDevelopProject
 					{
 						path = ".";
 					}
-					r.push(path + "/");
+					r.push(path.rtrim("/") + "/");
 				}
 			}
 		}
@@ -96,7 +96,7 @@ class FlashDevelopProject
 					{
 						path = ".";
 					}
-					r.push(path + "/");
+					r.push(path.rtrim("/") + "/");
 				}
 			}
 		}
@@ -146,7 +146,7 @@ class FlashDevelopProject
 					{
 						path = ".";
 					}
-					r = path + "/";
+					r = path.rtrim("/") + "/";
 				}
 			}
 		}

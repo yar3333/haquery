@@ -244,6 +244,7 @@ class Build
 				,function(s) return "(?:" + s.replace(".", "[.]") + ")"
 			).join("|") + ")$";
 			
+			log.print("Exclude regexp: " + strRegExpFileToExclude);
 			hant.copyFolderContent(path, project.binPath, strRegExpFileToExclude);
         }
 		
