@@ -1,5 +1,3 @@
-package ;
-
 import Imports;
 
 class Main
