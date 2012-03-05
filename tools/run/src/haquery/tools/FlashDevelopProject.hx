@@ -12,6 +12,7 @@ class FlashDevelopProject
 	public var binPath(default, null) : String;
 	public var classPaths(default, null) : Array<String>;
 	public var isDebug(default, null) : Bool;
+	public var srcPath(default, null) : String;
 	
 	public function new(dir:String, exeDir:String) 
 	{
@@ -26,6 +27,7 @@ class FlashDevelopProject
 		binPath = getBinPath(xml);
 		classPaths = getClassPaths(xml, exeDir);
 		isDebug = getIsDebug(xml);
+		srcPath = getSrcPath(xml);
 	}
 	
 	function findProjectFile(dir:String) : String
@@ -63,8 +65,6 @@ class FlashDevelopProject
     {
         var r = new Array<String>();
         
-		//r.push(exeDir);
-		
 		var fast = new haxe.xml.Fast(xml.firstElement());
 		
 		if (fast.hasNode.haxelib)
@@ -126,5 +126,31 @@ class FlashDevelopProject
 			}
 		}
 		return true;
+	}
+	
+	function getSrcPath(xml:Xml) : String
+	{
+		var r = "src/";
+		
+		var fast = new haxe.xml.Fast(xml.firstElement());		
+		
+		if (fast.hasNode.classpaths)
+		{
+			var classpaths = fast.node.classpaths;
+			for (elem in classpaths.elements)
+			{
+				if (elem.name == 'class' && elem.has.path)
+				{
+					var path = elem.att.path.trim().replace('\\', '/').rtrim('/');
+					if (path == "")
+					{
+						path = ".";
+					}
+					r = path + "/";
+				}
+			}
+		}
+		
+		return r;
 	}
 }
