@@ -26,12 +26,6 @@
 			</fileset>
 		</zip>
 	
-		<zip destfile="temp\tools\tests.zip">
-			<fileset dir="tools\tests">
-				<exclude name="bin\**" />
-			</fileset>
-		</zip>
-		
 		<zip destfile="temp\tools\flashdevelop.zip">
 			<fileset dir="tools\flashdevelop" />
 		</zip>
