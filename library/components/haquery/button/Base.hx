@@ -12,13 +12,13 @@ class Base extends HaqComponent
     
     function enabled_getter() : Bool
     {
-        return !q('#c').hasClass('disabled');
+        return !q('#b').hasClass('disabled');
     }
     
     function enabled_setter(enable : Bool) : Bool
     {
-        if (enable) q('#c').removeClass('disabled');
-        else        q('#c').addClass('disabled');
+        if (enable) q('#b').removeClass('disabled');
+        else        q('#b').addClass('disabled');
         return enable;
     }
 }
