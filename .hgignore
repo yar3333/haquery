@@ -37,3 +37,5 @@ library/copyfolder.exe.config
 tools/copyfolder/restorefiletime.suo
 tools/copyfolder/copyfolder.suo
 library.zip
+bin
+tests/Imports.hx

@@ -10,13 +10,12 @@ class Main
 		
 		var r = new haxe.unit.TestRunner();
 		
-		r.add(new HaqXmlTest());
-		r.add(new tests.HaqQueryTest());
-		r.add(new tests.HaqTemplatesTest());
+		r.add(new models.HaqQueryTest());
+		r.add(new models.HaqTemplatesTest());
 		
-		r.println("<pre>");
+		php.Lib.println("<pre>");
 		r.run();
-		r.println("</pre>");
+		php.Lib.println("</pre>");
 		
 		#end
 	}
