@@ -1,12 +1,11 @@
 package pages.index;
 
-import components.calculator.Client;
-import haquery.client.HaqPage;
 import haquery.client.Lib;
+import haquery.client.HaqPage;
 
 class Client extends HaqPage
 {
-    var template : Template;
+    var template : TemplateClient;
 	
 	public function init()
     {

@@ -1,4 +1,4 @@
-package components.button;
+package components.calculator.button;
 
 class Client extends components.haquery.button.Client
 {
