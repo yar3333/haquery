@@ -3,7 +3,7 @@
 		<component package="pages.layout" />
 	</extend>
 	<imports>
-		<components package="components" />
+		<components package="components.calculator" />
 		<components package="components.haquery" />
 	</imports>
 </config>

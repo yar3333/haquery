@@ -1,4 +1,4 @@
-package components.calculator;
+package components.calculator.calc;
 
 import js.JQuery;
 import haquery.client.Lib;
@@ -16,14 +16,19 @@ typedef OperAndNS = {
 	var ns : StackItem;
 }
 
+extern class JQueryNumberFormat
+{
+	function number_format(n:Float, params: { numberOfDecimals:Int, thousandSeparator:String }) : String;
+}
+
 class Client extends HaqComponent
 {
     var numberFieldSize : Int;
     var stack : Array<StackItem>;
     var lastOperAndNS : OperAndNS;
     var memory : Float;
-    var fixed : Float; // зафиксированное число (отображаемое на дисплее пока пользователь не начал нибирать новое)
-    var text : String;   // набираемое число
+    var fixed : Float; // fixed number (displayed until user start typo new number)
+    var text : String;   // typo number
     var isError : Bool;
     
 	function init()
@@ -36,44 +41,41 @@ class Client extends HaqComponent
 		text = "";
 		isError = false;
 		
-		q("#calculator .~buttons").bind(
-            "selectstart mousedown", untyped function(e) { return false; }
-        ); // ie + ff
+		q("#calculator .~buttons").bind("selectstart mousedown", untyped function(e) return false); // ie + ff
 
         if (JQuery.browser.opera) bindKeysForOpera();
         else                      bindKeysForIEAndFF();
 
-        this.update();
+        update();
     }
 
     function bindKeysForIEAndFF()
     {
-        var self = this;
-        (new JQuery(Lib.document)).keydown(function (e)
+        q(Lib.document).keydown(function (e)
         {
             switch (e.keyCode)
             {
-                case 48, 96:  self.bt_0_click();
-                case 49, 97:  self.bt_1_click();
-                case 50, 98:  self.bt_2_click();
-                case 51, 99:  self.bt_3_click();
-                case 52, 100: self.bt_4_click();
-                case 53, 101: self.bt_5_click();
-                case 54, 102: self.bt_6_click();
-                case 55, 103: self.bt_7_click();
-                case 56, 104: self.bt_8_click();
-                case 57, 105: self.bt_9_click();
+                case 48, 96:  bt_0_click();
+                case 49, 97:  bt_1_click();
+                case 50, 98:  bt_2_click();
+                case 51, 99:  bt_3_click();
+                case 52, 100: bt_4_click();
+                case 53, 101: bt_5_click();
+                case 54, 102: bt_6_click();
+                case 55, 103: bt_7_click();
+                case 56, 104: bt_8_click();
+                case 57, 105: bt_9_click();
 
-                case 107: self.bt_ADD_click();
-                case 109: self.bt_SUB_click();
-                case 106: self.bt_MUL_click();
-                case 111, 191: self.bt_DIV_click();
+                case 107: bt_ADD_click();
+                case 109: bt_SUB_click();
+                case 106: bt_MUL_click();
+                case 111, 191: bt_DIV_click();
 
-                case 46, 110, 188, 190: self.bt_POINT_click();
+                case 46, 110, 188, 190: bt_POINT_click();
 
-                case 8: self.bt_BS_click();
+                case 8: bt_BS_click();
 
-                case 13: self.bt_EQU_click();
+                case 13: bt_EQU_click();
 
                 default: return true;
             }
@@ -83,33 +85,31 @@ class Client extends HaqComponent
 
     function bindKeysForOpera()
     {
-        var self = this;
-
-		(new JQuery(Lib.document)).keypress(function (e)
+		q(Lib.document).keypress(function (e)
         {
             switch (e.keyCode)
             {
-                case 48: self.bt_0_click();
-                case 49: self.bt_1_click();
-                case 50: self.bt_2_click();
-                case 51: self.bt_3_click();
-                case 52: self.bt_4_click();
-                case 53: self.bt_5_click();
-                case 54: self.bt_6_click();
-                case 55: self.bt_7_click();
-                case 56: self.bt_8_click();
-                case 57: self.bt_9_click();
+                case 48: bt_0_click();
+                case 49: bt_1_click();
+                case 50: bt_2_click();
+                case 51: bt_3_click();
+                case 52: bt_4_click();
+                case 53: bt_5_click();
+                case 54: bt_6_click();
+                case 55: bt_7_click();
+                case 56: bt_8_click();
+                case 57: bt_9_click();
 
-                case 43: case 61: self.bt_ADD_click();
-                case 45: self.bt_SUB_click();
-                case 42: self.bt_MUL_click();
-                case 47: self.bt_DIV_click();
+                case 43: case 61: bt_ADD_click();
+                case 45: bt_SUB_click();
+                case 42: bt_MUL_click();
+                case 47: bt_DIV_click();
 
-                case 44: case 46: self.bt_POINT_click();
+                case 44: case 46: bt_POINT_click();
 
-                case 8: self.bt_BS_click();
+                case 8: bt_BS_click();
 
-                case 13: self.bt_EQU_click();
+                case 13: bt_EQU_click();
 
                 default:
                     return true;
@@ -141,7 +141,7 @@ class Client extends HaqComponent
 
     function getOperPriority(oper)
     {
-        if (oper=="*" || oper=="/") return 2;
+        if (oper == "*" || oper == "/") return 2;
         return 1;
     }
 
@@ -171,7 +171,7 @@ class Client extends HaqComponent
 			i += 2;
         }
 
-        var old = this.historyTextArea.html();
+        var old = historyTextArea.html();
         if (old != "")
 		{
 			old += JQuery.browser.msie ? "<br>" : "\r\n";
@@ -182,22 +182,23 @@ class Client extends HaqComponent
 
     //==========================================================================
 
-    function getScienticNumberFormat(n)
+    function getScienticNumberFormat(n:Float)
     {
         var por = 0;
         var an = Math.abs(n);
-        while (an>10) {an = an / 10;por++;}
-        while (an<1 && an!=0) {an = an * 10;por--;}
-        return {b: (n>=0 ? an : -an), p: por};
+        while (an > 10) { an = an / 10; por++; }
+        while (an < 1 && an != 0) { an = an * 10; por--; }
+        return { b : (n>=0 ? an : -an), p : por };
     }
 
-    function number2text(n)
+    function number2text(n:Float)
     {
         var r : String;
         var sciNum = this.getScienticNumberFormat(n);
-        if (sciNum.p>=-9 && sciNum.p<=99)
+        if (sciNum.p >= -9 && sciNum.p <= 99)
         {
-			r = untyped __js__("jQuery().number_format(n, {numberOfDecimals: this.numberFieldSize - String(Math.floor(Math.abs(sciNum.b))).length, thousandSeparator:''})");
+			//r = untyped __js__("jQuery().number_format(n, {numberOfDecimals: this.numberFieldSize - String(Math.floor(Math.abs(sciNum.b))).length, thousandSeparator:''})");
+			r = cast(new JQuery(), JQueryNumberFormat).number_format(n, { numberOfDecimals:numberFieldSize - Std.string(Math.floor(Math.abs(sciNum.b))).length, thousandSeparator:'' } );
 
             if (r.indexOf(',')!=-1)
             {
@@ -207,7 +208,8 @@ class Client extends HaqComponent
         }
         else
         {
-            r = untyped __js__("jQuery().number_format(sciNum.b, {numberOfDecimals: this.numberFieldSize - 2 - String(Math.floor(Math.abs(sciNum.b))).length - String(sciNum.p).length}) + 'e' + sciNum.p");
+            //r = untyped __js__("jQuery().number_format(sciNum.b, {numberOfDecimals: this.numberFieldSize - 2 - String(Math.floor(Math.abs(sciNum.b))).length - String(sciNum.p).length}) + 'e' + sciNum.p");
+            r = cast(new JQuery(), JQueryNumberFormat).number_format(sciNum.b, { numberOfDecimals:numberFieldSize - 2 - Std.string(Math.floor(Math.abs(sciNum.b))).length - Std.string(sciNum.p).length, thousandSeparator:"." }) + 'e' + sciNum.p;
         }
         return r;
 

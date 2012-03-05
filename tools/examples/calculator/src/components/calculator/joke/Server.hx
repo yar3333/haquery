@@ -1,6 +1,5 @@
-package components.joke;
+package components.calculator.joke;
 
-import php.Lib;
 import haquery.server.HaqComponent;
 
 class Server extends HaqComponent
