@@ -1,13 +1,17 @@
-<style>
-    .contextpanel
-    {
-        position: absolute;
-        z-index: 1000;
-        cursor: pointer;
-    }
-</style>
+<haq:placeholder id="styles">
+	<style>
+		.~container
+		{
+			position: absolute;
+			z-index: 1000;
+			cursor: pointer;
+		}
+	</style>
+</haq:placeholder>
 
-<input type="hidden" id="dataID" />
-<div id="p" class="contextpanel" style="display:none">
-<innercontent />
-</div>
+<haq:placeholder id="html">
+	<input type="hidden" id="dataID" />
+	<div id="p" class="~container" style="display:none">
+		<innercontent />
+	</div>
+</haq:placeholder>

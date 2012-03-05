@@ -1,33 +1,36 @@
-<style>
-    .uploader .uploader-file
-    {
-        position: absolute;
-        z-index: 999;
-        
-        margin: 0; 
-        padding:0; 
-        
-        opacity: 0;
-        filter:alpha(opacity: 0);
-        -moz-opacity: 0;
-        
-        width: 99px;
-        height: 20px;
-        
-        border: 0;
-    }
-    
-    .uploader, .uploader *
-    {
-        cursor: pointer;
-    }
-</style>
+<haq:placeholder id="styles">
+	<style>
+		.~form .~file
+		{
+			position: absolute;
+			
+			margin: 0; 
+			padding:0; 
+			
+			opacity: 0;
+			filter:alpha(opacity: 0);
+			-moz-opacity: 0;
+			
+			width: 99px;
+			height: 20px;
+			
+			border: 0;
+		}
+		
+		.~form, .~form *
+		{
+			cursor: pointer;
+		}
+	</style>
+</haq:placeholder>
 
-<input type="hidden" id="filter" />
-<iframe id="frame" src="about:blank" style="display:none"></iframe>
-<form id="form" method="post" enctype="multipart/form-data" class="uploader" style="display:block">
-    <input type="file" id="file" size="1" class="uploader-file" />
-    <div id="container" class="uploader-container">
-<innercontent />
-    </div>
-</form>
+<haq:placeholder id="html">
+	<input type="hidden" id="filter" />
+	<iframe id="frame" src="about:blank" style="display:none"></iframe>
+	<form id="form" method="post" enctype="multipart/form-data" class="~form" style="display:block">
+		<input type="file" id="file" size="1" class="~file" />
+		<div id="container" class="~container">
+			<innercontent />
+		</div>
+	</form>
+</haq:placeholder>

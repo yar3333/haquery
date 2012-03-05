@@ -1,20 +1,24 @@
-<style>
-    .tabs>*:first-child>*
-    {
-        cursor: pointer;
-    }
+<haq:placeholder id="styles">
+    <style>
+        .~container>*:first-child>*
+        {
+            cursor: pointer;
+        }
 
-    .tabs>*:last-child>*
-    {
-        display: none;
-    }
-    
-    .tabs>*:last-child>*.active
-    {
-        display: block;
-    }
-</style>
+        .~container>*:last-child>*
+        {
+            display: none;
+        }
+        
+        .~container>*:last-child>*.active
+        {
+            display: block;
+        }
+    </style>
+</haq:placeholder>
 
-<div id="tabs" class="tabs">
-<innercontent />
-</div>
+<haq:placeholder id="html">
+    <div id="tabs" class="~container">
+        <innercontent />
+    </div>
+</haq:placeholder>

@@ -38,7 +38,7 @@ class Client extends HaqComponent
         q('#dataID').val(dataID);
         show();
         elem.addClass('contextpanel-active');
-        if (timer!=null)
+        if (timer != null)
         {
             timer.stop();
             timer = null;
