@@ -28,7 +28,8 @@
   </build>
   <!-- haxelib libraries -->
   <haxelib>
-    <library name="" />
+    <library name="HtmlParser" />
+    <library name="FirePHP" />
   </haxelib>
   <!-- Class files to compile (other referenced classes will automatically be included) -->
   <compileTargets>
@@ -37,6 +38,7 @@
   <!-- Paths to exclude from the Project Explorer tree -->
   <hiddenPaths>
     <hidden path="bin" />
+    <hidden path="tools" />
   </hiddenPaths>
   <!-- Executed before build -->
   <preBuildCommand>haxelib run HaQuery pre-build</preBuildCommand>
