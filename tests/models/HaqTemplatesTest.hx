@@ -1,4 +1,4 @@
-package tests;
+package models;
 
 import haquery.server.HaqSystem;
 import haxe.unit.TestCase;

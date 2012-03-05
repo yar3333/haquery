@@ -1,5 +1,4 @@
-#if php
-package tests;
+package models;
 
 import php.Lib;
 import php.NativeArray;
@@ -55,5 +54,3 @@ class HaqQueryTest extends haxe.unit.TestCase
 		assertEquals('def', query.val());
     }
 }
-
-#end
