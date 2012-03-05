@@ -232,7 +232,8 @@ class Build
 		[
 			 "(?:/|^).(?:svn|hg)"
 			,".(?:hx|hxproj)"
-			,"^" + exeDir + "(?:tools|run.n|readme.txt|haxelib.xml|(?:restorefiletime|runwaiter|copyfolder).(?:exe|exe.config|pdb))"
+			,"haxelib.xml"
+			,"^" + exeDir + "(?:tools|run.n|readme.txt|(?:restorefiletime|runwaiter|copyfolder).(?:exe|exe.config|pdb))"
 		];
 		
 		var manager = new HaqTemplateManager(project.classPaths);
