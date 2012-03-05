@@ -40,8 +40,8 @@ class HaqTemplatesTest extends TestCase
 		var manager = new HaqTemplateManager();
 		assertTrue(manager != null);
 		
-		var page = manager.createPage("pages.test1", null);
-		assertTrue(page != null);
+		manager.createPage("pages.test1", null);
+		assertTrue(HaqSystem.page != null);
 		
 		var template = manager.get("components.set1.randnum");
 		assertTrue(template != null);
@@ -82,8 +82,8 @@ class HaqTemplatesTest extends TestCase
         assertEquals("0b2ac", template.getDocCopy().innerHTML);
         //assertEquals(0, template.doc.children.length);
         
-		var page = manager.createPage("pages.test2", null);
-		assertTrue(page != null);
+		manager.createPage("pages.test2", null);
+		assertTrue(HaqSystem.page != null);
 		
 		//trace("RESULT = " + page.render());
 		
