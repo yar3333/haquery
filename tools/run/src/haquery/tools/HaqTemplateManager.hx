@@ -47,25 +47,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 			{
 				if (file != HaqDefines.folders.support && FileSystem.isDirectory(path + '/' + file))
 				{
-					var fullTag = pack + "." + file;
-					
-					if (!templates.exists(fullTag))
-					{
-						try
-						{
-							var template = new HaqTemplate(classPaths, fullTag);
-							templates.set(fullTag, template);
-							
-							for (importPack in template.imports)
-							{
-								fillTemplates(importPack);
-							}
-						}
-						catch (e:HaqTemplateNotFoundException)
-						{
-							fillTemplates(fullTag);
-						}
-					}
+					addTemplate(pack + "." + file);
 				}
 			}
 		}
@@ -77,6 +59,29 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 				isFirstPrint = false;
 			}
 			Lib.print("WARNING: imported components package '" + pack + "' not found.\n  ");
+		}
+	}
+	
+	function addTemplate(fullTag:String)
+	{
+		if (fullTag != null && fullTag != "" && !templates.exists(fullTag))
+		{
+			try
+			{
+				var template = new HaqTemplate(classPaths, fullTag);
+				templates.set(fullTag, template);
+				
+				addTemplate(template.extend);
+				
+				for (importPack in template.imports)
+				{
+					fillTemplates(importPack);
+				}
+			}
+			catch (e:HaqTemplateNotFoundException)
+			{
+				fillTemplates(fullTag);
+			}
 		}
 	}
 	
