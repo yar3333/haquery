@@ -150,7 +150,7 @@ class Build
         
 		try
 		{
-			var manager = new HaqTemplateManager(project.classPaths);
+			var manager = new HaqTemplateManager(project.classPaths, log);
 			genTrm(manager);
 			genImports(manager, project.srcPath);
 			saveLastMods(manager);
@@ -187,7 +187,7 @@ class Build
     {
         log.start("Generate template related mapping classes");
         
-        TrmGenerator.run(manager!=null ? manager : new HaqTemplateManager(project.classPaths), hant);
+        TrmGenerator.run(manager!=null ? manager : new HaqTemplateManager(project.classPaths, log), hant);
         
         log.finishOk();
     }
@@ -236,7 +236,7 @@ class Build
 			,"^" + exeDir + "(?:tools|run.n|readme.txt|(?:restorefiletime|runwaiter|copyfolder).(?:exe|exe.config|pdb))"
 		];
 		
-		var manager = new HaqTemplateManager(project.classPaths);
+		var manager = new HaqTemplateManager(project.classPaths, log);
 		
 		for (path in project.classPaths)
         {
