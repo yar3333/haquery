@@ -7,7 +7,6 @@ import haquery.server.HaqDefines;
 import haquery.tools.HaqTemplate;
 import haquery.base.HaqTemplateParser.HaqTemplateNotFoundException;
 
-import haquery.server.Lib;
 import haxe.htmlparser.HtmlNodeElement;
 
 using haquery.StringTools;
@@ -17,17 +16,16 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 {
 	var classPaths : Array<String>;
 	
+	var log : Log;
+	
 	public var unusedTemplates(default,null) : Array<String>;
 	
-	var isFirstPrint : Bool;
-	
-	public function new(classPaths:Array<String>)
+	public function new(classPaths:Array<String>, log:Log)
 	{
 		super();
 		
 		this.classPaths = classPaths;
-		
-		isFirstPrint = true;
+		this.log = log;
 		
 		fillTemplates(HaqDefines.folders.pages);
 		unusedTemplates = detectUnusedTemplates();
@@ -53,12 +51,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		}
 		else
 		{
-			if (isFirstPrint)
-			{
-				Lib.print("\n  ");
-				isFirstPrint = false;
-			}
-			Lib.print("WARNING: imported components package '" + pack + "' not found.\n  ");
+			log.print("WARNING: imported components package '" + pack + "' not found.\n  ");
 		}
 	}
 	
@@ -149,10 +142,14 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		var i = classPaths.length - 1;
 		while (i >= 0)
 		{
-			var fullPath = classPaths[i] + path;
-			if (FileSystem.exists(fullPath))
+			// TODO: this is bad hack
+			if (classPaths[i] != "trm/")
 			{
-				return fullPath;
+				var fullPath = classPaths[i] + path;
+				if (FileSystem.exists(fullPath))
+				{
+					return fullPath;
+				}
 			}
 			i--;
 		}
