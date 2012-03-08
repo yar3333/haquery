@@ -151,12 +151,12 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 	
 	public function getTrmServerFilePath() : String
 	{
-		return getFullPath(fullTag.replace('.', '/')) + "/TemplateServer.hx";
+		return "trm/" + fullTag.replace('.', '/') + "/TemplateServer.hx";
 	}
 	
 	public function getTrmClientFilePath() : String
 	{
-		return getFullPath(fullTag.replace('.', '/')) + "/TemplateClient.hx";
+		return "trm/" + fullTag.replace('.', '/') + "/TemplateClient.hx";
 	}
 	
 	public function getLastMod() : Date
