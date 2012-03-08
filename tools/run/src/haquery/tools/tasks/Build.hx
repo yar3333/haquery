@@ -187,7 +187,7 @@ class Build
     {
         log.start("Generate template related mapping classes");
         
-        TrmGenerator.run(manager!=null ? manager : new HaqTemplateManager(project.classPaths));
+        TrmGenerator.run(manager!=null ? manager : new HaqTemplateManager(project.classPaths), hant);
         
         log.finishOk();
     }

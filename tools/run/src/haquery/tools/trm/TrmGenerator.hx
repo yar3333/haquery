@@ -1,35 +1,28 @@
 package haquery.tools.trm;
 
-import haquery.server.FileSystem;
-import haquery.server.HaqDefines;
-import haxe.htmlparser.HtmlNodeElement;
 import haquery.server.io.File;
-import haquery.server.Lib;
-
-import haquery.tools.HaqTemplate;
-import haquery.tools.HaqTemplateParser;
+import haquery.server.io.Path;
+import haquery.tools.Hant;
 import haquery.tools.HaqTemplateManager;
 import haquery.tools.HaxeClass;
+import haxe.htmlparser.HtmlNodeElement;
 
 using haquery.StringTools;
-using haquery.HashTools;
 
 class TrmGenerator
 {
 	var manager : HaqTemplateManager;
+	var hant : Hant;
 	
-	var isFirstPrint : Bool; 
-	
-	public static function run(manager:HaqTemplateManager)
+	public static function run(manager:HaqTemplateManager, hant:Hant)
 	{
-		new TrmGenerator(manager);
+		new TrmGenerator(manager, hant);
 	}
 	
-	function new(manager:HaqTemplateManager)
+	function new(manager:HaqTemplateManager, hant:Hant)
     {
 		this.manager = manager;
-		
-		isFirstPrint = true;
+		this.hant = hant;
 		
 		for (fullTag in manager.getLastMods().keys())
 		{
@@ -50,7 +43,7 @@ class TrmGenerator
 			}
 			else
 			{
-				deleteFile(template.trmServerFilePath);
+				hant.deleteFile(template.trmServerFilePath);
 			}
 				
 			var clientVars = getTemplateVars(fullTag, template.doc, "haquery.client.HaqQuery", false);
@@ -60,7 +53,7 @@ class TrmGenerator
 			}
 			else
 			{
-				deleteFile(template.trmClientFilePath);
+				hant.deleteFile(template.trmClientFilePath);
 			}
 		}
 	}
@@ -81,6 +74,8 @@ class TrmGenerator
 			,"Void"
 			,"this.component = component;"
 		);
+		
+		hant.createDirectory(Path.directory(classFilePath));
 		
 		File.putContent(
 			 classFilePath
@@ -131,22 +126,4 @@ class TrmGenerator
 			,haxeDefVal : defVal
 		};
 	}	
-	
-	function print(s:String)
-	{
-		if (isFirstPrint)
-		{
-			Lib.print("\n    ");
-			isFirstPrint = false;
-		}
-		Lib.print(s + "\n    ");
-	}
-	
-	function deleteFile(path:String)
-	{
-		if (FileSystem.exists(path))
-		{
-			FileSystem.deleteFile(path);
-		}
-	}
 }
