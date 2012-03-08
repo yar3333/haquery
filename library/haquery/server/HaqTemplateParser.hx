@@ -84,6 +84,11 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser<HaqTemplateConfig
 			}
 		}
 		
+		if (r.extend == fullTag)
+		{
+			r.extend = "";
+		}
+		
 		return r;
 	}
 	
