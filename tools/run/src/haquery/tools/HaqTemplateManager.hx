@@ -1,12 +1,9 @@
 package haquery.tools;
 
-import haquery.server.FileSystem;
-import haquery.server.io.File;
-import haquery.server.HaqDefines;
-
-import haquery.tools.HaqTemplate;
 import haquery.base.HaqTemplateParser.HaqTemplateNotFoundException;
-
+import haquery.server.FileSystem;
+import haquery.server.HaqDefines;
+import haquery.tools.HaqTemplate;
 import haxe.htmlparser.HtmlNodeElement;
 
 using haquery.StringTools;
@@ -38,20 +35,31 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 	
 	function fillTemplates(pack:String)
 	{
-		var path = getFullPath(pack.replace(".", "/"));
-		if (path != null)
+		var localPath = pack.replace(".", "/");
+		
+		var pathWasFound = false;
+		
+		var i = classPaths.length - 1;
+		while (i >= 0)
 		{
-			for (file in FileSystem.readDirectory(path))
+			var path = classPaths[i] + localPath;
+			if (FileSystem.exists(path) && FileSystem.isDirectory(path))
 			{
-				if (file != HaqDefines.folders.support && FileSystem.isDirectory(path + '/' + file))
+				pathWasFound = true;
+				for (file in FileSystem.readDirectory(path))
 				{
-					addTemplate(pack + "." + file);
+					if (file != HaqDefines.folders.support && FileSystem.isDirectory(path + '/' + file))
+					{
+						addTemplate(pack + "." + file);
+					}
 				}
 			}
+			i--;
 		}
-		else
+		
+		if (!pathWasFound)
 		{
-			log.print("WARNING: imported components package '" + pack + "' not found.\n  ");
+			log.print("WARNING: imported components package '" + pack + "' not found.");
 		}
 	}
 	
@@ -142,14 +150,10 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		var i = classPaths.length - 1;
 		while (i >= 0)
 		{
-			// TODO: this is bad hack
-			if (classPaths[i] != "trm/")
+			var fullPath = classPaths[i] + path;
+			if (FileSystem.exists(fullPath))
 			{
-				var fullPath = classPaths[i] + path;
-				if (FileSystem.exists(fullPath))
-				{
-					return fullPath;
-				}
+				return fullPath;
 			}
 			i--;
 		}
