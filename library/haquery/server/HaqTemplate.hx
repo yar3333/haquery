@@ -20,6 +20,11 @@ class HaqTemplate extends haquery.base.HaqTemplate
 	
 	public function new(fullTag:String) 
 	{
+		if (Lib.config.isTraceComponent)
+		{
+			trace("Parse '" + fullTag + "' component");
+		}
+		
 		parser = new HaqTemplateParser(fullTag, []);
 		
 		super(fullTag, parser.getImports());

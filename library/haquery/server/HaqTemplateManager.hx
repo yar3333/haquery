@@ -57,6 +57,10 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		else
 		{
 			Lib.profiler.begin("newTemplate");
+			if (Lib.config.isTraceComponent)
+			{
+				trace("Unserialize template '" + fullTag + "'");
+			}
 			var template = HaqTemplate.unserialize(File.getContent(templateCachePath));
 			Lib.profiler.end();
 			return template;
