@@ -61,6 +61,8 @@ typedef JqEvent = {
 	function removeAttr( attr : String ) : JQuery;
 
 	@:overload(function(prop:String,value:String):js.JQuery{})
+	@:overload(function(prop:String,value:Int):js.JQuery{})
+	@:overload(function(prop:String,value:Float):js.JQuery{})
 	@:overload(function(map:{}):js.JQuery{})
 	function css( prop : String ) : String;
 
