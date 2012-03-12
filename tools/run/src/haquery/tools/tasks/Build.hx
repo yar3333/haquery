@@ -33,7 +33,69 @@ class Build
 		project = new FlashDevelopProject('.', this.exeDir);
 	}
 	
-    function genImports(manager:HaqTemplateManager, srcPath:String)
+	public function preBuild()
+    {
+        log.start("Do pre-build step");
+        
+		try
+		{
+			var manager = new HaqTemplateManager(project.classPaths, log);
+			genTrm(manager);
+			genImports(manager, project.srcPath);
+			saveLastMods(manager);
+			try { saveLibFolder(); } catch (e:Dynamic) { }
+			
+			log.finishOk();
+		}
+		catch (e:HaqTemplateNotFoundException)
+		{
+			log.finishFail("ERROR: component not found [ " + e.toString() + " ].");
+		}
+		catch (e:HaqTemplateRecursiveExtendException)
+		{
+			log.finishFail("ERROR: recursive extend detected [ " + e.toString() + " ].");
+		}
+    }
+	
+    public function postBuild() : Bool
+    {
+        log.start("Do post-build step");
+        
+		if (!buildJs())
+		{
+			return false;
+		}
+        
+        var filesToExclude = 
+		[
+			 "(?:/|^).(?:svn|hg)"
+			,".(?:hx|hxproj)"
+			,"haxelib.xml"
+			,"^" + exeDir + "(?:tools|run.n|readme.txt|(?:restorefiletime|runwaiter|copyfolder).(?:exe|exe.config|pdb))"
+		];
+		
+		var manager = new HaqTemplateManager(project.classPaths, log);
+		
+		for (path in project.classPaths)
+        {
+			var strRegExpFileToExclude = "(?:" + Lambda.map(
+				 filesToExclude.concat([ path + (new PackageTree(manager.unusedTemplates).toString()) ])
+				,function(s) return "(?:" + s.replace(".", "[.]") + ")"
+			).join("|") + ")$";
+			
+			hant.copyFolderContent(path, project.binPath, strRegExpFileToExclude);
+        }
+		
+		loadLibFolder();
+		
+		removeTempFiles();
+        
+        log.finishOk();
+		
+		return true;
+    }
+    
+	function genImports(manager:HaqTemplateManager, srcPath:String)
     {
         log.start("Generate imports to '" + srcPath + "Imports.hx'");
         
@@ -144,30 +206,6 @@ class Build
 		return r == 0;
     }
 	
-	public function preBuild()
-    {
-        log.start("Do pre-build step");
-        
-		try
-		{
-			var manager = new HaqTemplateManager(project.classPaths, log);
-			genTrm(manager);
-			genImports(manager, project.srcPath);
-			saveLastMods(manager);
-			try { saveLibFolder(); } catch (e:Dynamic) { }
-			
-			log.finishOk();
-		}
-		catch (e:HaqTemplateNotFoundException)
-		{
-			log.finishFail("ERROR: component not found [ " + e.toString() + " ].");
-		}
-		catch (e:HaqTemplateRecursiveExtendException)
-		{
-			log.finishFail("ERROR: recursive extend detected [ " + e.toString() + " ].");
-		}
-    }
-	
 	function saveLastMods(manager:HaqTemplateManager)
 	{
 		var serverPath = project.binPath + '/haquery/server';
@@ -194,70 +232,25 @@ class Build
 	
 	function saveLibFolder()
 	{
-		log.start("Save file times of the " + project.binPath + "/lib folder");
-
 		if (FileSystem.exists(project.binPath + "/lib"))
 		{
-			hant.deleteDirectory(project.binPath + "/lib.old");
+			log.start("Save file times of the " + project.binPath + "/lib folder");
+			loadLibFolder();
 			hant.rename(project.binPath + "/lib", project.binPath + "/lib.old");
+			log.finishOk();
 		}
-
-		log.finishOk();
 	}
 
 	function loadLibFolder()
 	{
-		log.start("Load file times to " + project.binPath + "/lib");
-
-		if (FileSystem.exists(project.binPath + "/lib"))
+		if (FileSystem.exists(project.binPath + "/lib.old"))
 		{
+			log.start("Load file times to " + project.binPath + "/lib");
 			hant.restoreFileTime(project.binPath + "/lib.old", project.binPath + "/lib");
 			hant.deleteDirectory(project.binPath + "/lib.old");
+			log.finishOk();
 		}
-
-		log.finishOk();
 	}
-	
-    
-    public function postBuild() : Bool
-    {
-        log.start("Do post-build step");
-        
-		if (!buildJs())
-		{
-			return false;
-		}
-        
-        var filesToExclude = 
-		[
-			 "(?:/|^).(?:svn|hg)"
-			,".(?:hx|hxproj)"
-			,"haxelib.xml"
-			,"^" + exeDir + "(?:tools|run.n|readme.txt|(?:restorefiletime|runwaiter|copyfolder).(?:exe|exe.config|pdb))"
-		];
-		
-		var manager = new HaqTemplateManager(project.classPaths, log);
-		
-		for (path in project.classPaths)
-        {
-			var strRegExpFileToExclude = "(?:" + Lambda.map(
-				 filesToExclude.concat([ path + (new PackageTree(manager.unusedTemplates).toString()) ])
-				,function(s) return "(?:" + s.replace(".", "[.]") + ")"
-			).join("|") + ")$";
-			
-			//log.print("Exclude regexp: " + strRegExpFileToExclude);
-			
-			hant.copyFolderContent(path, project.binPath, strRegExpFileToExclude);
-        }
-		
-		loadLibFolder();
-		
-		removeTempFiles();
-        
-        log.finishOk();
-		
-		return true;
-    }
 	
 	function removeTempFiles()
 	{
