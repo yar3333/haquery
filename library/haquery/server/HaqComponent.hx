@@ -209,7 +209,7 @@ class HaqComponent extends haquery.base.HaqComponent
         
         HaqSystem.addAjaxResponse(
 			  "haquery.client.HaqSystem.page." + (fullID != "" ? "findComponent('" + fullID + "')." : "") + method
-			+ "(" + Lambda.map(params, function(p) return "haxe.Unserializer.run('" + Serializer.run(p) + "')").join(",") + ');'
+			+ "(" + Lambda.map(params != null ? params : [], function(p) return "haxe.Unserializer.run('" + Serializer.run(p) + "')").join(",") + ');'
 		);
 	}
     
