@@ -5,6 +5,7 @@ import haquery.client.Lib;
 import haquery.client.HaqComponent;
 
 using StringTools;
+using js.jQueryPlugins.NumberFormat;
 
 typedef StackItem = {
 	var num : Float;
@@ -14,11 +15,6 @@ typedef StackItem = {
 typedef OperAndNS = {
 	var oper : String;
 	var ns : StackItem;
-}
-
-extern class JQueryNumberFormat
-{
-	function number_format(n:Float, params: { numberOfDecimals:Int, thousandSeparator:String }) : String;
 }
 
 class Client extends HaqComponent
@@ -180,8 +176,6 @@ class Client extends HaqComponent
         historyTextArea.scrollTop(historyTextArea[0].scrollHeight);
     }
 
-    //==========================================================================
-
     function getScienticNumberFormat(n:Float)
     {
         var por = 0;
@@ -197,8 +191,7 @@ class Client extends HaqComponent
         var sciNum = this.getScienticNumberFormat(n);
         if (sciNum.p >= -9 && sciNum.p <= 99)
         {
-			//r = untyped __js__("jQuery().number_format(n, {numberOfDecimals: this.numberFieldSize - String(Math.floor(Math.abs(sciNum.b))).length, thousandSeparator:''})");
-			r = cast(new JQuery(), JQueryNumberFormat).number_format(n, { numberOfDecimals:numberFieldSize - Std.string(Math.floor(Math.abs(sciNum.b))).length, thousandSeparator:'' } );
+			r = new JQuery().numberFormat(n, cast { numberOfDecimals:numberFieldSize - Std.string(Math.floor(Math.abs(sciNum.b))).length, thousandSeparator:'' } );
 
             if (r.indexOf(',')!=-1)
             {
@@ -208,8 +201,7 @@ class Client extends HaqComponent
         }
         else
         {
-            //r = untyped __js__("jQuery().number_format(sciNum.b, {numberOfDecimals: this.numberFieldSize - 2 - String(Math.floor(Math.abs(sciNum.b))).length - String(sciNum.p).length}) + 'e' + sciNum.p");
-            r = cast(new JQuery(), JQueryNumberFormat).number_format(sciNum.b, { numberOfDecimals:numberFieldSize - 2 - Std.string(Math.floor(Math.abs(sciNum.b))).length - Std.string(sciNum.p).length, thousandSeparator:"." }) + 'e' + sciNum.p;
+            r = new JQuery().numberFormat(sciNum.b, cast { numberOfDecimals:numberFieldSize - 2 - Std.string(Math.floor(Math.abs(sciNum.b))).length - Std.string(sciNum.p).length, thousandSeparator:"." }) + 'e' + sciNum.p;
         }
         return r;
 
