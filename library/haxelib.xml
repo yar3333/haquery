@@ -3,7 +3,7 @@
     <tag v='js'/>
     <tag v='php'/>
     <description>Web framework with PHP and JavaScript target.</description>
-    <version name='3.0'>Improvements and bugfixes.</version>
+    <version name='3.0'>Major internal changes. Calling client methods from the server and vice versa. XML-based config files.</version>
     <depends name="HtmlParser"/>
     <depends name="FirePHP"/>
 </project>

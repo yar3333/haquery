@@ -1,0 +1,23 @@
+<config>
+    <!--
+    <extend>
+        <component package="" />
+    </extend>
+    -->
+    
+    <!--
+    <imports>
+        <components package="" />
+        <components package="" />
+        <components package="" />
+    </imports>
+    -->
+    
+    <!--
+    <requires>
+        <component package="" />
+        <component package="" />
+        <component package="" />
+    </requires>
+    -->
+</config>
