@@ -188,10 +188,6 @@ class Web {
     static inline function isModNeko_getter() : Bool  { return HaxeWeb.isModNeko; }
 
 	#if php
-	public static function getDocumentRoot() : String {
-        return untyped __php__("$_SERVER['DOCUMENT_ROOT']");
-    }
-
 	public static function getHttpHost() : String {
         return untyped __php__("$_SERVER['HTTP_HOST']"); 
     }
