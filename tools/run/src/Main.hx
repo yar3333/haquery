@@ -43,8 +43,8 @@ class Main
             
             default:
 				Lib.println("HaQuery building support and deploying tool.");
-				Lib.println("Usage: haquery <command>");
-				Lib.println("\twhere <command>:");
+				Lib.println("Usage: haxelib run HaQuery <command>");
+				Lib.println("\twhere <command> may be:");
 				Lib.println("\t\tpre-build                           Do pre-build step.");
 				Lib.println("\t\tpost-build                          Do post-build step.");
 				Lib.println("\t\tinstall                             Install FlashDevelop templates and apply a minor patch to haXe std library.");
