@@ -4,8 +4,8 @@ import haquery.server.HaqComponent;
 
 class Server extends HaqComponent
 {
-	public function preRender()
+	function preRender()
 	{
-		q('#n').html('123');
+		q("#n").html("123");
 	}
 }
