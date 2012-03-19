@@ -43,28 +43,31 @@ class Hant
     
     public function createDirectory(path:String)
     {
-        log.start("Create directory '" + path + "'");
-        try
-        {
-            path = path.replace('\\', '/');
-            var dirs : Array<String> = path.split('/');
-            for (i in 0...dirs.length)
-            {
-                var dir = dirs.slice(0, i + 1).join('/');
-                if (!dir.endsWith(':'))
-                {
-                    if (!FileSystem.exists(dir))
-                    {
-                        FileSystem.createDirectory(dir);
-                    }
-                }
-            }
-            log.finishOk();
-        }
-        catch (message:String)
-        {
-            log.finishFail(message);
-        }
+        if (!FileSystem.exists(path))
+		{
+			log.start("Create directory '" + path + "'");
+			try
+			{
+				path = path.replace('\\', '/');
+				var dirs : Array<String> = path.split('/');
+				for (i in 0...dirs.length)
+				{
+					var dir = dirs.slice(0, i + 1).join('/');
+					if (!dir.endsWith(':'))
+					{
+						if (!FileSystem.exists(dir))
+						{
+							FileSystem.createDirectory(dir);
+						}
+					}
+				}
+				log.finishOk();
+			}
+			catch (message:String)
+			{
+				log.finishFail(message);
+			}
+		}
     }
     
     public function copyFolderContent(fromFolder:String, toFolder:String, excludeRegExp:String="")
