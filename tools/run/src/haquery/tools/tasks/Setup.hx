@@ -59,7 +59,14 @@ class Setup
 		}
 		else
 		{
-			log.finishFail("User folder for FlashDevelop templates not found. Before install templates, ensure FlashDevelop installed and runned once.");
+			try
+			{
+				log.finishFail("User folder for FlashDevelop templates not found. Before install FlashDevelop templates, ensure FlashDevelop installed and runned at least once.");
+			}
+			catch (e:String)
+			{
+				log.print(e);
+			}
 		}
     }
     
@@ -82,13 +89,13 @@ class Setup
 
 		for (file in files)
 		{
-			hant.createDirectory(targetPath + '/' + Path.directory(file.fileName));
-			
 			if (!file.fileName.endsWith("/"))
 			{
 				log.start(file.fileName);
 				
 				var destFilePath = targetPath + '/' + file.fileName;
+				
+				hant.createDirectory(Path.directory(destFilePath));
 				
 				if (isMakeBackup && FileSystem.exists(destFilePath))
 				{

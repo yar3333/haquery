@@ -31,9 +31,6 @@ class Main
             case 'gen-orm': 
 				var project = new FlashDevelopProject("", exeDir);
 				tasks.genOrm(args.length > 1 ? args[1] : HaqConfig.readDatabaseConnectionString(project.srcPath + "config.xml"), project.srcPath);
-            
-            case 'gen-trm': 
-				tasks.genTrm();
 			
 			case 'pre-build': 
                 tasks.preBuild();
@@ -47,12 +44,11 @@ class Main
             default:
 				Lib.println("HaQuery building support and deploying tool.");
 				Lib.println("Usage: haquery <command>");
-				Lib.println("\twhere <command> may be:");
-				Lib.println("\t\tgen-orm <databaseConnectionString>  Generate object-related classes (managers and models)");
-				Lib.println("\t\tgen-trm <componentsPackage>         Generate template-related classes");
-				Lib.println("\t\tpre-build                           Do pre-build step");
-				Lib.println("\t\tpost-build                          Do post-build step");
-				Lib.println("\t\tinstall                             Install FlashDevelop templates and apply a minor patch to upgrade haXe library");
+				Lib.println("\twhere <command>:");
+				Lib.println("\t\tpre-build                           Do pre-build step.");
+				Lib.println("\t\tpost-build                          Do post-build step.");
+				Lib.println("\t\tinstall                             Install FlashDevelop templates and apply a minor patch to haXe std library.");
+				Lib.println("\t\tgen-orm [databaseConnectionString]  Generate object-related classes (managers and models).");
                 return 1;
         }
         

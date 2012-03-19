@@ -7,10 +7,8 @@
 		
 		<copy todir="temp">
 			<fileset dir="library">
-				<exclude name="tools\examples\*\bin\**" />
 				<exclude name="*.pdb" />
 				<exclude name="*.exe.config" />
-				<exclude name="*.hxproj" />
 			</fileset>
 		</copy>
 	
@@ -23,6 +21,7 @@
 		<zip destfile="temp\tools\examples.zip">
 			<fileset dir="tools\examples">
 				<exclude name="*\bin\**" />
+				<exclude name="*\trm\**" />
 			</fileset>
 		</zip>
 	
