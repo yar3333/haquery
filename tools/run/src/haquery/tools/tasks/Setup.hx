@@ -1,6 +1,6 @@
 package haquery.tools.tasks;
 
-import neko.zip.Uncompress;
+import neko.zip.Reader;
 import neko.Sys;
 
 import haquery.server.FileSystem;
@@ -52,17 +52,20 @@ class Setup
             : Sys.getEnv('USERPROFILE') + '/Local Settings/Application Data';
         var flashDevelopUserDataPath = userLocalPath.replace('\\', '/') + '/FlashDevelop';
         
-		unzip(srcPath, flashDevelopUserDataPath, false);
-        
-        log.finishOk();
+		if (FileSystem.exists(flashDevelopUserDataPath))
+		{
+			unzip(srcPath, flashDevelopUserDataPath, false);
+			log.finishOk();
+		}
+		else
+		{
+			log.finishFail("User folder for FlashDevelop templates not found. Before install templates, ensure FlashDevelop installed and runned once.");
+		}
     }
     
     function installHaxePatch()
     {
-        log.start('Install HaxePatch');
-		
-		log.print("std/js/_std/EReg.hx\tVersion from haXe 2.08+ (chrome browser bugfixes)");
-		log.print("std/php/_std/Date.hx\tVersion from haXe 2.08+ (microtime() instead time())");
+        log.start('Patch haXe std library files to haXe 2.08+ version');
         
         unzip(exeDir + "tools/haxepatch.zip", hant.getHaxePath(), true);
         
@@ -71,6 +74,8 @@ class Setup
     
     function unzip(zipPath:String, targetPath:String, isMakeBackup:Bool)
 	{
+		targetPath = targetPath.rtrim("\\/");
+		
 		var fin = neko.io.File.read(zipPath, true);
 		var files = neko.zip.Reader.readZip(fin);
 		fin.close();
@@ -79,15 +84,27 @@ class Setup
 		{
 			hant.createDirectory(targetPath + '/' + Path.directory(file.fileName));
 			
-			if (isMakeBackup && FileSystem.exists(targetPath + '/' + file.fileName))
+			if (!file.fileName.endsWith("/"))
 			{
-				FileSystem.rename(targetPath + '/' + file.fileName, targetPath + '/' + file.fileName + ".haquery.bak");
+				log.start(file.fileName);
+				
+				var destFilePath = targetPath + '/' + file.fileName;
+				
+				if (isMakeBackup && FileSystem.exists(destFilePath))
+				{
+					var bakFilePath = destFilePath + ".haquery.bak";
+					if (!FileSystem.exists(bakFilePath))
+					{
+						FileSystem.rename(destFilePath, bakFilePath);
+					}
+				}
+				
+				var fout = File.write(destFilePath, true);
+				fout.write(Reader.unzip(file));
+				fout.close();
+				
+				log.finishOk();
 			}
-			
-			var fout = File.write(targetPath + '/' + file.fileName, true);
-			var data = Uncompress.run(file.data);
-			fout.writeBytes(data, 0, data.length);
-			fout.close();
 		}
 	}
 }
