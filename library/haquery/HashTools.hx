@@ -35,12 +35,7 @@ class HashTools
     
     /**
      * Make hash on-the-fly.
-	 * For example:
-		 * var h : Hash<String> = cast haquery.HashTools.hashify({
-		 * 	 a: "abc"
-		 *  ,b: "def"
-		 *  ,c: "ghi"
-		 * });
+	 * <code>var h : Hash<String> = cast haquery.HashTools.hashify({ a:"abc", b:"def", c:"ghi" });</code>
      * @param	obj Generic object to convert to a hash.
      * @return	Result hash.
      */

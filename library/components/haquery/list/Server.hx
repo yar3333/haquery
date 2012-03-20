@@ -18,14 +18,14 @@ class Server extends Base
         }
 	}
 
-    public function bind(constsList:Iterable<Dynamic>)
+    public function bind(consts:Iterable<Dynamic>)
     {
         Lib.assert(!Lib.isPostback, 'List binding on postback is not allowed.');
 	
 		var i = 0;
-        for (consts in constsList)
+        for (data in consts)
         {
-            manager.createComponent(this, 'listitem', Std.string(i), cast HashTools.hashify(consts), innerNode, true);
+            manager.createComponent(this, 'listitem', Std.string(i), cast HashTools.hashify(data), innerNode, true);
             i++;
         }
 		q('#length').val(Std.string(i));
