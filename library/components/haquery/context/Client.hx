@@ -6,8 +6,6 @@ import haquery.client.HaqComponent;
 
 class Client extends HaqComponent
 {
-    public var position : ContextPanelPosition;
-    
     var event_show : HaqEvent;
     
     var elem : JQuery;
@@ -19,17 +17,13 @@ class Client extends HaqComponent
         return q('#dataID').val();
     }
     
-    var mouseOver : js.JQuery.JqEvent->Void;
-    var mouseOut : js.JQuery.JqEvent->Void;
+    var mouseOver : JqEvent->Void;
+    var mouseOut : JqEvent->Void;
     
-    public function new()
+    public function init()
     {
-        super();
-        
-        position = ContextPanelPosition.rightTopInner;
-        
-        mouseOver = function(e:js.JQuery.JqEvent) { elem = new JQuery(e.currentTarget);  innerMouseOver(); };
-        mouseOut = function(e:js.JQuery.JqEvent) { innerMouseOut(); };
+        mouseOver = function(e:JqEvent) { elem = new JQuery(e.currentTarget);  innerMouseOver(); };
+        mouseOut = function(e:JqEvent) { innerMouseOut(); };
     }
 
     function innerMouseOver()
@@ -37,7 +31,6 @@ class Client extends HaqComponent
         var dataID = elem.data(prefixID + "dataID");
         q('#dataID').val(dataID);
         show();
-        elem.addClass('contextpanel-active');
         if (timer != null)
         {
             timer.stop();
@@ -49,48 +42,33 @@ class Client extends HaqComponent
     {
         if (elem != null)
         {
-            elem.removeClass('contextpanel-active');
-            if (timer != null) timer.stop();
-            var self = this;
-            timer = haxe.Timer.delay(
-                function() { 
-                    self.q('#p').hide(); 
-                    self.timer = null; 
-                },
-                500
-            );
-        }
-    }
-    
-    function init()
-    {
-        if (q('#p').attr('position') != null)
-        {
-            position = Type.createEnumIndex(ContextPanelPosition, Std.parseInt(q('#p').attr('position')));
+            if (timer != null)
+			{
+				timer.stop();
+			}
+            timer = haxe.Timer.delay(function() { q('#p').hide(); timer = null; }, 500);
         }
     }
     
     function show()
     {
         q('#p').show();
-        var pos = elem.offset();
-        
-        switch (position)
-        {
-            case ContextPanelPosition.rightTopInner:
-                q('#p').offset({
-                     left: Math.round(pos.left + elem.width() - q('#p').width())
-                    ,top:  Math.round(pos.top)
-                });
-            case ContextPanelPosition.rightOuter:
-                q('#p').offset({
-                     left: Math.round(pos.left + elem.width())
-                    ,top:  Math.round(pos.top)
-                });
-        }
-        
-        event_show.call([ q('#p'), elem ]);
+        q('#p').offset(getContextPosition(elem));
+        event_show.call([ elem ]);
     }
+	
+	/**
+	 * Override if you want to display context panel in the different place.
+	 * @param	elem
+	 */
+	function getContextPosition(elem:JQuery) : { left:Int, top:Int }
+	{
+		var pos = elem.offset();
+		return {
+			 left: Math.round(pos.left + elem.width() - q('#p').width())
+			,top:  Math.round(pos.top)
+		};
+	}
     
     public function attach(elem:JQuery, ?dataID:String)
     {
@@ -101,17 +79,17 @@ class Client extends HaqComponent
     
     public function detach(elem:JQuery)
     {
-        elem.unbind("mouseover", mouseOver);
         elem.unbind("mouseout", mouseOut);
+        elem.unbind("mouseover", mouseOver);
         innerMouseOut();
     }
     
-    function p_mouseover(t, e:js.JQuery.JqEvent)
+    function p_mouseover()
     {
         innerMouseOver();
     }
     
-    function p_mouseout(t, e:js.JQuery.JqEvent)
+    function p_mouseout()
     {
         innerMouseOut();
     }
