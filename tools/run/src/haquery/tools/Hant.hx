@@ -19,23 +19,26 @@ class Hant
 		this.exeDir = exeDir;
     }
     
-    public function findFiles(path:String, include:String->Bool) : Array<String>
+    public function findFiles(path:String, ?isIncludeFile:String->Bool, ?isCheckDir:String->Bool) : Array<String>
     {
-        var r : Array<String> = new Array<String>();
+        var r = new Array<String>();
         
         for (file in FileSystem.readDirectory(path))
         {
-            if (include(path + '/' + file))
-            {
-                if (FileSystem.isDirectory(path + '/' + file))
-                {
-                    r = r.concat(findFiles(path + '/' + file, include));
-                }
-                else
-                {
-                    r.push(path + '/' + file);
-                }
-            }
+			if (FileSystem.isDirectory(path + '/' + file))
+			{
+				if (isCheckDir == null || isCheckDir(path + '/' + file))
+				{
+					r = r.concat(findFiles(path + '/' + file, isIncludeFile, isCheckDir));
+				}
+			}
+			else
+			{
+				if (isIncludeFile == null || isIncludeFile(path + '/' + file))
+				{
+					r.push(path + '/' + file);
+				}
+			}
         }
         
         return r;
