@@ -2,6 +2,7 @@ package components.haquery.list;
 
 import haquery.HashTools;
 import haquery.server.Lib;
+import haxe.htmlparser.HtmlNodeElement;
 
 using haquery.StringTools;
 
@@ -18,14 +19,17 @@ class Server extends Base
         }
 	}
 
-    public function bind(consts:Iterable<Dynamic>)
+	public function bind(models:Iterable<Dynamic>)
     {
         Lib.assert(!Lib.isPostback, 'List binding on postback is not allowed.');
 	
+		
+		var itemInnerNode = getItemInnerNode();
+		
 		var i = 0;
-        for (data in consts)
+        for (model in models)
         {
-            manager.createComponent(this, 'listitem', Std.string(i), cast HashTools.hashify(data), innerNode, true);
+            manager.createComponent(this, 'listitem', Std.string(i), cast HashTools.hashify(model), itemInnerNode, true);
             i++;
         }
 		q('#length').val(Std.string(i));
@@ -40,4 +44,9 @@ class Server extends Base
         }
         return r + "\n" + super.render();
     }
+    
+	function getItemInnerNode() : HtmlNodeElement
+	{
+		return innerNode;
+	}
 }
