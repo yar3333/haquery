@@ -8,9 +8,9 @@ import haxe.htmlparser.HtmlNodeElement;
 
 class Server extends Base
 {
-	override public function construct(manager:HaqTemplateManager, fullTag:String, parent:HaqComponent, id:String, doc:HtmlDocument, params:Hash<String>, parentNode:HtmlNodeElement, isCustomRender:Bool):Void 
+	override public function construct(manager:HaqTemplateManager, fullTag:String, parent:HaqComponent, id:String, doc:HtmlDocument, params:Hash<String>, innerNode:HtmlNodeElement, isInnerComponent:Bool):Void 
 	{
-		var innerHTML = parentNode.innerHTML;
+		var innerHTML = innerNode.innerHTML;
         
         if (params != null)
 		{
@@ -38,7 +38,7 @@ class Server extends Base
             xml = new HtmlDocument('XML parse error.');
         }
         
-        super.construct(manager, fullTag, parent, id, xml, params, null, isCustomRender);
+        super.construct(manager, fullTag, parent, id, xml, params, null, isInnerComponent);
 	}
     
 	override function createChildComponents()
