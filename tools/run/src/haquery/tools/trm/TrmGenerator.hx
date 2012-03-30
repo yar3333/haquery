@@ -110,7 +110,7 @@ class TrmGenerator
 				r.push({ haxeName:componentID, haxeType:type, haxeBody:body });
 			}
 			
-			if (child.name != "haq:list")
+			if (!isExtendedFromList(fullTag, child.name))
 			{
 				r = r.concat(getTemplateVars(fullTag, child, queryClassName, isServer));
 			}
@@ -125,5 +125,24 @@ class TrmGenerator
 			,haxeType : type
 			,haxeDefVal : defVal
 		};
-	}	
+	}
+	
+	function isExtendedFromList(fullTag:String, nodeName:String)
+	{
+		if (nodeName.startsWith("haq:"))
+		{
+			var tag = nodeName.substr("haq:".length).replace("-", ".");
+			var template = manager.findTemplate(fullTag, tag);
+			
+			while (template != null)
+			{
+				if (template.fullTag == "components.haquery.list")
+				{
+					return true;
+				}
+				template = template.extend != null && template.extend != "" ? manager.get(template.extend) : null;
+			}
+		}
+		return false;
+	}
 }
