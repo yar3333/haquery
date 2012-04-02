@@ -16,10 +16,10 @@ class StringTools
 
 	public static inline function isSpace( s : String, pos : Int ) : Bool { return HaxeStringTools.isSpace(s, pos); }
 
-	public static #if php inline #end function ltrim( s : String, chars : String = null ) : String
+	public static function ltrim( s : String, chars : String = null ) : String
     {
         #if php
-		return untyped __call__("ltrim", s, chars);
+		return chars == null ? untyped __call__("ltrim", s) : untyped __call__("ltrim", s, chars);
         #else
         if (chars == null)
 		{
@@ -33,10 +33,10 @@ class StringTools
         #end
     }
 
-	public static #if php inline #end function rtrim( s : String, chars : String = null ) : String
+	public static function rtrim( s : String, chars : String = null ) : String
     {
         #if php
-		return untyped __call__("rtrim", s, chars);
+		return chars == null ? untyped __call__("rtrim", s) : untyped __call__("rtrim", s, chars);
         #else
         if (chars == null)
 		{
@@ -50,10 +50,10 @@ class StringTools
         #end
     }
 
-	public static #if php inline #end function trim( s : String, chars : String = null ) : String
+	public static function trim( s : String, chars : String = null ) : String
     { 
         #if php
-		return untyped __call__("trim", s, chars);
+		return chars == null ? untyped __call__("trim", s) : untyped __call__("trim", s, chars);
         #else
         if (chars == null)
 		{
