@@ -69,22 +69,22 @@ class HaqComponent extends haquery.base.HaqComponent
 			jq.hasClass = function(name) { return jq.haquery_hasClass(cssGlobalizer.className(name)); };
 			
 			jq.haquery_find = jq.find;
-			jq.find = function(arg) { return jq.haquery_find(typeof(arg)=='string' ? cssGlobalizer.selector(arg) : arg); };
+			jq.find = function(arg) { return jq.haquery_find(__js__("typeof arg")=='string' ? cssGlobalizer.selector(arg) : arg); };
 			
 			jq.haquery_filter = jq.filter;
-			jq.filter = function(arg) { return jq.haquery_filter(typeof(arg)=='string' ? cssGlobalizer.selector(arg) : arg); };
+			jq.filter = function(arg) { return jq.haquery_filter(__js__("typeof arg")=='string' ? cssGlobalizer.selector(arg) : arg); };
 			
 			jq.haquery_has = jq.has;
-			jq.has = function(arg) { return jq.haquery_has(typeof(arg)=='string' ? cssGlobalizer.selector(arg) : arg); };
+			jq.has = function(arg) { return jq.haquery_has(__js__("typeof arg")=='string' ? cssGlobalizer.selector(arg) : arg); };
 			
 			jq.haquery_is = jq.is;
-			jq.is = function(arg) { return jq.haquery_is(typeof(arg)=='string' ? cssGlobalizer.selector(arg) : arg); };
+			jq.is = function(arg) { return jq.haquery_is(__js__("typeof arg")=='string' ? cssGlobalizer.selector(arg) : arg); };
 			
 			jq.haquery_not = jq.not;
-			jq.not = function(arg) { return jq.haquery_not(typeof(arg)=='string' ? cssGlobalizer.selector(arg) : arg); };
+			jq.not = function(arg) { return jq.haquery_not(__js__("typeof arg")=='string' ? cssGlobalizer.selector(arg) : arg); };
 			
 			jq.haquery_parent = jq.parent;
-			jq.parent = function(arg) { return jq.haquery_parent(typeof(arg)=='string' ? cssGlobalizer.selector(arg) : arg); };
+			jq.parent = function(arg) { return jq.haquery_parent(__js__("typeof arg")=='string' ? cssGlobalizer.selector(arg) : arg); };
 		}
 		
 		return jq;
