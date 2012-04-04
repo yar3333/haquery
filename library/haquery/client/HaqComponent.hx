@@ -59,29 +59,38 @@ class HaqComponent extends haquery.base.HaqComponent
 		
 		untyped 
 		{
-			jq.haqueryAddClass = jq.addClass;
-			jq.addClass = function(name)
-			{
-				return jq.haqueryAddClass(cssGlobalizer.className(name));
-			};
+			jq.haquery_addClass = jq.addClass;
+			jq.addClass = function(name) { return jq.haquery_addClass(cssGlobalizer.className(name)); };
 			
-			jq.haqueryRemoveClass = jq.removeClass;
-			jq.removeClass = function(name)
-			{
-				return jq.haqueryRemoveClass(cssGlobalizer.className(name));
-			};
+			jq.haquery_removeClass = jq.removeClass;
+			jq.removeClass = function(name) { return jq.haquery_removeClass(cssGlobalizer.className(name)); };
 
-			jq.haqueryHasClass = jq.hasClass;
-			jq.hasClass = function(name)
-			{
-				return jq.haqueryHasClass(cssGlobalizer.className(name));
-			};
+			jq.haquery_hasClass = jq.hasClass;
+			jq.hasClass = function(name) { return jq.haquery_hasClass(cssGlobalizer.className(name)); };
+			
+			jq.haquery_find = jq.find;
+			jq.find = function(arg) { return jq.haquery_find(typeof(arg)=='string' ? cssGlobalizer.selector(arg) : arg); };
+			
+			jq.haquery_filter = jq.filter;
+			jq.filter = function(arg) { return jq.haquery_filter(typeof(arg)=='string' ? cssGlobalizer.selector(arg) : arg); };
+			
+			jq.haquery_has = jq.has;
+			jq.has = function(arg) { return jq.haquery_has(typeof(arg)=='string' ? cssGlobalizer.selector(arg) : arg); };
+			
+			jq.haquery_is = jq.is;
+			jq.is = function(arg) { return jq.haquery_is(typeof(arg)=='string' ? cssGlobalizer.selector(arg) : arg); };
+			
+			jq.haquery_not = jq.not;
+			jq.not = function(arg) { return jq.haquery_not(typeof(arg)=='string' ? cssGlobalizer.selector(arg) : arg); };
+			
+			jq.haquery_parent = jq.parent;
+			jq.parent = function(arg) { return jq.haquery_parent(typeof(arg)=='string' ? cssGlobalizer.selector(arg) : arg); };
 		}
 		
 		return jq;
 	}
     
-    private function connectElemEventHandlers() : Void
+    function connectElemEventHandlers() : Void
     {
 		HaqElemEventManager.connect(this, this, manager);
     }
