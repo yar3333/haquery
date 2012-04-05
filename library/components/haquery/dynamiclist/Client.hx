@@ -41,4 +41,25 @@ class Client extends components.haquery.list.Client
 			prepareDoc(child, childID);
 		}
 	}
+	
+	
+	public function createDocComponents(parent:HaqComponent, baseNode:HtmlNodeElement, isCustomRender:Bool) : Array<HaqComponent>
+    {
+		var r = [];
+		
+		for (node in baseNode.children)
+        {
+            if (node.name.startsWith('haq:'))
+            {
+				var tag = node.name.substr('haq:'.length).replace("-", ".");
+				r.push(createComponent(parent, tag, node.getAttribute('id'), node.getAttributesAssoc(), node, isCustomRender));
+            }
+			else
+			{
+				r = r.concat(createDocComponents(parent, node, isCustomRender));
+			}
+        }
+		
+		return r;
+    }	
 }
