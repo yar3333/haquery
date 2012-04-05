@@ -22,7 +22,6 @@ class Server extends Base
 	public function bind(models:Iterable<Dynamic>)
     {
         Lib.assert(!Lib.isPostback, 'List binding on postback is not allowed.');
-	
 		
 		var itemInnerNode = getItemInnerNode();
 		
