@@ -26,15 +26,14 @@ private typedef ComponentData =
 
 class Client extends components.haquery.listitem.Client
 {
-	var nextChildID : Int;
-	
+	var componentAnonimIDs : Hash<Int>;
 	var docs : Hash<String>;
 	var childComponents : Array<ComponentData>;
 	
 	function new()
 	{
 		super();
-		nextChildID = 1;
+		componentAnonimIDs = new Hash<Int>();
 	}
 	
 	override function construct(manager:HaqTemplateManager, fullTag:String, parent:HaqComponent, id:String, factoryInitParams:Array<Dynamic> = null)
@@ -78,7 +77,7 @@ class Client extends components.haquery.listitem.Client
 			}
 			else
 			{
-				var id = getComponentID(child);
+				var id = getComponentID(prefixID, child);
 				var tag = child.name.substr("haq:".length);
 				var t = manager.findTemplate(fullTag, tag);
 				if (t == null)
@@ -102,7 +101,9 @@ class Client extends components.haquery.listitem.Client
 		return r;
 	}
 	
-	function getComponentID(node:HtmlNodeElement) : String
+	
+	
+	function getComponentID(prefixID:String,node:HtmlNodeElement) : String
 	{
 		var id = "";
 		if (node.hasAttribute("id"))
@@ -111,8 +112,13 @@ class Client extends components.haquery.listitem.Client
 		}
 		if (id == "")
 		{
-			id = "c" + nextChildID;
-			nextChildID++;
+			if (!componentAnonimIDs.exists(prefixID))
+			{
+				componentAnonimIDs.set(prefixID, 1);
+			}
+			var n = componentAnonimIDs.get(prefixID);
+			id = "haqc_" + n;
+			componentAnonimIDs.set(prefixID, n + 1);
 		}
 		return id;
 	}

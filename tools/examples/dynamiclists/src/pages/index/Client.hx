@@ -15,6 +15,9 @@ class Client extends HaqPage
 	{
 		template.users.create(template.table, { login : "admin" });
 		template.users.create(template.table, { login : "user" });
+		
+		template.users2.create(template.table2, { login : "admin" });
+		template.users2.create(template.table2, { login : "user" });
 	}
 	
 	function pagebt_click(t:HaqComponent, e)
