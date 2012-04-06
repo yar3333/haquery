@@ -10,30 +10,31 @@ class Server extends components.haquery.list.Server
     function preRender()
     {
         var docs = new Hash<String>();
-		fillDocs("", parent.fullTag, innerNode, docs);
+		fillDocs(parent.fullTag, innerNode, docs);
+		docs.set("", innerNode.innerHTML);
 		q("#docs").val(Serializer.run(docs));
     }
 	
-	function fillDocs(keyFullTag:String, fullTag:String, doc:HtmlNodeElement, docs:Hash<String>)
+	function fillDocs(parentFullTag:String, doc:HtmlNodeElement, docs:Hash<String>)
 	{
-		docs.set(keyFullTag, doc.toString());
-		
 		for (child in doc.children)
 		{
 			if (child.name.startsWith("haq:"))
 			{
 				var tag = child.name.substr("haq:".length);
-				var t = manager.findTemplate(fullTag, tag);
+				var t = manager.findTemplate(parentFullTag, tag);
 				if (t == null)
 				{
-					throw "Could not find template for the '" + tag + "' component for the '" + fullTag + "' parent component.";
+					throw "Could not find template for the '" + tag + "' component for the '" + parentFullTag + "' parent component.";
 				}
-				if (!docs.exists(keyFullTag))
+				if (!docs.exists(t.fullTag))
 				{
-					fillDocs(fullTag, t.fullTag, t.getDocCopy(), docs);
+					var childDoc = t.getDocCopy();
+					docs.set(t.fullTag, childDoc.toString());
+					fillDocs(t.fullTag, childDoc, docs);
 				}
 			}
-			fillDocs(keyFullTag, fullTag, child, docs);
+			fillDocs(parentFullTag, child, docs);
 		}
 	}
 }

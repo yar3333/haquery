@@ -14,7 +14,7 @@ class Client extends components.haquery.list.Client
 	
 	public function create(parentElem:JQuery, params:Dynamic)
 	{
-		manager.createComponent(this, "dynamiclistitem", Std.string(length), [ parentElem, docs, params ]);
+		manager.createComponent(this, "components.haquery.dynamiclistitem", Std.string(length), [ parentElem, docs, params ]);
 		q('#length').val(length + 1);
 	}
 }
