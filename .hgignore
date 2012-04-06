@@ -40,3 +40,4 @@ library.zip
 bin
 tests/Imports.hx
 trm
+tools/examples/dynamiclists/src/Imports.hx
