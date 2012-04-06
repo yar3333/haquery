@@ -57,4 +57,9 @@ class HaqInternals
 		r.imports = component.config.slice(1);
 		return r;
 	}
+	
+	public static function addComponent(fullTag:String, fullID:String)
+	{
+		getComponentIDs().set(fullID, fullTag);
+	}
 }

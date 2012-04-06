@@ -1,11 +1,14 @@
 package components.haquery.dynamiclistitem;
 
 import js.JQuery;
-import haquery.HashTools;
-import haquery.client.HaqComponent;
 import haxe.htmlparser.HtmlDocument;
 import haxe.htmlparser.HtmlNodeElement;
+import haquery.client.HaqDefines;
+import haquery.client.HaqInternals;
+import haquery.client.HaqTemplateManager;
+import haquery.client.HaqComponent;
 import haquery.client.HaqElemEventManager;
+import haquery.HashTools;
 
 using haquery.StringTools;
 using haquery.HashTools;
@@ -26,6 +29,7 @@ class Client extends components.haquery.listitem.Client
 	var nextChildID : Int;
 	
 	var docs : Hash<String>;
+	var childComponents : Array<ComponentData>;
 	
 	function new()
 	{
@@ -33,24 +37,27 @@ class Client extends components.haquery.listitem.Client
 		nextChildID = 1;
 	}
 	
-	function factoryInit(parentElem:JQuery, docs:Hash<String>, params:Dynamic)
+	override function construct(manager:HaqTemplateManager, fullTag:String, parent:HaqComponent, id:String, factoryInitParams:Array<Dynamic> = null)
 	{
+		var parentElem:JQuery = factoryInitParams[0];
+		var docs:Hash<String> = factoryInitParams[1];
+		var params:Dynamic = factoryInitParams[2];
+		
 		this.docs = docs;
 		
-		//trace("docs.keys = " + Lambda.array(docs.keysIterable()).join(", "));
+		trace("docs.keys = " + Lambda.array(docs.keysIterable()).join(", "));
 		
 		var html = docs.get("");
 		
 		var doc = Tools.applyHtmlParams(html, cast HashTools.hashify(params));
-		var childComponents = prepareDoc(parent.parent.fullTag, prefixID, doc);
-		
+		childComponents = prepareDoc(manager, parent.parent.fullTag, parent.prefixID + id + HaqDefines.DELIMITER, doc);
 		parentElem.append(doc.innerHTML);
 		HaqElemEventManager.elemsWasChanged();
 		
-		dynamicCreateChildComponents(this, childComponents);
+		super.construct(manager, fullTag, parent, id, factoryInitParams);
 	}
 	
-	function prepareDoc(fullTag:String, prefixID:String, node:HtmlNodeElement) : Array<ComponentData>
+	function prepareDoc(manager:HaqTemplateManager, fullTag:String, prefixID:String, node:HtmlNodeElement) : Array<ComponentData>
 	{
 		var r = new Array<ComponentData>();
 		
@@ -67,7 +74,7 @@ class Client extends components.haquery.listitem.Client
 		{
 			if (!child.name.startsWith("haq:"))
 			{
-				r = r.concat(prepareDoc(fullTag, prefixID, child));
+				r = r.concat(prepareDoc(manager, fullTag, prefixID, child));
 			}
 			else
 			{
@@ -80,7 +87,14 @@ class Client extends components.haquery.listitem.Client
 				}
 				var html = docs.get(t.fullTag);
 				var doc = new HtmlDocument(html);
-				r.push({ fullTag:t.fullTag, prefixID:prefixID, id:id, params:child.getAttributesAssoc(), chilren:prepareDoc(t.fullTag, prefixID + id, doc) });
+				r.push( { 
+					 fullTag: t.fullTag
+					,prefixID: prefixID
+					,id: id
+					,params: child.getAttributesAssoc()
+					,chilren: prepareDoc(manager, t.fullTag, prefixID + id + HaqDefines.DELIMITER, doc)
+				} );
+				HaqInternals.addComponent(t.fullTag, prefixID + id);
 				child.parent.replaceChildWithInner(child, doc);
 			}
 		}
@@ -88,15 +102,6 @@ class Client extends components.haquery.listitem.Client
 		return r;
 	}
 	
-	function dynamicCreateChildComponents(parent:HaqComponent, components:Array<ComponentData>)
-	{
-		for (c in components)
-		{
-			var pc = manager.createComponent(parent, c.fullTag, c.id, [ c.params ]);
-			dynamicCreateChildComponents(pc, c.chilren);
-		}
-	}
-
 	function getComponentID(node:HtmlNodeElement) : String
 	{
 		var id = "";
@@ -110,5 +115,13 @@ class Client extends components.haquery.listitem.Client
 			nextChildID++;
 		}
 		return id;
+	}
+	
+	override function createChildComponents()
+	{
+		for (c in childComponents)
+		{
+			manager.createComponent(this, c.fullTag, c.id, [ c.params ]);
+		}
 	}
 }
