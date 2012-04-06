@@ -1,11 +1,16 @@
 package components.haquery.dynamiclist;
 
+import haxe.htmlparser.HtmlNodeElement;
+import haxe.Serializer;
+
+using haquery.StringTools;
+
 class Server extends components.haquery.list.Server
 {
     function preRender()
     {
         var docs = new Hash<String>();
-		fillDocs("", innerNode, docs);
+		fillDocs("", parent.fullTag, innerNode, docs);
 		q("#docs").val(Serializer.run(docs));
     }
 	
@@ -19,7 +24,7 @@ class Server extends components.haquery.list.Server
 			{
 				var tag = child.name.substr("haq:".length);
 				var t = manager.findTemplate(fullTag, tag);
-				if (componentTemplate == null)
+				if (t == null)
 				{
 					throw "Could not find template for the '" + tag + "' component for the '" + fullTag + "' parent component.";
 				}
