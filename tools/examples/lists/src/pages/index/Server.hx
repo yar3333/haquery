@@ -25,22 +25,22 @@ class Server extends HaqPage
         }
 	}
     
-    public function pagebt_click(t:HaqComponent)
+    function pagebt_click(t:HaqComponent)
     {
         q('#status').html("pagebt_click server " + t.fullID);
     }
     
-    public function pagesbt_click(t:HaqComponent)
+    function pagesbt_click(t:HaqComponent)
     {
         q('#status').html("pagesbt_click server " + t.fullID);
     }
     
-    public function bt_click(t:HaqComponent)
+    function bt_click(t:HaqComponent)
     {
         q('#status').html("bt_click server " + t.fullID);
     }
     
-    public function sbt_click(t:HaqComponent)
+    function sbt_click(t:HaqComponent)
     {
         q('#status').html("sbt_click server " + t.fullID);
     }
