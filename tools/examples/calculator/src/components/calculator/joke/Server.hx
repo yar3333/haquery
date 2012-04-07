@@ -14,7 +14,7 @@ class Server extends HaqComponent
         "Year 2300. I think - I think, therefore I exist."
      ];
 
-    public function preRender()
+    function preRender()
     {
         var days = Math.floor(Date.now().getTime() / (60*60*24*1000));
 		q('#text').html(jokes[days % jokes.length]);
