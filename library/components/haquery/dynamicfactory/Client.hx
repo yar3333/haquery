@@ -6,7 +6,7 @@ import js.JQuery;
 
 class Client extends components.haquery.factory.Client
 {
-	var html : HtmlNodeElement;
+	var html : String;
 	
 	function init()
     {
