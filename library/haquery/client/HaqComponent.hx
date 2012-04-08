@@ -9,27 +9,21 @@ using haquery.StringTools;
 
 class HaqComponent extends haquery.base.HaqComponent
 {
-	public function construct(manager:HaqTemplateManager, fullTag:String, parent:HaqComponent, id:String, factoryInitParams:Array<Dynamic>=null) : Void
+	var isDynamic : Bool;
+	
+	public function construct(manager:HaqTemplateManager, fullTag:String, parent:HaqComponent, id:String, isDynamic:Bool, dynamicParams:Dynamic) : Void
 	{
 		super.commonConstruct(manager, fullTag, parent, id);
+		
+		this.isDynamic = isDynamic;
 		
 		connectElemEventHandlers();
         createEvents();
 		createChildComponents();
 		
-		if (factoryInitParams == null)
+		if (Reflect.isFunction(Reflect.field(this, 'init')))
 		{
-			if (Reflect.isFunction(Reflect.field(this, 'init')))
-			{
-				Reflect.callMethod(this, Reflect.field(this, 'init'), []);
-			}
-		}
-		else
-		{
-			if (Reflect.isFunction(Reflect.field(this, 'factoryInit')))
-			{
-				Reflect.callMethod(this, Reflect.field(this, 'factoryInit'), factoryInitParams);
-			}
+			Reflect.callMethod(this, Reflect.field(this, 'init'), [ dynamicParams ]);
 		}
 	}
 	
@@ -37,7 +31,7 @@ class HaqComponent extends haquery.base.HaqComponent
 	{
 		for (component in manager.getChildComponents(this))
 		{
-			manager.createComponent(this, component.fullTag, component.id);
+			manager.createComponent(this, component.fullTag, component.id, false);
 		}
 	}
 	

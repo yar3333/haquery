@@ -5,10 +5,15 @@ import haquery.server.HaqComponent;
 
 class Server extends HaqComponent
 {
-    //var template : TemplateServer;
+    var template : TemplateServer;
     
-    function test_click()
+    function init()
+	{
+		trace("server item.fullID = " + fullID);
+	}
+    
+	function test_click()
     {
-        trace("test_click on server");
+        trace("test_click on server " + fullID);
     }
 }

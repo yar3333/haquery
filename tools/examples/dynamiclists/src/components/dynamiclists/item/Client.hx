@@ -5,10 +5,15 @@ import haquery.client.HaqComponent;
 
 class Client extends HaqComponent
 {
-    //var template : TemplateClient;
+    var template : TemplateClient;
 
-    function test_click()
+    function init()
+	{
+		trace("client item.fullID = " + fullID);
+	}
+	
+	function test_click()
     {
-        trace("test_click on client");
+        trace("test_click on client " + fullID);
     }
 }
