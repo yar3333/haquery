@@ -9,15 +9,14 @@ class Server extends components.haquery.factory.Server
 {
     function preRender()
     {
-        var docs = new Hash<String>();
-		fillDocs(parent.fullTag, innerNode, docs);
-		docs.set("", innerNode.innerHTML);
-		q("#docs").val(Serializer.run(docs));
+		var storage = new DocStorage(manager);
+		storeDocs(parent.fullTag, innerNode, storage);
+		q("#html").val(Serializer.run(innerNode.innerHTML));
     }
 	
-	function fillDocs(parentFullTag:String, doc:HtmlNodeElement, docs:Hash<String>)
+	function storeDocs(parentFullTag:String, parentDoc:HtmlNodeElement, storage:DocStorage)
 	{
-		for (child in doc.children)
+		for (child in parentDoc.children)
 		{
 			if (child.name.startsWith("haq:"))
 			{
@@ -27,14 +26,15 @@ class Server extends components.haquery.factory.Server
 				{
 					throw "Could not find template for the '" + tag + "' component for the '" + parentFullTag + "' parent component.";
 				}
-				if (!docs.exists(t.fullTag))
+				
+				if (storage.get(t.fullTag) == null)
 				{
-					var childDoc = t.getDocCopy();
-					docs.set(t.fullTag, childDoc.toString());
-					fillDocs(t.fullTag, childDoc, docs);
+					var doc = t.getDocCopy();
+					storage.set(t.fullTag, doc);
+					storeDocs(t.fullTag, doc, storage);
 				}
 			}
-			fillDocs(parentFullTag, child, docs);
+			storeDocs(parentFullTag, child, storage);
 		}
 	}
 }
