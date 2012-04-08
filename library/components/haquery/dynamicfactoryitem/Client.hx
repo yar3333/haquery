@@ -13,7 +13,7 @@ import haquery.HashTools;
 using haquery.StringTools;
 using haquery.HashTools;
 
-typedef Tools = components.haquery.listitem.Tools;
+typedef Tools = components.haquery.factoryitem.Tools;
 
 private typedef ComponentData =
 {

@@ -1,4 +1,4 @@
-package components.haquery.dynamiclist;
+package components.haquery.dynamicfactory;
 
 import haxe.Unserializer; 
 import js.JQuery;
@@ -15,7 +15,7 @@ class Client extends components.haquery.factory.Client
 	public function create(parentElem:JQuery, params:Dynamic)
 	{
 		var n = length;
-		manager.createComponent(this, "components.haquery.dynamiclistitem", Std.string(n), true, { parentElem:parentElem, docs:docs, params:params });
+		manager.createComponent(this, "components.haquery.dynamicfactoryitem", Std.string(n), true, { parentElem:parentElem, docs:docs, params:params });
 		q('#length').val(n + 1);
 	}
 }
