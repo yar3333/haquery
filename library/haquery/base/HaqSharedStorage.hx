@@ -1,6 +1,7 @@
 package haquery.base;
 
 import haxe.Serializer;
+import haxe.Unserializer;
 
 enum SendDirection
 {
@@ -9,36 +10,43 @@ enum SendDirection
 	clientToServer;
 }
 
+private typedef Item =
+{
+	var v : Dynamic;
+	var d : SendDirection;
+}
+
 class HaqSharedStorage
 {
-    var data : Hash<Hash<{v:Dynamic, d:SendDirection}>>;
+    var data : Hash<Hash<Item>>;
 	
 	public function new()
 	{
-		data = new Hash<Hash<{v:Dynamic, d:SendDirection}>>();
+		data = new Hash<Hash<Item>>();
 	}
 	
-	public function set(group:String, key:String, value:Dynamic, sendDirection:SendDirection)
+	public function set(group:String, key:String, value:Dynamic, direction:SendDirection)
 	{
 		if (!data.exists(group))
 		{
-			data.set(group, new Hash<{v:Dynamic, d:SendDirection}>());
+			data.set(group, new Hash<Item>());
 		}
-		data.get(group).set(key, {v:value, d:sendDirection});
+		data.get(group).set(key, { v:value, d:direction });
 	}
 	
 	public function get(group:String, key:String) : Dynamic
 	{
 		if (data.exists(group))
 		{
-			return data.get(group).get(key).v;
+			var item = data.get(group).get(key);
+			return item != null ? item.v : null;
 		}
 		return null;
 	}
 	
-	public function serialize() : String
+	function hxSerialize(s:Serializer)
 	{
-		var r = new Hash<Hash<Dynamic>>();
+		var r = new Hash<Hash<Item>>();
 		for (group in data.keys())
 		{
 			var h = data.get(group);
@@ -46,20 +54,24 @@ class HaqSharedStorage
 			{
 				r.set(group, h);
 			}
-			
 		}
-		return Serializer.run(r);
+		s.serialize(r);
 	}
 	
-	function getHashForSerialize(h:Hash<{v:Dynamic, d:SendDirection}>) : Hash<{v:Dynamic, d:SendDirection}>
+	function hxUnserialize(s:Unserializer) 
+	{
+		data = s.unserialize();
+    }
+	
+	function getHashForSerialize(h:Hash<Item>) : Hash<{v:Dynamic, d:SendDirection}>
 	{
 		var r = new Hash<{v:Dynamic, d:SendDirection}>();
 		for (k in h.keys())
 		{
-			var v = h.get(k);
-			if (v.d == SendDirection.both || v.d == #if (php || neko) SendDirection.serverToClient #elseif js SendDirection.clientToServer #end)
+			var item = h.get(k);
+			if (item.d == SendDirection.both || item.d == #if (php || neko) SendDirection.serverToClient #elseif js SendDirection.clientToServer #end)
 			{
-				r.set(k, v);
+				r.set(k, item);
 			}
 		}
 		return r;

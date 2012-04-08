@@ -27,7 +27,6 @@ private typedef ComponentData =
 class Client extends components.haquery.factoryitem.Client
 {
 	var componentAnonimIDs : Hash<Int>;
-	var docs : Hash<String>;
 	var childComponents : Array<ComponentData>;
 	
 	function new()
@@ -39,14 +38,8 @@ class Client extends components.haquery.factoryitem.Client
 	override function construct(manager:HaqTemplateManager, fullTag:String, parent:HaqComponent, id:String, isDynamic:Bool, dynamicParams:Dynamic)
 	{
 		var parentElem:JQuery = dynamicParams.parentElem;
-		var docs:Hash<String> = dynamicParams.docs;
+		var html = dynamicParams.html;
 		var params:Dynamic = dynamicParams.params;
-		
-		this.docs = docs;
-		
-		trace("docs.keys = " + Lambda.array(docs.keysIterable()).join(", "));
-		
-		var html = docs.get("");
 		
 		var doc = Tools.applyHtmlParams(html, cast HashTools.hashify(params));
 		childComponents = prepareDoc(manager, parent.parent.fullTag, parent.prefixID + id + HaqDefines.DELIMITER, doc);
@@ -84,8 +77,7 @@ class Client extends components.haquery.factoryitem.Client
 				{
 					throw "Component template '" + tag + "' not found for parent component '" + fullTag + "'.";
 				}
-				var html = docs.get(t.fullTag);
-				var doc = new HtmlDocument(html);
+				var doc = new components.haquery.dynamicfactory.DocStorage(manager).get(t.fullTag);
 				r.push( { 
 					 fullTag: t.fullTag
 					,prefixID: prefixID
