@@ -262,29 +262,46 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser<HaqTemplateConfig
 	
 	public function getServerHandlers(className:String=null) : Hash<Array<String>>
 	{
-        Lib.profiler.begin('parseServerHandlers');
-			var serverMethods = [ 'click', 'change' ];   // server events
-            var serverHandlers = new Hash<Array<String>>();
-            var obj = Type.createEmptyInstance(Type.resolveClass(className != null ? className : getClassName()));
-            for (field in Type.getInstanceFields(Type.getClass(obj)))
-            {
-                if (Reflect.isFunction(Reflect.field(obj, field)))
-                {
-					var n = field.lastIndexOf("_");
-					if (n > 0 && Lambda.has(serverMethods, field.substr(n + 1)))
-                    {
-                        var nodeID = field.substr(0, n);
-                        var method = field.substr(n + 1);
-                        if (!serverHandlers.exists(nodeID))
-						{
-							serverHandlers.set(nodeID, new Array<String>());
-						}
-                        serverHandlers.get(nodeID).push(method);
-                    }
-                }
-            }
-        Lib.profiler.end();
-		
+		var serverMethods = [ 'click', 'change' ];   // server events
+		var serverHandlers = new Hash<Array<String>>();
+		var haxeClass = Type.resolveClass(className != null ? className : getClassName());
+		var obj = Type.createEmptyInstance(haxeClass);
+		for (field in Type.getInstanceFields(haxeClass))
+		{
+			if (Reflect.isFunction(Reflect.field(obj, field)))
+			{
+				var n = field.lastIndexOf("_");
+				if (n > 0 && Lambda.has(serverMethods, field.substr(n + 1)))
+				{
+					var nodeID = field.substr(0, n);
+					var method = field.substr(n + 1);
+					if (!serverHandlers.exists(nodeID))
+					{
+						serverHandlers.set(nodeID, new Array<String>());
+					}
+					serverHandlers.get(nodeID).push(method);
+				}
+			}
+		}
 		return serverHandlers;
 	}
+	
+	public function getSharedVars(className:String=null) : Array<String>
+	{
+		var r = new Array<String>();
+		var haxeClass = Type.resolveClass(className != null ? className : getClassName());
+		var obj = Type.createEmptyInstance(haxeClass);
+		var meta = haxe.rtti.Meta.getFields(haxeClass);
+		for (field in Type.getInstanceFields(haxeClass))
+		{
+			if (!Reflect.isFunction(Reflect.field(obj, field)))
+			{
+				if (Reflect.hasField(Reflect.field(meta, field), "shared"))
+				{
+					r.push(field);
+				} 
+			}
+		}
+		return r;
+	}	
 }
