@@ -62,4 +62,7 @@ class HaqInternals
 	{
 		getComponentIDs().set(fullID, fullTag);
 	}
+	
+	public var componentTemplateStorage(default, null) : HaqSharedStorage;
+	public var componentInstanceStorage(default, null) : HaqSharedStorage;
 }

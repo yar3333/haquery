@@ -2,6 +2,7 @@ package haquery.server;
 
 import haquery.server.HaqComponent;
 import haquery.server.HaqTemplate;
+import haxe.Serializer;
 //import haxe.htmlparser.HtmlParser;
 import haquery.server.Lib;
 import haquery.server.io.File;
@@ -20,6 +21,16 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 	var registeredScripts : Array<String>;
 	var registeredStyles : Array<String>;
 	
+	/**
+	 * fullTag => varName => varValue
+	 */
+	public var componentTemplateStorage(default, null) : HaqSharedStorage;
+	
+	/**
+	 * fullID => varName => varValue
+	 */
+	public var componentInstanceStorage(default, null) : HaqSharedStorage; 
+	
 	public function new()
 	{
 		super();
@@ -28,6 +39,9 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		
 		registeredScripts = [];
 		registeredStyles = [];
+		
+		componentTemplateStorage = new HaqSharedStorage();
+		componentInstanceStorage = new HaqSharedStorage();
 		
 		fillTemplates();
 	}
@@ -250,6 +264,9 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 				}).join(",\n")
 			  + "\n});\n";
 		
+		s += "haquery.client.HaqInternals.componentTemplateStorage = haxe.Unserializer.run(\"" + componentTemplateStorage.serialize() + "\");\n";
+		s += "haquery.client.HaqInternals.componentInstanceStorage = haxe.Unserializer.run(\"" + componentInstanceStorage.serialize() + "\");\n";
+			  
 		s += "haquery.client.Lib.run('" + page.fullTag + "');\n";
 
         return s;
