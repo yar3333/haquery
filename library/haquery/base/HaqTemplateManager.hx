@@ -13,9 +13,22 @@ class HaqTemplateManager<Template:HaqTemplate>
 {
 	var templates(default, null) : Hash<Template>;
 	
+	/**
+	 * fullTag => varName => varValue
+	 */
+	public var componentTemplateStorage(default, null) : HaqSharedStorage;
+	
+	/**
+	 * fullID => varName => varValue
+	 */
+	public var componentInstanceStorage(default, null) : HaqSharedStorage; 
+	
 	public function new()
 	{
 		templates = new Hash<Template>();
+		
+		componentTemplateStorage = new HaqSharedStorage();
+		componentInstanceStorage = new HaqSharedStorage();
 	}
 	
 	public function get(fullTag:String) : Template

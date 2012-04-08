@@ -15,6 +15,9 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		{
 			templates.set(fullTag, new HaqTemplate(fullTag));
 		}
+		
+		componentTemplateStorage = HaqInternals.componentTemplateStorage;
+		componentInstanceStorage = HaqInternals.componentInstanceStorage;
 	}
 	
 	public function createPage(pageFullTag:String)

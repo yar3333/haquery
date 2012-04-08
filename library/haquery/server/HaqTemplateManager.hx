@@ -21,16 +21,6 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 	var registeredScripts : Array<String>;
 	var registeredStyles : Array<String>;
 	
-	/**
-	 * fullTag => varName => varValue
-	 */
-	public var componentTemplateStorage(default, null) : HaqSharedStorage;
-	
-	/**
-	 * fullID => varName => varValue
-	 */
-	public var componentInstanceStorage(default, null) : HaqSharedStorage; 
-	
 	public function new()
 	{
 		super();
@@ -39,9 +29,6 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		
 		registeredScripts = [];
 		registeredStyles = [];
-		
-		componentTemplateStorage = new HaqSharedStorage();
-		componentInstanceStorage = new HaqSharedStorage();
 		
 		fillTemplates();
 	}
