@@ -16,8 +16,6 @@ class HaqTemplate extends haquery.base.HaqTemplate
 	public var serverClassName(default, null) : String;
 	public var serverHandlers(default, null) : Hash<Array<String>>;
 	
-	public var lastMod : Date;
-	
 	public function new(fullTag:String) 
 	{
 		if (Lib.config.isTraceComponent)
