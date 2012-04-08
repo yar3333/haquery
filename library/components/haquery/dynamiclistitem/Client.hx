@@ -36,11 +36,11 @@ class Client extends components.haquery.listitem.Client
 		componentAnonimIDs = new Hash<Int>();
 	}
 	
-	override function construct(manager:HaqTemplateManager, fullTag:String, parent:HaqComponent, id:String, factoryInitParams:Array<Dynamic> = null)
+	override function construct(manager:HaqTemplateManager, fullTag:String, parent:HaqComponent, id:String, isDynamic:Bool, dynamicParams:Dynamic)
 	{
-		var parentElem:JQuery = factoryInitParams[0];
-		var docs:Hash<String> = factoryInitParams[1];
-		var params:Dynamic = factoryInitParams[2];
+		var parentElem:JQuery = dynamicParams.parentElem;
+		var docs:Hash<String> = dynamicParams.docs;
+		var params:Dynamic = dynamicParams.params;
 		
 		this.docs = docs;
 		
@@ -53,7 +53,7 @@ class Client extends components.haquery.listitem.Client
 		parentElem.append(doc.innerHTML);
 		HaqElemEventManager.elemsWasChanged();
 		
-		super.construct(manager, fullTag, parent, id, factoryInitParams);
+		super.construct(manager, fullTag, parent, id, isDynamic, dynamicParams);
 	}
 	
 	function prepareDoc(manager:HaqTemplateManager, fullTag:String, prefixID:String, node:HtmlNodeElement) : Array<ComponentData>
@@ -127,7 +127,7 @@ class Client extends components.haquery.listitem.Client
 	{
 		for (c in childComponents)
 		{
-			manager.createComponent(this, c.fullTag, c.id, [ c.params ]);
+			manager.createComponent(this, c.fullTag, c.id, true, c.params);
 		}
 	}
 }
