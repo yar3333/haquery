@@ -110,7 +110,7 @@ class TrmGenerator
 				r.push({ haxeName:componentID, haxeType:type, haxeBody:body });
 			}
 			
-			if (!isExtendedFromList(fullTag, child.name))
+			if (isProcessNodeInner(fullTag, child.name))
 			{
 				r = r.concat(getTemplateVars(fullTag, child, queryClassName, isServer));
 			}
@@ -127,7 +127,7 @@ class TrmGenerator
 		};
 	}
 	
-	function isExtendedFromList(fullTag:String, nodeName:String)
+	function isProcessNodeInner(fullTag:String, nodeName:String)
 	{
 		if (nodeName.startsWith("haq:"))
 		{
@@ -136,13 +136,13 @@ class TrmGenerator
 			
 			while (template != null)
 			{
-				if (template.fullTag == "components.haquery.list")
+				if (template.fullTag == "components.haquery.factory")
 				{
-					return true;
+					return false;
 				}
 				template = template.extend != null && template.extend != "" ? manager.get(template.extend) : null;
 			}
 		}
-		return false;
+		return true;
 	}
 }

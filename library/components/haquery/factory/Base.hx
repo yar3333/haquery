@@ -1,4 +1,4 @@
-package components.haquery.list;
+package components.haquery.factory;
 
 class Base extends #if (php || neko) haquery.server.HaqComponent #else haquery.client.HaqComponent #end
 {

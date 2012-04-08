@@ -1,4 +1,4 @@
-package components.haquery.dynamiclistitem;
+package components.haquery.dynamicfactoryitem;
 
 import js.JQuery;
 import haxe.htmlparser.HtmlDocument;
@@ -24,7 +24,7 @@ private typedef ComponentData =
 	var chilren : Array<ComponentData>;
 }
 
-class Client extends components.haquery.listitem.Client
+class Client extends components.haquery.factoryitem.Client
 {
 	var componentAnonimIDs : Hash<Int>;
 	var docs : Hash<String>;

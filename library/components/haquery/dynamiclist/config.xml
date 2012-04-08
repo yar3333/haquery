@@ -1,9 +1,0 @@
-<config>
-    <extend>
-        <component package="components.haquery.list" />
-    </extend>
-    
-    <requires>
-        <component package="components.haquery.dynamiclistitem" /> 
-    </requires>
-</config>

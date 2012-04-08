@@ -1,4 +1,4 @@
-package components.haquery.listitem;
+package components.haquery.factoryitem;
 
 #if php
 import haquery.server.HaqComponent;

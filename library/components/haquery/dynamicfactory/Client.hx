@@ -3,7 +3,7 @@ package components.haquery.dynamiclist;
 import haxe.Unserializer; 
 import js.JQuery;
 
-class Client extends components.haquery.list.Client
+class Client extends components.haquery.factory.Client
 {
 	var docs : Hash<String>;
 	
@@ -14,7 +14,8 @@ class Client extends components.haquery.list.Client
 	
 	public function create(parentElem:JQuery, params:Dynamic)
 	{
-		manager.createComponent(this, "components.haquery.dynamiclistitem", Std.string(length), true, { parentElem:parentElem, docs:docs, params:params });
-		q('#length').val(length + 1);
+		var n = length;
+		manager.createComponent(this, "components.haquery.dynamiclistitem", Std.string(n), true, { parentElem:parentElem, docs:docs, params:params });
+		q('#length').val(n + 1);
 	}
 }

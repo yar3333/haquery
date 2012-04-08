@@ -1,5 +1,5 @@
 <config>
-	<requires>
-		<component package="components.haquery.listitem" />
-	</requires>
+	<extend>
+        <component package="components.haquery.factory" />
+	</extend>
 </config>

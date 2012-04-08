@@ -1,11 +1,11 @@
-package components.haquery.dynamiclist;
+package components.haquery.dynamicfactory;
 
 import haxe.htmlparser.HtmlNodeElement;
 import haxe.Serializer;
 
 using haquery.StringTools;
 
-class Server extends components.haquery.list.Server
+class Server extends components.haquery.factory.Server
 {
     function preRender()
     {
