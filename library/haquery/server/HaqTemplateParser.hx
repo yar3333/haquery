@@ -285,23 +285,4 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser<HaqTemplateConfig
 		}
 		return serverHandlers;
 	}
-	
-	public function getSharedVars(className:String=null) : Array<String>
-	{
-		var r = new Array<String>();
-		var haxeClass = Type.resolveClass(className != null ? className : getClassName());
-		var obj = Type.createEmptyInstance(haxeClass);
-		var meta = haxe.rtti.Meta.getFields(haxeClass);
-		for (field in Type.getInstanceFields(haxeClass))
-		{
-			if (!Reflect.isFunction(Reflect.field(obj, field)))
-			{
-				if (Reflect.hasField(Reflect.field(meta, field), "shared"))
-				{
-					r.push(field);
-				} 
-			}
-		}
-		return r;
-	}	
 }
