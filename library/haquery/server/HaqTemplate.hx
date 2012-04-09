@@ -15,7 +15,6 @@ class HaqTemplate extends haquery.base.HaqTemplate
 	public var css(default, null) : String;
 	public var serverClassName(default, null) : String;
 	public var serverHandlers(default, null) : Hash<Array<String>>;
-	public var sharedVars(default, null) : Array<String>;
 	
 	public function new(fullTag:String) 
 	{
@@ -36,7 +35,6 @@ class HaqTemplate extends haquery.base.HaqTemplate
 		
 		serverClassName = parser.getClassName();
 		serverHandlers = parser.getServerHandlers(serverClassName);
-		sharedVars = parser.getSharedVars(serverClassName);
 	}
 	
 	function serializeDoc(doc:HtmlDocument) : String

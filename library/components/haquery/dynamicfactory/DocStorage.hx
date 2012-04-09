@@ -21,7 +21,7 @@ class DocStorage
 	
 	public function set(fullTag:String, doc:HtmlNodeElement)
 	{
-		manager.componentTemplateStorage.set("components.haquery.dynamicfactory", "doc:" + fullTag, doc.toString(), SendDirection.serverToClient);
+		manager.componentTemplateStorage.set("components.haquery.dynamicfactory", "doc:" + fullTag, doc.toString());
 	}
 	
 	public function get(fullTag:String) : HtmlNodeElement
