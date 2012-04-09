@@ -14,21 +14,14 @@ class HaqTemplateManager<Template:HaqTemplate>
 	var templates(default, null) : Hash<Template>;
 	
 	/**
-	 * fullTag => varName => varValue
+	 * Vars to be (was) sended to the client.
 	 */
-	public var componentTemplateStorage(default, null) : HaqSharedStorage;
-	
-	/**
-	 * fullID => varName => varValue
-	 */
-	public var componentInstanceStorage(default, null) : HaqSharedStorage; 
+	public var sharedStorage(default, null) : HaqSharedStorage;
 	
 	public function new()
 	{
 		templates = new Hash<Template>();
-		
-		componentTemplateStorage = new HaqSharedStorage();
-		componentInstanceStorage = new HaqSharedStorage();
+		sharedStorage = new HaqSharedStorage();
 	}
 	
 	public function get(fullTag:String) : Template

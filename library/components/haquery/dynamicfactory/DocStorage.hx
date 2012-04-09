@@ -6,8 +6,10 @@ import haxe.htmlparser.HtmlNodeElement;
 
 #if (php || neko)
 typedef Manager = haquery.server.HaqTemplateManager
+typedef StoreType = Server;
 #elseif js
 typedef Manager = haquery.client.HaqTemplateManager
+typedef StoreType = Client;
 #end
 
 class DocStorage
@@ -21,12 +23,12 @@ class DocStorage
 	
 	public function set(fullTag:String, doc:HtmlNodeElement)
 	{
-		manager.componentTemplateStorage.set("components.haquery.dynamicfactory", "doc:" + fullTag, doc.toString());
+		manager.sharedStorage.setComponentTemplateVar(StoreType, "doc:" + fullTag, doc.toString());
 	}
 	
 	public function get(fullTag:String) : HtmlNodeElement
 	{
-		var html = manager.componentTemplateStorage.get("components.haquery.dynamicfactory", "doc:" + fullTag);
+		var html = manager.sharedStorage.getComponentTemplateVar(StoreType, "doc:" + fullTag);
 		if (html == null)
 		{
 			return null;

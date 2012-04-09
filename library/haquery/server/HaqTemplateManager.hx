@@ -251,8 +251,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 				}).join(",\n")
 			  + "\n});\n";
 		
-		s += "haquery.client.HaqInternals.componentTemplateStorage = haxe.Unserializer.run(\"" + Serializer.run(componentTemplateStorage) + "\");\n";
-		s += "haquery.client.HaqInternals.componentInstanceStorage = haxe.Unserializer.run(\"" + Serializer.run(componentInstanceStorage) + "\");\n";
+		s += "haquery.client.HaqInternals.sharedStorage = haxe.Unserializer.run(\"" + Serializer.run(sharedStorage) + "\");\n";
 			  
 		s += "haquery.client.Lib.run('" + page.fullTag + "');\n";
 
