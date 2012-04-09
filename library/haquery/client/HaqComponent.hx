@@ -31,7 +31,7 @@ class HaqComponent extends haquery.base.HaqComponent
 	{
 		for (component in manager.getChildComponents(this))
 		{
-			manager.createComponent(this, component.fullTag, component.id, false);
+			manager.createComponent(this, component.fullTag, component.id, isDynamic);
 		}
 	}
 	

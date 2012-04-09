@@ -38,7 +38,7 @@ class Client extends components.haquery.factoryitem.Client
 	override function construct(manager:HaqTemplateManager, fullTag:String, parent:HaqComponent, id:String, isDynamic:Bool, dynamicParams:Dynamic)
 	{
 		var parentElem:JQuery = dynamicParams.parentElem;
-		var html = dynamicParams.html;
+		var html:String = dynamicParams.html;
 		var params:Dynamic = dynamicParams.params;
 		
 		var doc = Tools.applyHtmlParams(html, cast HashTools.hashify(params));
@@ -82,7 +82,7 @@ class Client extends components.haquery.factoryitem.Client
 					 fullTag: t.fullTag
 					,prefixID: prefixID
 					,id: id
-					,params: child.getAttributesAssoc()
+					,params: hashToObject(child.getAttributesAssoc())
 					,chilren: prepareDoc(manager, t.fullTag, prefixID + id + HaqDefines.DELIMITER, doc)
 				} );
 				HaqInternals.addComponent(t.fullTag, prefixID + id);
@@ -93,7 +93,15 @@ class Client extends components.haquery.factoryitem.Client
 		return r;
 	}
 	
-	
+	function hashToObject(h:Hash<Dynamic>) : Dynamic
+	{
+		var r = { };
+		for (k in h.keys())
+		{
+			Reflect.setField(r, k, h.get(k));
+		}
+		return r;
+	}
 	
 	function getComponentID(prefixID:String,node:HtmlNodeElement) : String
 	{
