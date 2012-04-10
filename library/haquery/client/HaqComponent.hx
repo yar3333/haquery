@@ -23,7 +23,7 @@ class HaqComponent extends haquery.base.HaqComponent
 		
 		if (Reflect.isFunction(Reflect.field(this, 'init')))
 		{
-			Reflect.callMethod(this, Reflect.field(this, 'init'), [ dynamicParams ]);
+			Reflect.callMethod(this, Reflect.field(this, 'init'), []);
 		}
 	}
 	

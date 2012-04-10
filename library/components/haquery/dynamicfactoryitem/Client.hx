@@ -20,7 +20,6 @@ private typedef ComponentData =
 	var fullTag : String;
 	var prefixID : String;
 	var id : String;
-	var params : Hash<String>;
 	var chilren : Array<ComponentData>;
 }
 
@@ -82,7 +81,6 @@ class Client extends components.haquery.factoryitem.Client
 					 fullTag: t.fullTag
 					,prefixID: prefixID
 					,id: id
-					,params: hashToObject(child.getAttributesAssoc())
 					,chilren: prepareDoc(manager, t.fullTag, prefixID + id + HaqDefines.DELIMITER, doc)
 				} );
 				HaqInternals.addComponent(t.fullTag, prefixID + id);
@@ -127,7 +125,7 @@ class Client extends components.haquery.factoryitem.Client
 	{
 		for (c in childComponents)
 		{
-			manager.createComponent(this, c.fullTag, c.id, true, c.params);
+			manager.createComponent(this, c.fullTag, c.id, true);
 		}
 	}
 }
