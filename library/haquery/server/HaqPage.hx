@@ -131,10 +131,13 @@ class HaqPage extends HaqComponent
     {
 		if (url.startsWith("<")) return url;
 		
+		url += '?' + FileSystem.stat(url.ltrim("/")).mtime.getTime() / 1000;
+		
 		if (!url.startsWith("http://") && !url.startsWith("/"))
 		{
-			url = '/' + url + '?' + FileSystem.stat(url).mtime.getTime() / 1000;
+			url = '/' + url;
 		}
+		
         return "<link rel='stylesheet' type='text/css' href='" + url + "' />";
     }
 }
