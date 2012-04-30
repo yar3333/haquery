@@ -351,7 +351,14 @@ typedef JqEvent = {
 	//static function get, post
 	//static function getJSON, getScript, grep
 	//static function is*, makeArray, map, merge, noop, now, param, proxy, sub, trim, type, unique
-	static function post(url : String, ?params : Dynamic, ?callb : String -> Void) : Void;
+	inline static function getAjax(url : String, ?params : Dynamic, ?callb : Dynamic -> Void, ?dataType : String) : Void
+	{
+		untyped jQuery.get(url, params, callb, dataType);
+	}
+	inline static function postAjax(url : String, ?params : Dynamic, ?callb : Dynamic -> Void, ?dataType : String) : Void
+	{
+		untyped jQuery.post(url, params, callb, dataType);
+	}
 
 	private static inline function getCurrent() : JQuery {
 		return untyped __js__("$(this)");
