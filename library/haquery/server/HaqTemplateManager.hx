@@ -34,9 +34,9 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 	
 	override function newTemplate(fullTag:String) : HaqTemplate
 	{
-		var templatesCacheDir = HaqDefines.folders.temp + "/templates/";
+		var templatesCacheDir = HaqDefines.folders.temp + "/templates";
 		
-		var templateCachePath = templatesCacheDir + fullTag + ".dat";
+		var templateCachePath = templatesCacheDir + "/" + fullTag + ".dat";
 		
 		if (!FileSystem.exists(templateCachePath) || lastMods.get(fullTag).getTime() > FileSystem.stat(templateCachePath).mtime.getTime())
 		{
