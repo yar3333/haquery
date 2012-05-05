@@ -126,12 +126,12 @@ class Lib
 	
 	static function trace(v:Dynamic, ?pos : haxe.PosInfos) : Void
     {
-        #if php
-        if (Lib.config.filterTracesByIP != '')
+		if (Lib.config.filterTracesByIP != '')
         {
             if (Lib.config.filterTracesByIP!=Web.getClientIP()) return;
         }
         
+        #if php
         var text = '';
         if (Type.getClassName(Type.getClass(v)) == 'String') text += v;
         else
@@ -173,8 +173,14 @@ class Lib
                 HaxeLib.println("<script>if (console) console.debug(decodeURIComponent(\"" + StringTools.urlEncode("SERVER " + text) + "\"));</script>");
             }
         }
+		
+		#else
+		
+		var text = Std.string(v);
         
-        if (!FileSystem.exists(HaqDefines.folders.temp))
+		#end
+        
+		if (!FileSystem.exists(HaqDefines.folders.temp))
         {
             FileSystem.createDirectory(HaqDefines.folders.temp);
         }
@@ -182,12 +188,9 @@ class Lib
         var f : FileOutput = File.append(HaqDefines.folders.temp + "/haquery.log", false);
         if (f != null)
         {
-            f.writeString(text != '' ? StringTools.format('%.3f', (Date.now().getTime() - startTime) / 1000.0) + " " + StringTools.replace(text, "\n", "\r\n\t") + "\r\n" : "\r\n");
+			f.writeString(text != '' ? #if php StringTools.format('%.3f', (Date.now().getTime() - startTime) / 1000.0) + " " + #end StringTools.replace(text, "\n", "\r\n\t") + "\r\n" : "\r\n");
             f.close();
         }
-		#else
-		Lib.println(v);
-		#end
     }
     
     /**

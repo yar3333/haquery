@@ -1,12 +1,12 @@
 package haquery.server.io;
 
 #if php
-
-typedef File = php.io.File;
-
+typedef HaxeFile = php.io.File;
 #elseif neko
-
 typedef HaxeFile = neko.io.File;
+#elseif cpp
+typedef HaxeFile = cpp.io.File;
+#end
 
 class File 
 {
@@ -16,10 +16,6 @@ class File
 	public static inline function write( path : String, binary : Bool = true ) { return HaxeFile.write(path, binary); }
 	public static inline function append( path : String, binary : Bool = true ) { return HaxeFile.append(path, binary); }
 	public static inline function copy( src : String, dst : String ) { return HaxeFile.copy(src, dst); }
-	public static inline function stdin() { return HaxeFile.stdin(); }
-	public static inline function stdout() { return HaxeFile.stdout(); }
-	public static inline function stderr() { return HaxeFile.stderr(); }
-	public static inline function getChar( echo : Bool ) : Int { return HaxeFile.getChar(echo); }
 	
 	public static function putContent( path : String, text : String )
 	{
@@ -28,5 +24,3 @@ class File
 		fout.close();
 	}
 } 
-
-#end
