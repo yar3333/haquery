@@ -3,7 +3,6 @@ package haquery.server;
 import haquery.server.HaqComponent;
 import haquery.server.HaqTemplate;
 import haxe.Serializer;
-//import haxe.htmlparser.HtmlParser;
 import haquery.server.Lib;
 import haquery.server.io.File;
 import haxe.htmlparser.HtmlNodeElement;
