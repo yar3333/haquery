@@ -25,7 +25,7 @@ class StringTools
 		{
 			return HaxeStringTools.ltrim(s);
 		}
-		while (chars.indexOf(s.substr(0, 1)) >= 0)
+		while (s.length > 0 && chars.indexOf(s.substr(0, 1)) >= 0)
 		{
 			s = s.substr(1, s.length - 1);
 		}
@@ -42,7 +42,7 @@ class StringTools
 		{
 			return HaxeStringTools.rtrim(s);
 		}
-		while (chars.indexOf(s.substr(s.length - 1, 1)) >= 0)
+		while (s.length > 0 && chars.indexOf(s.substr(s.length - 1, 1)) >= 0)
 		{
 			s = s.substr(0, s.length - 1);
 		}
