@@ -33,7 +33,6 @@ class Setup
 		try
 		{
 			installFlashDevelopTemplates();
-			installHaxePatch();
 		}
 		catch (e:Dynamic)
 		{
@@ -68,15 +67,6 @@ class Setup
 				log.print(e);
 			}
 		}
-    }
-    
-    function installHaxePatch()
-    {
-        log.start('Patch haXe std library files to haXe 2.08+ version');
-        
-        unzip(exeDir + "tools/haxepatch.zip", hant.getHaxePath(), true);
-        
-        log.finishOk();
     }
     
     function unzip(zipPath:String, targetPath:String, isMakeBackup:Bool)
