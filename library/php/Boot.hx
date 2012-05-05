@@ -15,7 +15,7 @@ function _hx_add($a, $b) {
 		return $a + $b;
 	}
 }
-		
+
 function _hx_anonymous($arr = array()) {
 	$o = new _hx_anonymous();
 	foreach($arr as $k => $v)
@@ -52,7 +52,7 @@ class _hx_array implements ArrayAccess, IteratorAggregate {
 	function iterator() {
 		return new _hx_array_iterator($this->»a);
 	}
-	
+
 	function getIterator() {
 		return $this->iterator();
 	}
@@ -103,7 +103,7 @@ class _hx_array implements ArrayAccess, IteratorAggregate {
 	}
 
 	function slice($pos, $end) {
-		if($end == null)
+		if($end === null)
 			return new _hx_array(array_slice($this->»a, $pos));
 		else
 			return new _hx_array(array_slice($this->»a, $pos, $end-$pos));
@@ -334,10 +334,11 @@ function _hx_get_object_vars($o) {
 	if(isset($o->»dynamics))
 		$a = array_merge($a, array_keys($o->»dynamics));
 	$arr = array();
-	while($k = current($a)) {
+	for($i=0;$i<count($a); $i++)
+	{
+		$k = '' . $a[$i];
 		if(substr($k, 0, 1) != '»')
 			$arr[] = $k;
-		next($a);
 	}
 	return $arr;
 }
@@ -366,7 +367,7 @@ function _hx_instanceof($v, $t) {
 		case 'Array'  : return is_array($v);
 		case 'String' : return is_string($v) && !_hx_is_lambda($v);
 		case 'Bool'   : return is_bool($v);
-		case 'Int'    : return is_int($v);
+		case 'Int'    : return is_int($v) || (is_float($v) && intval($v) == $v && !is_nan($v));
 		case 'Float'  : return is_float($v) || is_int($v);
 		case 'Dynamic': return true;
 		case 'Class'  : return ($v instanceof _hx_class || $v instanceof _hx_interface) && $v->__tname__ != 'Enum';
@@ -522,7 +523,10 @@ function _hx_string_rec($o, $s) {
 			}
 			return $b;
 		} else {
-			if($o instanceof _hx_anonymous) {
+			if ($o instanceof _hx_anonymous) {
+				if ($o->toString && is_callable($o->toString)) {
+					return call_user_func($o->toString);
+				}
 				$rfl = new ReflectionObject($o);
 				$b2 = \"{\n\";
 				$s .= \"\t\";
@@ -569,7 +573,7 @@ function _hx_string_rec($o, $s) {
 		{
 			if ($first && $k === 0)
 				$assoc = false;
-			$str .= ($first ? '' : ', ') . ($assoc 
+			$str .= ($first ? '' : ', ') . ($assoc
 				? _hx_string_rec($k, $s) . '=>' . _hx_string_rec($o[$k], $s)
 				: _hx_string_rec($o[$k], $s)
 			);
