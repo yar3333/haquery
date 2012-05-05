@@ -40,7 +40,7 @@ class OrmManagerGenerator
 	{
 		var model:HaxeClass = new HaxeClass(fullClassName, baseFullClassName);
 		
-		model.addImport('php.db.ResultSet');
+		model.addImport('#if php php.db.ResultSet #elseif neko neko.db.ResultSet #end');
 		model.addImport('haquery.server.db.HaqDb');
 		
 		model.addMethod('new', [], 'Void', '');
