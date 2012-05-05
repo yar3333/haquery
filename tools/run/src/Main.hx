@@ -47,7 +47,7 @@ class Main
 				Lib.println("\twhere <command> may be:");
 				Lib.println("\t\tpre-build                           Do pre-build step.");
 				Lib.println("\t\tpost-build                          Do post-build step.");
-				Lib.println("\t\tinstall                             Install FlashDevelop templates and apply a minor patch to haXe std library.");
+				Lib.println("\t\tinstall                             Install FlashDevelop templates.");
 				Lib.println("\t\tgen-orm [databaseConnectionString]  Generate object-related classes (managers and models).");
                 return 1;
         }
