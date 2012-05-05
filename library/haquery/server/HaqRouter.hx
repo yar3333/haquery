@@ -20,6 +20,8 @@ class HaqRouter
 	
 	public function getRoute(url:String) : HaqRoute
 	{
+		if (url == null) url = "";
+		
 		if (url == 'index.php' || url == 'index')
 		{
 			Web.redirect('/');
