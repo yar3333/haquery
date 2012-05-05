@@ -4,7 +4,7 @@ class Cookie
 {
     public static function all() : Hash<String>
     {
-        #if php
+        #if !client
 		return php.Web.getCookies();
         #else
 		return js.Cookie.all();
@@ -13,7 +13,7 @@ class Cookie
     
     public static function exists(name : String) : Bool
     {
-        #if php
+        #if !client
 		return php.Web.getCookies().exists(name);
         #else
 		return js.Cookie.exists(name);
@@ -22,7 +22,7 @@ class Cookie
     
     public static function get(name : String)
     {
-        #if php
+        #if !client
 		return php.Web.getCookies().get(name);
         #else
 		return js.Cookie.get(name);
@@ -31,7 +31,7 @@ class Cookie
 	
 	public static function set(name : String, value : String, ?expire : Date, ?path : String, ?domain : String)
 	{
-		#if php
+		#if !client
 		return php.Web.setCookie(name, value, expire, domain, path);
 		#else
 		return js.Cookie.set(name, value, expire != null ? Std.int(expire.getTime() - Date.now().getTime()) : null, path, domain) ;
@@ -40,7 +40,7 @@ class Cookie
     
     public static function remove(name : String, ?path : String, ?domain : String) : Void
     {
-        #if php
+        #if !client
 		if (exists(name))
 		{
 			set(name, null, new Date(2000,1,1,0,0,0), domain, path);

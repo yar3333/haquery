@@ -118,12 +118,12 @@ class Build
 		var arrClientClassNames = Lambda.array(clientClassNames.keysIterable());
 		arrClientClassNames.sort(strcmp);
 		
-		fo.writeString("#if (php || neko)\n\n");
+		fo.writeString("#if !client\n\n");
 		fo.writeString(Lambda.map(findBootstrapClassNames(HaqDefines.folders.pages, srcPath), function(s) return "import " + s + ";").join('\n'));
 		fo.writeString("\n");
 		fo.writeString("\n");
 		fo.writeString(Lambda.map(arrServerClassNames, function(s) return "import " + s + ";").join('\n'));
-		fo.writeString("\n\n#elseif js\n\n");
+		fo.writeString("\n\n#else\n\n");
 		fo.writeString(Lambda.map(arrClientClassNames, function(s) return "import " + s + ";").join('\n'));
 		fo.writeString("\n\n#end\n");
         
@@ -177,7 +177,8 @@ class Build
 			params.push("-debug");
 		}
 		
-		params = params.concat([ '-D', 'noEmbedJS' ]);		
+		params = params.concat([ '-D', 'noEmbedJS' ]);
+		params = params.concat([ '-D', 'client' ]);
 		
 		var r = hant.runWaiter(hant.getHaxePath() + "haxe.exe", params, 5000);
         

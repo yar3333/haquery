@@ -1,5 +1,3 @@
-#if (php || neko)
-
 package haquery.server.db;
 
 #if php
@@ -8,6 +6,9 @@ import php.db.ResultSet;
 #elseif neko
 import neko.db.Connection;
 import neko.db.ResultSet;
+#elseif cpp
+import cpp.db.Connection;
+import cpp.db.ResultSet;
 #end
 
 typedef HaqDbTableFieldData = {
@@ -41,5 +42,3 @@ interface HaqDbDriver
 	function getForeignKeys(table:String) : Array<HaqDbTableForeignKey>;
 	function getUniques(table:String) : Hash<Array<String>>;
 }
-
-#end

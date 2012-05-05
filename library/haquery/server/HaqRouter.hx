@@ -4,12 +4,7 @@ import haquery.server.FileSystem;
 import haquery.server.Lib;
 import haquery.server.Sys;
 import haquery.server.Web;
-
-#if php
-import php.io.Path;
-#elseif neko
-import neko.io.Path;
-#end
+import haquery.server.io.Path;
 
 using haquery.StringTools;
 

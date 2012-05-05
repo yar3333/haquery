@@ -6,6 +6,8 @@ import haxe.io.Bytes;
 private typedef HaxeWeb = php.Web;
 #elseif neko
 private typedef HaxeWeb = neko.Web;
+#elseif cpp
+private typedef HaxeWeb = cpp.Web;
 #end
 
 class UploadedFile

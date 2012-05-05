@@ -1,6 +1,6 @@
 package components.haquery.factoryitem;
 
-#if php
+#if !client
 import haquery.server.HaqComponent;
 import haquery.server.HaqEvent;
 #else

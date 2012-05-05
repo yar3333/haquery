@@ -1,8 +1,8 @@
 package components.haquery.link;
 
-#if php
+#if !client
 import haquery.server.HaqComponent;
-#elseif js
+#else
 import haquery.client.HaqComponent;
 #end
 
@@ -10,9 +10,9 @@ class Base extends HaqComponent
 {
     public var enabled(enabled_getter, enabled_setter) : Bool;
     
-    #if php
+    #if !client
     var link : components.haquery.button.Server;
-    #elseif js
+    #else
     var link : components.haquery.button.Client;
     #end
     

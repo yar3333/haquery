@@ -1,7 +1,9 @@
 package haquery.server.io;
 
 #if php
+
 typedef File = php.io.File;
+
 #elseif neko
 
 typedef HaxeFile = neko.io.File;

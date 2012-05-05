@@ -12,12 +12,17 @@ import php.db.ResultSet;
 import neko.db.Connection;
 import neko.db.Mysql;
 import neko.db.ResultSet;
+#elseif cpp
+import cpp.db.Connection;
+import cpp.db.Mysql;
+import cpp.db.ResultSet;
 #end
 
 class HaqDbDriver_mysql implements HaqDbDriver
 {
+	var database : String;
+	
 	public var connection(default, null) : Connection;
-	private var database : String;
 	
 	public function new(host:String, user:String, pass:String, database:String, port:Int=0) : Void
     {
@@ -36,7 +41,7 @@ class HaqDbDriver_mysql implements HaqDbDriver
 		#if php
 		var r = connection.request(sql);
 		var errno = untyped __call__('mysql_errno');
-		#elseif neko
+		#else
 		var r = null;
 		var errno = 0;
 		try { r = connection.request(sql); }
@@ -64,7 +69,7 @@ class HaqDbDriver_mysql implements HaqDbDriver
     {
 		#if php
 		return untyped __call__('mysql_affected_rows');
-		#elseif neko
+		#else
 		return -1;
 		#end
     }
@@ -73,7 +78,7 @@ class HaqDbDriver_mysql implements HaqDbDriver
 	{
 		#if php
 		return untyped __call__('mysql_error');
-		#elseif neko
+		#else
 		return "";
 		#end
 	}

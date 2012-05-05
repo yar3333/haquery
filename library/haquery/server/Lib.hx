@@ -7,6 +7,8 @@ import haxe.Stack;
 private typedef HaxeLib = php.Lib;
 #elseif neko
 private typedef HaxeLib = neko.Lib;
+#elseif cpp
+private typedef HaxeLib = cpp.Lib;
 #end
 
 import haquery.server.HaqConfig;
@@ -50,7 +52,6 @@ class Lib
         try
         {
             profiler.begin("HAQUERY");
-        
                 startTime = Date.now().getTime();
                 haxe.Log.trace = Lib.trace;
                 

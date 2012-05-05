@@ -23,7 +23,7 @@ class HaqDefines
 		'focus', 'focusin', 'focusout',
     ];
 	
-	#if (php || neko)
+	#if !client
 	public static var haqueryClientFilePath = "haquery/client/haquery.js";
 	#end
 }

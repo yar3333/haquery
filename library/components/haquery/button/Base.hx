@@ -1,8 +1,8 @@
 package components.haquery.button;
 
-#if php
+#if !client
 import haquery.server.HaqComponent;
-#elseif js
+#else
 import haquery.client.HaqComponent;
 #end
 

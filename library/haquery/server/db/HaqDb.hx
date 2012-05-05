@@ -11,6 +11,8 @@ import haquery.server.Lib;
 import php.db.ResultSet;
 #elseif neko
 import neko.db.ResultSet;
+#elseif cpp
+import cpp.db.ResultSet;
 #end
 
 class HaqDb

@@ -3,17 +3,10 @@ package haquery.server;
 import haquery.server.HaqCssGlobalizer;
 import haquery.server.HaqDefines;
 import haquery.server.HaqComponent;
+import haquery.server.FileSystem;
+import haquery.server.io.File;
 import haxe.htmlparser.HtmlDocument;
 import haxe.htmlparser.HtmlNodeElement;
-
-#if php
-import php.FileSystem;
-import php.io.File;
-import php.Lessc;
-#elseif neko
-import neko.FileSystem;
-import neko.io.File;
-#end
 
 import haquery.base.HaqTemplateParser.HaqTemplateNotFoundException;
 import haquery.base.HaqTemplateParser.HaqTemplateNotFoundCriticalException;
@@ -178,7 +171,7 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser<HaqTemplateConfig
 				if (node.getAttribute('type') == "text/less")
 				{
 					#if php
-					css += new Lessc().parse(cssGlobalizer.styles(node.innerHTML));
+					css += new php.Lessc().parse(cssGlobalizer.styles(node.innerHTML));
 					#else
 					css += "\n// Lessc supported for the php target only.\n\n";
 					#end
