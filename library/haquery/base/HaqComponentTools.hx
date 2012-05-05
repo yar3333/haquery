@@ -10,9 +10,9 @@ class HaqComponentTools
 		var n = className.lastIndexOf(".");
 		if (n > 0)
 		{
-			#if (php || neko)
+			#if !client
 			var templateClassName = className.substr(0, n) + ".TemplateServer";
-			#elseif js
+			#else
 			var templateClassName = className.substr(0, n) + ".TemplateClient";
 			#end
 			var templateClass = Type.resolveClass(templateClassName);

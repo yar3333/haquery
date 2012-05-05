@@ -1,12 +1,12 @@
 package haquery.base;
 
-#if (php || neko)
+#if !client
 import haquery.server.HaqEvent;
 import haquery.server.Lib;
 import haquery.server.HaqTemplate;
 import haquery.server.HaqTemplateManager;
 private typedef Component = haquery.server.HaqComponent;
-#elseif js
+#else
 import haquery.client.HaqEvent;
 import haquery.client.Lib;
 import haquery.client.HaqTemplate;

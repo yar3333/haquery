@@ -1,8 +1,8 @@
 package haquery.base;
 
-#if (php || neko)
+#if !client
 private typedef TemplateParser = haquery.server.HaqTemplateParser;
-#elseif js
+#else
 private typedef TemplateParser = haquery.client.HaqTemplateParser;
 #end
 
@@ -81,7 +81,7 @@ class HaqTemplateParser<TemplateConfig:HaqTemplateConfig>
 			return parentParser.getClassName();
 		}
 		
-		#if (php || neko)
+		#if !client
 		return isPage() ? "haquery.server.HaqPage" : "haquery.server.HaqComponent";
 		#elseif js
 		return isPage() ? "haquery.client.HaqPage" : "haquery.client.HaqComponent";

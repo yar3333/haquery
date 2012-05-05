@@ -4,10 +4,10 @@ import haquery.server.HaqSharedStorage;
 import haxe.htmlparser.HtmlDocument;
 import haxe.htmlparser.HtmlNodeElement;
 
-#if (php || neko)
+#if !client
 typedef Manager = haquery.server.HaqTemplateManager
 typedef StoreType = Server;
-#elseif js
+#else
 typedef Manager = haquery.client.HaqTemplateManager
 typedef StoreType = Client;
 #end

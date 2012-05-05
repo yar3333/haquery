@@ -1,6 +1,6 @@
 package haquery.base;
 	
-#if (php || neko)
+#if !client
 import haquery.server.FileSystem;
 import haquery.server.Lib;
 #end
@@ -26,7 +26,7 @@ class HaqTemplateManager<Template:HaqTemplate>
 	
 	public function get(fullTag:String) : Template
 	{
-		#if (php || neko)
+		#if !client
 		if (templates.exists(fullTag))
 		{
 			var r = templates.get(fullTag);
@@ -38,12 +38,12 @@ class HaqTemplateManager<Template:HaqTemplate>
 			return r;
 		}
 		return null;
-		#elseif js
+		#else
 		return templates.get(fullTag);
 		#end
 	}
 	
-	#if (php || neko)
+	#if !client
 	function newTemplate(fullTag:String) : Template
 	{
 		return null; 

@@ -1,6 +1,6 @@
 package components.haquery.uploader;
 
-#if php
+#if !client
 typedef Component = haquery.server.HaqComponent;
 #else
 typedef Component = haquery.client.HaqComponent;

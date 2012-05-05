@@ -1,13 +1,13 @@
 package haquery.base;
 
-#if (php || neko)
-	import haquery.server.HaqComponent;
-    import haquery.server.Lib;
-    import haquery.server.HaqQuery;
-#elseif js
-	import haquery.client.HaqComponent;
-    import haquery.client.Lib;
-    import haquery.client.HaqQuery;
+#if !client
+import haquery.server.HaqComponent;
+import haquery.server.Lib;
+import haquery.server.HaqQuery;
+#else
+import haquery.client.HaqComponent;
+import haquery.client.Lib;
+import haquery.client.HaqQuery;
 #end
 
 private typedef Handler = {
@@ -47,7 +47,7 @@ class HaqEvent
 			var obj = handlers[i].o;
 			var func = handlers[i].f;
             var r = Reflect.callMethod(obj, func, cast([component.parent], Array<Dynamic>).concat(params));
-			#if php
+			#if !js
 				if (r == false) return false;
 			#else
 				if (untyped __js__('r === false')) return false;
