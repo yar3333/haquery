@@ -8,19 +8,19 @@ class HaqComponentTools
 {
     static var baseComponentFields : List<String> = null;
 	
-	static function __init__() : Void
-	{
-		var emptyComponent = Type.createEmptyInstance(HaqComponent);
-		baseComponentFields = Lambda.filter(
-			 Reflect.fields(emptyComponent)
-			,function(field) return !Reflect.isFunction(Reflect.field(emptyComponent, field))
-		);
-		baseComponentFields.push('template');
-	}
-	
 	public static function getFieldsToLoadParams(component:HaqComponent) : Hash<String>
     {
-        var r : Hash<String> = new Hash<String>(); // fieldname => FieldName
+		if (baseComponentFields == null)
+		{
+			var emptyComponent = Type.createEmptyInstance(HaqComponent);
+			baseComponentFields = Lambda.filter(
+				 Reflect.fields(emptyComponent)
+				,function(field) return !Reflect.isFunction(Reflect.field(emptyComponent, field))
+			);
+			baseComponentFields.push('template');
+		}
+		
+		var r : Hash<String> = new Hash<String>(); // fieldname => FieldName
         for (field in Reflect.fields(component))
         {
             if (!Reflect.isFunction(Reflect.field(component, field))
