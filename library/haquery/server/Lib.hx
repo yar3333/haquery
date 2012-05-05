@@ -49,15 +49,19 @@ class Lib
 
     static public function run() : Void
     {
-        try
+        #if neko
+		Sys.setCwd(Web.getCwd());
+		#end
+		
+		try
         {
             profiler.begin("HAQUERY");
                 startTime = Date.now().getTime();
-                haxe.Log.trace = Lib.trace;
+				haxe.Log.trace = Lib.trace;
                 
-                isPostback = Web.getParams().get('HAQUERY_POSTBACK') != null;
+				isPostback = Web.getParams().get('HAQUERY_POSTBACK') != null;
                 
-                var router = new HaqRouter();
+				var router = new HaqRouter();
 				var route = router.getRoute(Web.getParams().get('route'));
 
 				switch (route)
@@ -128,14 +132,14 @@ class Lib
     {
 		if (Lib.config.filterTracesByIP != '')
         {
-            if (Lib.config.filterTracesByIP!=Web.getClientIP()) return;
+            if (Lib.config.filterTracesByIP != Web.getClientIP()) return;
         }
         
-        #if php
+		#if php
         var text = '';
         if (Type.getClassName(Type.getClass(v)) == 'String') text += v;
         else
-        if (v!=null)
+        if (v != null)
         {
             text += "DUMP\n";
             var dump = ''; untyped __php__("ob_start(); var_dump($v); $dump = ob_get_clean();");
