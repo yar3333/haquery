@@ -205,10 +205,19 @@ class Lib
         var f : FileOutput = File.append(HaqDefines.folders.temp + "/haquery.log");
         if (f != null)
         {
-			f.writeString(text != "" ? #if php StringTools.format("%.3f", (Date.now().getTime() - startTime) / 1000.0) + " " + #end StringTools.replace(text, "\n", "\r\n\t") + "\r\n" : "\r\n");
+			f.writeString(text != "" ? formatTime((Date.now().getTime() - startTime) / 1000.0) + " " +  StringTools.replace(text, "\n", "\r\n\t") + "\r\n" : "\r\n");
             f.close();
         }
     }
+	
+	static function formatTime(dt:Float) : String
+	{
+		#if php
+		return StringTools.format("%.3f", dt);
+		#else
+		return Math.floor(dt) + "." + StringTools.lpad(Std.string(Math.floor((dt - Math.floor(dt)) * 1000)), "0", 3);
+		#end
+	}
     
     /**
      * Load bootstrap files from current folder to relativePath.
