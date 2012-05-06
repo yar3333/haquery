@@ -17,7 +17,7 @@ class Base extends HaqComponent
             var handlerName = event.component.id + '_' + event.name;
             if (Reflect.isFunction(Reflect.field(parent.parent, handlerName)))
             {
-                event.bind(parent.parent, Reflect.field(parent.parent, handlerName));
+                event.bind(parent.parent, handlerName);
             }
         }
 	}

@@ -12,7 +12,7 @@ import haquery.client.HaqQuery;
 
 private typedef Handler = {
 	var o : HaqComponent;
-	var f : HaqComponent->Dynamic->Bool;
+	var f : String;
 }
 
 class HaqEvent
@@ -29,30 +29,38 @@ class HaqEvent
 		this.name = name;
 	}
 
-	public function bind(obj:HaqComponent, func:HaqComponent->Dynamic->Bool)
+	public function bind(obj:HaqComponent, method:String)
 	{
-		handlers.push( { o: obj, f: func } );
+		handlers.push( { o:obj, f:method } );
 		return this;
 	}
 
-	public  function call(params:Array<Dynamic>=null) : Bool
+	public function call(params:Dynamic) : Bool
 	{
-		//trace("Event call for " + component.fullID + " - " + name + " #" + handlers.length);
-        
-        if (params == null) params = [];
-		
         var i = handlers.length - 1;
-		while (i>=0)
+		while (i >= 0)
 		{
 			var obj = handlers[i].o;
 			var func = handlers[i].f;
-            var r = Reflect.callMethod(obj, func, cast([component.parent], Array<Dynamic>).concat(params));
-			#if !js
-				if (r == false) return false;
-			#else
-				if (untyped __js__('r === false')) return false;
-			#end
-			i--;
+            
+			try
+			{
+				var r = Reflect.callMethod(obj, Reflect.field(obj, func), [ component.parent, params ]);
+				#if !js
+					if (r == false) return false;
+				#else
+					if (untyped __js__('r === false')) return false;
+				#end
+				i--;
+			}
+			catch (e:String)
+			{
+				if (e == "Invalid call")
+				{
+					throw "Invalid call: " + Type.getClassName(Type.getClass(obj)) + "::" + func + "(t, e)";
+				}
+				throw e;
+			}
 		}
 		return true;
 	}

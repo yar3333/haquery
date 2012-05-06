@@ -106,7 +106,7 @@ class HaqComponent
         var handlerName = event.component.id + '_' + event.name;
         if (Reflect.isFunction(Reflect.field(this, handlerName)))
         {
-            event.bind(cast this, Reflect.field(this, handlerName));
+            event.bind(cast this, handlerName);
         }
 	}
 	
