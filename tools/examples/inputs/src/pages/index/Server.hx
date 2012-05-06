@@ -12,7 +12,7 @@ class Server extends HaqPage
 		updateStatus();
 	}
 	
-	function save_click()
+	function save_click(t, e)
 	{
 		updateStatus();
 	}
