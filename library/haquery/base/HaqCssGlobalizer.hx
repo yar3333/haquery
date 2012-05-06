@@ -15,7 +15,7 @@ class HaqCssGlobalizer
 	{
         if (name == null)
 		{
-			return null;
+			return "";
 		}
 		return ~/[~]/g.replace(name, prefix);
 	}
@@ -24,7 +24,7 @@ class HaqCssGlobalizer
 	{
         if (selector == null)
 		{
-			return null;
+			return "";
 		}
 		return ~/[.][~]/g.replace(selector, "." + prefix);
 	}
