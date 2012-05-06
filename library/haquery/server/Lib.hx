@@ -71,14 +71,27 @@ class Lib
 					
 					case HaqRoute.page(path, fullTag, pageID): 
 						loadBootstraps(path);
+						
 						#if php
 						php.Session.start();
 						#end
+						
 						if (config.databaseConnectionString != null && config.databaseConnectionString != "")
 						{
 							HaqDb.connect(config.databaseConnectionString);
 						}
+						
+						if (config.onStart != null)
+						{
+							config.onStart();
+						}
+						
 						HaqSystem.run(fullTag, pageID, isPostback);
+						
+						if (config.onFinish != null)
+						{
+							config.onFinish();
+						}
 				}                
             profiler.end();
             profiler.traceResults();
