@@ -27,6 +27,7 @@ class OrmTools
 		if (sqlTypeCheck(sqlType, 'LONG'))     return 'Int';
 		if (sqlTypeCheck(sqlType, 'INT'))      return 'Int';
 		if (sqlTypeCheck(sqlType, 'INT24'))    return 'Int';
+		if (sqlTypeCheck(sqlType, 'BIGINT'))   return 'Int';
 		if (sqlTypeCheck(sqlType, 'LONGLONG')) return 'Float';
 		if (sqlTypeCheck(sqlType, 'DECIMAL'))  return 'Float';
 		if (sqlTypeCheck(sqlType, 'FLOAT'))    return 'Float';
