@@ -12,7 +12,7 @@ class Server extends HaqComponent
 		trace("server item.fullID = " + fullID);
 	}
     
-	function test_click()
+	function test_click(t, e)
     {
         trace("test_click on server " + fullID);
     }
