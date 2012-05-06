@@ -4,7 +4,7 @@ class Main
 {
     static function main()
 	{
-		#if php
+		#if !client
 		
 		var r = new haxe.unit.TestRunner();
 		

@@ -4,7 +4,7 @@ class Main
 {
     static function main()
     {
-        #if php
+        #if !client
         haquery.server.Lib.run();
         #end
     }
