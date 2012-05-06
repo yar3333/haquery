@@ -135,7 +135,7 @@ class StringTools
 		#if php
         return untyped __call__('addcslashes', s, "\'\"\t\r\n\\");
 		#else
-		return new EReg("\'\"\t\r\n\\", "g").replace(s, "\\\\0");
+		return new EReg("\'\"\t\r\n\\\\", "g").replace(s, "\\\\0");
 		#end
     }
 }
