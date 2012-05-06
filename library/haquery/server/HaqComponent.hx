@@ -215,8 +215,20 @@ class HaqComponent extends haquery.base.HaqComponent
     
     public function callElemEventHandler(elemID:String, eventName:String) : Dynamic
     {
-        var handler = elemID + '_' + eventName;
-        return Reflect.callMethod(this, handler, [ this ]);
+		var handler = elemID + '_' + eventName;
+		
+		try
+		{
+			return Reflect.callMethod(this, Reflect.field(this, handler), [ this, {} ]);
+		}
+		catch (e:String)
+		{
+			if (e == "Invalid call")
+			{
+				throw "Invalid call: " + Type.getClassName(Type.getClass(this)) + "::" + handler + "(t, e)";
+			}
+			throw e;
+		}
     }
     
     /*function getSupportPath() : String

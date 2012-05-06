@@ -16,9 +16,9 @@ class Server extends Base
         q('#b').addClass(cssClass);
 	}
 	
-	function b_click()
+	function b_click(t, e)
 	{
-        event_click.call();
+		event_click.call(e);
 	}
 	
 	override function loadFieldValues(params:Hash<String>) 

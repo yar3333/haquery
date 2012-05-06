@@ -6,7 +6,7 @@ class Client extends Base
 {
     var event_click : HaqEvent;
     
-    function b_click()
+    function b_click(t, e)
     {
         return enabled ? event_click.call() : false;
     }
