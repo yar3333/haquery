@@ -9,15 +9,15 @@ class Server extends HaqComponent
     public var checked(checked_getter, checked_setter) : Bool;
 	public var text : String;
     
-    function checked_getter() : Bool
+	function checked_getter() : Bool
 	{
 		if (!Lib.isPostback)
 		{
-			return q('#cb').attr("checked") ? true : false;
+			return Std.bool(q('#cb').attr("checked"));
 		}
 		else
 		{
-			return q('#cb').val();
+			return Std.bool(q('#cb').val());
 		}
 	}
 	
