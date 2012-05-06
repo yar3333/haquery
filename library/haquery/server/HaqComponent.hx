@@ -219,7 +219,7 @@ class HaqComponent extends haquery.base.HaqComponent
 		
 		try
 		{
-			return Reflect.callMethod(this, Reflect.field(this, handler), [ this, {} ]);
+			return Reflect.callMethod(this, Reflect.field(this, handler), [ this, null ]);
 		}
 		catch (e:String)
 		{

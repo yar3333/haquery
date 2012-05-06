@@ -8,10 +8,10 @@ class Client extends Base
     
     function b_click(t, e)
     {
-        return enabled ? event_click.call() : false;
+        return enabled ? event_click.call(e) : false;
     }
     
-    public function click()
+    public function click(t, e)
     {
         q('#b').click();
     }
