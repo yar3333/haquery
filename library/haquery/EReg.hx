@@ -1,6 +1,6 @@
 package haquery;
 
-@:hack class EReg extends HaxeEReg
+@:hack class EReg extends std.EReg
 {
 	public function splitNational( s : String ) : Array<String>
     {

@@ -2,19 +2,19 @@ package haquery;
 
 class StringTools 
 {
-	public static inline function urlEncode( s : String ) : String untyped { return HaxeStringTools.urlEncode(s); }
+	public static inline function urlEncode( s : String ) : String untyped { return std.StringTools.urlEncode(s); }
 	
-	public static inline function urlDecode( s : String ) : String untyped { return HaxeStringTools.urlDecode(s); }
+	public static inline function urlDecode( s : String ) : String untyped { return std.StringTools.urlDecode(s); }
 
-	public static inline function htmlEscape( s : String ) : String { return HaxeStringTools.htmlEscape(s); }
+	public static inline function htmlEscape( s : String ) : String { return std.StringTools.htmlEscape(s); }
 
-	public static inline function htmlUnescape( s : String ) : String { return HaxeStringTools.htmlUnescape(s); }
+	public static inline function htmlUnescape( s : String ) : String { return std.StringTools.htmlUnescape(s); }
 
-	public static inline function startsWith( s : String, start : String ) { return HaxeStringTools.startsWith(s, start); }
+	public static inline function startsWith( s : String, start : String ) { return std.StringTools.startsWith(s, start); }
 
-	public static inline function endsWith( s : String, end : String ) { return HaxeStringTools.endsWith(s, end); }
+	public static inline function endsWith( s : String, end : String ) { return std.StringTools.endsWith(s, end); }
 
-	public static inline function isSpace( s : String, pos : Int ) : Bool { return HaxeStringTools.isSpace(s, pos); }
+	public static inline function isSpace( s : String, pos : Int ) : Bool { return std.StringTools.isSpace(s, pos); }
 
 	public static function ltrim( s : String, chars : String = null ) : String
     {
@@ -23,7 +23,7 @@ class StringTools
         #else
         if (chars == null)
 		{
-			return HaxeStringTools.ltrim(s);
+			return std.StringTools.ltrim(s);
 		}
 		while (s.length > 0 && chars.indexOf(s.substr(0, 1)) >= 0)
 		{
@@ -40,7 +40,7 @@ class StringTools
         #else
         if (chars == null)
 		{
-			return HaxeStringTools.rtrim(s);
+			return std.StringTools.rtrim(s);
 		}
 		while (s.length > 0 && chars.indexOf(s.substr(s.length - 1, 1)) >= 0)
 		{
@@ -57,23 +57,23 @@ class StringTools
         #else
         if (chars == null)
 		{
-			return HaxeStringTools.trim(s);
+			return std.StringTools.trim(s);
 		}
 		return rtrim(ltrim(s, chars), chars);
         #end
     }
 
-	public static inline function rpad( s : String, c : String, l : Int ) : String { return HaxeStringTools.rpad(s, c, l); }
+	public static inline function rpad( s : String, c : String, l : Int ) : String { return std.StringTools.rpad(s, c, l); }
 
-	public static inline function lpad( s : String, c : String, l : Int ) : String { return HaxeStringTools.lpad(s, c, l); }
+	public static inline function lpad( s : String, c : String, l : Int ) : String { return std.StringTools.lpad(s, c, l); }
 
-	public static inline function replace( s : String, sub : String, by : String ) : String { return HaxeStringTools.replace(s, sub, by); }
+	public static inline function replace( s : String, sub : String, by : String ) : String { return std.StringTools.replace(s, sub, by); }
 
-	public static inline function hex( n : Int, ?digits : Int ) { return HaxeStringTools.hex(n, digits); }
+	public static inline function hex( n : Int, ?digits : Int ) { return std.StringTools.hex(n, digits); }
 
-	public static inline function fastCodeAt( s : String, index : Int ) : Int { return HaxeStringTools.fastCodeAt(s, index); }
+	public static inline function fastCodeAt( s : String, index : Int ) : Int { return std.StringTools.fastCodeAt(s, index); }
 
-	public static inline function isEOF( c : Int ) : Bool { return HaxeStringTools.isEOF(c); }
+	public static inline function isEOF( c : Int ) : Bool { return std.StringTools.isEOF(c); }
     
 	#if (php || js)
 	public static inline function jsonDecode(s : String) : Dynamic
