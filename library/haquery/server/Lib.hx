@@ -193,7 +193,7 @@ class Lib
 		
 		#else
 		
-		var text = Std.string(v);
+		var text = Std.string(v != null ? v : "");
         
 		#end
         
@@ -202,10 +202,10 @@ class Lib
             FileSystem.createDirectory(HaqDefines.folders.temp);
         }
         
-        var f : FileOutput = File.append(HaqDefines.folders.temp + "/haquery.log", false);
+        var f : FileOutput = File.append(HaqDefines.folders.temp + "/haquery.log");
         if (f != null)
         {
-			f.writeString(text != '' ? #if php StringTools.format('%.3f', (Date.now().getTime() - startTime) / 1000.0) + " " + #end StringTools.replace(text, "\n", "\r\n\t") + "\r\n" : "\r\n");
+			f.writeString(text != "" ? #if php StringTools.format("%.3f", (Date.now().getTime() - startTime) / 1000.0) + " " + #end StringTools.replace(text, "\n", "\r\n\t") + "\r\n" : "\r\n");
             f.close();
         }
     }
