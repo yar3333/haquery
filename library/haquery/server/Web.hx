@@ -189,11 +189,16 @@ class Web {
 	public static var isModNeko(isModNeko_getter, null) : Bool; 
     static inline function isModNeko_getter() : Bool  { return HaxeWeb.isModNeko; }
 
-	#if php
-	public static function getHttpHost() : String {
-        return untyped __php__("$_SERVER['HTTP_HOST']"); 
+	public static function getHttpHost() : String 
+	{
+        #if php
+		return untyped __php__("$_SERVER['HTTP_HOST']"); 
+		#else
+		return getClientHeader("Host");
+		#end
     }
 
+	#if php
 	public static function getFiles() : Hash<UploadedFile> 
     {
         var files : Hash<php.NativeArray> = Lib.hashOfAssociativeArray(untyped __var__("_FILES"));
