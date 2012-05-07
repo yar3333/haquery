@@ -61,7 +61,10 @@ class HaqSystem
 
         Lib.profiler.end();
         
-        Lib.print(html);
+        if (!Lib.isRedirected)
+		{
+			Lib.print(html);
+		}
     }
     
     function renderPage(page:HaqPage) : String

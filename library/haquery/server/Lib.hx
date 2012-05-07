@@ -29,6 +29,8 @@ class Lib
     public static var config : HaqConfig;
     
     public static var profiler = new HaqProfiler();
+	
+	public static var isRedirected = false;
     
     /**
      * Ajax?
@@ -112,7 +114,9 @@ class Lib
 		}
         else
 		{
+			Web.setReturnCode(302); // Moved Temporarily
 			Web.setHeader('Location', url);
+			isRedirected = true;
 		}
     }
 
