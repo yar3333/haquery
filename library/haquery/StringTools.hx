@@ -86,17 +86,40 @@ class StringTools
 	}
 	#end
 
-    #if php
     public static inline function toUpperCaseNational(s : String) : String
     {
-        return untyped __call__('mb_strtoupper', s, 'UTF-8');
+		#if php
+		return untyped __call__('mb_strtoupper', s, 'UTF-8');
+		#else
+		//var lower = "абвгдеёжзийклмнопрстуфхцчшщьыъэюя";
+		//var upper = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭЮЯ";
+		// TODO: toUpperCaseNational
+		return s.toUpperCase();
+		#end
     }
     
     public static inline function toLowerCaseNational(s : String) : String
     {
-        return untyped __call__('mb_strtolower', s, 'UTF-8');
+        #if php
+		return untyped __call__('mb_strtolower', s, 'UTF-8');
+		#else
+		//var lower = "абвгдеёжзийклмнопрстуфхцчшщьыъэюя";
+		//var upper = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭЮЯ";
+		// TODO: toLowerCaseNational
+		return s.toLowerCase();
+		#end
     }
     
+	public static inline function hexdec(s : String) : Int
+	{
+		#if php
+		return untyped __call__('hexdec', s);
+		#else
+		return Std.parseInt("0x" + s);
+		#end
+	}
+    
+	#if php
 	public static inline function stripTags(s : String) : String
 	{
 		return untyped __call__('strip_tags', s);
@@ -110,11 +133,6 @@ class StringTools
 	public static inline function jsonEncode(x : Dynamic) : String
 	{
 		return untyped __call__('json_encode', x);
-	}
-    
-	public static inline function hexdec(s : String) : Int
-	{
-		return untyped __call__('hexdec', s);
 	}
     
     public static inline function lengthNational(s:String) : Int
