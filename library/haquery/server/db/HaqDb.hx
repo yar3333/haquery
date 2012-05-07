@@ -31,10 +31,9 @@ class HaqDb
 		
         Lib.profiler.begin("openDatabase");
             connection = Type.createInstance(
-                Type.resolveClass(
-                    'haquery.server.db.HaqDbDriver_' + re.matched(1)), 
-                    [ re.matched(4), re.matched(2), re.matched(3), re.matched(6), re.matched(5) != "" ? Std.parseInt(re.matched(5)) : 0 ]
-                );
+                 Type.resolveClass('haquery.server.db.HaqDbDriver_' + re.matched(1))
+				,[ re.matched(4), re.matched(2), re.matched(3), re.matched(6), re.matched(5) != "" ? Std.parseInt(re.matched(5)) : 0 ]
+            );
         Lib.profiler.end();
 		
         return true;
@@ -55,7 +54,7 @@ class HaqDb
 
     static public function quote(v:Dynamic) : String
     {
-        return connection.quote(v);
+		return connection.quote(v);
     }
 
     static public function lastInsertId() : Int

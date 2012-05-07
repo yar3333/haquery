@@ -39,7 +39,7 @@ class Client extends Base
         container_mousemove(t, e);
     }
     
-    function file_change() : Bool
+    function file_change(t, e) : Bool
     {
         var fileName : String = q('#file').val();
         fileName = fileName.replace('\\', '/');
@@ -61,7 +61,7 @@ class Client extends Base
 
         if (!event_select.call([fileName])) return false;
 
-        event_uploading.call();
+        event_uploading.call(e);
         enabled = false;
 
         var frame : IFrame = cast q('#frame')[0];

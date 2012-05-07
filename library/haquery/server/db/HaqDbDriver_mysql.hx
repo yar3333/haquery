@@ -21,8 +21,7 @@ import cpp.db.ResultSet;
 class HaqDbDriver_mysql implements HaqDbDriver
 {
 	var database : String;
-	
-	public var connection(default, null) : Connection;
+	var connection : Connection;
 	
 	public function new(host:String, user:String, pass:String, database:String, port:Int=0) : Void
     {
@@ -116,7 +115,7 @@ class HaqDbDriver_mysql implements HaqDbDriver
 
     public function quote(v:Dynamic) : String
     {
-        switch (Type.typeof(v))
+		switch (Type.typeof(v))
         {
             case ValueType.TClass(cls):
                 if (cls == String)
