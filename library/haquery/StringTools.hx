@@ -75,16 +75,25 @@ class StringTools
 
 	public static inline function isEOF( c : Int ) : Bool { return std.StringTools.isEOF(c); }
     
-	#if (php || js)
+	public static inline function jsonEncode(x : Dynamic) : String
+	{
+		#if php
+		return untyped __call__('json_encode', x);
+		#else
+		return hxjson2.JSON.encode(x);
+		#end
+	}
+	
 	public static inline function jsonDecode(s : String) : Dynamic
 	{
 		#if php
-			return untyped __call__('json_decode', s);
+		return untyped __call__('json_decode', s);
 		#elseif js
-			return js.Lib.eval("(" + s + ")");
+		return js.Lib.eval("(" + s + ")");
+		#else
+		return hxjson2.JSON.decode(s);
 	    #end
 	}
-	#end
 
     public static inline function toUpperCaseNational(s : String) : String
     {
@@ -119,6 +128,37 @@ class StringTools
 		#end
 	}
     
+    public static inline function lengthNational(s:String) : Int
+    {
+        #if php
+		return untyped __call__('mb_strlen', s, 'UTF-8');
+		#else
+		return haxe.Utf8.length(s);
+		#end
+    }
+    
+    public static function substrNational(s:String, pos:Int, ?len:Int) : String
+    {
+        #if php
+        return len != null 
+            ? untyped __call__('mb_substr', s, pos, len, 'UTF-8')
+            : untyped __call__('mb_substr', s, pos, lengthNational(s) - pos, 'UTF-8');
+		#else
+        return len != null 
+            ? haxe.Utf8.sub(s, pos, len)
+            : haxe.Utf8.sub(s, pos, lengthNational(s) - pos);
+		#end
+    }
+	
+	public static function addcslashes(s:String) : String
+    {
+		#if php
+        return untyped __call__('addcslashes', s, "\'\"\t\r\n\\");
+		#else
+		return new EReg("\'\"\t\r\n\\\\", "g").replace(s, "\\\\0");
+		#end
+    }
+	
 	#if php
 	public static inline function stripTags(s : String) : String
 	{
@@ -129,31 +169,5 @@ class StringTools
 	{
 		return untyped __call__('sprintf', template, value);
 	}
-
-	public static inline function jsonEncode(x : Dynamic) : String
-	{
-		return untyped __call__('json_encode', x);
-	}
-    
-    public static inline function lengthNational(s:String) : Int
-    {
-        return untyped __call__('mb_strlen', s, 'UTF-8');
-    }
-    
-    public static function substrNational(s:String, pos:Int, ?len:Int) : String
-    {
-        return len != null 
-            ? untyped __call__('mb_substr', s, pos, len, 'UTF-8') 
-            : untyped __call__('mb_substr', s, pos, lengthNational(s) - pos, 'UTF-8');
-    }
 	#end
-    
-	public static function addcslashes(s:String) : String
-    {
-		#if php
-        return untyped __call__('addcslashes', s, "\'\"\t\r\n\\");
-		#else
-		return new EReg("\'\"\t\r\n\\\\", "g").replace(s, "\\\\0");
-		#end
-    }
 }
