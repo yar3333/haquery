@@ -83,7 +83,7 @@ class Build
 				,function(s) return "(?:" + s.replace(".", "[.]") + ")"
 			).join("|") + ")$";
 			
-			hant.copyFolderContent(path, project.binPath, strRegExpFileToExclude);
+			hant.copyFolderContent(path, project.binPath, project.platform, strRegExpFileToExclude);
         }
 		
 		loadLibFolder();

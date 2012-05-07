@@ -13,6 +13,7 @@ class FlashDevelopProject
 	public var classPaths(default, null) : Array<String>;
 	public var isDebug(default, null) : Bool;
 	public var srcPath(default, null) : String;
+	public var platform(default, null) : String;
 	
 	public function new(dir:String, exeDir:String) 
 	{
@@ -28,6 +29,7 @@ class FlashDevelopProject
 		classPaths = getClassPaths(xml, exeDir);
 		isDebug = getIsDebug(xml);
 		srcPath = getSrcPath(xml);
+		platform = getPlatform(xml);
 	}
 	
 	function findProjectFile(dir:String) : String
@@ -50,14 +52,18 @@ class FlashDevelopProject
 	function getBinPath(xml:Xml) : String
 	{
 		var fast = new haxe.xml.Fast(xml.firstElement());
-		if (fast.hasNode.output && fast.node.output.hasNode.movie)
+		
+		if (fast.hasNode.output)
 		{
-			var movie = fast.node.output.node.movie;
-			if (movie.has.path)
+			for (elem in fast.node.output.elements)
 			{
-				return movie.att.path.replace("\\", "/").rtrim("/");
+				if (elem.name == "movie" && elem.has.bin)
+				{
+					return elem.att.bin;
+				}
 			}
 		}
+		
 		return "bin";
 	}
 	
@@ -152,5 +158,23 @@ class FlashDevelopProject
 		}
 		
 		return r;
+	}
+
+	function getPlatform(xml:Xml) : String
+	{
+		var fast = new haxe.xml.Fast(xml.firstElement());
+		
+		if (fast.hasNode.output)
+		{
+			for (elem in fast.node.output.elements)
+			{
+				if (elem.name == "movie" && elem.has.platform)
+				{
+					return elem.att.platform.toLowerCase();
+				}
+			}
+		}
+		
+		return "";
 	}
 }

@@ -10,7 +10,7 @@ namespace copyfolder
     {
         static int Main(string[] args)
         {
-            if (args.Length >= 2 || args.Length <= 4)
+            if (args.Length >= 2 && args.Length <= 4)
             {
                 var platform = args.Length > 2 ? args[2] : null;
                 Regex exclude = args.Length > 3 ? new Regex(args[3], RegexOptions.IgnoreCase) : null;
@@ -60,22 +60,34 @@ namespace copyfolder
 
         static bool isAllowedForPlatform(string path, string platform)
         {
-            var name = Path.GetFileNameWithoutExtension(path);
+            var name = GetFileNameWithoutExtension(path);
             return platform == null || !name.Contains("--") || name.EndsWith("--" + platform);
         }
 
         static string getDestFileName(string path, string platform)
         {
-            var name = Path.GetFileNameWithoutExtension(path);
+            var name = GetFileNameWithoutExtension(path);
             if (platform == null || !name.Contains("--"))
             {
-                return name + Path.GetExtension(path);
+                return name + GetExtension(path);
             }
             if (name.EndsWith("--" + platform))
             {
-                return name.Substring(0, name.Length - ("--" + platform).Length) + Path.GetExtension(path);
+                return name.Substring(0, name.Length - ("--" + platform).Length) + GetExtension(path);
             }
             return null;
+        }
+
+        static string GetFileNameWithoutExtension(string path)
+        {
+            var name = Path.GetFileNameWithoutExtension(path);
+            return name != "" ? name : Path.GetExtension(path);
+        }
+        
+        static string GetExtension(string path)
+        {
+            var name = Path.GetFileNameWithoutExtension(path);
+            return name != "" ? Path.GetExtension(path) : "";
         }
     }
 }
