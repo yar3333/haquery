@@ -73,14 +73,14 @@ class Hant
 		}
     }
     
-    public function copyFolderContent(fromFolder:String, toFolder:String, excludeRegExp:String="")
+    public function copyFolderContent(fromFolder:String, toFolder:String, platform:String="", excludeRegExp:String="")
     {
 		fromFolder = fromFolder.replace('\\', '/').rtrim('/');
         toFolder = toFolder.replace('\\', '/').rtrim('/');
 		
 		log.start("Copy directory '" + fromFolder + "' => '" + toFolder + "'");
         
-		run(exeDir + "copyfolder.exe", [ fromFolder.replace("/", "\\"), toFolder.replace("/", "\\"), excludeRegExp ]);
+		run(exeDir + "copyfolder.exe", [ fromFolder.replace("/", "\\"), toFolder.replace("/", "\\"), platform, excludeRegExp ]);
 		
 		log.finishOk();
     }
