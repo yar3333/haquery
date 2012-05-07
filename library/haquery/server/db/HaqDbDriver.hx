@@ -30,8 +30,6 @@ typedef HaqDbTableForeignKey = {
 
 interface HaqDbDriver 
 {
-    public var connection(default, null) : Connection;
-    
 	function query(sql:String) : ResultSet;
     function quote(s:Dynamic) : String;
     function lastInsertId() : Int;

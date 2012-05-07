@@ -26,7 +26,7 @@ using haquery.StringTools;
 
 class Lib
 {
-    public static var config = new HaqConfig();
+    public static var config : HaqConfig;
     
     public static var profiler = new HaqProfiler();
     
@@ -52,6 +52,8 @@ class Lib
         #if neko
 		Sys.setCwd(Web.getCwd());
 		#end
+		
+		config = new HaqConfig();
 		
 		try
         {
@@ -228,11 +230,18 @@ class Lib
         for (i in 1...folders.length + 1)
         {
             var className = folders.slice(0, i).join('.') + '.Bootstrap';
-            var clas : Class<HaqBootstrap> = cast Type.resolveClass(className);
+			var clas = Type.resolveClass(className);
             if (clas != null)
             {
-                var b : HaqBootstrap = Type.createInstance(clas, []);
-                b.init(config);
+				var initMethod = Reflect.field(clas, "init");
+				if (initMethod != null)
+				{
+					Reflect.callMethod(clas, initMethod, [ config ]);
+				}
+				else
+				{
+					throw "Bootsrap class " + className + " must have init() method.";
+				}
             }
         }
     }

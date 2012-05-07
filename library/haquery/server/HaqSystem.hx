@@ -31,7 +31,7 @@ class HaqSystem
 		
         Lib.profiler.begin("system");
 
-            trace("HAQUERY SYSTEM Start pageFullTag = " + pageFullTag #if php +  ", HTTP_HOST = " + Web.getHttpHost() #end + ", clientIP = " + Web.getClientIP() + ", pageID = " + pageID);
+            trace("HAQUERY SYSTEM Start pageFullTag = " + pageFullTag +  ", HTTP_HOST = " + Web.getHttpHost() + ", clientIP = " + Web.getClientIP() + ", pageID = " + pageID);
             
             var params = Web.getParams();
             if (pageID != null)
