@@ -115,7 +115,16 @@ class FlashDevelopProject
 		var hant = new Hant(new Log(0), exeDir);
 		var haxelib = Sys.environment().get("HAXEPATH").replace("\\", "/").rtrim("/") + "/haxelib.exe";
 		var paths = hant.run(haxelib, [ "path", name ]).stdOut.split("\n");
-		return paths[0].replace("\\", "/").rtrim("/") + "/";
+		
+		for (path in paths)
+		{
+			if (!path.startsWith("-"))
+			{
+				return path.replace("\\", "/").rtrim("/") + "/";
+			}
+		}
+		
+		return null;
 	}
 	
 	function getIsDebug(xml:Xml) : Bool
