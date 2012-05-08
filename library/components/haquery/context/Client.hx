@@ -6,7 +6,7 @@ import haquery.client.HaqComponent;
 
 class Client extends HaqComponent
 {
-    var event_show : HaqEvent;
+    var event_show : HaqEvent<JQuery>;
     
     var elem : JQuery;
     var timer : haxe.Timer;
@@ -54,7 +54,7 @@ class Client extends HaqComponent
     {
         q('#p').show();
         q('#p').offset(getContextPosition(elem));
-        event_show.call([ elem ]);
+        event_show.call(elem);
     }
 	
 	/**
@@ -84,12 +84,12 @@ class Client extends HaqComponent
         innerMouseOut();
     }
     
-    function p_mouseover()
+    function p_mouseover(t, e)
     {
         innerMouseOver();
     }
     
-    function p_mouseout()
+    function p_mouseout(t, e)
     {
         innerMouseOut();
     }

@@ -2,6 +2,12 @@ package components.haquery.list;
 
 import haquery.server.Lib;
 import haquery.server.HaqEvent;
+import haquery.server.HaqComponent;
+
+typedef ItemDataBoundEventArgs = {
+	var item:HaqComponent;
+	var obj:Dynamic;
+}
 
 class Server extends components.haquery.factory.Server
 {
@@ -14,7 +20,7 @@ class Server extends components.haquery.factory.Server
         for (obj in objects)
         {
             var item = create(obj);
-			event_itemDataBound.call([ item, obj ]);
+			event_itemDataBound.call({ item:item, obj:obj });
         }
     }
 }

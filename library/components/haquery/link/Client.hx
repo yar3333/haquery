@@ -4,7 +4,7 @@ import haquery.client.Lib;
 
 class Client extends Base
 {
-    function link_click()
+    function link_click(t, e)
     {
         Lib.redirect(q('#href').val());
         return false;

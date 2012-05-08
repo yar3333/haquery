@@ -3,10 +3,16 @@ package components.haquery.uploader;
 import haquery.server.HaqEvent;
 import haquery.server.Web;
 
+typedef UploadEventArgs = 
+{
+	var file : haquery.server.UploadedFile;
+}
+
 class Server extends Base
 {
     public var filter : String;
-    var event_upload : HaqEvent;
+    
+	var event_upload : HaqEvent<UploadEventArgs>;
 
     function preRender()
     {
@@ -19,7 +25,7 @@ class Server extends Base
     {
         var files = Web.getFiles();
         var file = files.get(prefixID + 'file');
-        event_upload.call([file]);
+        event_upload.call({ file:file });
         callSharedMethod('fileUploadComplete', [ Type.enumIndex(file.error) ]);
     }
 }

@@ -1,6 +1,5 @@
 package components.haquery.radioboxes;
 
-import js.Dom;
 import haquery.client.HaqEvent;
 import haquery.client.HaqQuery;
 import haquery.client.HaqComponent;
@@ -9,13 +8,13 @@ class Client extends HaqComponent
 {
     public var value(value_getter, value_setter) : String;
     
-    var event_change : HaqEvent;
+    var event_change : HaqEvent<js.JQuery.JqEvent>;
     
     function init()
     {
         for (elem in getInputElements())
         {
-            elem.change(function(e) { event_change.call([e]); } );
+            elem.change(function(e) { event_change.call(e); } );
         }
     }
     

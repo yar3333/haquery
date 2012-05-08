@@ -5,7 +5,7 @@ import haquery.client.HaqEvent;
 
 class Client extends HaqComponent
 {
-    var event_change : HaqEvent;
+    var event_change : HaqEvent<js.JQuery.JqEvent>;
 	
 	public var checked(checked_getter, checked_setter) : Bool;
     
@@ -20,9 +20,9 @@ class Client extends HaqComponent
         return v;
     }
     
-    function cb_change(e)
+    function cb_change(t, e:js.JQuery.JqEvent)
     {
-		event_change.call([ e ]);
+		event_change.call(e);
     }
 	
 	@shared function setChecked(v:Bool)
