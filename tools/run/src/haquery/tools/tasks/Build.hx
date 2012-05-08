@@ -4,6 +4,7 @@ import haquery.server.FileSystem;
 import haquery.server.io.File;
 import haquery.server.io.Path;
 import haquery.server.HaqDefines;
+import haquery.tools.Excludes;
 import haquery.tools.HaqTemplateManager;
 import haquery.tools.JSMin;
 import haquery.tools.PackageTree;
@@ -39,7 +40,7 @@ class Build
         
 		try
 		{
-			var manager = new HaqTemplateManager(project.classPaths, log);
+			var manager = new HaqTemplateManager(project.allClassPaths, log);
 			genTrm(manager);
 			genImports(manager, project.srcPath);
 			saveLastMods(manager);
@@ -66,25 +67,22 @@ class Build
 			return false;
 		}
         
-        var filesToExclude = 
-		[
-			 "(?:/|^).(?:svn|hg)"
-			,".(?:hx|hxproj)"
-			,"haxelib.xml"
-			,"^" + exeDir + "(?:tools|run.n|readme.txt|(?:restorefiletime|runwaiter|copyfolder).(?:exe|exe.config|pdb))"
-		];
+        var excludes = new Excludes(project.libPaths);
+		for (path in project.libPaths)
+		{
+			if (FileSystem.exists(path + "excludes.xml"))
+			{
+				excludes.appendFromFile(path + "excludes.xml");
+			}
+		}
 		
-		var manager = new HaqTemplateManager(project.classPaths, log);
-		
-		for (path in project.classPaths)
-        {
-			var strRegExpFileToExclude = "(?:" + Lambda.map(
-				 filesToExclude.concat([ path + (new PackageTree(manager.unusedTemplates).toString()) ])
-				,function(s) return "(?:" + s.replace(".", "[.]") + ")"
-			).join("|") + ")$";
-			
-			hant.copyFolderContent(path, project.binPath, project.platform, strRegExpFileToExclude);
-        }
+		var manager = new HaqTemplateManager(project.allClassPaths, log);
+		var reUnusedTemplate = new PackageTree(manager.unusedTemplates).toString();
+		for (path in project.allClassPaths)
+		{
+			var reExclude = "(?:" + excludes.getRegExp(path) + ")|(?:" + (path + reUnusedTemplate).replace(".", "[.]") + ")";
+			hant.copyFolderContent(path, project.binPath, project.platform, "^(?:" + reExclude + ")$");
+		}
 		
 		loadLibFolder();
 		
@@ -158,17 +156,19 @@ class Build
 		hant.createDirectory(clientPath);
         
         var params = new Array<String>();
-        for (path in project.classPaths)
+        
+		for (path in project.classPaths)
         {
-            if (path != exeDir)
-			{
-				params.push('-cp'); params.push(path.rtrim('/'));
-			}
+			params.push('-cp'); params.push(path.rtrim('/'));
         }
+        
+		for (name in project.libPaths.keysIterable())
+        {
+			params.push('-lib'); params.push(name);
+		}
 		
 		params = params.concat([ 
-			 "-lib", "HaQuery"
-			,"-js", clientPath + "/haquery.js"
+			 "-js", clientPath + "/haquery.js"
 			,'-main', 'Main'
 		]);
 		
@@ -226,7 +226,7 @@ class Build
     {
         log.start("Generate template related mapping classes");
         
-        TrmGenerator.run(manager!=null ? manager : new HaqTemplateManager(project.classPaths, log), hant);
+        TrmGenerator.run(manager!=null ? manager : new HaqTemplateManager(project.allClassPaths, log), hant);
         
         log.finishOk();
     }
