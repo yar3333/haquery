@@ -45,7 +45,7 @@ class Setup
     {
         log.start('Install FlashDevelop templates');
         
-        var srcPath = exeDir + "tools/flashdevelop.zip";
+        var srcPath = exeDir + "flashdevelop.zip";
         var userLocalPath = Sys.getEnv('LOCALAPPDATA') != null 
             ? Sys.getEnv('LOCALAPPDATA') 
             : Sys.getEnv('USERPROFILE') + '/Local Settings/Application Data';

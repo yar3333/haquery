@@ -11,8 +11,6 @@
 				<exclude name="*.exe.config" />
 			</fileset>
 		</copy>
-	
-		<mkdir dir="temp\tools" />
 		
 		<zip destfile="temp\examples.zip">
 			<fileset dir="examples">
@@ -21,7 +19,7 @@
 			</fileset>
 		</zip>
 	
-		<zip destfile="temp\tools\flashdevelop.zip">
+		<zip destfile="temp\flashdevelop.zip">
 			<fileset dir="tools\flashdevelop" />
 		</zip>
 		
