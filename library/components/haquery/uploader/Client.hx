@@ -3,17 +3,16 @@ package components.haquery.uploader;
 import haquery.client.HaqElemEventManager;
 import haquery.client.HaqEvent;
 import haquery.client.HaqQuery;
-import js.JQuery;
 import js.Dom;
 
 using haquery.StringTools;
 
 class Client extends Base
 {
-    var event_select : HaqEvent;
-    var event_filterNotMatch : HaqEvent;
-    var event_uploading : HaqEvent;
-    var event_complete : HaqEvent;
+    var event_select : HaqEvent<{ fileName:String }>;
+    var event_filterNotMatch : HaqEvent<{ fileName:String }>;
+    var event_uploading : HaqEvent<Null>;
+    var event_complete : HaqEvent<{ errorCode:Int }>;
 
     function init()
     {
@@ -54,14 +53,14 @@ class Client extends Base
             var re = new EReg(filter, "i");
             if (!re.match(fileName))
             {
-                event_filterNotMatch.call([fileName]);
+                event_filterNotMatch.call({ fileName:fileName });
                 return false;
             }
         }
 
-        if (!event_select.call([fileName])) return false;
+        if (!event_select.call({ fileName:fileName })) return false;
 
-        event_uploading.call(e);
+        event_uploading.call(null);
         enabled = false;
 
         var frame : IFrame = cast q('#frame')[0];
@@ -94,6 +93,6 @@ class Client extends Base
     @shared function fileUploadComplete(errorCode:Int)
     {
         enabled = true;
-        event_complete.call([errorCode]);
+        event_complete.call({ errorCode:errorCode });
     }
 }

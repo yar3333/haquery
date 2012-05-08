@@ -44,21 +44,4 @@ class Client extends HaqComponent
         
         return n;
     }
-    
-/*    public function select()
-    {
-        var self = this;
-        q('#tabs>div').each(function(index,elem) {
-            var elemID = elem.id.substr(self.prefixID.length);
-            if (elemID != tabID)
-            {
-                new HaqQuery(elem).removeClass('active');
-                self.parent.q('#' + new HaqQuery(elem).attr('panelID')).removeClass('active');
-                self.event_hided.call([elemID]);
-            }
-        });
-        q('#'+tabID).addClass('active');
-        parent.q('#' + q('#' + tabID).attr('panelID')).addClass('active');
-        event_selected.call([tabID]);
-    }*/
 }

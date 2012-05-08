@@ -4,9 +4,9 @@ import haquery.client.HaqEvent;
 
 class Client extends Base
 {
-    var event_click : HaqEvent;
+    var event_click : HaqEvent<js.JQuery.JqEvent>;
     
-    function b_click(t, e)
+    function b_click(t, e:js.JQuery.JqEvent)
     {
         return enabled ? event_click.call(e) : false;
     }
