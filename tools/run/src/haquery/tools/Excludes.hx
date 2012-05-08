@@ -43,15 +43,18 @@ class Excludes
 			if (elemLibrary.name == "library" && elemLibrary.has.name)
 			{
 				var localPath = libPaths.get(elemLibrary.att.name.toLowerCase());
-				for (elemRegexp in elemLibrary.elements)
+				if (localPath != null)
 				{
-					if (elemRegexp.name == "regexp" && elemRegexp.has.pattern)
+					for (elemRegexp in elemLibrary.elements)
 					{
-						if (!reLocals.exists(localPath))
+						if (elemRegexp.name == "regexp" && elemRegexp.has.pattern)
 						{
-							reLocals.set(localPath, new Array<String>());
+							if (!reLocals.exists(localPath))
+							{
+								reLocals.set(localPath, new Array<String>());
+							}
+							reLocals.get(localPath).push(elemRegexp.att.pattern);
 						}
-						reLocals.get(localPath).push(elemRegexp.att.pattern);
 					}
 				}
 			}
