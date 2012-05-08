@@ -47,7 +47,7 @@ class HaqConfig
 	
 	public function new()
 	{
-		databaseConnectionString = readDatabaseConnectionString("config.xml");
+		databaseConnectionString = readDatabaseConnectionString(Web.getCwd().rtrim("\\/") + "/config.xml");
 		sqlTraceLevel = 1;
 		isTraceComponent = false;
 		filterTracesByIP = '';
