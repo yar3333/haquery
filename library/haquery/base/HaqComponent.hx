@@ -88,7 +88,7 @@ class HaqComponent
 			{
 				if (field.startsWith('event_'))
 				{
-					var event : HaqEvent = Reflect.field(this, field);
+					var event : HaqEvent<Dynamic> = Reflect.field(this, field);
 					if (event == null)
 					{
 						event = new HaqEvent(cast this, field.substr("event_".length));
@@ -100,9 +100,8 @@ class HaqComponent
 		}
 	}
 	
-	public function connectEventHandlers(event:HaqEvent) : Void
+	public function connectEventHandlers(event:HaqEvent<Dynamic>) : Void
 	{
-		//trace("base[" + fullID + "] connectEventHandlers event = " + event.name);
         var handlerName = event.component.id + '_' + event.name;
         if (Reflect.isFunction(Reflect.field(this, handlerName)))
         {

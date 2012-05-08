@@ -15,7 +15,7 @@ private typedef Handler = {
 	var f : String;
 }
 
-class HaqEvent
+class HaqEvent<ArgType:Dynamic>
 {
 	var handlers : Array<Handler>;
 	
@@ -35,7 +35,7 @@ class HaqEvent
 		return this;
 	}
 
-	public function call(params:Dynamic) : Bool
+	public function call(param:ArgType) : Bool
 	{
         var i = handlers.length - 1;
 		while (i >= 0)
@@ -45,7 +45,7 @@ class HaqEvent
             
 			try
 			{
-				var r = Reflect.callMethod(obj, Reflect.field(obj, func), [ component.parent, params ]);
+				var r = Reflect.callMethod(obj, Reflect.field(obj, func), [ component.parent, param ]);
 				#if !js
 					if (r == false) return false;
 				#else

@@ -1,3 +1,3 @@
 package haquery.server;
 
-typedef HaqEvent = haquery.base.HaqEvent;
+typedef HaqEvent<ArgType> = haquery.base.HaqEvent<ArgType>;
