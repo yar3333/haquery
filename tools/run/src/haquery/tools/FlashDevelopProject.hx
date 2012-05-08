@@ -11,6 +11,8 @@ class FlashDevelopProject
 {
 	public var binPath(default, null) : String;
 	public var classPaths(default, null) : Array<String>;
+	public var libPaths(default, null) : Hash<String>;
+	public var allClassPaths(default, null) : Array<String>;
 	public var isDebug(default, null) : Bool;
 	public var srcPath(default, null) : String;
 	public var platform(default, null) : String;
@@ -27,6 +29,8 @@ class FlashDevelopProject
 		
 		binPath = getBinPath(xml);
 		classPaths = getClassPaths(xml, exeDir);
+		libPaths = getLibPaths(xml, exeDir);
+		allClassPaths = Lambda.array(libPaths).concat(classPaths);
 		isDebug = getIsDebug(xml);
 		srcPath = getSrcPath(xml);
 		platform = getPlatform(xml);
@@ -70,25 +74,7 @@ class FlashDevelopProject
     function getClassPaths(xml:Xml, exeDir:String) : Array<String>
     {
         var r = new Array<String>();
-        
 		var fast = new haxe.xml.Fast(xml.firstElement());
-		
-		if (fast.hasNode.haxelib)
-		{
-			var haxelibs = fast.node.haxelib;
-			for (elem in haxelibs.elements)
-			{
-				if (elem.name == 'library' && elem.has.name)
-				{
-					var path = getHaxeLibPath(elem.att.name, exeDir);
-					if (path == "")
-					{
-						path = ".";
-					}
-					r.push(path.rtrim("/") + "/");
-				}
-			}
-		}
 		
 		if (fast.hasNode.classpaths)
 		{
@@ -106,11 +92,36 @@ class FlashDevelopProject
 				}
 			}
 		}
-        
+		
 		return r;
     }
 	
-	function getHaxeLibPath(name:String, exeDir:String)
+    function getLibPaths(xml:Xml, exeDir:String) : Hash<String>
+    {
+        var r = new Hash<String>();
+		var fast = new haxe.xml.Fast(xml.firstElement());
+		
+		if (fast.hasNode.haxelib)
+		{
+			var haxelibs = fast.node.haxelib;
+			for (elem in haxelibs.elements)
+			{
+				if (elem.name == 'library' && elem.has.name)
+				{
+					var path = getLibPath(elem.att.name, exeDir);
+					if (path == "")
+					{
+						path = ".";
+					}
+					r.set(elem.att.name.toLowerCase(), path.rtrim("/") + "/");
+				}
+			}
+		}
+		
+		return r;
+    }
+	
+	function getLibPath(name:String, exeDir:String)
 	{
 		var hant = new Hant(new Log(0), exeDir);
 		var haxelib = Sys.environment().get("HAXEPATH").replace("\\", "/").rtrim("/") + "/haxelib.exe";

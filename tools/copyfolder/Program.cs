@@ -14,7 +14,9 @@ namespace copyfolder
             {
                 var platform = args.Length > 2 ? args[2] : null;
                 Regex exclude = args.Length > 3 ? new Regex(args[3], RegexOptions.IgnoreCase) : null;
-                copyFolderContent(args[0].TrimEnd("/\\".ToCharArray()), args[1].TrimEnd("/\\".ToCharArray()), platform, exclude);
+                var src = Path.GetFullPath(args[0]).TrimEnd("/\\".ToCharArray());
+                var dest = args[1].TrimEnd("/\\".ToCharArray());
+                copyFolderContent(src, dest, platform, exclude);
                 return 0;
             }
             else
