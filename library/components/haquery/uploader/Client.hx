@@ -3,6 +3,7 @@ package components.haquery.uploader;
 import haquery.client.HaqElemEventManager;
 import haquery.client.HaqEvent;
 import haquery.client.HaqQuery;
+import js.JQuery;
 import js.Dom;
 
 using haquery.StringTools;
@@ -11,7 +12,7 @@ class Client extends Base
 {
     var event_select : HaqEvent<{ fileName:String }>;
     var event_filterNotMatch : HaqEvent<{ fileName:String }>;
-    var event_uploading : HaqEvent<Null>;
+    var event_uploading : HaqEvent<Dynamic>;
     var event_complete : HaqEvent<{ errorCode:Int }>;
 
     function init()
@@ -64,7 +65,7 @@ class Client extends Base
         enabled = false;
 
         var frame : IFrame = cast q('#frame')[0];
-        new JQuery(frame).unbind('load').load(function(e:JqEvent) {
+        q(frame).unbind('load').load(function(e:JqEvent) {
             var elem : HtmlDom = frame.contentWindow.document.body.firstChild;
             var text = elem.innerHTML;
             HaqElemEventManager.callServerHandlersCallbackFunction(text); 
