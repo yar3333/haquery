@@ -14,8 +14,8 @@
 	
 		<mkdir dir="temp\tools" />
 		
-		<zip destfile="temp\tools\examples.zip">
-			<fileset dir="tools\examples">
+		<zip destfile="temp\examples.zip">
+			<fileset dir="examples">
 				<exclude name="*\bin\**" />
 				<exclude name="*\trm\**" />
 			</fileset>
