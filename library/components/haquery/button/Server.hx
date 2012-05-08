@@ -5,7 +5,7 @@ import haquery.server.HaqEvent;
 
 class Server extends Base
 {
-	var event_click : HaqEvent<Null>;
+	var event_click : HaqEvent<Dynamic>;
 
 	public var text : String;
 	public var cssClass : String;

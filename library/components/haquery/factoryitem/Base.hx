@@ -10,7 +10,7 @@ import haquery.client.HaqEvent;
 
 class Base extends HaqComponent
 {
-	override function connectEventHandlers(event:HaqEvent) : Void
+	override function connectEventHandlers(event:HaqEvent<Dynamic>) : Void
 	{
         if (parent != null && parent.parent != null)
         {
