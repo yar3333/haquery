@@ -6,20 +6,9 @@
         <regexp pattern=".+/excludes[.]xml" />
     </global>
     
-    <library name="HaQuery">
+    <local>
         <regexp pattern=".+[.](?:zip|n|exe|txt|exe[.]config|pdb)" />
-    </library>
-    
-    <library name="nMagick">
-        <regexp pattern="changes[.]txt" />
-        <regexp pattern="IM_license[.]html" />
-        <regexp pattern="LICENSE[.]txt" />
-        <regexp pattern="src" />
-    </library>
-    
-	<library name="NekoCurl">
-        <regexp pattern="src" />
-    </library>
+    </local>
 	
 	<library name="hxJson2">
         <regexp pattern="LICENSE" />

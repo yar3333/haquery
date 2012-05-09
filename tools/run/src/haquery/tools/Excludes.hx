@@ -63,7 +63,7 @@ class Excludes
 		var localPath = Path.directory(FileSystem.fullPath(excludeFilePath)).replace("\\", "/").rtrim("/") + "/";
 		for (elemLocal in fast.elements)
 		{
-			if (elemLocal.name == "local" && elemLocal.has.name)
+			if (elemLocal.name == "local")
 			{
 				for (elemRegexp in elemLocal.elements)
 				{
