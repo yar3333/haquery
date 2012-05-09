@@ -3,12 +3,13 @@ package components.haquery.radioboxes;
 import haquery.client.HaqEvent;
 import haquery.client.HaqQuery;
 import haquery.client.HaqComponent;
+import js.JQuery;
 
 class Client extends HaqComponent
 {
     public var value(value_getter, value_setter) : String;
     
-    var event_change : HaqEvent<js.JQuery.JqEvent>;
+    var event_change : HaqEvent<JqEvent>;
     
     function init()
     {

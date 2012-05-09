@@ -1,12 +1,13 @@
 package components.haquery.button;
 
 import haquery.client.HaqEvent;
+import js.JQuery;
 
 class Client extends Base
 {
-    var event_click : HaqEvent<js.JQuery.JqEvent>;
+    var event_click : HaqEvent<JqEvent>;
     
-    function b_click(t, e:js.JQuery.JqEvent)
+    function b_click(t, e:JqEvent)
     {
         return enabled ? event_click.call(e) : false;
     }
