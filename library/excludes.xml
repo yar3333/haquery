@@ -7,7 +7,7 @@
     </global>
     
     <library name="HaQuery">
-        <regexp pattern=".+[.](?:zip|n|exe|xml|txt|exe[.]config|pdb)" />
+        <regexp pattern=".+[.](?:zip|n|exe|txt|exe[.]config|pdb)" />
     </library>
     
     <library name="nMagick">
