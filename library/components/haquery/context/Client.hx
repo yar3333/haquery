@@ -4,9 +4,13 @@ import js.JQuery;
 import haquery.client.HaqEvent;
 import haquery.client.HaqComponent;
 
+typedef ShowEventArgs = {
+	var elem : JQuery;
+}
+
 class Client extends HaqComponent
 {
-    var event_show : HaqEvent<JQuery>;
+    var event_show : HaqEvent<ShowEventArgs>;
     
     var elem : JQuery;
     var timer : haxe.Timer;
@@ -54,7 +58,7 @@ class Client extends HaqComponent
     {
         q('#p').show();
         q('#p').offset(getContextPosition(elem));
-        event_show.call(elem);
+        event_show.call({ elem:elem });
     }
 	
 	/**

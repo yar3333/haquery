@@ -15,7 +15,7 @@ private typedef Handler = {
 	var f : String;
 }
 
-class HaqEvent<ArgType:Dynamic>
+class HaqEvent<EventArgs:Dynamic>
 {
 	var handlers : Array<Handler>;
 	
@@ -35,7 +35,7 @@ class HaqEvent<ArgType:Dynamic>
 		return this;
 	}
 
-	public function call(param:ArgType) : Bool
+	public function call(param:EventArgs) : Bool
 	{
         var i = handlers.length - 1;
 		while (i >= 0)

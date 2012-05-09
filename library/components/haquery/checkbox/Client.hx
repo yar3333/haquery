@@ -2,10 +2,11 @@ package components.haquery.checkbox;
 
 import haquery.client.HaqComponent;
 import haquery.client.HaqEvent;
+import js.JQuery;
 
 class Client extends HaqComponent
 {
-    var event_change : HaqEvent<js.JQuery.JqEvent>;
+    var event_change : HaqEvent<JqEvent>;
 	
 	public var checked(checked_getter, checked_setter) : Bool;
     
@@ -20,7 +21,7 @@ class Client extends HaqComponent
         return v;
     }
     
-    function cb_change(t, e:js.JQuery.JqEvent)
+    function cb_change(t, e:JqEvent)
     {
 		event_change.call(e);
     }
