@@ -13,7 +13,6 @@ private typedef HaxeLib = cpp.Lib;
 
 import haquery.server.HaqConfig;
 import haquery.server.HaqRouter;
-import haquery.server.HaqBootstrap;
 import haquery.server.HaqSystem;
 import haquery.server.db.HaqDb;
 import haquery.server.HaqProfiler;
