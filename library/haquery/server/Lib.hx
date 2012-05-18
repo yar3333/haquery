@@ -59,16 +59,20 @@ class Lib
             profiler.begin("HAQUERY");
                 startTime = Date.now().getTime();
 				haxe.Log.trace = Lib.trace;
-                
+				
 				isPostback = Web.getParams().get('HAQUERY_POSTBACK') != null;
                 
 				var router = new HaqRouter();
 				var route = router.getRoute(Web.getParams().get('route'));
-
+				
 				switch (route)
 				{
 					case HaqRoute.file(path): 
+					#if php
 						untyped __call__('require', path);
+					#elseif neko
+						throw "HaqRoute.file is unsupported for neko platform.";
+					#end
 					
 					case HaqRoute.page(path, fullTag, pageID): 
 						loadBootstraps(path);

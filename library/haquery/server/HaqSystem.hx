@@ -61,7 +61,7 @@ class HaqSystem
 
         Lib.profiler.end();
         
-        if (!Lib.isRedirected)
+		if (!Lib.isRedirected)
 		{
 			Lib.print(html);
 		}
@@ -69,7 +69,7 @@ class HaqSystem
     
     function renderPage(page:HaqPage) : String
     {
-        Lib.profiler.begin('renderPage');
+		Lib.profiler.begin('renderPage');
             var html : String = page.render();
         Lib.profiler.end();
 
@@ -80,7 +80,7 @@ class HaqSystem
     
     function processPostback(page : HaqPage)
     {
-        page.forEachComponent('preEventHandlers');
+		page.forEachComponent('preEventHandlers');
 
         var componentID = Web.getParams().get('HAQUERY_COMPONENT');
         var method = Web.getParams().get('HAQUERY_METHOD');
@@ -110,7 +110,7 @@ class HaqSystem
             throw "Component id = '" + componentID + "' not found.";
         }
         
-        Web.setHeader('Content-Type', 'text/plain; charset=utf-8');
+		Web.setHeader('Content-Type', 'text/plain; charset=utf-8');
         
         return 'HAQUERY_OK' + Serializer.run(result) + "\n" + ajaxResponse;
     }
@@ -131,13 +131,25 @@ class HaqSystem
 	
 	function callSharedMethod(component:HaqComponent, method:String, params:Array<Dynamic>) : { success:Bool, result:Dynamic }
 	{
-		var haxeClass = Type.getClass(component);
-		var meta = haxe.rtti.Meta.getFields(haxeClass);
-		var m = Reflect.field(meta, method);
-		if (Reflect.hasField(m, "shared"))
+		if (isMethodShared(Type.getClass(component), method))
 		{
 			return { success:true, result:Reflect.callMethod(component, Reflect.field(component, method), params) };
 		}
 		return { success:false, result:null };
+	}
+	
+	function isMethodShared(cls:Class<HaqComponent>, method:String) : Bool
+	{
+		if (cls != null)
+		{
+			var meta = haxe.rtti.Meta.getFields(cls);
+			var m = Reflect.field(meta, method);
+			if (Reflect.hasField(m, "shared"))
+			{
+				return true;
+			}
+			return isMethodShared(cast Type.getSuperClass(cls), method);
+		}
+		return false;
 	}
 }

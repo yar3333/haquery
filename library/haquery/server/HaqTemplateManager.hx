@@ -237,7 +237,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 	
 	function array2json(a:Iterable<String>) : String
 	{
-		return "[" + Lambda.map(a, function(s) return "'" + s + "'").join(",") + "]";
+		return "[" + Lambda.map(a, function(s) return s != null ? "'" + s + "'" : "null").join(",") + "]";
 	}
 	
 	public function getDynamicClientCode(page:HaqPage) : String
@@ -264,7 +264,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 					var t = get(tag);
 					return "'" + tag + "':"
 						 + "{" 
-							 + "config:" + array2json([t.extend].concat(t.imports)) 
+							 + "config:" + array2json([ t.extend ].concat(t.imports))
 							 + ", "
 							 + "serverHandlers:haquery.HashTools.hashify({" 
 								+ Lambda.map(t.serverHandlers.keysIterable(), function(elemID) {
