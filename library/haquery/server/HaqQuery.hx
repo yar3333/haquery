@@ -343,11 +343,11 @@ class HaqQuery
         {
             if (nodes.length > 0)
             {
-                var sStyles = nodes[0].getAttribute('style');
-                
-				//if (preg_match("/\b(" + name + ")\b\s*:\s*(.*?)\s*;/", sStyles, matches)) return matches[1];
-				var re : EReg = new EReg("\\b(" + name + ")\\b\\s*:\\s*(.*?)\\s*;", '');
-				if (re.match(sStyles)) return re.matched(1);
+                if (nodes[0].hasAttribute("style"))
+				{
+					var re = new EReg("\\b(" + name + ")\\b\\s*:\\s*(.*?)\\s*;", '');
+					if (re.match(nodes[0].getAttribute("style"))) return re.matched(1);
+				}
             }
             return null;
         }
@@ -355,7 +355,7 @@ class HaqQuery
         var re = new EReg("\\b(" + name + ")\\b\\s*:\\s*(.*?)\\s*(;|$)", '');
 		for (node in nodes)
         {
-            var sStyles = nodes[0].getAttribute('style');
+			var sStyles = node.hasAttribute("style") ? node.getAttribute("style") : "";
 			if (re.match(sStyles))
 			{
 				sStyles = re.replace((val != '' && val != null) ? name + ": " + val + ";" : '', sStyles);
@@ -367,7 +367,7 @@ class HaqQuery
 					sStyles =  name + ": " + val + "; " + sStyles;
 				}
 			}
-            nodes[0].setAttribute('style', sStyles);
+            node.setAttribute("style", sStyles);
         }
 
         if (Lib.isPostback)
@@ -381,9 +381,9 @@ class HaqQuery
     /**
      * Show element by setting display style to specified value.
      */
-    public function show(display='') : HaqQuery
+    public function show(display="") : HaqQuery
     {
-        return css('display',display);
+        return css("display", display);
     }
 
     /**
@@ -391,7 +391,7 @@ class HaqQuery
      */
     public function hide() : HaqQuery
     {
-        return css('display','none');
+        return css("display", "none");
     }
     
     /**
