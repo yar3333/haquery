@@ -250,7 +250,7 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser<HaqTemplateConfig
 	 */
 	function getFullPath(path:String) : String
 	{
-		return FileSystem.exists(path) ? path : null;
+		return FileSystem.exists(path.rtrim("/")) ? path : null;
 	}
 	
 	public function getServerHandlers(className:String=null) : Hash<Array<String>>
