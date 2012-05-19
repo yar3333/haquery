@@ -404,4 +404,26 @@ class HaqQuery
             f(i, get(i));
         }
     }
+	
+	public function data(name:String, ?val:Dynamic) : Dynamic
+	{
+		if (val != null)
+		{
+			if      (val == true)	val = "true";
+			else if (val == false)	val = "false";
+			return attr("data-" + name, val);
+		}
+		else
+		{
+			val = attr("data-" + name);
+			if (val == "true") return true;
+			if (val == "false") return false;
+			if (val == "0") return 0;
+			var n = Std.parseInt(val);
+			if (n != 0 && n != null) return n;
+			var f = Std.parseFloat(val);
+			if (f != 0 && f != null) return n;
+			return val;
+		}
+	}
 }
