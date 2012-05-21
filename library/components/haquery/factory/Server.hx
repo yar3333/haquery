@@ -9,6 +9,14 @@ using haquery.StringTools;
 
 class Server extends Base
 {
+    public var items(default, null) : Array<HaqComponent>;
+    
+    function new()
+    {
+		super();
+		items = new Array<HaqComponent>();
+    }
+    
     override function createChildComponents():Void 
 	{
         if (Lib.isPostback)
@@ -26,16 +34,17 @@ class Server extends Base
 		
 		var n = length;
 		var r = manager.createComponent(this, "factoryitem", Std.string(n), cast HashTools.hashify(params), getItemInnerNode(), true);
-		q('#length').val(Std.string(n + 1));
+		items.push(r);
+		q('#length').val(n + 1);
 		return r;
 	}
 	
     override function render()
     {
         var r = "";
-		for (component in components)
+		for (item in items)
         {
-            r += component.render().trim() + "\n";
+            r += item.render().trim() + "\n";
         }
         return r + "\n" + super.render();
     }
