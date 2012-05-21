@@ -1,11 +1,10 @@
 package pages;
 
-import haquery.server.HaqBootstrap;
 import haquery.server.HaqConfig;
 
-class Bootstrap implements HaqBootstrap
+class Bootstrap
 {
-    public function init(config:HaqConfig)
+    static function init(config:HaqConfig)
     {
        // your code to config application
     }
