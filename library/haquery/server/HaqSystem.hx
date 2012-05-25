@@ -133,8 +133,8 @@ class HaqSystem
 	{
 		if (isMethodShared(Type.getClass(component), method))
 		{
-			trace("Call "+Type.getClassName(Type.getClass(component)) + "::" + method);
-			return { success:true, result:Reflect.callMethod(component, Reflect.field(component, method), params) };
+			var f = Reflect.field(component, method);
+			return { success:true, result:Reflect.callMethod(component, f, params != null ? params : []) };
 		}
 		return { success:false, result:null };
 	}
