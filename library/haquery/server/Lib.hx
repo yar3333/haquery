@@ -2,6 +2,7 @@ package haquery.server;
 
 import haquery.server.io.File;
 import haxe.Stack;
+import microtime.Date;
 
 #if php
 private typedef HaxeLib = php.Lib;

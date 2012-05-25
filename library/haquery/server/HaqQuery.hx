@@ -283,9 +283,15 @@ class HaqQuery
             if (Lib.isPostback && node.hasAttribute('id'))
             {
                 var fullID = prefixID + node.getAttribute('id');
-				untyped __php__("
+				/*untyped __php__("
 					if (isset($_POST[$fullID])) $_POST[$fullID] = $val; 
-				");
+				");*/
+				var params = Web.getParams();
+				if (params.exists(fullID))
+				{
+					params.set(fullID, val);
+					Lib.assert(Web.getParams().get(fullID) == val);
+				}
             }
             
             if (node.name == 'textarea')

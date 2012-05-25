@@ -1,5 +1,7 @@
 package haquery.server;
 
+import microtime.Date;
+
 using haquery.HashTools;
 
 private typedef HaqProfilerBlock =
