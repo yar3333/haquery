@@ -6,4 +6,5 @@
     <version name='3.0'>Major changes. Calling client methods from the server and vice versa. Components imports. XML-based config files.</version>
     <depends name="HtmlParser"/>
     <depends name="FirePHP"/>
+    <depends name="MicroTime"/>
 </project>
