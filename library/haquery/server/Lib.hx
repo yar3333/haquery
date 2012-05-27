@@ -3,6 +3,7 @@ package haquery.server;
 import haquery.server.io.File;
 import haxe.Stack;
 import microtime.Date;
+import haxe.FirePHP;
 
 #if php
 private typedef HaxeLib = php.Lib;
@@ -176,16 +177,16 @@ class Lib
                 {
                     if (text.startsWith('HAXE EXCEPTION'))
                     {
-                        php.FirePHP.getInstance(true).error(text);
+                        FirePHP.getInstance(true).error(text);
                     }
                     else if (text.startsWith('HAQUERY'))
                     {
-                        php.FirePHP.getInstance(true).info(text);
+                        FirePHP.getInstance(true).info(text);
                     }
                     else
                     {
                         text = pos.fileName + ":" + pos.lineNumber + " : " + text;
-                        php.FirePHP.getInstance(true).warn(text);
+                        FirePHP.getInstance(true).warn(text);
                     }
                 }
                 catch (s:String)
