@@ -11,6 +11,8 @@ using haquery.StringTools;
 
 class HaqSystem
 {
+	static var manager : HaqTemplateManager = null;
+	
 	public static var page : HaqPage;
 	
 	static var ajaxResponse = "";
@@ -39,9 +41,12 @@ class HaqSystem
                 params.set('pageID', pageID);
             }
 
-            Lib.profiler.begin('manager');
-				var manager : HaqTemplateManager = new HaqTemplateManager();
-            Lib.profiler.end();
+            if (manager == null)
+			{
+				Lib.profiler.begin('manager');
+					manager = new HaqTemplateManager();
+				Lib.profiler.end();
+			}
 
             Lib.profiler.begin('page');
 				manager.createPage(pageFullTag, params);
