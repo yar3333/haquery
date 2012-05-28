@@ -6,14 +6,14 @@ class Stack
 	{
 		if (untyped __php__("isset($GLOBALS['%nativeExceptionCallStack'])"))
 		{
-			var stack = php.Lib.toHaxeArray(untyped __php__("$GLOBALS['%nativeExceptionCallStack']"));
+			var stack = Lib.toHaxeArray(untyped __php__("$GLOBALS['%nativeExceptionCallStack']"));
 			for (i in 0...stack.length)
 			{
-				stack[i] = php.Lib.hashOfAssociativeArray(stack[i]);
+				stack[i] = Lib.hashOfAssociativeArray(stack[i]);
 				if (stack[i].exists('args'))
 				{
-					var args = php.Lib.toHaxeArray(stack[i].get('args'));
-					if (args.length > 3) args[3] = php.Lib.toHaxeArray(args[3]);
+					var args = Lib.toHaxeArray(stack[i].get('args'));
+					if (args.length > 3) args[3] = Lib.toHaxeArray(args[3]);
 					stack[i].set('args', args);
 				}
 			}
@@ -21,7 +21,7 @@ class Stack
 		}
 		else
 		{
-			return [];
+			return null;
 		}
 	}
 }

@@ -157,21 +157,20 @@ class Lib
             if (Lib.config.filterTracesByIP != Web.getClientIP()) return;
         }
         
-		#if php
         var text = '';
-        if (Type.getClassName(Type.getClass(v)) == 'String') text += v;
+        if (Type.getClass(v) == String)
+		{
+			text += v;
+		}
         else
         if (v != null)
         {
-            text += "DUMP\n";
-            var dump = ''; untyped __php__("ob_start(); var_dump($v); $dump = ob_get_clean();");
-            text += StringTools.stripTags(dump);
+            text += "DUMP\n" + getDump(v);
         }
 
 		if (text != '')
         {
-            var isHeadersSent : Bool = untyped __call__('headers_sent');
-            if (!isHeadersSent)
+            if (!isHeadersSent())
             {
                 try
                 {
@@ -189,7 +188,7 @@ class Lib
                         FirePHP.getInstance(true).warn(text);
                     }
                 }
-                catch (s:String)
+                catch (s:Dynamic)
                 {
                     text += "\n\nFirePHP exception: " + s;
                 }
@@ -200,12 +199,6 @@ class Lib
             }
         }
 		
-		#else
-		
-		var text = Std.string(v != null ? v : "");
-        
-		#end
-        
 		if (!FileSystem.exists(HaqDefines.folders.temp))
         {
             FileSystem.createDirectory(HaqDefines.folders.temp);
@@ -218,6 +211,25 @@ class Lib
             f.close();
         }
     }
+	
+	static function getDump(v:Dynamic) : String
+	{
+		#if php
+        var dump = ''; untyped __php__("ob_start(); var_dump($v); $dump = ob_get_clean();");
+		return StringTools.stripTags(dump);
+		#else
+		return "dump is not supported on this platform.";
+		#end
+	}
+	
+	static function isHeadersSent() : Bool
+	{
+		#if php
+		return untyped __call__('headers_sent');
+		#else
+		return false;
+		#end
+	}
 	
 	static function formatTime(dt:Float) : String
 	{
@@ -260,25 +272,27 @@ class Lib
         
 		#if php		 
 		var nativeStack : Array<Hash<Dynamic>> = php.Stack.nativeExceptionStack();
-        assert(nativeStack != null);
-        text += "\n\n";
-        text += "NATIVE EXCEPTION: " + Std.string(e) + "\n";
-        text += "Stack trace:\n";
-        for (row in nativeStack)
-        {
-            text += "\t";
-            if (row.exists('class')) text += row.get('class') + row.get('type');
-            text += row.get('function');
+        if (nativeStack != null)
+		{
+			text += "\n\n";
+			text += "NATIVE EXCEPTION: " + Std.string(e) + "\n";
+			text += "Stack trace:\n";
+			for (row in nativeStack)
+			{
+				text += "\t";
+				if (row.exists('class')) text += row.get('class') + row.get('type');
+				text += row.get('function');
 
-            if (row.exists('file'))
-            {
-                text += " in " + row.get('file') + " at line " + row.get('line') + "\n";
-            }
-            else
-            {
-                text += "\n";
-            }
-        }
+				if (row.exists('file'))
+				{
+					text += " in " + row.get('file') + " at line " + row.get('line') + "\n";
+				}
+				else
+				{
+					text += "\n";
+				}
+			}
+		}
 		#end
 		
         trace(text);
