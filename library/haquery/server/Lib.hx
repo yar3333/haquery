@@ -207,7 +207,17 @@ class Lib
         var f : FileOutput = File.append(HaqDefines.folders.temp + "/haquery.log");
         if (f != null)
         {
-			f.writeString(text != "" ? formatTime((Date.now().getTime() - startTime) / 1000.0) + " " +  StringTools.replace(text, "\n", "\r\n\t") + "\r\n" : "\r\n");
+			if (text != "")
+			{
+				var start = Date.fromTime(startTime).toString();
+				var duration = formatTime((Date.now().getTime() - startTime) / 1000.0);
+				text = start + " " + duration + " " +  StringTools.replace(text, "\n", "\r\n\t") + "\r\n";
+			}
+			else
+			{
+				text = "\r\n";
+			}
+			f.writeString(text);
             f.close();
         }
     }
