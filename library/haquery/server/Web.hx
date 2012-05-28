@@ -102,7 +102,11 @@ class Web {
 	/**
 		Surprisingly returns the client IP address.
 	**/
-	public static inline function getClientIP() : String { return HaxeWeb.getClientIP(); }
+	public static inline function getClientIP() : String
+	{
+		var realIP = getClientHeader("X-Real-IP");
+		return realIP != null && realIP != "" ? realIP : HaxeWeb.getClientIP();
+	}
 
 	/**
 		Returns the original request URL (before any server internal redirections)
