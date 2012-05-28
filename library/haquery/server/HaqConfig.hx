@@ -47,25 +47,49 @@ class HaqConfig
 	
 	public function new()
 	{
-		databaseConnectionString = readDatabaseConnectionString(Web.getCwd().rtrim("\\/") + "/config.xml");
+		databaseConnectionString = null;
 		sqlTraceLevel = 1;
 		isTraceComponent = false;
 		filterTracesByIP = '';
 		custom = new Hash<Dynamic>();
 		templateSelector = new HaqTemplateSelector();
+		
+		load("config.xml");
 	}
 	
-    public static function readDatabaseConnectionString(path) : String
+    function load(path:String) : Void
 	{
 		if (FileSystem.exists(path))
 		{
 			var xml = new HtmlDocument(File.getContent(path));
-			var nodes = xml.find(">config>database");
-			if (nodes.length > 0 && nodes[0].hasAttribute("connectionString"))
+			
+			var databaseNodes = xml.find(">config>database");
+			if (databaseNodes.length > 0 && databaseNodes[0].hasAttribute("connectionString"))
 			{
-				return nodes[0].getAttribute("connectionString");
+				databaseConnectionString = databaseNodes[0].getAttribute("connectionString");
+			}
+			
+			var customNodes = xml.find(">config>custom");
+			for (customNode in customNodes)
+			{
+				if (customNode.hasAttribute("name") && customNode.hasAttribute("value"))
+				{
+					var value : Dynamic = customNode.getAttribute("value");
+					if (value.toLowerCase() == "true") value = true;
+					else
+					if (value.toLowerCase() == "false") value = false;
+					else
+					if (value.toLowerCase() == "null") value = null;
+					else
+					if (value == "0") value = 0;
+					else
+					if (Std.parseInt(value) != null && Std.parseInt(value) != 0) value = Std.parseInt(value);
+					else
+					if (Std.parseFloat(value) != null && Std.parseFloat(value) != 0.0) value = Std.parseFloat(value);
+					
+					custom.set(customNode.getAttribute("name"), value);
+				}
 			}
 		}
-		return null;
 	}
 }

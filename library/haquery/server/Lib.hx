@@ -27,10 +27,8 @@ using haquery.StringTools;
 
 class Lib
 {
-    public static var config = new HaqConfig();
-    
-    public static var profiler = new HaqProfiler();
-	
+    public static var config = null;
+    public static var profiler = null;
 	public static var isRedirected = false;
     
     /**
@@ -55,6 +53,9 @@ class Lib
         #if neko
 		Sys.setCwd(Web.getCwd());
 		#end
+		
+		config = new HaqConfig();
+		profiler = new HaqProfiler();
 		
 		try
         {
