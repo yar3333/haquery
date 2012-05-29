@@ -75,11 +75,17 @@ class HaqConfig
 				if (customNode.hasAttribute("name") && customNode.hasAttribute("value"))
 				{
 					var value : Dynamic = customNode.getAttribute("value");
-					if (value.toLowerCase() == "true") value = true;
+					
+					if (value != null)
+					{
+						value = value.toLowerCase();
+					}
+					
+					if (value == "true") value = true;
 					else
-					if (value.toLowerCase() == "false") value = false;
+					if (value == "false") value = false;
 					else
-					if (value.toLowerCase() == "null") value = null;
+					if (value == "null") value = null;
 					else
 					if (value == "0") value = 0;
 					else
