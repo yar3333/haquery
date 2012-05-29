@@ -27,8 +27,8 @@ using haquery.StringTools;
 
 class Lib
 {
-    public static var config = null;
-    public static var profiler = null;
+    public static var config : HaqConfig = null;
+    public static var profiler : HaqProfiler = null;
 	public static var isRedirected = false;
     
     /**
