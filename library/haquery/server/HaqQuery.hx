@@ -1,9 +1,10 @@
 package haquery.server;
 
+import haquery.Std;
+import haxe.htmlparser.HtmlNodeElement;
 import haquery.base.HaqCssGlobalizer;
 import haquery.server.Lib;
-import haxe.htmlparser.HtmlNodeElement;
-import haquery.Std;
+import haquery.server.Web;
 
 using haquery.StringTools;
 
@@ -15,7 +16,18 @@ class HaqQuery
     public var cssGlobalizer(default, null) : HaqCssGlobalizer;
     public var prefixID(default, null) : String;
     
-    /**
+    static var webParams_cached : Hash<String>;
+	static var webParams(webParams_getter, null) : Hash<String>;
+	static function webParams_getter() : Hash<String>
+	{
+		if (webParams_cached == null)
+		{
+			webParams_cached = Web.getParams();
+		}
+		return webParams_cached;
+	}
+	
+	/**
      * Original CSS-selector.
      */
     public var query : String;
@@ -171,9 +183,9 @@ class HaqQuery
             if (Lib.isPostback && node.name == 'textarea' && node.hasAttribute('id'))
             {
                 var fullID = prefixID + node.getAttribute('id');
-                if (Web.getParams().exists(fullID))
+                if (webParams.exists(fullID))
 				{
-					return Web.getParams().get(fullID);
+					return webParams.get(fullID);
 				}
             }
             return node.innerHTML;
@@ -225,9 +237,9 @@ class HaqQuery
                 if (Lib.isPostback && node.hasAttribute('id'))
                 {
                     var fullID = prefixID + node.getAttribute('id');
-                    if (Web.getParams().exists(fullID))
+                    if (webParams.exists(fullID))
 					{
-						return Web.getParams().get(fullID);
+						return webParams.get(fullID);
 					}
                 }
                 
@@ -252,7 +264,7 @@ class HaqQuery
 					else
 					{
 						var fullID = prefixID + node.getAttribute('id');
-						return Std.bool(Web.getParams().get(fullID));
+						return Std.bool(webParams.get(fullID));
 					}
                 }
                 
@@ -267,9 +279,9 @@ class HaqQuery
                     if (re.match(query))
                     {
                         var fullID = prefixID + re.matched(1);
-                        if (Web.getParams().exists(fullID))
+                        if (webParams.exists(fullID))
 						{
-							return Web.getParams().get(fullID);
+							return webParams.get(fullID);
 						}
                     }
                 }
@@ -283,14 +295,10 @@ class HaqQuery
             if (Lib.isPostback && node.hasAttribute('id'))
             {
                 var fullID = prefixID + node.getAttribute('id');
-				/*untyped __php__("
-					if (isset($_POST[$fullID])) $_POST[$fullID] = $val; 
-				");*/
-				var params = Web.getParams();
-				if (params.exists(fullID))
+				if (webParams.exists(fullID))
 				{
-					params.set(fullID, val);
-					Lib.assert(Web.getParams().get(fullID) == val);
+					webParams.set(fullID, val);
+					Lib.assert(webParams.get(fullID) == val);
 				}
             }
             
