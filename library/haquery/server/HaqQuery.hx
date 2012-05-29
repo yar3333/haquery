@@ -298,7 +298,6 @@ class HaqQuery
 				if (webParams.exists(fullID))
 				{
 					webParams.set(fullID, val);
-					Lib.assert(webParams.get(fullID) == val);
 				}
             }
             
