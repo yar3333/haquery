@@ -7,7 +7,7 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^.*$ index.n?route=$0 [L,QSA]
 
 Order Deny,Allow
-<FilesMatch "^temp/haquery.log$|^temp/templates/">
+<FilesMatch "^temp/haquery.log$|^temp/templates/|(^|/)config.xml$">
     Deny from all
 </FilesMatch>
 Allow from all
