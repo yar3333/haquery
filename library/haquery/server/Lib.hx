@@ -223,14 +223,74 @@ class Lib
         }
     }
 	
-	static function getDump(v:Dynamic) : String
+	static function getDump(v:Dynamic, level=0) : String
 	{
-		#if php
-        var dump = ''; untyped __php__("ob_start(); var_dump($v); $dump = ob_get_clean();");
-		return StringTools.stripTags(dump);
-		#else
-		return "dump is not supported on this platform.";
-		#end
+		var prefix = ""; for (i in 0...level) prefix += "\t";
+		
+		var s : String;
+		switch (Type.typeof(v))
+		{
+			case ValueType.TBool:
+				s = "BOOL" + (v ? "true" : "false") + ")";
+			
+			case ValueType.TNull:
+				s = "NULL";
+				
+			case ValueType.TClass(c):
+				if (c == String)
+				{
+					s = "STRING(" + Std.string(v) + ")";
+				}
+				else
+				if (c == Array)
+				{
+					s = "ARRAY(" + v.length + ")\n";
+					for (item in cast(v, Array<Dynamic>))
+					{
+						s += getDump(item, level + 1);
+					}
+				}
+				else
+				if (c == Hash)
+				{
+					s = "HASH\n";
+					for (key in cast(v, Hash<Dynamic>).keys())
+					{
+						s += prefix + key + " => " + getDump(v.get(key), level + 1);
+					}
+				}
+				else
+				{
+					s = "CLASS(" + Type.getClassName(c) + ")\n" + getDumpObject(v, level + 1);
+				}
+			
+			case ValueType.TEnum(e):
+				s = "ENUM(" + Type.getEnumName(e) + ") = " + Type.enumConstructor(v);
+			
+			case ValueType.TFloat:
+				s = "FLOAT(" + Std.string(v) + ")";
+			
+			case ValueType.TInt:
+				s = "INT(" + Std.string(v) + ")";
+			
+			case ValueType.TObject:
+				s = "OBJECT" + "\n" + getDumpObject(v, level + 1);
+			
+			case ValueType.TFunction, ValueType.TUnknown:
+				s = "FUNCTION OR UNKNOW";
+		};
+		return s != "" ? s + "\n" : "";
+	}
+	
+	static function getDumpObject(obj:Dynamic, level:Int) : String
+	{
+		var prefix = ""; for (i in 0...level) prefix += "\t";
+		var s = "";
+		for (fieldName in Reflect.fields(obj))
+		{
+			s += prefix + fieldName + " : " + getDump(Reflect.field(obj, fieldName), level);
+		}
+		return s;
 	}
 	
 	static function isHeadersSent() : Bool
