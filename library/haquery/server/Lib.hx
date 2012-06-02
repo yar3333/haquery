@@ -100,6 +100,10 @@ class Lib
 						{
 							config.onFinish();
 						}
+						
+					case HaqRoute.error(code): 
+						Web.setReturnCode(code);
+						Lib.println("<h1>Error " + code + "</h1>");
 				}                
             profiler.end();
             profiler.traceResults();
