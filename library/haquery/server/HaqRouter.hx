@@ -1,10 +1,6 @@
 package haquery.server;
 
 import haquery.server.FileSystem;
-import haquery.server.Lib;
-import haquery.server.Sys;
-import haquery.server.Web;
-import haquery.server.io.Path;
 
 using haquery.StringTools;
 
@@ -12,6 +8,7 @@ enum HaqRoute
 {
 	file(path:String);
 	page(path:String, fullTag:String, pageID:String);
+	error(code:Int);
 }
 
 class HaqRouter
@@ -22,16 +19,16 @@ class HaqRouter
 	{
 		if (url == null) url = "";
 		
-		if (url == 'index.php' || url == 'index')
-		{
-			Web.redirect('/');
-			Sys.exit(0);
-		}
-		
-		if (url.endsWith('/index'))
-		{
-			Web.redirect(url.substr(0, url.length - ("/index").length));
-			Sys.exit(0);
+		if (url == 'index.php' 
+		 || url == 'index.n' 
+		 || url == 'index' 
+		 || url.endsWith('/index')
+		 || url == 'index.php/' 
+		 || url == 'index.n/' 
+		 || url == 'index/' 
+		 || url.endsWith('/index/')
+		) {
+			return HaqRoute.error(403);
 		}
 		
 		if (FileSystem.exists(url) && url.endsWith('.php'))
@@ -65,9 +62,7 @@ class HaqRouter
             
 			if (!isPageExist(path))
 			{
-				Web.setReturnCode(404);
-                Lib.print("<h1>File not found (404)</h1>");
-				Sys.exit(0);
+				return HaqRoute.error(404);
 			}
 			
 			return HaqRoute.page(path, path.replace("/", "."), pageID);
