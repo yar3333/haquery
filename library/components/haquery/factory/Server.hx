@@ -10,18 +10,31 @@ using haquery.StringTools;
 class Server extends Base
 {
     public var items(default, null) : Array<HaqComponent>;
+	
+	/**
+	 * Limit to creating components on postback. Use to prevent too big server load.
+	 * Default is 0 (no limit).
+	 */
+	public var limit(default, null) : Int;
     
     function new()
     {
 		super();
 		items = new Array<HaqComponent>();
+		limit = 0;
     }
     
     override function createChildComponents():Void 
 	{
         if (Lib.isPostback)
         {
-			for (i in 0...length)
+			var len = length;
+			if (limit > 0 && len > limit)
+			{
+				trace("HAQUERY components.haquery.factory limit exceed (" + len + " > " + limit + ".");
+				len = limit;
+			}
+			for (i in 0...len)
 			{
 				manager.createComponent(this, "factoryitem", Std.string(i), null, innerNode, false);
 			}
