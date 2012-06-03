@@ -113,13 +113,25 @@ class HaqComponent
     {
 		if (isFromTopToBottom && Reflect.isFunction(Reflect.field(this, f)))
         {
-            Reflect.callMethod(this, Reflect.field(this, f), []);
+            #if !client
+			if (Lib.config.isTraceComponent)
+			{
+				trace("HAQUERY [" + fullID + "] " + fullTag + "." + f + "...");
+			}
+			#end
+			Reflect.callMethod(this, Reflect.field(this, f), []);
         }
         
         for (component in this.components) component.forEachComponent(f, isFromTopToBottom);
         
         if (!isFromTopToBottom && Reflect.isFunction(Reflect.field(this, f)))
         {
+            #if !client
+			if (Lib.config.isTraceComponent)
+			{
+				trace("HAQUERY [" + fullID + "] " + fullTag + "." + f + "...");
+			}
+			#end
             Reflect.callMethod(this, Reflect.field(this, f), []);
         }
     }

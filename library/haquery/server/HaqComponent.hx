@@ -72,7 +72,11 @@ class HaqComponent extends haquery.base.HaqComponent
         if (Reflect.isFunction(Reflect.field(this, 'init')))
         {
 			Lib.profiler.begin("init");
-            Reflect.callMethod(this, Reflect.field(this, 'init'), []);
+            if (Lib.config.isTraceComponent)
+			{
+				trace("HAQUERY [" + fullID + "] " + fullTag + ".init...");
+			}
+			Reflect.callMethod(this, Reflect.field(this, 'init'), []);
 			Lib.profiler.end();
         }
     }
