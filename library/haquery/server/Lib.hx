@@ -110,14 +110,8 @@ class Lib
         }
         catch (e:Dynamic)
         {
-			if (config == null || config.isCatchExceptions)
-			{
-				traceException(e);
-			}
-			else
-			{
-				throw e;
-			}
+			traceException(e);
+			throw e;
         }
     }
 	
