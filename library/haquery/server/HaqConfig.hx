@@ -41,6 +41,12 @@ class HaqConfig
 	 * Change this field to your class instance, if you want to substitute components templates.
 	 */
 	public var templateSelector : HaqTemplateSelector;
+	
+	/**
+	 * By default HaQuery catch all exceptions and write them to "temp/haquery.log" file.
+	 * You may disable this if need by setting isCatchExceptions to "false".
+	 */
+	public var isCatchExceptions : Bool;
     
 	public var onStart : Void->Void;
 	public var onFinish : Void->Void;
@@ -53,6 +59,7 @@ class HaqConfig
 		filterTracesByIP = '';
 		custom = new Hash<Dynamic>();
 		templateSelector = new HaqTemplateSelector();
+		isCatchExceptions = true;
 		
 		load("config.xml");
 	}
