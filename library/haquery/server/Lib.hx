@@ -110,7 +110,14 @@ class Lib
         }
         catch (e:Dynamic)
         {
-            traceException(e);
+			if (config == null || config.isCatchExceptions)
+			{
+				traceException(e);
+			}
+			else
+			{
+				throw e;
+			}
         }
     }
 	
@@ -123,7 +130,7 @@ class Lib
         else
 		{
 			Web.setReturnCode(302); // Moved Temporarily
-			Web.setHeader('Location', url);
+			Web.setHeader("Location", url);
 			isRedirected = true;
 		}
     }
@@ -141,16 +148,16 @@ class Lib
 	}
 
 	#if debug
-		static public function assert(e:Bool, errorMessage:String=null, ?pos : haxe.PosInfos) : Void
+		static public function assert(e:Bool, errorMessage:String=null, ?pos:haxe.PosInfos) : Void
 		{
 			if (!e) 
 			{
-				if (errorMessage == null) errorMessage = "ASSERT";
-				throw errorMessage + " in " + pos.fileName + ' at line ' + pos.lineNumber;
+				if (errorMessage == null) errorMessage = "HAQUERY ASSERT";
+				throw errorMessage + " in " + pos.fileName + " at line " + pos.lineNumber;
 			}
 		}
 	#else
-		static public inline function assert(e:Bool, errorMessage:String=null, ?pos : haxe.PosInfos) : Void
+		static public inline function assert(e:Bool, errorMessage:String=null, ?pos:haxe.PosInfos) : Void
 		{
 		}
 	#end
@@ -343,7 +350,7 @@ class Lib
     static function traceException(e:Dynamic) : Void
     {
         var text = "HAXE EXCEPTION: " + Std.string(e) + "\n"
-                 + "Stack trace:" + Stack.toString(Stack.exceptionStack()).replace('\n', '\n\t');
+                 + "Stack trace:" + Stack.toString(Stack.exceptionStack()).replace("\n", "\n\t");
         
 		#if php		 
 		var nativeStack : Array<Hash<Dynamic>> = php.Stack.nativeExceptionStack();
@@ -355,12 +362,12 @@ class Lib
 			for (row in nativeStack)
 			{
 				text += "\t";
-				if (row.exists('class')) text += row.get('class') + row.get('type');
+				if (row.exists('class')) text += row.get("class") + row.get("type");
 				text += row.get('function');
 
 				if (row.exists('file'))
 				{
-					text += " in " + row.get('file') + " at line " + row.get('line') + "\n";
+					text += " in " + row.get('file') + " at line " + row.get("line") + "\n";
 				}
 				else
 				{
