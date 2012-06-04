@@ -31,8 +31,7 @@ class Server extends Base
 			var len = length;
 			if (limit > 0 && len > limit)
 			{
-				trace("HAQUERY [" + fullID + "] " + fullTag + " limit exceed (" + len + " > " + limit + ".");
-				len = limit;
+				throw "HAQUERY LIMIT [" + fullID + "] " + fullTag + " (" + len + " > " + limit + ".";
 			}
 			for (i in 0...len)
 			{
