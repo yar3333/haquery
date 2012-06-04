@@ -53,7 +53,6 @@ class HaqConfig
 		filterTracesByIP = '';
 		custom = new Hash<Dynamic>();
 		templateSelector = new HaqTemplateSelector();
-		isCatchExceptions = true;
 		
 		load("config.xml");
 	}
