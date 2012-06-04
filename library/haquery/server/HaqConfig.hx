@@ -42,12 +42,6 @@ class HaqConfig
 	 */
 	public var templateSelector : HaqTemplateSelector;
 	
-	/**
-	 * By default HaQuery catch all exceptions and write them to "temp/haquery.log" file.
-	 * You may disable this if need by setting isCatchExceptions to "false".
-	 */
-	public var isCatchExceptions : Bool;
-    
 	public var onStart : Void->Void;
 	public var onFinish : Void->Void;
 	
