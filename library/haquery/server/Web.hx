@@ -1,79 +1,83 @@
 package haquery.server;
 
 import haxe.io.Bytes;
+import haquery.server.FileSystem;
+import haquery.server.io.File;
+import microtime.Date;
 
 #if php
 private typedef HaxeWeb = php.Web;
 #elseif neko
 private typedef HaxeWeb = neko.Web;
-#elseif cpp
-private typedef HaxeWeb = cpp.Web;
 #end
-
-class UploadedFile
-{
-    public var name(default,null) : String;
-    public var type(default,null) : String;
-    public var tmp_name(default,null) : String;
-    public var error(default,null) : UploadError;
-    public var size(default, null) : Int;
-    
-    public function new(name:String, type:String, tmp_name:String, error:UploadError, size:Int) : Void
-    {
-        this.name = name;
-        this.type = type;
-        this.tmp_name = tmp_name;
-        this.error = error;
-        this.size = size;
-    }
-    
-    public function move(destFilePath:String) : Void
-    {
-        untyped __call__('move_uploaded_file', tmp_name, destFilePath);
-    }
-}
 
 enum UploadError
 {
 	/**
 	 * Value: 0; There is no error, the file uploaded with success.
 	 */
-	UPLOAD_ERR_OK;
+	OK;
 
 	/**
 	 * Value: 1; The uploaded file exceeds the upload_max_filesize directive in php.ini.
 	 */
-	UPLOAD_ERR_INI_SIZE;
+	INI_SIZE;
 
 	/**
 	 * Value: 2; The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form.
 	 */
-	UPLOAD_ERR_FORM_SIZE;
+	FORM_SIZE;
 
 	/**
 	 * Value: 3; The uploaded file was only partially uploaded.
 	 */
-	UPLOAD_ERR_PARTIAL;
+	PARTIAL;
 
 	/**
 	 * Value: 4; No file was uploaded.
 	 */
-	UPLOAD_ERR_NO_FILE;
+	NO_FILE;
 
 	/**
 	 * Value: 6; Missing a temporary folder. Introduced in PHP 4.3.10 and PHP 5.0.3.
 	 */
-	UPLOAD_ERR_NO_TMP_DIR;
+	NO_TMP_DIR;
 
 	/**
 	 * Value: 7; Failed to write file to disk. Introduced in PHP 5.1.0.
 	 */
-	UPLOAD_ERR_CANT_WRITE;
+	CANT_WRITE;
 
 	/**
 	 * Value: 8; A PHP extension stopped the file upload. PHP does not provide a way to ascertain which extension caused the file upload to stop; examining the list of loaded extensions with phpinfo() may help. Introduced in PHP 5.2.0.
 	 */
-	UPLOAD_ERR_EXTENSION;
+	EXTENSION;
+}
+
+class UploadedFile
+{
+    var tempFileName : String;
+    
+	public var name(default,null) : String;
+    public var size(default, null) : Int;
+    public var error(default,null) : UploadError;
+    
+    public function new(tempFileName:String, name:String, size:Int, error:UploadError) : Void
+    {
+        this.tempFileName = tempFileName;
+        this.name = name;
+        this.size = size;
+        this.error = error;
+    }
+    
+    public function move(destFilePath:String) : Void
+    {
+        #if php
+		untyped __call__("move_uploaded_file", tempFileName, destFilePath);
+		#elseif neko
+		FileSystem.rename(tempFileName, destFilePath);
+		#end
+    }
 }
 
 /**
@@ -85,7 +89,7 @@ class Web {
 	/**
 		Returns the GET and POST parameters.
 	**/
-	public static inline function getParams() { return HaxeWeb.getParams(); }
+	public static inline function getParams() : Hash<String> { return HaxeWeb.getParams(); }
 
 	/**
 		Returns an Array of Strings built using GET / POST values.
@@ -116,19 +120,19 @@ class Web {
 	/**
 		Tell the client to redirect to the given url ("Location" header)
 	**/
-	public static inline function redirect( url : String ) { return haquery.server.Lib.redirect(url); }
+	public static inline function redirect( url : String ) : Void { haquery.server.Lib.redirect(url); }
 
 	/**
 		Set an output header value. If some data have been printed, the headers have
 		already been sent so this will raise an exception.
 	**/
-	public static inline function setHeader( h : String, v : String ) { return HaxeWeb.setHeader(h,v); }
+	public static inline function setHeader( h : String, v : String ) : Void { HaxeWeb.setHeader(h,v); }
 
 	/**
 		Set the HTTP return code. Same remark as setHeader.
 		See status code explanation here: http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
 	**/
-	public static inline function setReturnCode( r : Int ) { return HaxeWeb.setReturnCode(r); }
+	public static inline function setReturnCode( r : Int ) : Void { HaxeWeb.setReturnCode(r); }
 
 	/**
 		Retrieve a client header value sent with the request.
@@ -138,7 +142,7 @@ class Web {
 	/**
 		Retrieve all the client headers.
 	**/
-	public static inline function getClientHeaders() { return HaxeWeb.getClientHeaders(); }
+	public static inline function getClientHeaders() : List<{header : String, value : String}> { return HaxeWeb.getClientHeaders(); }
 
 	/**
 		Returns all the GET parameters String
@@ -153,7 +157,7 @@ class Web {
 		case, you will have to use [getMultipart] or [parseMultipart]
 		methods.
 	**/
-	public static inline function getPostData() { return HaxeWeb.getPostData(); }
+	public static inline function getPostData() : String { return HaxeWeb.getPostData(); }
 
 	/**
 		Returns an object with the authorization sent by the client (Basic scheme only).
@@ -177,13 +181,13 @@ class Web {
 		and [onData] when some part data is readed. You can this way
 		directly save the data on hard drive in the case of a file upload.
 	**/
-	public static inline function parseMultipart( onPart : String -> String -> Void, onData : Bytes -> Int -> Int -> Void ) : Void { return HaxeWeb.parseMultipart(onPart, onData); }
+	public static inline function parseMultipart( onPart : String -> String -> Void, onData : Bytes -> Int -> Int -> Void ) : Void { HaxeWeb.parseMultipart(onPart, onData); }
 
 	/**
 		Flush the data sent to the client. By default on Apache, outgoing data is buffered so
 		this can be useful for displaying some long operation progress.
 	**/
-	public static inline function flush() : Void { return HaxeWeb.flush(); }
+	public static inline function flush() : Void { HaxeWeb.flush(); }
 
 	/**
 		Get the HTTP method used by the client.
@@ -196,29 +200,113 @@ class Web {
 	public static function getHttpHost() : String 
 	{
         #if php
-		return untyped __php__("$_SERVER['HTTP_HOST']"); 
+		return untyped __var__("_SERVER", "HTTP_HOST"); 
 		#else
 		return getClientHeader("Host");
 		#end
     }
-
-	#if php
-	public static function getFiles() : Hash<UploadedFile> 
-    {
-        var files : Hash<php.NativeArray> = Lib.hashOfAssociativeArray(untyped __var__("_FILES"));
-        var r = new Hash<UploadedFile>();
-        for (id in files.keys())
-        {
-            var file : php.NativeArray = files.get(id);
-            r.set(id, new UploadedFile(
-                 file[untyped "name"]
-                ,file[untyped "type"]
-                ,file[untyped "tmp_name"]
-                ,Type.createEnumIndex(UploadError, file[untyped "error"])
+	
+	public static function getUploadedFiles(maxUploadDataSize:Int) : Hash<UploadedFile>
+	{
+        #if php
+		
+		var files = new Hash<UploadedFile>();
+		var nativeFiles : Hash<php.NativeArray> = Lib.hashOfAssociativeArray(untyped __var__("_FILES"));
+		for (id in nativeFiles.keys())
+		{
+			var file : php.NativeArray = nativeFiles.get(id);
+            files.set(id, new UploadedFile(
+                 file[untyped "tmp_name"]
+                ,file[untyped "name"]
                 ,file[untyped "size"]
+                ,Type.createEnumIndex(UploadError, file[untyped "error"])
             ));
         }
-        return r;
-    }
-	#end
+		return files;
+		
+		#elseif neko
+		
+		var files = new Hash<UploadedFile>();
+		
+		var lastPartName : String = null;
+		var lastFileName : String = null;
+		var lastTempFileName : String = null;
+		
+		var error : UploadError = null;
+		
+		Web.parseMultipart(
+			function(partName:String, fileName:String)
+			{
+				if (partName != lastPartName)
+				{
+					if (lastPartName != null)
+					{
+						files.set(
+							lastPartName
+						   ,new UploadedFile(lastTempFileName, lastFileName, FileSystem.stat(lastTempFileName).size, error)
+						);
+					}
+					
+					lastPartName = partName;
+					lastFileName = fileName;
+					lastTempFileName = getTempUploadedFilePath();
+					error = UploadError.OK;
+					
+				}
+			}
+		   ,function(data:Bytes, offset:Int, length:Int)
+			{
+				maxUploadDataSize -= length;
+				if (maxUploadDataSize >= 0)
+				{
+					var h = File.append(lastTempFileName);
+					h.seek(offset, sys.io.FileSeek.SeekBegin);
+					h.writeBytes(data, 0, length);
+					h.close();
+				}
+				else
+				{
+					error = UploadError.INI_SIZE;
+					if (FileSystem.exists(lastTempFileName))
+					{
+						FileSystem.deleteFile(lastTempFileName);
+					}
+				}
+			}
+		);
+		
+		if (lastPartName != null)
+		{
+			files.set(
+				lastPartName
+			   ,new UploadedFile(lastTempFileName, lastFileName, FileSystem.stat(lastTempFileName).size, error)
+			);
+		}
+		
+        return files;
+		
+		#end
+	}
+	
+	static function getTempUploadedFilePath()
+	{
+		var s = Std.string(Date.now().getTime());
+		if (s.indexOf(".") >= 0) s = s.substr(0, s.indexOf("."));
+		s += "_" + Std.int(Math.random() * 999999);
+		s += "_" + Std.int(Math.random() * 999999);
+		
+		var tempDir = getCwd() + "/" + HaqDefines.folders.temp;
+		if (!FileSystem.exists(tempDir))
+		{
+			FileSystem.createDirectory(tempDir);
+		}
+		
+		var uploadsDir = tempDir + "/uploads";
+		if (!FileSystem.exists(uploadsDir))
+		{
+			FileSystem.createDirectory(uploadsDir);
+		}
+		
+		return uploadsDir + "/" + s;
+	}
 }
