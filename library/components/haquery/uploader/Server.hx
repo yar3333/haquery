@@ -23,14 +23,9 @@ class Server extends Base
     
     @shared function upload()
     {
-        #if php
-		var files = Web.getFiles();
-        var file = files.get(prefixID + 'file');
+        var files = Web.getUploadedFiles(50 * 1024 * 1024);
+		var file = files.get(prefixID + 'file');
         event_upload.call({ file:file });
         callSharedMethod('fileUploadComplete', [ Type.enumIndex(file.error) ]);
-		#elseif neko
-        // TODO: neko file uploading
-		callSharedMethod('fileUploadComplete', [ -1 ]);
-		#end
     }
 }
