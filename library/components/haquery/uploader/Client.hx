@@ -76,7 +76,7 @@ class Client extends Base
         for (key in Reflect.fields(sendData))
         {
             form.append("<input type='hidden' id='HAQUERY_DATA-" + key + "' name='" + key + "' />\n");
-            (new JQuery('#HAQUERY_DATA-' + key)).val(Reflect.field(sendData, key));
+            new JQuery('#HAQUERY_DATA-' + key).val(Reflect.field(sendData, key));
         }
         cast(form[0]).submit();
         

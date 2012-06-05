@@ -63,8 +63,6 @@ class Lib
                 startTime = Date.now().getTime();
 				haxe.Log.trace = Lib.trace;
 				
-				isPostback = Web.getParams().get('HAQUERY_POSTBACK') != null;
-                
 				var router = new HaqRouter();
 				var route = router.getRoute(Web.getParams().get('route'));
 				
@@ -88,6 +86,8 @@ class Lib
 						{
 							HaqDb.connect(config.databaseConnectionString);
 						}
+						
+						isPostback = Web.getParams().get('HAQUERY_POSTBACK') != null;
 						
 						if (config.onStart != null)
 						{

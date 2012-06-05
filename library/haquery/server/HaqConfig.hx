@@ -12,6 +12,8 @@ class HaqConfig
 	 * For example: mysql://root:123456@localhost/mytestdb 
      */
 	public var databaseConnectionString : String;
+	
+	public var maxPostSize : Int;
 
     /**
      * Level of tracing SQL:
@@ -48,6 +50,7 @@ class HaqConfig
 	public function new()
 	{
 		databaseConnectionString = null;
+		maxPostSize = 16 * 1024 * 1024;
 		sqlTraceLevel = 1;
 		isTraceComponent = false;
 		filterTracesByIP = '';

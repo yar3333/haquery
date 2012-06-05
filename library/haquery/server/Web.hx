@@ -89,7 +89,15 @@ class Web {
 	/**
 		Returns the GET and POST parameters.
 	**/
-	public static inline function getParams() : Hash<String> { return HaxeWeb.getParams(); }
+	public static function getParams() : Hash<String>
+	{
+		if (params == null)
+		{
+			fillParamsAndUploadedFiles();
+			
+		}
+		return params;
+	}
 
 	/**
 		Returns an Array of Strings built using GET / POST values.
@@ -206,33 +214,46 @@ class Web {
 		#end
     }
 	
-	public static function getUploadedFiles(maxUploadDataSize:Int) : Hash<UploadedFile>
+	public static function getUploadedFiles() : Hash<UploadedFile>
 	{
-        #if php
+		if (uploadedFiles == null)
+		{
+			fillParamsAndUploadedFiles();
+		}
+		return uploadedFiles;
+	}
+	
+	static var params : Hash<String>;
+	static var uploadedFiles : Hash<UploadedFile>;
+	
+	static function fillParamsAndUploadedFiles()
+	{
+		params = HaxeWeb.getParams();
+		uploadedFiles = new Hash<UploadedFile>();
 		
-		var files = new Hash<UploadedFile>();
+		#if php
+		
 		var nativeFiles : Hash<php.NativeArray> = Lib.hashOfAssociativeArray(untyped __var__("_FILES"));
 		for (id in nativeFiles.keys())
 		{
 			var file : php.NativeArray = nativeFiles.get(id);
-            files.set(id, new UploadedFile(
+            uploadedFiles.set(id, new UploadedFile(
                  file[untyped "tmp_name"]
                 ,file[untyped "name"]
                 ,file[untyped "size"]
                 ,Type.createEnumIndex(UploadError, file[untyped "error"])
             ));
         }
-		return files;
 		
 		#elseif neko
-		
-		var files = new Hash<UploadedFile>();
 		
 		var lastPartName : String = null;
 		var lastFileName : String = null;
 		var lastTempFileName : String = null;
-		
+		var lastParamValue : String = null;
 		var error : UploadError = null;
+		
+		var maxUploadDataSize = Lib.config.maxPostSize;
 		
 		Web.parseMultipart(
 			function(partName:String, fileName:String)
@@ -241,49 +262,68 @@ class Web {
 				{
 					if (lastPartName != null)
 					{
-						files.set(
-							lastPartName
-						   ,new UploadedFile(lastTempFileName, lastFileName, FileSystem.stat(lastTempFileName).size, error)
-						);
+						if (lastFileName != null)
+						{
+							trace("set = " + lastPartName + ", " + lastFileName);
+							uploadedFiles.set(
+								lastPartName
+							   ,new UploadedFile(lastTempFileName, lastFileName, FileSystem.stat(lastTempFileName).size, error)
+							);
+						}
+						else
+						{
+							params.set(lastPartName, lastParamValue);
+						}
 					}
 					
 					lastPartName = partName;
 					lastFileName = fileName;
 					lastTempFileName = getTempUploadedFilePath();
+					lastParamValue = "";
 					error = UploadError.OK;
-					
 				}
 			}
 		   ,function(data:Bytes, offset:Int, length:Int)
 			{
-				maxUploadDataSize -= length;
-				if (maxUploadDataSize >= 0)
+				if (lastFileName != null)
 				{
-					var h = File.append(lastTempFileName);
-					h.seek(offset, sys.io.FileSeek.SeekBegin);
-					h.writeBytes(data, 0, length);
-					h.close();
+					maxUploadDataSize -= length;
+					if (maxUploadDataSize >= 0)
+					{
+						var h = File.append(lastTempFileName);
+						h.writeBytes(data, 0, length);
+						h.close();
+					}
+					else
+					{
+						error = UploadError.INI_SIZE;
+						if (FileSystem.exists(lastTempFileName))
+						{
+							FileSystem.deleteFile(lastTempFileName);
+						}
+					}
 				}
 				else
 				{
-					error = UploadError.INI_SIZE;
-					if (FileSystem.exists(lastTempFileName))
-					{
-						FileSystem.deleteFile(lastTempFileName);
-					}
+					lastParamValue += data.readString(0, length);
 				}
 			}
 		);
 		
 		if (lastPartName != null)
 		{
-			files.set(
-				lastPartName
-			   ,new UploadedFile(lastTempFileName, lastFileName, FileSystem.stat(lastTempFileName).size, error)
-			);
+			if (lastFileName != null)
+			{
+				uploadedFiles.set(
+					lastPartName
+				   ,new UploadedFile(lastTempFileName, lastFileName, FileSystem.stat(lastTempFileName).size, error)
+				);
+			}
+			else
+			{
+				params.set(lastPartName, lastParamValue);
+			}
 		}
-		
-        return files;
 		
 		#end
 	}
