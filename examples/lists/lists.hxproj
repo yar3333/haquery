@@ -31,6 +31,7 @@
     <library name="HaQuery" />
     <library name="HtmlParser" />
     <library name="FirePHP" />
+    <library name="MicroTime" />
   </haxelib>
   <!-- Class files to compile (other referenced classes will automatically be included) -->
   <compileTargets>
@@ -40,6 +41,7 @@
   <hiddenPaths>
     <hidden path="bin" />
     <hidden path="trm" />
+    <hidden path="src\Imports.hx" />
   </hiddenPaths>
   <!-- Executed before build -->
   <preBuildCommand>haxelib run HaQuery pre-build</preBuildCommand>
