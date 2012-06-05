@@ -23,7 +23,7 @@ class Server extends Base
     
     @shared function upload()
     {
-        var files = Web.getUploadedFiles(50 * 1024 * 1024);
+		var files = Web.getUploadedFiles();
 		var file = files.get(prefixID + 'file');
         event_upload.call({ file:file });
         callSharedMethod('fileUploadComplete', [ Type.enumIndex(file.error) ]);
