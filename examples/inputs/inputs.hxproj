@@ -40,6 +40,7 @@
   <hiddenPaths>
     <hidden path="bin" />
     <hidden path="trm" />
+    <hidden path="src\Imports.hx" />
   </hiddenPaths>
   <!-- Executed before build -->
   <preBuildCommand>haxelib run HaQuery pre-build</preBuildCommand>
