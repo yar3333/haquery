@@ -1,7 +1,7 @@
 package pages.index;
 
 import haquery.server.HaqPage;
-import php.io.Path;
+import haquery.server.io.Path;
 
 class Server extends HaqPage
 {
