@@ -54,8 +54,11 @@ class Lib
 		Sys.setCwd(Web.getCwd());
 		#end
 		
-		config = new HaqConfig();
+		config = new HaqConfig("config.xml");
 		profiler = new HaqProfiler();
+		
+		HaqDb.logLevel = config.sqlLogLevel;
+		HaqDb.profiler = profiler;
 		
 		try
         {

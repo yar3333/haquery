@@ -2,7 +2,6 @@ package haquery.server.db;
 
 import Type;
 import haquery.server.db.HaqDbDriver;
-import haquery.server.Lib;
 
 #if php
 import php.db.Connection;
@@ -35,53 +34,27 @@ class HaqDbDriver_mysql implements HaqDbDriver
 
     public function query(sql:String) : ResultSet
     {
-        if (Lib.config.sqlTraceLevel >= 2) trace("SQL QUERY: " + sql);
-        
 		#if php
 		var r = connection.request(sql);
 		var errno = untyped __call__('mysql_errno');
+		if (errno != 0)
+		{
+			throw new HaqDbException(errno, untyped __call__('mysql_error'));
+		}
+		return r;
 		#else
 		var r = null;
 		var errno = 0;
+		var errormsg = "";
 		try { r = connection.request(sql); }
-		catch (e:Dynamic) { errno = 1; }
-		#end
-		
-        if (errno != 0)
-        {
-            throw "sql query error:\n"
-				+ "SQL QUERY: " + sql + "\n"
-				+ "SQL RESULT: " + affectedRows() + " rows affected, error code = " + errno + " (" + getLastErrorMessage() + ").";
-        }
-        if (Lib.config.sqlTraceLevel>0)
-        {
-            if (Lib.config.sqlTraceLevel == 1 && errno != 0) trace("SQL QUERY: " + sql);
-            if (Lib.config.sqlTraceLevel >= 3 || errno != 0)
-			{
-                trace("SQL RESULT: " + affectedRows() + " rows affected, error code = " + errno + " (" + getLastErrorMessage() + ').');
-			}
-        }
-        return r;
-    }
-
-    public function affectedRows() : Int
-    {
-		#if php
-		return untyped __call__('mysql_affected_rows');
-		#else
-		return -1;
+		catch (e:Dynamic)
+		{
+			throw new HaqDbException(1, Std.string(e));
+		}
+		return r;
 		#end
     }
 	
-	private function getLastErrorMessage() : String
-	{
-		#if php
-		return untyped __call__('mysql_error');
-		#else
-		return "";
-		#end
-	}
-
     public function getTables() : Array<String>
     {
         var r : Array<String> = [];

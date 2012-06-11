@@ -1,11 +1,10 @@
-#if (php || neko)
+#if !client
 
 package haquery.server.db;
 
 import haquery.server.db.HaqDbDriver;
 import haquery.server.db.HaqDbDriver_mysql;
 import haquery.server.HaqProfiler;
-import haquery.server.Lib;
 
 #if php
 import php.db.ResultSet;
@@ -15,9 +14,31 @@ import neko.db.ResultSet;
 import cpp.db.ResultSet;
 #end
 
+enum LogLevel
+{
+	/**
+	 * 0 - do not show anything.
+	 */
+	NONE;
+	/**
+	 * 1 - show errors.
+	 */
+	ERRORS;
+	/**
+	 * 2 - show queries too.
+	 */
+	QUERIES;
+	/**
+	 * 3 - show queries and results statuses.
+	 */
+	RESULTS;
+}
+
 class HaqDb
 {
     static public var connection : HaqDbDriver = null;
+	static public var logLevel = LogLevel.NONE;
+	static public var profiler : HaqProfiler = null;
 
     static public function connect(connectionString:String) : Bool
     {
@@ -26,30 +47,41 @@ class HaqDb
 		var re = new EReg('^([a-z]+)\\://([_a-zA-Z0-9]+)\\:(.+?)@([_.a-zA-Z0-9]+)(?:[:](\\d+))?/([_a-zA-Z0-9]+)$', '');
 		if (!re.match(connectionString))
 		{
-			Lib.assert(false, "Connection string invalid format.");
+			throw "Connection string invalid format.";
 		}
 		
-        Lib.profiler.begin("openDatabase");
+        if (profiler != null) profiler.begin("openDatabase");
             connection = Type.createInstance(
                  Type.resolveClass('haquery.server.db.HaqDbDriver_' + re.matched(1))
 				,[ re.matched(4), re.matched(2), re.matched(3), re.matched(6), re.matched(5) != "" ? Std.parseInt(re.matched(5)) : 0 ]
             );
-        Lib.profiler.end();
+        if (profiler != null) profiler.end();
 		
         return true;
     }
 
     static public function query(sql:String) : ResultSet
     {
-        Lib.profiler.begin('SQL query');
-        var r = connection.query(sql);
-        Lib.profiler.end();
-        return r;
-    }
-
-    static public function affectedRows() : Int
-    {
-        return connection.affectedRows();
+		try
+		{
+			if (profiler != null) profiler.begin('SQL query');
+			if (Type.enumIndex(logLevel) >= 2) trace("SQL QUERY: " + sql);
+			var r = connection.query(sql);
+			if (profiler != null) profiler.end();
+			return r;
+		}
+		catch (e:HaqDbException)
+		{
+            if (profiler != null) profiler.end();
+			throw "SQL EXCEPTION:\n"
+				+ "SQL QUERY: " + sql + "\n"
+				+ "SQL RESULT: error code = " + e.code + " (" + e.message + ").";
+		}
+		catch (e:Dynamic)
+		{
+			if (profiler != null) profiler.end();
+			throw e;
+		}
     }
 
     static public function quote(v:Dynamic) : String

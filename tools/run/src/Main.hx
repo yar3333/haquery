@@ -30,7 +30,8 @@ class Main
         {
             case 'gen-orm': 
 				var project = new FlashDevelopProject("", exeDir);
-				tasks.genOrm(args.length > 1 ? args[1] : HaqConfig.readDatabaseConnectionString(project.srcPath + "config.xml"), project.srcPath);
+				var config = new HaqConfig(project.srcPath + "config.xml");
+				tasks.genOrm(args.length > 1 ? args[1] : config.databaseConnectionString, project.srcPath);
 			
 			case 'pre-build': 
                 tasks.preBuild();

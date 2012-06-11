@@ -2,6 +2,7 @@ package haquery.server;
 
 import haxe.htmlparser.HtmlDocument;
 import haquery.server.io.File;
+import haquery.server.db.HaqDb;
 
 using haquery.StringTools;
 
@@ -22,7 +23,7 @@ class HaqConfig
      * 2 - show queries too;
      * 3 - show queries too and results statuses.
      */
-    public var sqlTraceLevel : Int;
+    public var sqlLogLevel : LogLevel;
 
     /**
      * Trace when components renders.
@@ -47,20 +48,20 @@ class HaqConfig
 	public var onStart : Void->Void;
 	public var onFinish : Void->Void;
 	
-	public function new()
+	public function new(filePath:String)
 	{
 		databaseConnectionString = null;
 		maxPostSize = 16 * 1024 * 1024;
-		sqlTraceLevel = 1;
+		sqlLogLevel = LogLevel.ERRORS;
 		isTraceComponent = false;
 		filterTracesByIP = '';
 		custom = new Hash<Dynamic>();
 		templateSelector = new HaqTemplateSelector();
 		
-		load("config.xml");
+		load(filePath);
 	}
 	
-    function load(path:String) : Void
+    public function load(path:String) : Void
 	{
 		if (FileSystem.exists(path))
 		{
