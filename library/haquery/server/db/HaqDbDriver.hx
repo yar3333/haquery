@@ -33,7 +33,6 @@ interface HaqDbDriver
 	function query(sql:String) : ResultSet;
     function quote(s:Dynamic) : String;
     function lastInsertId() : Int;
-    function affectedRows() : Int;
     
 	function getTables() : Array<String>;
     function getFields(table:String) : Array<HaqDbTableFieldData>;

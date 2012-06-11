@@ -86,7 +86,6 @@ class OrmManagerGenerator
 			+") VALUES (' + "
 				+Lambda.map(createVars, function(v) { return "HaqDb.quote(" + v.haxeName + ")"; } ).join(" + ', ' + ")
 			+" + ')');\n"
-			+"if (HaqDb.affectedRows() < 1) return null;\n"
 			+"return newModelFromParams(" + Lambda.map(vars, function(v) { return v.isAutoInc ? 'HaqDb.lastInsertId()' : v.haxeName; } ).join(", ") + ");"
 		);
 		
