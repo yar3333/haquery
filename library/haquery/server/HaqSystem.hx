@@ -12,10 +12,9 @@ using haquery.StringTools;
 class HaqSystem
 {
 	static var manager : HaqTemplateManager = null;
-	
-	public static var page : HaqPage;
-	
 	static var ajaxResponse = "";
+	
+	public static var page(default, null) : HaqPage;
 
 	public static function run(pageFullTag:String, pageID:String, isPostback:Bool)
 	{
@@ -49,7 +48,7 @@ class HaqSystem
 			}
 
             Lib.profiler.begin('page');
-				manager.createPage(pageFullTag, params);
+				page = manager.createPage(pageFullTag, params);
             Lib.profiler.end();
             
 			var html : String;
