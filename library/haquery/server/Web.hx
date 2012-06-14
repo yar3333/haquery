@@ -3,7 +3,6 @@ package haquery.server;
 import haxe.io.Bytes;
 import haquery.server.FileSystem;
 import haquery.server.io.File;
-import microtime.Date;
 
 #if php
 private typedef HaxeWeb = php.Web;
@@ -330,7 +329,7 @@ class Web {
 	
 	static function getTempUploadedFilePath()
 	{
-		var s = Std.string(Date.now().getTime());
+		var s = Std.string(Sys.time() * 1000);
 		if (s.indexOf(".") >= 0) s = s.substr(0, s.indexOf("."));
 		s += "_" + Std.int(Math.random() * 999999);
 		s += "_" + Std.int(Math.random() * 999999);
