@@ -2,7 +2,6 @@ package haquery.server;
 
 import haquery.server.io.File;
 import haxe.Stack;
-import microtime.Date;
 import haxe.FirePHP;
 
 #if php
@@ -63,7 +62,7 @@ class Lib
 		try
         {
             profiler.begin("HAQUERY");
-                startTime = Date.now().getTime();
+                startTime = Sys.time();
 				haxe.Log.trace = Lib.trace;
 				
 				var router = new HaqRouter();
@@ -218,9 +217,8 @@ class Lib
         {
 			if (text != "")
 			{
-				var start = Date.fromTime(startTime).toString();
-				var duration = formatTime((Date.now().getTime() - startTime) / 1000.0);
-				text = start + " " + duration + " " +  StringTools.replace(text, "\n", "\r\n\t") + "\r\n";
+				var duration = formatTime(Sys.time() - startTime);
+				text = Date.fromTime(startTime * 1000) + " " + duration + " " +  StringTools.replace(text, "\n", "\r\n\t") + "\r\n";
 			}
 			else
 			{

@@ -1,8 +1,6 @@
 package haquery.server;
 
-import microtime.Date;
-
-using haquery.HashTools;
+import haquery.server.Sys;
 
 private typedef HaqProfilerBlock =
 {
@@ -46,7 +44,7 @@ class HaqProfiler
         {
             name = opened[opened.length - 1].name + '-' + name;
         }
-        opened.push({ name:name, time:Date.now().getTime() });
+        opened.push({ name:name, time:Sys.time() });
         #end
     }
 
@@ -56,7 +54,7 @@ class HaqProfiler
         haquery.server.Lib.assert(opened.length > 0);
         
         var b = opened.pop();
-        var dt = Date.now().getTime() - b.time;
+        var dt = Sys.time() - b.time;
 
         if (!blocks.exists(b.name))
         {
@@ -117,7 +115,7 @@ class HaqProfiler
                 }
             }
             
-            return Math.round((b.dt - a.dt) * 1000); 
+            return Math.round(b.dt - a.dt); 
         });
 
         trace("HAQUERY Nested:");
@@ -150,7 +148,7 @@ class HaqProfiler
         var values = results.values();
         values.sort(function(a, b)
         {
-            return Math.round((b.dt - a.dt) * 1000); 
+            return Math.round(b.dt - a.dt); 
         });
 
         trace("HAQUERY Summary:");
