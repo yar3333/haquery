@@ -4,6 +4,7 @@
         <regexp pattern=".+[.](?:hx|hxproj)" />
         <regexp pattern=".+/haxelib[.]xml" />
         <regexp pattern=".+/excludes[.]xml" />
+        <regexp pattern=".+/run[.]n" />
     </global>
     
     <local>
