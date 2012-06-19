@@ -96,7 +96,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 			trace("HAQUERY update client js file");
 			File.putContent(templatesCacheClientFilePath, getStaticClientCode());
 		}
-		registerScript(null, "/" + templatesCacheClientFilePath);
+		registerScript(null, templatesCacheClientFilePath);
 		
 		var templatesCacheStyleFilePath = HaqDefines.folders.temp + "/templates-cache-client.css";
 		if (!FileSystem.exists(templatesCacheStyleFilePath) || globalLastMod.getTime() > FileSystem.stat(templatesCacheStyleFilePath).mtime.getTime())
@@ -108,7 +108,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 			trace("HAQUERY update css styles file");
 			File.putContent(templatesCacheStyleFilePath, getStaticStyles());
 		}
-		registerStyle(null, "/" + templatesCacheStyleFilePath);
+		registerStyle(null, templatesCacheStyleFilePath);
 	}
 	
 	public function createPage(pageFullTag:String, attr:Hash<String>) : HaqPage
@@ -149,11 +149,11 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 			url = url.substr(2);
 		}
 		
-		if (!url.startsWith("http://") && !url.startsWith("/") && !url.startsWith("<"))
+		if (fullTag != null && !url.startsWith("http://") && !url.startsWith("/") && !url.startsWith("<"))
 		{
 			var template = get(fullTag);
 			Lib.assert(template != null, "Template '" + fullTag + "' not found.");
-			url = '/' + template.getSupportFilePath(url);
+			url = template.getSupportFilePath(url);
 		}
 		
 		return url;

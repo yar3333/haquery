@@ -3,6 +3,8 @@ package haquery.server;
 import haxe.htmlparser.HtmlDocument;
 import haquery.server.io.File;
 import haquery.server.db.HaqDb;
+import haquery.Std;
+import haxe.htmlparser.HtmlNodeElement;
 
 using haquery.StringTools;
 
@@ -14,7 +16,15 @@ class HaqConfig
      */
 	public var databaseConnectionString : String;
 	
+	/**
+	 * Default is 16M.
+	 */
 	public var maxPostSize : Int;
+	
+	/**
+	 * Append file last modification timestamp to URLs. Set to "false" on production.
+	 */
+	public var isProtectFilesFromCaching : Bool;
 
     /**
      * Level of tracing SQL:
@@ -52,6 +62,7 @@ class HaqConfig
 	{
 		databaseConnectionString = null;
 		maxPostSize = 16 * 1024 * 1024;
+		isProtectFilesFromCaching = true;
 		sqlLogLevel = LogLevel.ERRORS;
 		isTraceComponent = false;
 		filterTracesByIP = '';
@@ -67,18 +78,50 @@ class HaqConfig
 		{
 			var xml = new HtmlDocument(File.getContent(path));
 			
-			var databaseNodes = xml.find(">config>database");
-			if (databaseNodes.length > 0 && databaseNodes[0].hasAttribute("connectionString"))
+			var paramNodes = xml.find(">config>param");
+			for (node in paramNodes)
 			{
-				databaseConnectionString = databaseNodes[0].getAttribute("connectionString");
+				if (node.hasAttribute("name") && node.hasAttribute("value"))
+				{
+					var name = node.getAttribute("name");
+					var value = node.getAttribute("value");
+					
+					switch (node.getAttribute("name"))
+					{
+						case "databaseConnectionString":
+							databaseConnectionString = value;
+						
+						case "maxPostSize":
+							maxPostSize = Std.parseInt(value);
+						
+						case "isProtectFilesFromCaching":
+							isProtectFilesFromCaching = Std.bool(value);
+						
+						case "sqlLogLevel":
+							sqlLogLevel = Type.createEnum(LogLevel, value);
+						
+						case "isTraceComponent":
+							isTraceComponent = Std.bool(value);
+						
+						case "filterTracesByIP":
+							filterTracesByIP = value;
+						
+						default:
+							throwBadConfigFileRecord(path, node);
+					}
+				}
+				else
+				{
+					throwBadConfigFileRecord(path, node);
+				}
 			}
 			
 			var customNodes = xml.find(">config>custom");
-			for (customNode in customNodes)
+			for (node in customNodes)
 			{
-				if (customNode.hasAttribute("name") && customNode.hasAttribute("value"))
+				if (node.hasAttribute("name") && node.hasAttribute("value"))
 				{
-					var value : Dynamic = customNode.getAttribute("value");
+					var value : Dynamic = node.getAttribute("value");
 					
 					if (value != null)
 					{
@@ -97,9 +140,14 @@ class HaqConfig
 					else
 					if (Std.parseFloat(value) != null && Std.parseFloat(value) != 0.0) value = Std.parseFloat(value);
 					
-					custom.set(customNode.getAttribute("name"), value);
+					custom.set(node.getAttribute("name"), value);
 				}
 			}
 		}
+	}
+	
+	function throwBadConfigFileRecord(path:String, node:HtmlNodeElement) : Void
+	{
+		throw "HAQUERY ERROR: Bad config file ('" + path + "') record ('" + node + "').";
 	}
 }
