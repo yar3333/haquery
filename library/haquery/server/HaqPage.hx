@@ -56,7 +56,7 @@ class HaqPage extends HaqComponent
     
     function insertStyles(links:Array<String>)
     {
-        var text = Lambda.map(links, function(path) return getStyleLink(path)).join('\n        ');
+        var text = Lambda.map(links, function(path) return getStyleLink(path)).join("\n");
         var heads = doc.find(">html>head");
         if (heads.length > 0)
         {
@@ -65,22 +65,22 @@ class HaqPage extends HaqComponent
             if (head.children.length > 0)
             {
                 child = head.children[0];
-                while (child != null && child.name != 'link' && (child.getAttribute('rel') != 'stylesheet' || child.getAttribute('type') != 'text/css'))
+                while (child != null && child.name != "link" && (child.getAttribute("rel") != "stylesheet" || child.getAttribute("type") != "text/css"))
                 {
                     child = child.getNextSiblingElement();
                 }
             }
-            head.addChild(new HtmlNodeText(text + '\n        '), child);
+            head.addChild(new HtmlNodeText(text + "\n"), child);
         }
         else
         {
-            doc.addChild(new HtmlNodeText(text + '\n'));
+            doc.addChild(new HtmlNodeText(text + "\n"));
         }
     }
     
     function insertScripts(links:Array<String>)
     {
-        var text = Lambda.map(links, function(path) return getScriptLink(path)).join('\n        ');
+        var text = Lambda.map(links, function(path) return getScriptLink(path)).join("\n");
         var heads = doc.find(">html>head");
         if (heads.length > 0)
         {
@@ -89,16 +89,16 @@ class HaqPage extends HaqComponent
             if (head.children.length > 0)
             {
                 child = head.children[0];
-                while (child != null && child.name != 'script')
+                while (child != null && child.name != "script")
                 {
                     child = child.getNextSiblingElement();
                 }
             }
-            head.addChild(new HtmlNodeText(text + '\n        '), child);
+            head.addChild(new HtmlNodeText(text + "\n"), child);
         }
         else
         {
-            doc.addChild(new HtmlNodeText(text + '\n'));
+            doc.addChild(new HtmlNodeText(text + "\n"));
         }
     }
     
@@ -122,8 +122,13 @@ class HaqPage extends HaqComponent
 		
 		if (!url.startsWith("http://") && !url.startsWith("/"))
 		{
-			url = '/' + url + '?' + FileSystem.stat(url).mtime.getTime() / 1000;
+			if (Lib.config.isProtectFilesFromCaching)
+			{
+				url += "?" + FileSystem.stat(url).mtime.getTime() / 1000;
+			}
+			url = "/" + url;
 		}
+		
 		return "<script src='" + url + "'></script>";
     }
     
@@ -131,10 +136,12 @@ class HaqPage extends HaqComponent
     {
 		if (url.startsWith("<")) return url;
 		
-		url += '?' + FileSystem.stat(url.ltrim("/")).mtime.getTime() / 1000;
-		
 		if (!url.startsWith("http://") && !url.startsWith("/"))
 		{
+			if (Lib.config.isProtectFilesFromCaching)
+			{
+				url += "?" + FileSystem.stat(url).mtime.getTime() / 1000;
+			}
 			url = '/' + url;
 		}
 		
