@@ -80,7 +80,6 @@ class OrmModelGenerator
 		var model:HaxeClass = new HaxeClass(fullClassName, baseFullClassName);
 		
 		model.addImport('haquery.server.db.HaqDb');
-		model.addImport(customManagerFullClassName);
 		
 		model.addVar(OrmTools.createVar('manager', customManagerFullClassName, 'new ' + customManagerFullClassName + '()'), false, true);
 		
