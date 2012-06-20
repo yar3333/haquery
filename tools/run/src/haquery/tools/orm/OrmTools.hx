@@ -23,6 +23,7 @@ class OrmTools
 		sqlType = sqlType.toUpperCase();
 		if (sqlType == 'TINYINT(1)')           return 'Bool';
 		if (sqlTypeCheck(sqlType, 'TINYINT'))  return 'Int';
+		if (sqlTypeCheck(sqlType, 'SMALLINT')) return 'Int';
 		if (sqlTypeCheck(sqlType, 'SHORT'))    return 'Int';
 		if (sqlTypeCheck(sqlType, 'LONG'))     return 'Int';
 		if (sqlTypeCheck(sqlType, 'INT'))      return 'Int';
