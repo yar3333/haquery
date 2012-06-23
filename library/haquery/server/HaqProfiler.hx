@@ -180,12 +180,9 @@ class HaqProfiler
         {
             trace(
                  "HAQUERY "
-                //+StringTools.format("%0" + Std.string(Math.round(maxDT)).length + "d | ", )
 				+StringTools.lpad(Std.string(Std.int(result.dt*1000)), "0", Std.string(Std.int(maxDT*1000)).length) + " | "
                 +StringTools.rpad(StringTools.rpad('', '*', Math.round(result.dt / maxDT * maxW)), ' ', maxW)
-                //+StringTools.format(" | %-" + maxLen + "s", result.name)
 				+" | " + StringTools.rpad(result.name, " ", maxLen)
-                //+StringTools.format(" [%-" + Std.string(maxCount).length + "d time(s)]", result.count)
 				+" [" + StringTools.rpad(Std.string(result.count), " ", Std.string(maxCount).length) + " time(s)]"
             );
         }
