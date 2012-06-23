@@ -122,23 +122,17 @@ class HaqConfig
 				if (node.hasAttribute("name") && node.hasAttribute("value"))
 				{
 					var value : Dynamic = node.getAttribute("value");
+					var valueLC = value != null ? value.toLowerCase() : null;
 					
-					if (value != null)
-					{
-						value = value.toLowerCase();
-					}
-					
-					if (value == "true") value = true;
+					if (valueLC == "true") value = true;
 					else
-					if (value == "false") value = false;
+					if (valueLC == "false") value = false;
 					else
-					if (value == "null") value = null;
+					if (valueLC == "null") value = null;
 					else
-					if (value == "0") value = 0;
+					if (~/^\s*[+-]?\s*(?:0x)?\d{1,9}\s*$/.match(valueLC)) value = Std.parseInt(value);
 					else
-					if (Std.parseInt(value) != null && Std.parseInt(value) != 0) value = Std.parseInt(value);
-					else
-					if (Std.parseFloat(value) != null && Std.parseFloat(value) != 0.0) value = Std.parseFloat(value);
+					if (~/^\s*[+-]?\s*\d{1,9}(?:[.]\d{1,9})?(?:e[+-]?\d{1,9})?\s*$/.match(valueLC)) value = Std.parseFloat(value);
 					
 					custom.set(node.getAttribute("name"), value);
 				}
