@@ -26,7 +26,9 @@ using haquery.StringTools;
 
 class Lib
 {
-    public static var config : HaqConfig = null;
+    public static var isHeadersSent(default, null) : Bool;
+	
+	public static var config : HaqConfig = null;
     public static var profiler : HaqProfiler = null;
 	public static var isRedirected = false;
     
@@ -178,7 +180,7 @@ class Lib
 
 		if (text != '')
         {
-            if (!isHeadersSent())
+            if (!isHeadersSent)
             {
                 try
                 {
@@ -299,15 +301,6 @@ class Lib
 		return s;
 	}
 	
-	static function isHeadersSent() : Bool
-	{
-		#if php
-		return untyped __call__('headers_sent');
-		#else
-		return false;
-		#end
-	}
-	
 	static function formatTime(dt:Float) : String
 	{
 		#if php
@@ -391,19 +384,19 @@ class Lib
 	/**
 		Print the specified value on the default output.
 	**/
-    public static inline function print( v : Dynamic ) : Void { return HaxeLib.print(v); }
+    public static inline function print( v : Dynamic ) : Void { isHeadersSent = true; HaxeLib.print(v); }
 
 	/**
 		Print the specified value on the default output followed by a newline character.
 	**/
-	public static inline function println( v : Dynamic ) : Void { return HaxeLib.println(v); }
+	public static inline function println( v : Dynamic ) : Void { isHeadersSent = true; HaxeLib.println(v); }
 
 	#if php
 	public static inline function extensionLoaded(name : String) { return HaxeLib.extensionLoaded(name); }
 	public static inline function isCli() : Bool { return HaxeLib.isCli(); }
-	public static inline function printFile(file : String) { return HaxeLib.printFile(file); }
+	public static inline function printFile(file : String) : Void { isHeadersSent = true; HaxeLib.printFile(file); }
 	
-	public static inline function dump(v : Dynamic) : Void { return HaxeLib.dump(v); }
+	public static inline function dump(v : Dynamic) : Void { isHeadersSent = true; HaxeLib.dump(v); }
 	
 	/**
 		Serialize using native PHP serialization. This will return a Binary string that can be
