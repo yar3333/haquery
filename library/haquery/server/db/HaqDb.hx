@@ -14,7 +14,7 @@ import neko.db.ResultSet;
 import cpp.db.ResultSet;
 #end
 
-enum LogLevel
+enum SqlLogLevel
 {
 	/**
 	 * 0 - do not show anything.
@@ -37,7 +37,7 @@ enum LogLevel
 class HaqDb
 {
     static public var connection : HaqDbDriver = null;
-	static public var logLevel = LogLevel.NONE;
+	static public var logLevel = SqlLogLevel.NONE;
 	static public var profiler : HaqProfiler = null;
 
     static public function connect(connectionString:String) : Bool

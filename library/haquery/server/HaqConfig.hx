@@ -33,7 +33,7 @@ class HaqConfig
      * 2 - show queries too;
      * 3 - show queries too and results statuses.
      */
-    public var sqlLogLevel : LogLevel;
+    public var sqlLogLevel(sqlLogLevel_getter, sqlLogLevel_setter) : SqlLogLevel;
 
     /**
      * Trace when components renders.
@@ -58,12 +58,15 @@ class HaqConfig
 	public var onStart : Void->Void;
 	public var onFinish : Void->Void;
 	
+	inline function sqlLogLevel_getter() : SqlLogLevel { return HaqDb.logLevel; }
+	inline function sqlLogLevel_setter(level:SqlLogLevel) { HaqDb.logLevel = level; return level; }
+	
 	public function new(filePath:String)
 	{
 		databaseConnectionString = null;
 		maxPostSize = 16 * 1024 * 1024;
 		isProtectFilesFromCaching = true;
-		sqlLogLevel = LogLevel.ERRORS;
+		sqlLogLevel = SqlLogLevel.ERRORS;
 		isTraceComponent = false;
 		filterTracesByIP = '';
 		custom = new Hash<Dynamic>();
@@ -98,7 +101,7 @@ class HaqConfig
 							isProtectFilesFromCaching = Std.bool(value);
 						
 						case "sqlLogLevel":
-							sqlLogLevel = Type.createEnum(LogLevel, value);
+							sqlLogLevel = Type.createEnum(SqlLogLevel, value);
 						
 						case "isTraceComponent":
 							isTraceComponent = Std.bool(value);
