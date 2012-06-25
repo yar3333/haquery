@@ -4,11 +4,22 @@ import Type.ValueType;
 
 class Std 
 {
-	public static inline function is( v : Dynamic, t : Dynamic ) : Bool { return std.Std.is(v, t);  }
+	public static inline function is( v : Dynamic, t : Dynamic ) : Bool return std.Std.is(v, t)
+	
 	public static inline function string( s : Dynamic ) : String { return std.Std.string(s);  }
+	
 	public static inline function int( x : Float ) : Int { return std.Std.int(x);  }
-	public static inline function parseInt( x : String ) : Null<Int> { return std.Std.parseInt(x);  }
-	public static inline function parseFloat( x : String ) : Float { return std.Std.parseFloat(x);  }
+	
+	public static inline function parseInt( x : String ) : Null<Int>
+	{
+		return ~/^\s*[+-]?\s*(?:0x)?\d{1,9}\s*$/.match(x) ? std.Std.parseInt(x) : null;
+	}
+	
+	public static inline function parseFloat( x : String ) : Null<Float>
+	{
+		return ~/^\s*[+-]?\s*\d{1,9}(?:[.]\d{1,9})?(?:e[+-]?\d{1,9})?\s*$/.match(x) ? std.Std.parseFloat(x) : null;
+	}
+	
 	public static inline function random( x : Int ) : Int { return std.Std.random(x);  }
 	
     public static function bool(v:Dynamic) : Bool

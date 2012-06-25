@@ -126,6 +126,7 @@ class HaqConfig
 				{
 					var value : Dynamic = node.getAttribute("value");
 					var valueLC = value != null ? value.toLowerCase() : null;
+					var parsedValue : Dynamic;
 					
 					if (valueLC == "true") value = true;
 					else
@@ -133,9 +134,9 @@ class HaqConfig
 					else
 					if (valueLC == "null") value = null;
 					else
-					if (~/^\s*[+-]?\s*(?:0x)?\d{1,9}\s*$/.match(valueLC)) value = Std.parseInt(value);
+					if ((parsedValue = Std.parseInt(value)) != null) value = parsedValue;
 					else
-					if (~/^\s*[+-]?\s*\d{1,9}(?:[.]\d{1,9})?(?:e[+-]?\d{1,9})?\s*$/.match(valueLC)) value = Std.parseFloat(value);
+					if ((parsedValue = Std.parseFloat(value)) != null) value = parsedValue;
 					
 					custom.set(node.getAttribute("name"), value);
 				}
