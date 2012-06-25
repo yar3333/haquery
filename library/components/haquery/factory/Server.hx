@@ -15,13 +15,12 @@ class Server extends Base
 	 * Limit to creating components on postback. Use to prevent too big server load.
 	 * Default is 0 (no limit).
 	 */
-	public var limit(default, null) : Int;
+	public var limit(default, null) : Int = 0;
     
     function new()
     {
 		super();
 		items = new Array<HaqComponent>();
-		limit = 0;
     }
     
     override function createChildComponents():Void 

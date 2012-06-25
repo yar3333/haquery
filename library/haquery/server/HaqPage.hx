@@ -12,7 +12,7 @@ class HaqPage extends HaqComponent
 	/**
 	 * Default value is "text/html; charset=utf-8".
 	 */
-    public var contentType : String;
+    public var contentType = "text/html; charset=utf-8";
     
     /**
      * Last unexist URL part will be placed to this var. 
@@ -26,13 +26,6 @@ class HaqPage extends HaqComponent
      */
 	public var disableSystemHtmlInserts : Bool;
 	
-	public function new() : Void
-	{
-		super();
-		
-		contentType = "text/html; charset=utf-8";
-	}
-    
 	override public function render() : String 
 	{
         Lib.profiler.begin("preRender");
