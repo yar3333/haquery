@@ -40,6 +40,14 @@
     <hidden path="bin" />
     <hidden path="trm" />
     <hidden path="library.zip" />
+    <hidden path="library\copyfolder.exe" />
+    <hidden path="library\copyfolder.exe.config" />
+    <hidden path="library\copyfolder.pdb" />
+    <hidden path="library\restorefiletime.exe" />
+    <hidden path="library\run.n" />
+    <hidden path="library\runwaiter.exe" />
+    <hidden path="library\runwaiter.exe.config" />
+    <hidden path="library\runwaiter.pdb" />
   </hiddenPaths>
   <!-- Executed before build -->
   <preBuildCommand>haxelib run HaQuery pre-build</preBuildCommand>
