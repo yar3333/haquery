@@ -4,13 +4,7 @@ import haquery.server.HaqComponent;
 
 class Server extends HaqComponent
 {
-    public var active : Int;
-    
-    function new()
-    {
-        super();
-        active = 0;
-    }
+    public var active = 0;
     
     function preRender()
     {

@@ -7,13 +7,7 @@ import haxe.htmlparser.HtmlParser;
 
 class Server extends HaqComponent
 {
-    public var active : Int;
-    
-    public function new()
-    {
-        super();
-        active = 0;
-    }
+    public var active = 0;
     
     function init()
     {
