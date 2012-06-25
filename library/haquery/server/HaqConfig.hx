@@ -48,7 +48,7 @@ class HaqConfig
 	/**
      * User-defined data.
      */
-    public var custom : Hash<Dynamic>;
+    public var customs : Hash<Dynamic>;
 	
 	/**
 	 * Change this field to your class instance, if you want to substitute components templates.
@@ -69,7 +69,7 @@ class HaqConfig
 		sqlLogLevel = SqlLogLevel.ERRORS;
 		isTraceComponent = false;
 		filterTracesByIP = '';
-		custom = new Hash<Dynamic>();
+		customs = new Hash<Dynamic>();
 		templateSelector = new HaqTemplateSelector();
 		
 		load(filePath);
@@ -81,8 +81,7 @@ class HaqConfig
 		{
 			var xml = new HtmlDocument(File.getContent(path));
 			
-			var paramNodes = xml.find(">config>param");
-			for (node in paramNodes)
+			for (node in xml.find(">config>param"))
 			{
 				if (node.hasAttribute("name") && node.hasAttribute("value"))
 				{
@@ -119,26 +118,11 @@ class HaqConfig
 				}
 			}
 			
-			var customNodes = xml.find(">config>custom");
-			for (node in customNodes)
+			for (node in xml.find(">config>custom"))
 			{
 				if (node.hasAttribute("name") && node.hasAttribute("value"))
 				{
-					var value : Dynamic = node.getAttribute("value");
-					var valueLC = value != null ? value.toLowerCase() : null;
-					var parsedValue : Dynamic;
-					
-					if (valueLC == "true") value = true;
-					else
-					if (valueLC == "false") value = false;
-					else
-					if (valueLC == "null") value = null;
-					else
-					if ((parsedValue = Std.parseInt(value)) != null) value = parsedValue;
-					else
-					if ((parsedValue = Std.parseFloat(value)) != null) value = parsedValue;
-					
-					custom.set(node.getAttribute("name"), value);
+					customs.set(node.getAttribute("name"), Std.parseValue(node.getAttribute("value")));
 				}
 			}
 		}
