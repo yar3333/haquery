@@ -53,7 +53,7 @@ class HaqDb
         if (profiler != null) profiler.begin("openDatabase");
             connection = Type.createInstance(
                  Type.resolveClass('haquery.server.db.HaqDbDriver_' + re.matched(1))
-				,[ re.matched(4), re.matched(2), re.matched(3), re.matched(6), re.matched(5) != "" ? Std.parseInt(re.matched(5)) : 0 ]
+				,[ re.matched(4), re.matched(2), re.matched(3), re.matched(6), re.matched(5) != null && re.matched(5) != "" ? Std.parseInt(re.matched(5)) : 0 ]
             );
         if (profiler != null) profiler.end();
 		
