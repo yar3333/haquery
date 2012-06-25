@@ -44,4 +44,23 @@ class Std
 		
 		return true;
     }
+	
+	public static function parseValue( x:String ) : Dynamic
+	{
+		var value : Dynamic = x;
+		var valueLC = value != null ? value.toLowerCase() : null;
+		var parsedValue : Dynamic;
+		
+		if (valueLC == "true") value = true;
+		else
+		if (valueLC == "false") value = false;
+		else
+		if (valueLC == "null") value = null;
+		else
+		if ((parsedValue = Std.parseInt(value)) != null) value = parsedValue;
+		else
+		if ((parsedValue = Std.parseFloat(value)) != null) value = parsedValue;
+		
+		return value;
+	}
 }
