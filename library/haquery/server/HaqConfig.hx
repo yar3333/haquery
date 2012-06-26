@@ -14,12 +14,12 @@ class HaqConfig
      * Database connection string in TYPE://USER:PASS@HOST/DBNAME form.
 	 * For example: mysql://root:123456@localhost/mytestdb 
      */
-	public var databaseConnectionString : String;
+	public var databaseConnectionString : String = null;
 	
 	/**
 	 * Default is 16M.
 	 */
-	public var maxPostSize : Int;
+	public var maxPostSize = 16 * 1024 * 1024;
 	
 	/**
      * Cache system connection string in TYPE://HOST form.
@@ -35,17 +35,17 @@ class HaqConfig
      */
     public var sqlLogLevel(sqlLogLevel_getter, sqlLogLevel_setter) : Int;
 
-    public var enableProfiling : Bool;
+    public var enableProfiling = false;
 	
 	/**
      * Trace when components renders.
      */
-    public var isTraceComponent : Bool;
+    public var isTraceComponent = false;
 
     /**
      * Log only if access from specified IP.
      */
-    public var filterTracesByIP : String;
+    public var filterTracesByIP = "";
 
 	/**
      * User-defined data.
@@ -65,12 +65,6 @@ class HaqConfig
 	
 	public function new(filePath:String)
 	{
-		databaseConnectionString = null;
-		maxPostSize = 16 * 1024 * 1024;
-		sqlLogLevel = 1;
-		enableProfiling  = false;
-		isTraceComponent = false;
-		filterTracesByIP = '';
 		customs = new Hash<Dynamic>();
 		templateSelector = new HaqTemplateSelector();
 		
