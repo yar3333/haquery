@@ -10,14 +10,18 @@ class Std
 	
 	public static inline function int( x : Float ) : Int { return std.Std.int(x);  }
 	
-	public static inline function parseInt( x : String ) : Null<Int>
+	public static function parseInt( x : String ) : Null<Int>
 	{
-		return ~/^\s*[+-]?\s*(?:0x)?\d{1,9}\s*$/.match(x) ? std.Std.parseInt(x) : null;
+		return x != null
+			? (~/^\s*[+-]?\s*(?:0x)?\d{1,9}\s*$/.match(x) ? std.Std.parseInt(x) : null)
+			: null;
 	}
 	
-	public static inline function parseFloat( x : String ) : Null<Float>
+	public static function parseFloat( x : String ) : Null<Float>
 	{
-		return ~/^\s*[+-]?\s*\d{1,9}(?:[.]\d{1,9})?(?:e[+-]?\d{1,9})?\s*$/.match(x) ? std.Std.parseFloat(x) : null;
+		return x != null
+			? (~/^\s*[+-]?\s*\d{1,9}(?:[.]\d{1,9})?(?:e[+-]?\d{1,9})?\s*$/.match(x) ? std.Std.parseFloat(x) : null)
+			: null;
 	}
 	
 	public static inline function random( x : Int ) : Int { return std.Std.random(x);  }
