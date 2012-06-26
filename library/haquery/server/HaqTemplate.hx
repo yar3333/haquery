@@ -54,14 +54,4 @@ class HaqTemplate extends haquery.base.HaqTemplate
 	{
 		return parser.getSupportFilePath(relPath);
 	}
-	
-	public function serialize() : String
-	{
-		return Serializer.run(this);
-	}
-	
-	public static function unserialize(s:String) : HaqTemplate
-	{
-		return Unserializer.run(s);
-	}
 }

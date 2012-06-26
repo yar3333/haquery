@@ -85,8 +85,6 @@ class Build
 		}
 		
 		loadLibFolder();
-		
-		removeTempFiles();
         
         log.finishOk();
 		
@@ -251,12 +249,5 @@ class Build
 			hant.deleteDirectory(project.binPath + "/lib.old");
 			log.finishOk();
 		}
-	}
-	
-	function removeTempFiles()
-	{
-		var tempPath = project.binPath + "/" + HaqDefines.folders.temp + "/";
-		hant.deleteFile(tempPath + "templates-cache-client.js");
-		hant.deleteFile(tempPath + "templates-cache-client.css");
 	}
 }
