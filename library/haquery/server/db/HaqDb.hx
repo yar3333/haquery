@@ -24,7 +24,7 @@ class HaqDb
 	 * 1 - show queries;
 	 * 2 - show queries and times.
      */
-	static public var logLevel = 1;
+	static public var logLevel = 0;
 	
 	static public var profiler : HaqProfiler = null;
 	
