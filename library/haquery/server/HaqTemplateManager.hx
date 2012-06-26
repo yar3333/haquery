@@ -1,12 +1,14 @@
 package haquery.server;
 
+import haquery.server.FileSystem;
 import haquery.server.HaqComponent;
 import haquery.server.HaqTemplate;
-import haxe.Serializer;
-import haquery.server.Lib;
 import haquery.server.io.File;
+import haquery.server.io.Path;
+import haquery.server.Lib;
 import haxe.htmlparser.HtmlNodeElement;
-import haquery.server.FileSystem;
+import haxe.Serializer;
+import haxe.Unserializer;
 
 using haquery.StringTools;
 using haquery.HashTools;
@@ -34,24 +36,13 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 	
 	override function newTemplate(fullTag:String) : HaqTemplate
 	{
-		var templatesCacheDir = HaqDefines.folders.temp + "/templates";
-		
-		var templateCachePath = templatesCacheDir + "/" + fullTag + ".dat";
+		var templateCachePath = HaqDefines.folders.temp + "/templates/" + fullTag + ".dat";
 		
 		if (!FileSystem.exists(templateCachePath) || lastMods.get(fullTag).getTime() > FileSystem.stat(templateCachePath).mtime.getTime())
 		{
-			if (!FileSystem.exists(HaqDefines.folders.temp))
-			{
-				FileSystem.createDirectory(HaqDefines.folders.temp);
-			}
-			
-			if (!FileSystem.exists(templatesCacheDir))
-			{
-				FileSystem.createDirectory(templatesCacheDir);
-			}
-			
+			FileSystem.createDirectory(Path.directory(templateCachePath));
 			var template = new HaqTemplate(fullTag); 
-			File.putContent(templateCachePath, template.serialize());
+			File.putContent(templateCachePath, Serializer.run(template));
 			return template;
 		}
 		else
@@ -61,7 +52,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 			{
 				trace("Unserialize template '" + fullTag + "'");
 			}
-			var template = HaqTemplate.unserialize(File.getContent(templateCachePath));
+			var template = Unserializer.run(File.getContent(templateCachePath));
 			Lib.profiler.end();
 			return template;
 		}
@@ -69,7 +60,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 	
 	function fillTemplates()
 	{
-		var globalLastMod = MIN_DATE;
+		var globalLastMod = Lib.getCompilationDate();
 		for (fullTagAndLastMod in File.getContent("haquery/server/templates.dat").split("\n"))
 		{
 			var ft_lm = fullTagAndLastMod.split("\t");
@@ -86,25 +77,19 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 			}
 		}
 		
-		var templatesCacheClientFilePath = HaqDefines.folders.temp + "/templates-cache-client.js";
+		var templatesCacheClientFilePath = HaqDefines.folders.temp + "/cache/haquery/client/templates.js";
 		if (!FileSystem.exists(templatesCacheClientFilePath) || globalLastMod.getTime() > FileSystem.stat(templatesCacheClientFilePath).mtime.getTime())
 		{
-			if (!FileSystem.exists(HaqDefines.folders.temp))
-			{
-				FileSystem.createDirectory(HaqDefines.folders.temp);
-			}
+			FileSystem.createDirectory(Path.directory(templatesCacheClientFilePath));
 			trace("HAQUERY update client js file");
 			File.putContent(templatesCacheClientFilePath, getStaticClientCode());
 		}
 		registerScript(null, templatesCacheClientFilePath);
 		
-		var templatesCacheStyleFilePath = HaqDefines.folders.temp + "/templates-cache-client.css";
+		var templatesCacheStyleFilePath = HaqDefines.folders.temp + "/cache/haquery/client/templates.css";
 		if (!FileSystem.exists(templatesCacheStyleFilePath) || globalLastMod.getTime() > FileSystem.stat(templatesCacheStyleFilePath).mtime.getTime())
 		{
-			if (!FileSystem.exists(HaqDefines.folders.temp))
-			{
-				FileSystem.createDirectory(HaqDefines.folders.temp);
-			}
+			FileSystem.createDirectory(Path.directory(templatesCacheStyleFilePath));
 			trace("HAQUERY update css styles file");
 			File.putContent(templatesCacheStyleFilePath, getStaticStyles());
 		}

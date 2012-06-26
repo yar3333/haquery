@@ -1,9 +1,5 @@
 package haquery.server;
 
-import haquery.server.io.File;
-import haxe.Stack;
-import haxe.FirePHP;
-
 #if php
 private typedef HaxeLib = php.Lib;
 #elseif neko
@@ -12,15 +8,18 @@ private typedef HaxeLib = neko.Lib;
 private typedef HaxeLib = cpp.Lib;
 #end
 
+import haxe.Stack;
+import haxe.FirePHP;
+import haquery.server.cache.HaqCache;
+import haquery.server.db.HaqDb;
+import haquery.server.io.FileOutput;
+import haquery.server.io.File;
+import haquery.server.FileSystem;
 import haquery.server.HaqConfig;
 import haquery.server.HaqRouter;
 import haquery.server.HaqSystem;
-import haquery.server.db.HaqDb;
 import haquery.server.HaqProfiler;
 import haquery.server.Web;
-import haquery.server.FileSystem;
-import haquery.server.io.FileOutput;
-import haquery.server.io.File;
 
 using haquery.StringTools;
 
@@ -30,6 +29,7 @@ class Lib
 	
 	public static var config : HaqConfig = null;
     public static var profiler : HaqProfiler = null;
+	public static var cache : HaqCache = null;
 	public static var isRedirected = false;
     
     /**
@@ -57,6 +57,7 @@ class Lib
 		
 		config = new HaqConfig("config.xml");
 		profiler = new HaqProfiler();
+		cache = new HaqCache(config.cacheConnectionString);
 		
 		HaqDb.logLevel = config.sqlLogLevel;
 		HaqDb.profiler = profiler;
@@ -111,9 +112,11 @@ class Lib
 				}                
             profiler.end();
             profiler.traceResults();
+			cache.dispose();
         }
-        catch (e:Dynamic)
+		catch (e:Dynamic)
         {
+			cache.dispose();
 			traceException(e);
 			throw e;
         }
@@ -376,6 +379,17 @@ class Lib
 		headers += "From: " + fromEmail + "\r\n";
 		headers += "X-Mailer: My Send E-mail\r\n";
 		return untyped __call__("mail", email, subject, message, headers);
+	}
+	
+	static public function getCompilationDate() : Date
+	{
+		var path = Web.getCwd() + "/" + #if php "index.php" #elseif neko "index.n" #end;
+		if (FileSystem.exists(path))
+		{
+			return FileSystem.stat(path).mtime;
+		}
+		
+		throw "File '" + file + "' is not found.";
 	}
 	
     ////////////////////////////////////////////////
