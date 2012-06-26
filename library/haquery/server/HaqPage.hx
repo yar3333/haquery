@@ -115,10 +115,7 @@ class HaqPage extends HaqComponent
 		
 		if (!url.startsWith("http://") && !url.startsWith("/"))
 		{
-			if (Lib.config.isProtectFilesFromCaching)
-			{
-				url += "?" + FileSystem.stat(url).mtime.getTime() / 1000;
-			}
+			url += "?" + FileSystem.stat(url).mtime.getTime() / 1000;
 			url = "/" + url;
 		}
 		
@@ -131,10 +128,7 @@ class HaqPage extends HaqComponent
 		
 		if (!url.startsWith("http://") && !url.startsWith("/"))
 		{
-			if (Lib.config.isProtectFilesFromCaching)
-			{
-				url += "?" + FileSystem.stat(url).mtime.getTime() / 1000;
-			}
+			url += "?" + FileSystem.stat(url).mtime.getTime() / 1000;
 			url = '/' + url;
 		}
 		
