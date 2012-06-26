@@ -29,14 +29,15 @@ class HaqConfig
 
     /**
      * Level of tracing SQL:
-     * 0 - do not show anything;
-     * 1 - show errors;
-     * 2 - show queries too;
-     * 3 - show queries too and results statuses.
+	 * 0 - show errors only;
+	 * 1 - show queries;
+	 * 2 - show queries and times.
      */
-    public var sqlLogLevel(sqlLogLevel_getter, sqlLogLevel_setter) : SqlLogLevel;
+    public var sqlLogLevel(sqlLogLevel_getter, sqlLogLevel_setter) : Int;
 
-    /**
+    public var enableProfiling : Bool;
+	
+	/**
      * Trace when components renders.
      */
     public var isTraceComponent : Bool;
@@ -59,14 +60,15 @@ class HaqConfig
 	public var onStart : Void->Void;
 	public var onFinish : Void->Void;
 	
-	inline function sqlLogLevel_getter() : SqlLogLevel { return HaqDb.logLevel; }
-	inline function sqlLogLevel_setter(level:SqlLogLevel) { HaqDb.logLevel = level; return level; }
+	inline function sqlLogLevel_getter() : Int { return HaqDb.logLevel; }
+	inline function sqlLogLevel_setter(level:Int) { HaqDb.logLevel = level; return level; }
 	
 	public function new(filePath:String)
 	{
 		databaseConnectionString = null;
 		maxPostSize = 16 * 1024 * 1024;
-		sqlLogLevel = SqlLogLevel.ERRORS;
+		sqlLogLevel = 1;
+		enableProfiling  = false;
 		isTraceComponent = false;
 		filterTracesByIP = '';
 		customs = new Hash<Dynamic>();
@@ -100,7 +102,10 @@ class HaqConfig
 							cacheConnectionString = value;
 						
 						case "sqlLogLevel":
-							sqlLogLevel = Type.createEnum(SqlLogLevel, value);
+							sqlLogLevel = Std.parseInt(value);
+						
+						case "enableProfiling":
+							enableProfiling = Std.bool(value);
 						
 						case "isTraceComponent":
 							isTraceComponent = Std.bool(value);

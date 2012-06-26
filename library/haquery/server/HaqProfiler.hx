@@ -24,74 +24,76 @@ private typedef HaqProfilerResult =
 
 class HaqProfiler
 {
-    static inline var file = 'temp/profiler.data';
-    static inline var traceWidth = 120;
-    
-    var blocks : Hash<HaqProfilerBlock>;
+    public var isActive(default, null) : Bool;
+	
+	var blocks : Hash<HaqProfilerBlock>;
     var opened : Array<HaqProfilerOpened>;
 
-    public function new()
+    public function new(isActive:Bool)
     {
-        #if PROFILER
-        blocks = new Hash<HaqProfilerBlock>();
-        opened = [];
-        #end
+        this.isActive = isActive;
+		
+		if (isActive)
+		{
+			blocks = new Hash<HaqProfilerBlock>();
+			opened = [];
+		}
     }
     
-    public #if !PROFILER inline #end function begin(name:String) : Void
+    public function begin(name:String) : Void
     {
-        #if PROFILER
-        if (opened.length > 0)
-        {
-            name = opened[opened.length - 1].name + '-' + name;
-        }
-        opened.push({ name:name, time:Sys.time() });
-        #end
+        if (isActive)
+		{
+			if (opened.length > 0)
+			{
+				name = opened[opened.length - 1].name + '-' + name;
+			}
+			opened.push( { name:name, time:Sys.time() } );
+		}
     }
 
-    public #if !PROFILER inline #end function end() : Void
+    public function end() : Void
     {
-        #if PROFILER
-        haquery.server.Lib.assert(opened.length > 0);
-        
-        var b = opened.pop();
-        var dt = Sys.time() - b.time;
+        if (isActive)
+		{
+			haquery.server.Lib.assert(opened.length > 0);
+			
+			var b = opened.pop();
+			var dt = Sys.time() - b.time;
 
-        if (!blocks.exists(b.name))
-        {
-            blocks.set(b.name, { count:1, dt:dt });
+			if (!blocks.exists(b.name))
+			{
+				blocks.set(b.name, { count:1, dt:dt });
+			}
+			else
+			{
+				blocks.get(b.name).count++;
+				blocks.get(b.name).dt += dt;
+			}
         }
-        else
-        {
-            blocks.get(b.name).count++;
-            blocks.get(b.name).dt += dt;
-        }
-        #end
     }
 
-    public #if !PROFILER inline #end function traceResults(levelLimit = 4)
+    public function traceResults(levelLimit = 4, traceWidth = 120)
     {
-        #if PROFILER
-        
-        trace("HAQUERY Profiling Results");
-        if (opened.length > 0)
-        {
-            for (b in opened)
-            {
-                trace("HAQUERY WARNING: Block '" + b.name + "' not ended");
-            }
+   		if (isActive)
+		{
+			trace("HAQUERY PROFILING Results");
+			
+			if (opened.length > 0)
+			{
+				for (b in opened)
+				{
+					trace("HAQUERY WARNING: Block '" + b.name + "' not ended");
+				}
+			}
+			
+			traceResultsNested(levelLimit, traceWidth);
+			traceResultsSummary(traceWidth);
         }
-        
-        traceResultsNested(levelLimit);
-        traceResultsSummary();
-        
-        #end
     }
     
-    #if !PROFILER inline #end function traceResultsNested(levelLimit)
+    function traceResultsNested(levelLimit:Int, traceWidth:Int)
     {
-        #if PROFILER
-        
         var results = new Array<HaqProfilerResult>();
         for (name in blocks.keys()) 
         {
@@ -116,22 +118,15 @@ class HaqProfiler
                 }
             }
             
-            return Math.round(b.dt - a.dt); 
+            return Std.int((b.dt - a.dt) * 1000);
         });
 
-        trace("HAQUERY Nested:");
-        traceGistogram(Lambda.filter(results, function(result) 
-        {
-            return result.name.split('-').length <= levelLimit;
-        }));
-        
-        #end
+        trace("HAQUERY PROFILING Nested:");
+        traceGistogram(Lambda.filter(results, function(result) return result.name.split('-').length <= levelLimit), traceWidth);
     }
 
-    #if !PROFILER inline #end function traceResultsSummary()
+    function traceResultsSummary(traceWidth:Int)
     {
-        #if PROFILER
-        
         var results = new Hash<HaqProfilerResult>();
 		
         for (name in blocks.keys()) 
@@ -150,45 +145,41 @@ class HaqProfiler
         var values = Lambda.array(results);
         values.sort(function(a, b)
         {
-            return Math.round(b.dt - a.dt); 
+            return Std.int((b.dt - a.dt) * 1000);
         });
 
-        trace("HAQUERY Summary:");
-        traceGistogram(values);
-        
-        #end
+        trace("HAQUERY PROFILING Summary:");
+        traceGistogram(values, traceWidth);
     }
     
-    #if !PROFILER inline #end function traceGistogram(results:Iterable<HaqProfilerResult>)
+    function traceGistogram(results:Iterable<HaqProfilerResult>, traceWidth:Int)
     {
-        #if PROFILER
-        
-        var maxLen = 0;
-        var maxDT = 0.0;
-        var maxCount = 0;
-        for (result in results) 
-        {
-            maxLen = Std.int(Math.max(maxLen, result.name.length));
-            maxDT = Math.max(maxDT, result.dt);
-            maxCount = Std.int(Math.max(maxCount, result.count));
-        }
-        
-        var maxW = traceWidth - maxLen - Std.string(maxCount).length;
-        if (maxW < 1) maxW = 1;
-        
-        for (result in results)
-        {
-            trace(
-                 "HAQUERY "
-				+StringTools.lpad(Std.string(Std.int(result.dt*1000)), "0", Std.string(Std.int(maxDT*1000)).length) + " | "
-                +StringTools.rpad(StringTools.rpad('', '*', Math.round(result.dt / maxDT * maxW)), ' ', maxW)
-				+" | " + StringTools.rpad(result.name, " ", maxLen)
-				+" [" + StringTools.rpad(Std.string(result.count), " ", Std.string(maxCount).length) + " time(s)]"
-            );
-        }
-        
-        #end
+		if (isActive)
+		{
+			var maxLen = 0;
+			var maxDT = 0.0;
+			var maxCount = 0;
+			for (result in results) 
+			{
+				maxLen = Std.int(Math.max(maxLen, result.name.length));
+				maxDT = Math.max(maxDT, result.dt);
+				maxCount = Std.int(Math.max(maxCount, result.count));
+			}
+			
+			var maxW = traceWidth - maxLen - Std.string(maxCount).length;
+			if (maxW < 1) maxW = 1;
+			
+			for (result in results)
+			{
+				trace(
+					 "HAQUERY "
+					+StringTools.lpad(Std.string(Std.int(result.dt*1000)), "0", Std.string(Std.int(maxDT*1000)).length) + " | "
+					+StringTools.rpad(StringTools.rpad('', '*', Math.round(result.dt / maxDT * maxW)), ' ', maxW)
+					+" | " + StringTools.rpad(result.name, " ", maxLen)
+					+" [" + StringTools.rpad(Std.string(result.count), " ", Std.string(maxCount).length) + " time(s)]"
+				);
+			}
+		}
     }
-    
 }
 

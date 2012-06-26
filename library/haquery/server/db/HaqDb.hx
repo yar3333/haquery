@@ -14,32 +14,20 @@ import neko.db.ResultSet;
 import cpp.db.ResultSet;
 #end
 
-enum SqlLogLevel
-{
-	/**
-	 * 0 - do not show anything.
-	 */
-	NONE;
-	/**
-	 * 1 - show errors.
-	 */
-	ERRORS;
-	/**
-	 * 2 - show queries too.
-	 */
-	QUERIES;
-	/**
-	 * 3 - show queries and results statuses.
-	 */
-	RESULTS;
-}
-
 class HaqDb
 {
     static public var connection : HaqDbDriver = null;
-	static public var logLevel = SqlLogLevel.NONE;
+	
+    /**
+     * Level of tracing SQL:
+	 * 0 - show errors only;
+	 * 1 - show queries;
+	 * 2 - show queries and times.
+     */
+	static public var logLevel = 1;
+	
 	static public var profiler : HaqProfiler = null;
-
+	
     static public function connect(connectionString:String) : Bool
     {
 		if (connection != null) return true;
@@ -65,8 +53,10 @@ class HaqDb
 		try
 		{
 			if (profiler != null) profiler.begin('SQL query');
-			if (Type.enumIndex(logLevel) >= 2) trace("SQL QUERY: " + sql);
+			if (logLevel >= 1) trace("SQL QUERY: " + sql);
+			var startTime = logLevel >= 2 ? Sys.time() : 0;
 			var r = connection.query(sql);
+			if (logLevel >= 2) trace("SQL QUERY FINISH " + Math.round((Sys.time() - startTime) * 1000) + " ms");
 			if (profiler != null) profiler.end();
 			return r;
 		}

@@ -56,7 +56,7 @@ class Lib
 		#end
 		
 		config = new HaqConfig("config.xml");
-		profiler = new HaqProfiler();
+		profiler = new HaqProfiler(config.enableProfiling);
 		cache = new HaqCache(config.cacheConnectionString);
 		
 		HaqDb.logLevel = config.sqlLogLevel;
