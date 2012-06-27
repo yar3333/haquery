@@ -154,31 +154,28 @@ class HaqProfiler
     
     function traceGistogram(results:Iterable<HaqProfilerResult>, traceWidth:Int)
     {
-		if (isActive)
+		var maxLen = 0;
+		var maxDT = 0.0;
+		var maxCount = 0;
+		for (result in results) 
 		{
-			var maxLen = 0;
-			var maxDT = 0.0;
-			var maxCount = 0;
-			for (result in results) 
-			{
-				maxLen = Std.int(Math.max(maxLen, result.name.length));
-				maxDT = Math.max(maxDT, result.dt);
-				maxCount = Std.int(Math.max(maxCount, result.count));
-			}
-			
-			var maxW = traceWidth - maxLen - Std.string(maxCount).length;
-			if (maxW < 1) maxW = 1;
-			
-			for (result in results)
-			{
-				trace(
-					 "HAQUERY "
-					+StringTools.lpad(Std.string(Std.int(result.dt*1000)), "0", Std.string(Std.int(maxDT*1000)).length) + " | "
-					+StringTools.rpad(StringTools.rpad('', '*', Math.round(result.dt / maxDT * maxW)), ' ', maxW)
-					+" | " + StringTools.rpad(result.name, " ", maxLen)
-					+" [" + StringTools.rpad(Std.string(result.count), " ", Std.string(maxCount).length) + " time(s)]"
-				);
-			}
+			maxLen = Std.int(Math.max(maxLen, result.name.length));
+			maxDT = Math.max(maxDT, result.dt);
+			maxCount = Std.int(Math.max(maxCount, result.count));
+		}
+		
+		var maxW = traceWidth - maxLen - Std.string(maxCount).length;
+		if (maxW < 1) maxW = 1;
+		
+		for (result in results)
+		{
+			trace(
+				 "HAQUERY "
+				+StringTools.lpad(Std.string(Std.int(result.dt*1000)), "0", Std.string(Std.int(maxDT*1000)).length) + " | "
+				+StringTools.rpad(StringTools.rpad('', '*', Math.round(result.dt / maxDT * maxW)), ' ', maxW)
+				+" | " + StringTools.rpad(result.name, " ", maxLen)
+				+" [" + StringTools.rpad(Std.string(result.count), " ", Std.string(maxCount).length) + " time(s)]"
+			);
 		}
     }
 }
