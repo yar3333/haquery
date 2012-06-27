@@ -56,67 +56,71 @@ class Lib
 		#end
 		
 		config = new HaqConfig("config.xml");
-		profiler = new HaqProfiler(config.enableProfiling);
-		cache = new HaqCache(config.cacheConnectionString);
-		
-		HaqDb.logLevel = config.sqlLogLevel;
-		HaqDb.profiler = profiler;
 		
 		try
         {
-            profiler.begin("HAQUERY");
-                startTime = Sys.time();
-				haxe.Log.trace = Lib.trace;
+			startTime = Sys.time();
+			haxe.Log.trace = Lib.trace;
+			
+			var router = new HaqRouter();
+			var route = router.getRoute(Web.getParams().get('route'));
+			
+			switch (route)
+			{
+				case HaqRoute.file(path): 
+				#if php
+					untyped __call__('require', path);
+				#elseif neko
+					throw "HaqRoute.file is unsupported for neko platform.";
+				#end
 				
-				var router = new HaqRouter();
-				var route = router.getRoute(Web.getParams().get('route'));
-				
-				switch (route)
-				{
-					case HaqRoute.file(path): 
+				case HaqRoute.page(path, fullTag, pageID): 
+					loadBootstraps(path);
+					
+					profiler = new HaqProfiler(config.enableProfiling);
+					HaqDb.profiler = profiler;
+					cache = new HaqCache(config.cacheConnectionString);
+					
+					profiler.begin("HAQUERY");
+					
 					#if php
-						untyped __call__('require', path);
-					#elseif neko
-						throw "HaqRoute.file is unsupported for neko platform.";
+					php.Session.start();
 					#end
 					
-					case HaqRoute.page(path, fullTag, pageID): 
-						loadBootstraps(path);
-						
-						#if php
-						php.Session.start();
-						#end
-						
-						if (config.databaseConnectionString != null && config.databaseConnectionString != "")
-						{
-							HaqDb.connect(config.databaseConnectionString);
-						}
-						
-						isPostback = Web.getParams().get('HAQUERY_POSTBACK') != null;
-						
-						if (config.onStart != null)
-						{
-							config.onStart();
-						}
-						
-						HaqSystem.run(fullTag, pageID, isPostback);
-						
-						if (config.onFinish != null)
-						{
-							config.onFinish();
-						}
-						
-					case HaqRoute.error(code): 
-						Web.setReturnCode(code);
-						Lib.println("<h1>Error " + code + "</h1>");
-				}                
-            profiler.end();
-            profiler.traceResults();
-			cache.dispose();
+					if (config.databaseConnectionString != null && config.databaseConnectionString != "")
+					{
+						HaqDb.connect(config.databaseConnectionString);
+					}
+					
+					isPostback = Web.getParams().get('HAQUERY_POSTBACK') != null;
+					
+					if (config.onStart != null)
+					{
+						config.onStart();
+					}
+					
+					HaqSystem.run(fullTag, pageID, isPostback);
+					
+					if (config.onFinish != null)
+					{
+						config.onFinish();
+					}
+					
+					profiler.end();
+					cache.dispose();
+					profiler.traceResults();		
+					
+				case HaqRoute.error(code): 
+					Web.setReturnCode(code);
+					Lib.println("<h1>Error " + code + "</h1>");
+			}                
         }
 		catch (e:Dynamic)
         {
-			cache.dispose();
+			if (cache != null)
+			{
+				cache.dispose();
+			}
 			traceException(e);
 			throw e;
         }
