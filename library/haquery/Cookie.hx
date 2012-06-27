@@ -50,7 +50,7 @@ class Cookie
 		#if !client
 		Web.setCookie(name, value, expire, domain, path);
 		#else
-		js.Cookie.set(name, value, expire != null ? Std.int(expire.getTime() - Date.now().getTime()) : null, path, domain) ;
+		js.Cookie.set(name, value, expire != null ? Std.int((expire.getTime() - Date.now().getTime()) / 1000) : null, path, domain);
 		#end
 	}
     
