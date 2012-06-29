@@ -1,6 +1,6 @@
 package components.haquery.button;
 
-import haquery.client.HaqEvent;
+import haquery.common.HaqEvent;
 import js.JQuery;
 
 class Client extends Base

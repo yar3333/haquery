@@ -1,4 +1,6 @@
-package haquery.base;
+package haquery.common;
+
+import haquery.base.HaqComponent;
 
 class HaqSharedStorage
 {

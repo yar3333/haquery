@@ -1,4 +1,4 @@
-package haquery.base;
+package haquery.common;
 
 class HaqDefines 
 {

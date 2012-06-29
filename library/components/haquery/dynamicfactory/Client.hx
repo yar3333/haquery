@@ -1,7 +1,7 @@
 package components.haquery.dynamicfactory;
 
 import haquery.client.HaqComponent;
-import haquery.client.HaqEvent;
+import haquery.common.HaqEvent;
 import haxe.htmlparser.HtmlNodeElement;
 import haxe.Unserializer; 
 import js.JQuery;

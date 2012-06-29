@@ -2,6 +2,7 @@ package haquery.client;
 
 import haquery.client.HaqComponent;
 import haquery.client.HaqTemplate;
+import haquery.common.HaqDefines;
 
 using haquery.StringTools;
 

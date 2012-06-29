@@ -5,7 +5,7 @@ import haxe.Unserializer;
 import js.Dom;
 import js.Lib;
 import js.JQuery;
-
+import haquery.common.HaqDefines;
 using haquery.StringTools;
 
 class HaqElemEventManager 

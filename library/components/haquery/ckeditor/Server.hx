@@ -2,7 +2,7 @@ package components.haquery.ckeditor;
 
 import haquery.server.Lib;
 import haquery.server.HaqComponent;
-import haquery.server.HaqEvent;
+import haquery.common.HaqEvent;
 
 class Server extends HaqComponent
 {

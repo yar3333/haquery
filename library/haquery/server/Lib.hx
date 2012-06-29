@@ -10,6 +10,7 @@ private typedef HaxeLib = cpp.Lib;
 
 import haxe.Stack;
 import haxe.FirePHP;
+import haquery.common.HaqDefines;
 import haquery.server.cache.HaqCache;
 import haquery.server.db.HaqDb;
 import haquery.server.FileSystem;

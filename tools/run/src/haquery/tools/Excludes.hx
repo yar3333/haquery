@@ -1,8 +1,8 @@
 package haquery.tools;
 
 import haquery.server.FileSystem;
-import haquery.server.io.File;
-import haquery.server.io.Path;
+import haxe.io.Path;
+import sys.io.File;
 
 using haquery.StringTools;
 using haquery.HashTools;

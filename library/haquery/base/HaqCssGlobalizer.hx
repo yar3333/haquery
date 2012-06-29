@@ -1,5 +1,6 @@
 package haquery.base;
 
+import haquery.common.HaqDefines;
 using haquery.StringTools;
 
 class HaqCssGlobalizer 

@@ -1,7 +1,7 @@
 package components.haquery.list;
 
 import haquery.server.Lib;
-import haquery.server.HaqEvent;
+import haquery.common.HaqEvent;
 import haquery.server.HaqComponent;
 
 typedef ItemDataBoundEventArgs = {

@@ -1,7 +1,7 @@
 package components.haquery.ckeditor;
 
 import haquery.client.HaqComponent;
-import haquery.client.HaqEvent;
+import haquery.common.HaqEvent;
 import haquery.client.Lib;
 import haxe.Timer;
 

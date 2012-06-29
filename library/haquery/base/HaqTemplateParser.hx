@@ -6,6 +6,7 @@ private typedef TemplateParser = haquery.server.HaqTemplateParser;
 private typedef TemplateParser = haquery.client.HaqTemplateParser;
 #end
 
+import haquery.common.HaqDefines;
 using haquery.StringTools;
 
 class HaqTemplateException

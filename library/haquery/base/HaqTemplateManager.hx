@@ -1,11 +1,7 @@
 package haquery.base;
-	
-#if !client
-import haquery.server.FileSystem;
-import haquery.server.Lib;
-#end
 
-import haquery.base.HaqTemplateParser.HaqTemplateNotFoundException;
+import haquery.common.HaqDefines;
+import haquery.common.HaqSharedStorage;
 
 using haquery.StringTools;
 
