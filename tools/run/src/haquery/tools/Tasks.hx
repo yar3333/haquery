@@ -37,9 +37,7 @@ class Tasks
         
 		log.start("Generate object related mapping classes");
 		
-		HaqDb.connect(databaseConnectionString);
-		
-		OrmGenerator.run(log, destBasePath);
+		OrmGenerator.run(new HaqDb(databaseConnectionString), log, destBasePath);
         
         log.finishOk();
     }

@@ -30,6 +30,7 @@ class Lib
 	public static var config : HaqConfig = null;
     public static var profiler : HaqProfiler = null;
 	public static var cache : HaqCache = null;
+	public static var db : HaqDb = null;
 	public static var isRedirected = false;
     
     /**
@@ -78,7 +79,6 @@ class Lib
 					loadBootstraps(path);
 					
 					profiler = new HaqProfiler(config.enableProfiling);
-					HaqDb.profiler = profiler;
 					cache = new HaqCache(config.cacheConnectionString);
 					
 					profiler.begin("HAQUERY");
@@ -89,7 +89,7 @@ class Lib
 					
 					if (config.databaseConnectionString != null && config.databaseConnectionString != "")
 					{
-						HaqDb.connect(config.databaseConnectionString);
+						db = new HaqDb(config.databaseConnectionString, config.sqlLogLevel, profiler);
 					}
 					
 					isPostback = Web.getParams().get('HAQUERY_POSTBACK') != null;

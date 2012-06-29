@@ -16,7 +16,7 @@ import cpp.db.ResultSet;
 
 class HaqDb
 {
-    static public var connection : HaqDbDriver = null;
+    public var connection : HaqDbDriver = null;
 	
     /**
      * Level of tracing SQL:
@@ -24,14 +24,12 @@ class HaqDb
 	 * 1 - show queries;
 	 * 2 - show queries and times.
      */
-	static public var logLevel = 0;
+	public var logLevel : Int;
 	
-	static public var profiler : HaqProfiler = null;
+	public var profiler : HaqProfiler = null;
 	
-    static public function connect(connectionString:String) : Bool
+    public function new(connectionString:String, logLevel=0, ?profiler:HaqProfiler) : Void
     {
-		if (connection != null) return true;
-		
 		var re = new EReg('^([a-z]+)\\://([_a-zA-Z0-9]+)\\:(.+?)@([_.a-zA-Z0-9]+)(?:[:](\\d+))?/([_a-zA-Z0-9]+)$', '');
 		if (!re.match(connectionString))
 		{
@@ -45,10 +43,11 @@ class HaqDb
             );
         if (profiler != null) profiler.end();
 		
-        return true;
+		this.logLevel = logLevel;
+		this.profiler = profiler;
     }
 
-    static public function query(sql:String) : ResultSet
+    public function query(sql:String) : ResultSet
     {
 		try
 		{
@@ -74,12 +73,12 @@ class HaqDb
 		}
     }
 
-    static public function quote(v:Dynamic) : String
+    public function quote(v:Dynamic) : String
     {
 		return connection.quote(v);
     }
 
-    static public function lastInsertId() : Int
+    public function lastInsertId() : Int
     {
         return connection.lastInsertId();
     }
