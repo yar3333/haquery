@@ -1,6 +1,5 @@
 package haquery.server;
 
-import haquery.server.Web;
 using haquery.StringTools;
 
 class Uuid 
@@ -17,7 +16,7 @@ class Uuid
 	
 	static function getHexClientIP()
     {
-        var ip = Web.getClientIP();
+        var ip = Lib.getClientIP();
         var hex = "";
         for (part in ip.split('.'))
         {

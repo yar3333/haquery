@@ -4,7 +4,6 @@ import haxe.Serializer;
 import haxe.Unserializer;
 import haquery.common.HaqDefines;
 import haquery.server.Lib;
-import haquery.server.Web;
 
 using haquery.StringTools;
 
