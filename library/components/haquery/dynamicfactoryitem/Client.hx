@@ -3,7 +3,7 @@ package components.haquery.dynamicfactoryitem;
 import js.JQuery;
 import haxe.htmlparser.HtmlDocument;
 import haxe.htmlparser.HtmlNodeElement;
-import haquery.client.HaqDefines;
+import haquery.common.HaqDefines;
 import haquery.client.HaqInternals;
 import haquery.client.HaqTemplateManager;
 import haquery.client.HaqComponent;

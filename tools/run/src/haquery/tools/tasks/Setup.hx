@@ -1,12 +1,11 @@
 package haquery.tools.tasks;
 
 import neko.zip.Reader;
-import neko.Sys;
 
 import haquery.server.FileSystem;
-import haquery.server.io.File;
-import haquery.server.io.Path;
 import haquery.server.Lib;
+import haxe.io.Path;
+import sys.io.File;
 
 import haquery.tools.Log;
 import haquery.tools.Hant;

@@ -1,9 +1,8 @@
 package haquery.tools;
 
 import haquery.server.FileSystem;
-import haquery.server.io.File;
 import haquery.Std;
-import neko.Sys;
+import sys.io.File;
 
 using haquery.StringTools;
 

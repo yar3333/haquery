@@ -1,6 +1,6 @@
 package components.haquery.uploader;
 
-import haquery.server.HaqEvent;
+import haquery.common.HaqEvent;
 import haquery.server.Web;
 
 typedef UploadEventArgs = 

@@ -1,4 +1,4 @@
-package haquery.base;
+package haquery.common;
 
 #if !client
 import haquery.server.HaqComponent;

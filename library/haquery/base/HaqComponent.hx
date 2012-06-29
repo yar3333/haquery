@@ -1,13 +1,14 @@
 package haquery.base;
 
+import haquery.common.HaqDefines;
+import haquery.common.HaqEvent;
+
 #if !client
-import haquery.server.HaqEvent;
 import haquery.server.Lib;
 import haquery.server.HaqTemplate;
 import haquery.server.HaqTemplateManager;
 private typedef Component = haquery.server.HaqComponent;
 #else
-import haquery.client.HaqEvent;
 import haquery.client.Lib;
 import haquery.client.HaqTemplate;
 import haquery.client.HaqTemplateManager;

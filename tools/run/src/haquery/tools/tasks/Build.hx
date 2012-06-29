@@ -1,9 +1,10 @@
 package haquery.tools.tasks;
 
+import sys.io.File;
+import haxe.io.Path;
+
+import haquery.common.HaqDefines;
 import haquery.server.FileSystem;
-import haquery.server.io.File;
-import haquery.server.io.Path;
-import haquery.server.HaqDefines;
 import haquery.tools.Excludes;
 import haquery.tools.HaqTemplateManager;
 import haquery.tools.JSMin;
@@ -191,7 +192,7 @@ class Build
 		{
 			if (!project.isDebug)
 			{
-				File.putContent(clientPath + "/haquery.js", new JSMin(File.getContent(clientPath + "/haquery.js")).output);
+				File.saveContent(clientPath + "/haquery.js", new JSMin(File.getContent(clientPath + "/haquery.js")).output);
 			}
 			
 			log.finishOk();
@@ -211,7 +212,7 @@ class Build
 		hant.createDirectory(serverPath);
 		
 		var lastMods = manager.getLastMods();
-		File.putContent(
+		File.saveContent(
 			 serverPath + "/templates.dat"
 			,Lambda.map(
 				 Lambda.filter(lastMods.keysIterable(), function(fullTag) return !Lambda.has(manager.unusedTemplates, fullTag))

@@ -1,13 +1,12 @@
 package haquery.server;
 
-import haquery.server.HaqCssGlobalizer;
-import haquery.server.HaqDefines;
-import haquery.server.HaqComponent;
-import haquery.server.FileSystem;
-import sys.io.File;
 import haxe.htmlparser.HtmlDocument;
 import haxe.htmlparser.HtmlNodeElement;
-
+import sys.io.File;
+import haquery.common.HaqDefines;
+import haquery.server.HaqCssGlobalizer;
+import haquery.server.HaqComponent;
+import haquery.server.FileSystem;
 import haquery.base.HaqTemplateParser.HaqTemplateNotFoundException;
 import haquery.base.HaqTemplateParser.HaqTemplateNotFoundCriticalException;
 import haquery.base.HaqTemplateParser.HaqTemplateRecursiveExtendException;

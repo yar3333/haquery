@@ -2,10 +2,9 @@ package haquery.server;
 
 import haxe.Serializer;
 import haxe.Unserializer;
-
+import haquery.common.HaqDefines;
 import haquery.server.Web;
 import haquery.server.Lib;
-import haquery.server.HaqDefines;
 
 using haquery.StringTools;
 

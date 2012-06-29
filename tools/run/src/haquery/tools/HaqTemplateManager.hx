@@ -1,8 +1,8 @@
 package haquery.tools;
 
 import haquery.base.HaqTemplateParser.HaqTemplateNotFoundException;
+import haquery.common.HaqDefines;
 import haquery.server.FileSystem;
-import haquery.server.HaqDefines;
 import haquery.tools.HaqTemplate;
 import haxe.htmlparser.HtmlNodeElement;
 

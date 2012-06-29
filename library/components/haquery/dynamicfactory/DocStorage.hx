@@ -1,8 +1,8 @@
 package components.haquery.dynamicfactory;
 
-import haquery.server.HaqSharedStorage;
 import haxe.htmlparser.HtmlDocument;
 import haxe.htmlparser.HtmlNodeElement;
+import haquery.common.HaqSharedStorage;
 
 #if !client
 typedef Manager = haquery.server.HaqTemplateManager

@@ -1,7 +1,7 @@
 package components.haquery.button;
 
+import haquery.common.HaqEvent;
 import haquery.Std;
-import haquery.server.HaqEvent;
 
 class Server extends Base
 {

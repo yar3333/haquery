@@ -1,6 +1,7 @@
 package haquery.server;
 
 import haxe.io.Bytes;
+import haquery.common.HaqDefines;
 import haquery.server.FileSystem;
 import sys.io.File;
 

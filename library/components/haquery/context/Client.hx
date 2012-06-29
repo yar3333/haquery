@@ -1,7 +1,7 @@
 package components.haquery.context;
 
 import js.JQuery;
-import haquery.client.HaqEvent;
+import haquery.common.HaqEvent;
 import haquery.client.HaqComponent;
 
 typedef ShowEventArgs = {

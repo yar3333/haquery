@@ -1,5 +1,6 @@
 package haquery.server;
 
+import haquery.common.HaqDefines;
 import haquery.server.FileSystem;
 
 using haquery.StringTools;
