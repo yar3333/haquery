@@ -1,11 +1,10 @@
 package haquery.server;
 
 import haxe.htmlparser.HtmlDocument;
-import haquery.server.io.File;
+import haxe.htmlparser.HtmlNodeElement;
 import haquery.server.db.HaqDb;
 import haquery.Std;
-import haxe.htmlparser.HtmlNodeElement;
-
+import sys.io.File;
 using haquery.StringTools;
 
 class HaqConfig

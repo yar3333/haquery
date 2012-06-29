@@ -1,6 +1,5 @@
 package haquery.server;
 
-import haquery.server.Sys;
 import haquery.StringTools;
 
 private typedef HaqProfilerBlock =

@@ -1,7 +1,7 @@
 package haquery.server.cache;
 
 import haquery.server.FileSystem;
-import haquery.server.io.File;
+import sys.io.File;
 import haxe.Serializer;
 import haxe.Unserializer;
 using haquery.StringTools;
@@ -39,9 +39,9 @@ class HaqCacheDriver_filesystem implements HaqCacheDriver
 	public function set(key:String, obj:Dynamic) : Void
 	{
 		#if neko
-		File.putContent(getFilePath(key), neko.Lib.stringReference(neko.Lib.serialize(obj)));
+		File.saveContent(getFilePath(key), neko.Lib.stringReference(neko.Lib.serialize(obj)));
 		#else
-		File.putContent(getFilePath(key), Serializer.run(obj));
+		File.saveContent(getFilePath(key), Serializer.run(obj));
 		#end
 	}
 	

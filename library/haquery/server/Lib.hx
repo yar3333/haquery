@@ -12,14 +12,14 @@ import haxe.Stack;
 import haxe.FirePHP;
 import haquery.server.cache.HaqCache;
 import haquery.server.db.HaqDb;
-import haquery.server.io.FileOutput;
-import haquery.server.io.File;
 import haquery.server.FileSystem;
 import haquery.server.HaqConfig;
 import haquery.server.HaqRouter;
 import haquery.server.HaqSystem;
 import haquery.server.HaqProfiler;
 import haquery.server.Web;
+import sys.io.FileOutput;
+import sys.io.File;
 
 using haquery.StringTools;
 
