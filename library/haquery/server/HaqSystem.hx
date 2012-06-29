@@ -3,8 +3,8 @@ package haquery.server;
 import haxe.Serializer;
 import haxe.Unserializer;
 import haquery.common.HaqDefines;
-import haquery.server.Web;
 import haquery.server.Lib;
+import haquery.server.Web;
 
 using haquery.StringTools;
 
@@ -31,12 +31,11 @@ class HaqSystem
 		
         Lib.profiler.begin("system");
 
-            trace("HAQUERY SYSTEM Start pageFullTag = " + pageFullTag +  ", HTTP_HOST = " + Web.getHttpHost() + ", clientIP = " + Web.getClientIP() + ", pageID = " + pageID);
+            trace("HAQUERY SYSTEM Start pageFullTag = " + pageFullTag +  ", HTTP_HOST = " + Lib.getHttpHost() + ", clientIP = " + Lib.getClientIP() + ", pageID = " + pageID);
             
-            var params = Web.getParams();
             if (pageID != null)
             {
-                params.set('pageID', pageID);
+                Lib.params.set('pageID', pageID);
             }
 
             if (manager == null)
@@ -47,7 +46,7 @@ class HaqSystem
 			}
 
             Lib.profiler.begin('page');
-				page = manager.createPage(pageFullTag, params);
+				page = manager.createPage(pageFullTag, Lib.params);
             Lib.profiler.end();
             
 			var html : String;
@@ -85,8 +84,8 @@ class HaqSystem
     {
 		page.forEachComponent('preEventHandlers');
 
-        var componentID = Web.getParams().get('HAQUERY_COMPONENT');
-        var method = Web.getParams().get('HAQUERY_METHOD');
+        var componentID = Lib.params.get('HAQUERY_COMPONENT');
+        var method = Lib.params.get('HAQUERY_METHOD');
         
         var component = page.findComponent(componentID);
         
@@ -97,7 +96,7 @@ class HaqSystem
 			var r = callElemEventHandler(component, method);
 			if (!r.success)
 			{
-				r = callSharedMethod(component, method, Unserializer.run(Web.getParams().get('HAQUERY_PARAMS')));
+				r = callSharedMethod(component, method, Unserializer.run(Lib.params.get('HAQUERY_PARAMS')));
 			}
 			if (r.success)
 			{

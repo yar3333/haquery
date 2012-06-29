@@ -1,7 +1,6 @@
 package haquery.server;
 
 import haquery.server.Web;
-
 using haquery.StringTools;
 
 class Uuid 
@@ -26,5 +25,4 @@ class Uuid
         }
         return hex;
     }
-	
 }
