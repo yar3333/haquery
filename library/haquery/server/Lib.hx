@@ -10,6 +10,7 @@ private typedef HaxeLib = cpp.Lib;
 
 import haxe.Stack;
 import haxe.FirePHP;
+import haquery.common.HaqCookie;
 import haquery.common.HaqDefines;
 import haquery.server.cache.HaqCache;
 import haquery.server.db.HaqDb;
@@ -29,6 +30,7 @@ class Lib
     public static var isHeadersSent(default, null) : Bool;
 	
 	public static var config : HaqConfig = null;
+	public static var cookie : HaqCookie;
     public static var profiler : HaqProfiler = null;
 	public static var cache : HaqCache = null;
 	public static var db : HaqDb = null;
@@ -77,6 +79,8 @@ class Lib
 				#end
 				
 				case HaqRoute.page(path, fullTag, pageID): 
+					cookie = new HaqCookie();
+					
 					loadBootstraps(path);
 					
 					profiler = new HaqProfiler(config.enableProfiling);

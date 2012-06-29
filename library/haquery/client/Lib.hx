@@ -4,17 +4,22 @@ import haxe.Stack;
 import haxe.Firebug;
 import haquery.client.HaqInternals;
 import haquery.client.HaqSystem;
+import haquery.common.HaqCookie;
 
 using haquery.StringTools;
 
 class Lib
 {
-    static public function run(pageFullTag:String)
+    public static var cookie(default, null) : HaqCookie;
+	
+	static public function run(pageFullTag:String)
     {
 		haxe.Log.trace = Firebug.detect() 
 			? Firebug.trace 
 			: haquery.client.Lib.trace;
         
+		cookie = new HaqCookie();
+			
 		HaqSystem.run(pageFullTag);
     }
 	
