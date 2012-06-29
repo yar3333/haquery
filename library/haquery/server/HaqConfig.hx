@@ -33,7 +33,7 @@ class HaqConfig
 	 * 1 - show queries;
 	 * 2 - show queries and times.
      */
-    public var sqlLogLevel(sqlLogLevel_getter, sqlLogLevel_setter) : Int;
+    public var sqlLogLevel = 0;
 
     public var enableProfiling = false;
 	
@@ -59,9 +59,6 @@ class HaqConfig
 	
 	public var onStart : Void->Void;
 	public var onFinish : Void->Void;
-	
-	inline function sqlLogLevel_getter() : Int { return HaqDb.logLevel; }
-	inline function sqlLogLevel_setter(level:Int) { HaqDb.logLevel = level; return level; }
 	
 	public function new(filePath:String)
 	{
