@@ -8,6 +8,12 @@ private typedef HaxeLib = neko.Lib;
 private typedef HaxeLib = cpp.Lib;
 #end
 
+#if php
+typedef Web = php.Web;
+#elseif neko
+typedef Web = neko.Web;
+#end
+
 import haxe.Stack;
 import haxe.FirePHP;
 import haquery.common.HaqCookie;
@@ -19,23 +25,10 @@ import haquery.server.HaqConfig;
 import haquery.server.HaqRouter;
 import haquery.server.HaqSystem;
 import haquery.server.HaqProfiler;
-import haquery.server.Web;
 import sys.io.FileOutput;
 import sys.io.File;
 import haquery.server.HaqUploadedFile.HaqUploadError;
 import haxe.io.Bytes;
-
-/*
-import haquery.common.HaqDefines;
-import haquery.server.FileSystem;
-import sys.io.File;
-
-#if php
-private typedef HaxeWeb = php.Web;
-#elseif neko
-private typedef HaxeWeb = neko.Web;
-#end
-*/ 
 
 using haquery.StringTools;
 
@@ -578,6 +571,9 @@ class Lib
 		
 		return uploadsDir + "/" + s;
 	}
+	
+	public static inline function setHeader(name:String, value:String) : Void { Web.setHeader(name, value); }	
+	public static inline function getURI() : String { return Web.getURI();  }
 	
     ////////////////////////////////////////////////
     // official methods
