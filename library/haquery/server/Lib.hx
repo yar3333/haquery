@@ -494,7 +494,7 @@ class Lib
 						}
 						else
 						{
-							params.set(lastPartName, lastParamValue);
+							params_cached.set(lastPartName, lastParamValue);
 						}
 					}
 					
@@ -543,7 +543,7 @@ class Lib
 			}
 			else
 			{
-				params.set(lastPartName, lastParamValue);
+				params_cached.set(lastPartName, lastParamValue);
 			}
 		}
 		
