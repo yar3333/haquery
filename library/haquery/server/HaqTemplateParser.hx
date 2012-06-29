@@ -4,7 +4,7 @@ import haquery.server.HaqCssGlobalizer;
 import haquery.server.HaqDefines;
 import haquery.server.HaqComponent;
 import haquery.server.FileSystem;
-import haquery.server.io.File;
+import sys.io.File;
 import haxe.htmlparser.HtmlDocument;
 import haxe.htmlparser.HtmlNodeElement;
 

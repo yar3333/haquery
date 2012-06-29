@@ -3,8 +3,8 @@ package haquery.server;
 import haquery.server.FileSystem;
 import haquery.server.HaqComponent;
 import haquery.server.HaqTemplate;
-import haquery.server.io.File;
-import haquery.server.io.Path;
+import sys.io.File;
+import haxe.io.Path;
 import haquery.server.Lib;
 import haxe.htmlparser.HtmlNodeElement;
 import haxe.Serializer;
@@ -42,7 +42,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		{
 			FileSystem.createDirectory(Path.directory(templateCachePath));
 			var template = new HaqTemplate(fullTag); 
-			File.putContent(templateCachePath, Serializer.run(template));
+			File.saveContent(templateCachePath, Serializer.run(template));
 			return template;
 		}
 		else
@@ -82,7 +82,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		{
 			FileSystem.createDirectory(Path.directory(templatesCacheClientFilePath));
 			trace("HAQUERY update client js file");
-			File.putContent(templatesCacheClientFilePath, getStaticClientCode());
+			File.saveContent(templatesCacheClientFilePath, getStaticClientCode());
 		}
 		registerScript(null, templatesCacheClientFilePath);
 		
@@ -91,7 +91,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		{
 			FileSystem.createDirectory(Path.directory(templatesCacheStyleFilePath));
 			trace("HAQUERY update css styles file");
-			File.putContent(templatesCacheStyleFilePath, getStaticStyles());
+			File.saveContent(templatesCacheStyleFilePath, getStaticStyles());
 		}
 		registerStyle(null, templatesCacheStyleFilePath);
 	}

@@ -2,7 +2,7 @@ package haquery.server;
 
 import haxe.io.Bytes;
 import haquery.server.FileSystem;
-import haquery.server.io.File;
+import sys.io.File;
 
 #if php
 private typedef HaxeWeb = php.Web;
