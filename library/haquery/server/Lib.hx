@@ -66,7 +66,9 @@ class Lib
 
     static public function run() : Void
     {
-        #if neko
+        isHeadersSent = false;
+		
+		#if neko
 		Sys.setCwd(Web.getCwd());
 		#end
 		
