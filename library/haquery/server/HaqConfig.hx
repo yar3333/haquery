@@ -56,9 +56,6 @@ class HaqConfig
 	 */
 	public var templateSelector : HaqTemplateSelector;
 	
-	public var onStart : Void->Void;
-	public var onFinish : Void->Void;
-	
 	public function new(filePath:String)
 	{
 		customs = new Hash<Dynamic>();
