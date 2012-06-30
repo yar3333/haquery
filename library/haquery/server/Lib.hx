@@ -66,14 +66,13 @@ class Lib
 
     static public function run() : Void
     {
-        isHeadersSent = false;
+		isHeadersSent = false;
+		params_cached = null;
+		uploadedFiles_cached = null;
 		
 		#if neko
 		Sys.setCwd(Web.getCwd());
 		#end
-		
-		params_cached = null;
-		uploadedFiles_cached = null;
 		
 		config = new HaqConfig("config.xml");
 		
@@ -590,6 +589,7 @@ class Lib
 	
 	public static inline function setHeader(name:String, value:String) : Void { Web.setHeader(name, value); }	
 	public static inline function getURI() : String { return Web.getURI();  }
+	public static inline function setReturnCode(status:Int) : Void { Web.setReturnCode(status); }
 	
     ////////////////////////////////////////////////
     // official methods
