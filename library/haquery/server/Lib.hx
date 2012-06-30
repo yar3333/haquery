@@ -128,6 +128,11 @@ class Lib
 						bootstrap.finish();
 					}
 					
+					if (db != null)
+					{
+						db.close();
+					}
+					
 					profiler.end();
 					cache.dispose();
 					profiler.traceResults();		
@@ -139,6 +144,10 @@ class Lib
         }
 		catch (e:Dynamic)
         {
+			if (db != null)
+			{
+				db.close();
+			}
 			if (cache != null)
 			{
 				cache.dispose();

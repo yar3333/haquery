@@ -55,6 +55,11 @@ class HaqDbDriver_mysql implements HaqDbDriver
 		#end
     }
 	
+	public function close() : Void
+	{
+		connection.close();
+	}
+	
     public function getTables() : Array<String>
     {
         var r : Array<String> = [];

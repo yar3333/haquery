@@ -82,6 +82,13 @@ class HaqDb
     {
         return connection.lastInsertId();
     }
+	
+	public function close() : Void
+	{
+		try { connection.close(); } 
+		catch (e:Dynamic) {}
+		connection = null;
+	}
 }
 
 #end
