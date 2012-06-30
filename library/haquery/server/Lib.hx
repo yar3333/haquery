@@ -95,7 +95,7 @@ class Lib
 				case HaqRoute.page(path, fullTag, pageID): 
 					cookie = new HaqCookie();
 					
-					loadBootstraps(path);
+					var bootstraps = loadBootstraps(path);
 					
 					profiler = new HaqProfiler(config.enableProfiling);
 					cache = new HaqCache(config.cacheConnectionString);
@@ -113,16 +113,17 @@ class Lib
 					
 					isPostback = Web.getParams().get('HAQUERY_POSTBACK') != null;
 					
-					if (config.onStart != null)
+					for (bootstrap in bootstraps)
 					{
-						config.onStart();
+						bootstrap.start();
 					}
 					
 					HaqSystem.run(fullTag, pageID, isPostback);
 					
-					if (config.onFinish != null)
+					bootstraps.reverse();
+					for (bootstrap in bootstraps)
 					{
-						config.onFinish();
+						bootstrap.finish();
 					}
 					
 					profiler.end();
@@ -339,26 +340,30 @@ class Lib
     /**
      * Load bootstrap files from current folder to relativePath.
      */
-    static function loadBootstraps(relativePath:String) : Void
+    static function loadBootstraps(relativePath:String) : Array<HaqBootstrap>
     {
-        var folders = StringTools.trim(relativePath, '/').split('/');
+        var bootstraps = [];
+		
+		var folders = StringTools.trim(relativePath, '/').split('/');
         for (i in 1...folders.length + 1)
         {
             var className = folders.slice(0, i).join('.') + '.Bootstrap';
 			var clas = Type.resolveClass(className);
             if (clas != null)
             {
-				var initMethod = Reflect.field(clas, "init");
-				if (initMethod != null)
+				try
 				{
-					Reflect.callMethod(clas, initMethod, [ config ]);
+					var bootstrap = cast(Type.createInstance(clas, []), HaqBootstrap);
+					bootstraps.push(bootstrap);
 				}
-				else
+				catch (e:Dynamic)
 				{
-					throw "Bootsrap class " + className + " must have init() method.";
+					throw "Bootsrap '" + className + "' problem. " + e;
 				}
             }
         }
+		
+		return bootstraps;
     }
     
     static function traceException(e:Dynamic) : Void
