@@ -50,16 +50,21 @@ class Client extends HaqComponent
 			{
 				timer.stop();
 			}
-            timer = haxe.Timer.delay(function() { q('#container').hide(); timer = null; }, 500);
+            timer = haxe.Timer.delay(function() { hide(); timer = null; }, 500);
         }
     }
     
     function show()
     {
-        q('#container').show();
+		q('#container').show();
         q('#container').offset(getContextPosition(elem));
         event_show.call({ elem:elem });
     }
+	
+	function hide()
+	{
+		q('#container').hide();
+	}
 	
 	/**
 	 * Override if you want to display context panel in the different place.
