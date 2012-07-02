@@ -61,14 +61,6 @@ class Lib
 	
 	static var startTime : Float;
     
-    public static function getParamsString()
-    {
-        var s = Web.getParamsString();
-        var re = ~/route=[^&]*/g;
-        s = re.replace(s, '');
-        return haquery.StringTools.trim(s, '&');
-    }
-
     public static function run() : Void
     {
 		isRedirected = false;
@@ -78,7 +70,7 @@ class Lib
 		uploadedFiles_cached = null;
 		
 		#if neko
-		Sys.setCwd(Web.getCwd());
+		Sys.setCwd(getCwd());
 		#end
 		
 		config = new HaqConfig("config.xml");
@@ -183,6 +175,7 @@ class Lib
         }
 		catch (e:Dynamic)
         {
+			traceException(e);
 			if (db != null)
 			{
 				db.close();
@@ -191,7 +184,6 @@ class Lib
 			{
 				cache.dispose();
 			}
-			traceException(e);
 			throw e;
         }
     }
@@ -373,7 +365,7 @@ class Lib
 	
 	public static function getCompilationDate() : Date
 	{
-		var path = Web.getCwd() + "/" + #if php "index.php" #elseif neko "index.n" #end;
+		var path = getCwd() + "/" + #if php "index.php" #elseif neko "index.n" #end;
 		if (FileSystem.exists(path))
 		{
 			return FileSystem.stat(path).mtime;
@@ -384,7 +376,7 @@ class Lib
 	
 	public static function getClientIP() : String
 	{
-		var realIP = Web.getClientHeader("X-Real-IP");
+		var realIP = getClientHeader("X-Real-IP");
 		return realIP != null && realIP != "" ? realIP : Web.getClientIP();
 	}
 	
@@ -524,7 +516,7 @@ class Lib
 		s += "_" + Std.int(Math.random() * 999999);
 		s += "_" + Std.int(Math.random() * 999999);
 		
-		var tempDir = Web.getCwd() + "/" + HaqDefines.folders.temp;
+		var tempDir = getCwd() + "/" + HaqDefines.folders.temp;
 		if (!FileSystem.exists(tempDir))
 		{
 			FileSystem.createDirectory(tempDir);
@@ -543,6 +535,16 @@ class Lib
 	{
 		ajaxResponse += jsCode + "\n";
 	}
+	
+    public static function getParamsString()
+    {
+        var s = Web.getParamsString();
+        var re = ~/route=[^&]*/g;
+        s = re.replace(s, '');
+        return haquery.StringTools.trim(s, '&');
+    }
+	
+	public static function getCwd() { return Web.getCwd().replace("\\", "/").rtrim("/"); }
 	
 	public static inline function setHeader(name:String, value:String) : Void { Web.setHeader(name, value); }	
 	public static inline function getClientHeader(name:String) : String { return Web.getClientHeader(name); }	
