@@ -89,9 +89,9 @@ class HaqComponent extends haquery.base.HaqComponent
 		{
 			var v : Dynamic = params.get(k);
 			k = k.toLowerCase();
-			if (fields.exists(k))
+			if (fields.exists(k) || fields.exists(k + "_"))
 			{
-				var field = fields.get(k);
+				var field = fields.exists(k) ? fields.get(k) : fields.get(k + "_");
 				switch (Type.typeof(Reflect.field(this, field)))
 				{
 					case ValueType.TInt:    v = Std.parseInt(v);
