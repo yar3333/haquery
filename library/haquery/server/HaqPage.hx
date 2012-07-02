@@ -1,11 +1,11 @@
 package haquery.server;
 
+import haxe.htmlparser.HtmlNodeElement;
+import haxe.htmlparser.HtmlNodeText;
 import haquery.common.HaqDefines;
 import haquery.server.HaqComponent;
 import haquery.server.FileSystem;
-import haxe.htmlparser.HtmlNodeElement;
-import haxe.htmlparser.HtmlNodeText;
-
+import haquery.server.Lib;
 using haquery.StringTools;
 
 class HaqPage extends HaqComponent

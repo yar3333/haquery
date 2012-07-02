@@ -18,6 +18,8 @@ import haxe.io.Bytes;
 import haxe.io.Path;
 import haxe.Stack;
 import haxe.FirePHP;
+import haxe.Serializer;
+import haxe.Unserializer;
 import haquery.common.HaqCookie;
 import haquery.common.HaqDumper;
 import haquery.common.HaqDefines;
@@ -26,7 +28,6 @@ import haquery.server.FileSystem;
 import haquery.server.cache.HaqCache;
 import haquery.server.HaqConfig;
 import haquery.server.HaqRouter;
-import haquery.server.HaqSystem;
 import haquery.server.HaqProfiler;
 import haquery.server.HaqUploadedFile.HaqUploadError;
 import sys.io.FileOutput;
@@ -35,14 +36,14 @@ using haquery.StringTools;
 
 class Lib
 {
-    public static var isHeadersSent(default, null) : Bool;
-	
-	public static var config : HaqConfig = null;
+	public static var config : HaqConfig;
 	public static var cookie : HaqCookie;
-    public static var profiler : HaqProfiler = null;
-	public static var cache : HaqCache = null;
-	public static var db : HaqDb = null;
-	public static var isRedirected = false;
+    public static var profiler : HaqProfiler;
+	public static var cache : HaqCache;
+	public static var db : HaqDb;
+	public static var isRedirected(default, null) : Bool;
+    public static var isHeadersSent(default, null) : Bool;
+	public static var page(default, null) : HaqPage;
 	
     /**
      * Ajax ? calling server event handler : rendering HTML.
@@ -55,6 +56,9 @@ class Lib
 	static var uploadedFiles_cached : Hash<HaqUploadedFile>;
 	public static var uploadedFiles(uploadedFiles_getter, null) : Hash<HaqUploadedFile>;
     
+	static var manager : HaqTemplateManager;
+	static var ajaxResponse : String;
+	
 	static var startTime : Float;
     
     public static function getParamsString()
@@ -67,7 +71,9 @@ class Lib
 
     static public function run() : Void
     {
+		isRedirected = false;
 		isHeadersSent = false;
+		ajaxResponse = "";
 		params_cached = null;
 		uploadedFiles_cached = null;
 		
@@ -99,6 +105,10 @@ class Lib
 				{
 					db = new HaqDb(config.databaseConnectionString, config.sqlLogLevel, profiler);
 				}
+				else
+				{
+					db = null;
+				}
 				
 				isPostback = params.get('HAQUERY_POSTBACK') != null;
 				
@@ -107,7 +117,48 @@ class Lib
 					bootstrap.start();
 				}
 				
-				HaqSystem.run(route.fullTag, route.pageID, isPostback);
+				if (manager == null)
+				{
+					profiler.begin('manager');
+						manager = new HaqTemplateManager();
+					profiler.end();
+				}
+				
+				if (route.pageID != null)
+				{
+					params.set("pageID", route.pageID);
+				}
+				
+				profiler.begin("page");
+					trace("HAQUERY START pageFullTag = " + route.fullTag +  ", HTTP_HOST = " + getHttpHost() + ", clientIP = " + getClientIP() + ", pageID = " + route.pageID);
+						page = manager.createPage(route.fullTag, params);
+						if (!isPostback)
+						{
+							var html = page.render();
+							if (!isRedirected)
+							{
+								Web.setHeader('Content-Type', page.contentType);
+								print(html);
+							}
+						}
+						else
+						{
+							page.forEachComponent('preEventHandlers');
+							var componentID = params.get('HAQUERY_COMPONENT');
+							var component = page.findComponent(componentID);
+							if (component != null)
+							{
+								var result = HaqComponentTools.callMethod(component, params.get('HAQUERY_METHOD'), Unserializer.run(params.get('HAQUERY_PARAMS')));
+								Web.setHeader('Content-Type', 'text/plain; charset=utf-8');
+								print('HAQUERY_OK' + Serializer.run(result) + "\n" + ajaxResponse);
+							}
+							else
+							{
+								throw "Component id = '" + componentID + "' not found.";
+							}
+						}
+					trace("HAQUERY FINISH");
+				profiler.end();
 				
 				bootstraps.reverse();
 				for (bootstrap in bootstraps)
@@ -149,7 +200,7 @@ class Lib
     {
         if (Lib.isPostback)
 		{
-			HaqSystem.addAjaxResponse("haquery.client.Lib.redirect('" + StringTools.addcslashes(url) + "');");
+			addAjaxResponse("haquery.client.Lib.redirect('" + url.addcslashes() + "');");
 		}
         else
 		{
@@ -163,7 +214,7 @@ class Lib
 	{
         if (Lib.isPostback)
 		{
-			HaqSystem.addAjaxResponse("window.location.reload(true);");
+			addAjaxResponse("window.location.reload(true);");
 		}
         else
 		{
@@ -486,6 +537,11 @@ class Lib
 		}
 		
 		return uploadsDir + "/" + s;
+	}
+	
+	public static inline function addAjaxResponse(jsCode:String) 
+	{
+		ajaxResponse += jsCode + "\n";
 	}
 	
 	public static inline function setHeader(name:String, value:String) : Void { Web.setHeader(name, value); }	
