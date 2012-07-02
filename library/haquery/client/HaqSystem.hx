@@ -15,5 +15,7 @@ class HaqSystem
 	{
 		var manager = new HaqTemplateManager();
         manager.createPage(pageFullTag);
+		page.forEachComponent("preInit", true);
+		page.forEachComponent("init", false);
 	}
 }
