@@ -14,22 +14,22 @@ typedef Web = php.Web;
 typedef Web = neko.Web;
 #end
 
+import haxe.io.Bytes;
+import haxe.io.Path;
 import haxe.Stack;
 import haxe.FirePHP;
 import haquery.common.HaqCookie;
 import haquery.common.HaqDefines;
-import haquery.server.cache.HaqCache;
 import haquery.server.db.HaqDb;
 import haquery.server.FileSystem;
+import haquery.server.cache.HaqCache;
 import haquery.server.HaqConfig;
 import haquery.server.HaqRouter;
 import haquery.server.HaqSystem;
 import haquery.server.HaqProfiler;
+import haquery.server.HaqUploadedFile.HaqUploadError;
 import sys.io.FileOutput;
 import sys.io.File;
-import haquery.server.HaqUploadedFile.HaqUploadError;
-import haxe.io.Bytes;
-
 using haquery.StringTools;
 
 class Lib
@@ -81,65 +81,53 @@ class Lib
 			startTime = Sys.time();
 			haxe.Log.trace = Lib.trace;
 			
-			var router = new HaqRouter();
-			var route = router.getRoute(Web.getParams().get('route'));
-			
-			switch (route)
+			try
 			{
-				case HaqRoute.file(path): 
-				#if php
-					untyped __call__('require', path);
-				#elseif neko
-					throw "HaqRoute.file is unsupported for neko platform.";
-				#end
+				var route = new HaqRouter().getRoute(params.get('route'));
 				
-				case HaqRoute.page(path, fullTag, pageID): 
-					cookie = new HaqCookie();
-					
-					var bootstraps = loadBootstraps(path);
-					
-					profiler = new HaqProfiler(config.enableProfiling);
-					cache = new HaqCache(config.cacheConnectionString);
-					
-					profiler.begin("HAQUERY");
-					
-					#if php
-					php.Session.start();
-					#end
-					
-					if (config.databaseConnectionString != null && config.databaseConnectionString != "")
-					{
-						db = new HaqDb(config.databaseConnectionString, config.sqlLogLevel, profiler);
-					}
-					
-					isPostback = Web.getParams().get('HAQUERY_POSTBACK') != null;
-					
-					for (bootstrap in bootstraps)
-					{
-						bootstrap.start();
-					}
-					
-					HaqSystem.run(fullTag, pageID, isPostback);
-					
-					bootstraps.reverse();
-					for (bootstrap in bootstraps)
-					{
-						bootstrap.finish();
-					}
-					
-					if (db != null)
-					{
-						db.close();
-					}
-					
-					profiler.end();
-					cache.dispose();
-					profiler.traceResults();		
-					
-				case HaqRoute.error(code): 
-					Web.setReturnCode(code);
-					Lib.println("<h1>Error " + code + "</h1>");
-			}                
+				cookie = new HaqCookie();
+				
+				var bootstraps = loadBootstraps(route.path);
+				
+				profiler = new HaqProfiler(config.enableProfiling);
+				cache = new HaqCache(config.cacheConnectionString);
+				
+				profiler.begin("HAQUERY");
+				
+				if (config.databaseConnectionString != null && config.databaseConnectionString != "")
+				{
+					db = new HaqDb(config.databaseConnectionString, config.sqlLogLevel, profiler);
+				}
+				
+				isPostback = params.get('HAQUERY_POSTBACK') != null;
+				
+				for (bootstrap in bootstraps)
+				{
+					bootstrap.start();
+				}
+				
+				HaqSystem.run(route.fullTag, route.pageID, isPostback);
+				
+				bootstraps.reverse();
+				for (bootstrap in bootstraps)
+				{
+					bootstrap.finish();
+				}
+				
+				if (db != null)
+				{
+					db.close();
+				}
+				
+				profiler.end();
+				cache.dispose();
+				profiler.traceResults();		
+			}
+			catch (e:HaqRouterException)
+			{
+				setReturnCode(e.code);
+				Lib.println("<h1>Error " + e.code + "</h1>");
+			}
         }
 		catch (e:Dynamic)
         {
@@ -164,8 +152,8 @@ class Lib
 		}
         else
 		{
-			Web.setReturnCode(302); // Moved Temporarily
-			Web.setHeader("Location", url);
+			setReturnCode(302); // Moved Temporarily
+			setHeader("Location", url);
 			isRedirected = true;
 		}
     }
@@ -178,7 +166,7 @@ class Lib
 		}
         else
 		{
-			redirect(Web.getURI());
+			redirect(getURI());
 		}
 	}
 
@@ -201,7 +189,7 @@ class Lib
     {
 		if (Lib.config.filterTracesByIP != '')
         {
-            if (Lib.config.filterTracesByIP != Web.getClientIP()) return;
+            if (Lib.config.filterTracesByIP != getClientIP()) return;
         }
         
         var text = '';
@@ -427,7 +415,7 @@ class Lib
 			return FileSystem.stat(path).mtime;
 		}
 		
-		throw "File '" + file + "' is not found.";
+		throw "File '" + Path.withoutDirectory(path) + "' is not found.";
 	}
 	
 	public static function getClientIP() : String
@@ -441,7 +429,7 @@ class Lib
         #if php
 		return untyped __var__("_SERVER", "HTTP_HOST"); 
 		#else
-		return Web.getClientHeader("Host");
+		return getClientHeader("Host");
 		#end
     }
 	
@@ -588,6 +576,7 @@ class Lib
 	}
 	
 	public static inline function setHeader(name:String, value:String) : Void { Web.setHeader(name, value); }	
+	public static inline function getClientHeader(name:String) : String { return Web.getClientHeader(name); }	
 	public static inline function getURI() : String { return Web.getURI();  }
 	public static inline function setReturnCode(status:Int) : Void { Web.setReturnCode(status); }
 	
