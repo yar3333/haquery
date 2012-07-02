@@ -211,7 +211,7 @@ class HaqComponent extends haquery.base.HaqComponent
 	{
 		Lib.assert(Lib.isPostback, "HaqComponent.callSharedMethod() allowed on the postback only.");
         
-        HaqSystem.addAjaxResponse(
+        Lib.addAjaxResponse(
 			  "haquery.client.HaqSystem.page." + (fullID != "" ? "findComponent('" + fullID + "')." : "") + method
 			+ "(" + Lambda.map(params != null ? params : [], function(p) return "haxe.Unserializer.run('" + Serializer.run(p) + "')").join(",") + ');'
 		);

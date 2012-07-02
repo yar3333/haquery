@@ -27,7 +27,7 @@ class HaqQuery
     
     function jQueryCall(method)
     {
-        HaqSystem.addAjaxResponse("$('" + query.replace('#', '#' + prefixID) + "')." + method + ";");
+        Lib.addAjaxResponse("$('" + query.replace('#', '#' + prefixID) + "')." + method + ";");
     }
     
 	public function new(cssGlobalizer:HaqCssGlobalizer, prefixID:String, query:String, nodes:Array<HtmlNodeElement>)
