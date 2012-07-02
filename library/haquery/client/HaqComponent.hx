@@ -20,11 +20,6 @@ class HaqComponent extends haquery.base.HaqComponent
 		connectElemEventHandlers();
         createEvents();
 		createChildComponents();
-		
-		if (Reflect.isFunction(Reflect.field(this, 'init')))
-		{
-			Reflect.callMethod(this, Reflect.field(this, 'init'), []);
-		}
 	}
 	
 	public function createChildComponents() : Void
