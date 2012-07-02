@@ -5,18 +5,17 @@ import haquery.server.FileSystem;
 
 using haquery.StringTools;
 
-enum HaqRoute
+class HaqRouterException
 {
-	file(path:String);
-	page(path:String, fullTag:String, pageID:String);
-	error(code:Int);
+	public var code(default, null) : Int;
+	public function new(code:Int) this.code = code
 }
 
 class HaqRouter
 {
 	public function new() {}
 	
-	public function getRoute(url:String) : HaqRoute
+	public function getRoute(url:String) : { path:String, fullTag:String, pageID:String }
 	{
 		if (url == null) url = "";
 		
@@ -29,45 +28,38 @@ class HaqRouter
 		 || url == 'index/' 
 		 || url.endsWith('/index/')
 		) {
-			return HaqRoute.error(403);
+			throw new HaqRouterException(403);
 		}
 		
-		if (FileSystem.exists(url) && url.endsWith('.php'))
+		url = url.trim('/');
+		if (url == '') url = 'index';
+		var path = HaqDefines.folders.pages + '/' + url;
+		
+		var pageID : String = null;
+		
+		if (isPageExist(path + '/index'))
 		{
-			return HaqRoute.file(url);
+			path = path + '/index';
 		}
-		else
+		
+		if (!isPageExist(path))
 		{
-			url = url.trim('/');
-			if (url == '') url = 'index';
-			var path = HaqDefines.folders.pages + '/' + url;
-			
-			var pageID = null;
-            
-            if (isPageExist(path + '/index'))
-            {
-                path = path + '/index';
-            }
-            
-			if (!isPageExist(path))
-			{
-				var p = path.split('/');
-				pageID = p.pop();
-				path = p.join('/');
-			}
-			
-			if (!isPageExist(path))
-            {
-				path += '/index';
-            }
-            
-			if (!isPageExist(path))
-			{
-				return HaqRoute.error(404);
-			}
-			
-			return HaqRoute.page(path, path.replace("/", "."), pageID);
+			var p = path.split('/');
+			pageID = p.pop();
+			path = p.join('/');
 		}
+		
+		if (!isPageExist(path))
+		{
+			path += '/index';
+		}
+		
+		if (!isPageExist(path))
+		{
+			throw new HaqRouterException(404);
+		}
+		
+		return { path:path, fullTag:path.replace("/", "."), pageID:pageID };
 	}
 	
     function isPageExist(path:String) : Bool
