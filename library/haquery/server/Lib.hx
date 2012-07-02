@@ -123,33 +123,34 @@ class Lib
 				
 				profiler.begin("page");
 					trace("HAQUERY START pageFullTag = " + route.fullTag +  ", HTTP_HOST = " + getHttpHost() + ", clientIP = " + getClientIP() + ", pageID = " + route.pageID);
-						page = manager.createPage(route.fullTag, params);
-						if (!isPostback)
+					page = manager.createPage(route.fullTag, params);
+					if (!isPostback)
+					{
+						var html = page.render();
+						trace("HAQUERY FINISH");
+						if (!isRedirected)
 						{
-							var html = page.render();
-							if (!isRedirected)
-							{
-								Web.setHeader('Content-Type', page.contentType);
-								print(html);
-							}
+							Web.setHeader('Content-Type', page.contentType);
+							print(html);
+						}
+					}
+					else
+					{
+						page.forEachComponent('preEventHandlers');
+						var componentID = params.get('HAQUERY_COMPONENT');
+						var component = page.findComponent(componentID);
+						if (component != null)
+						{
+							var result = HaqComponentTools.callMethod(component, params.get('HAQUERY_METHOD'), Unserializer.run(params.get('HAQUERY_PARAMS')));
+							trace("HAQUERY FINISH");
+							Web.setHeader('Content-Type', 'text/plain; charset=utf-8');
+							print('HAQUERY_OK' + Serializer.run(result) + "\n" + ajaxResponse);
 						}
 						else
 						{
-							page.forEachComponent('preEventHandlers');
-							var componentID = params.get('HAQUERY_COMPONENT');
-							var component = page.findComponent(componentID);
-							if (component != null)
-							{
-								var result = HaqComponentTools.callMethod(component, params.get('HAQUERY_METHOD'), Unserializer.run(params.get('HAQUERY_PARAMS')));
-								Web.setHeader('Content-Type', 'text/plain; charset=utf-8');
-								print('HAQUERY_OK' + Serializer.run(result) + "\n" + ajaxResponse);
-							}
-							else
-							{
-								throw "Component id = '" + componentID + "' not found.";
-							}
+							throw "Component id = '" + componentID + "' not found.";
 						}
-					trace("HAQUERY FINISH");
+					}
 				profiler.end();
 				
 				bootstraps.reverse();
