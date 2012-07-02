@@ -20,9 +20,9 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		sharedStorage = HaqInternals.sharedStorage;
 	}
 	
-	public function createPage(pageFullTag:String)
+	public function createPage(pageFullTag:String) : HaqPage
     {
-		newComponent(get(pageFullTag), null, '', null);
+		return cast(newComponent(get(pageFullTag), null, '', null), HaqPage);
     }
 	
 	public function createComponent(parent:HaqComponent, fullTag:String, id:String, isDynamic:Bool, dynamicParams:Dynamic=null) : HaqComponent
@@ -33,10 +33,6 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 	function newComponent(template:HaqTemplate, parent:HaqComponent, id:String, isDynamic:Bool, dynamicParams:Dynamic=null) : HaqComponent
 	{
         var r : HaqComponent = Type.createInstance(Type.resolveClass(template.clientClassName), []);
-        if (parent == null)
-		{
-			HaqSystem.page = cast r;
-		}
 		r.construct(this, template.fullTag, parent, id, isDynamic, dynamicParams);
 		return r;
 	}	
