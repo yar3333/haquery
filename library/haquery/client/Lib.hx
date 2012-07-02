@@ -3,7 +3,6 @@ package haquery.client;
 import haxe.Stack;
 import haxe.Firebug;
 import haquery.client.HaqInternals;
-import haquery.client.HaqSystem;
 import haquery.common.HaqCookie;
 
 using haquery.StringTools;
@@ -11,6 +10,7 @@ using haquery.StringTools;
 class Lib
 {
     public static var cookie(default, null) : HaqCookie;
+	public static var page(default, null) : HaqPage;
 	
 	static public function run(pageFullTag:String)
     {
@@ -20,7 +20,10 @@ class Lib
         
 		cookie = new HaqCookie();
 			
-		HaqSystem.run(pageFullTag);
+		var manager = new HaqTemplateManager();
+        page = manager.createPage(pageFullTag);
+		page.forEachComponent("preInit", true);
+		page.forEachComponent("init", false);
     }
 	
     static public function redirect(url:String) : Void
