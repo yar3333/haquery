@@ -19,6 +19,7 @@ import haxe.io.Path;
 import haxe.Stack;
 import haxe.FirePHP;
 import haquery.common.HaqCookie;
+import haquery.common.HaqDumper;
 import haquery.common.HaqDefines;
 import haquery.server.db.HaqDb;
 import haquery.server.FileSystem;
@@ -144,7 +145,7 @@ class Lib
         }
     }
 	
-    static public function redirect(url:String) : Void
+    public static function redirect(url:String) : Void
     {
         if (Lib.isPostback)
 		{
@@ -158,7 +159,7 @@ class Lib
 		}
     }
 
-	static public function reload() : Void
+	public static function reload() : Void
 	{
         if (Lib.isPostback)
 		{
@@ -171,7 +172,7 @@ class Lib
 	}
 
 	#if debug
-		static public function assert(e:Bool, errorMessage:String=null, ?pos:haxe.PosInfos) : Void
+		public static function assert(e:Bool, errorMessage:String=null, ?pos:haxe.PosInfos) : Void
 		{
 			if (!e) 
 			{
@@ -180,7 +181,7 @@ class Lib
 			}
 		}
 	#else
-		static public inline function assert(e:Bool, errorMessage:String=null, ?pos:haxe.PosInfos) : Void
+		public static inline function assert(e:Bool, errorMessage:String=null, ?pos:haxe.PosInfos) : Void
 		{
 		}
 	#end
@@ -200,7 +201,7 @@ class Lib
         else
         if (v != null)
         {
-            text += "DUMP\n" + getDump(v);
+            text += "DUMP\n" + HaqDumper.getDump(v);
         }
 
 		if (text != '')
@@ -244,7 +245,8 @@ class Lib
         {
 			if (text != "")
 			{
-				var duration = formatTime(Sys.time() - startTime);
+				var dt = Sys.time() - startTime;
+				var duration = Math.floor(dt) + "." + Std.string(Math.floor((dt - Math.floor(dt)) * 1000)).lpad("0", 3);
 				text = Date.fromTime(startTime * 1000) + " " + duration + " " +  StringTools.replace(text, "\n", "\r\n\t") + "\r\n";
 			}
 			else
@@ -255,85 +257,6 @@ class Lib
             f.close();
         }
     }
-	
-	static function getDump(v:Dynamic, level=0) : String
-	{
-		var prefix = ""; for (i in 0...level) prefix += "\t";
-		
-		var s : String;
-		switch (Type.typeof(v))
-		{
-			case ValueType.TBool:
-				s = "BOOL" + (v ? "true" : "false") + ")";
-			
-			case ValueType.TNull:
-				s = "NULL";
-				
-			case ValueType.TClass(c):
-				if (c == String)
-				{
-					s = "STRING(" + Std.string(v) + ")";
-				}
-				else
-				if (c == Array)
-				{
-					s = "ARRAY(" + v.length + ")\n";
-					for (item in cast(v, Array<Dynamic>))
-					{
-						s += getDump(item, level + 1);
-					}
-				}
-				else
-				if (c == Hash)
-				{
-					s = "HASH\n";
-					for (key in cast(v, Hash<Dynamic>).keys())
-					{
-						s += prefix + key + " => " + getDump(v.get(key), level + 1);
-					}
-				}
-				else
-				{
-					s = "CLASS(" + Type.getClassName(c) + ")\n" + getDumpObject(v, level + 1);
-				}
-			
-			case ValueType.TEnum(e):
-				s = "ENUM(" + Type.getEnumName(e) + ") = " + Type.enumConstructor(v);
-			
-			case ValueType.TFloat:
-				s = "FLOAT(" + Std.string(v) + ")";
-			
-			case ValueType.TInt:
-				s = "INT(" + Std.string(v) + ")";
-			
-			case ValueType.TObject:
-				s = "OBJECT" + "\n" + getDumpObject(v, level + 1);
-			
-			case ValueType.TFunction, ValueType.TUnknown:
-				s = "FUNCTION OR UNKNOW";
-		};
-		return s != "" ? s + "\n" : "";
-	}
-	
-	static function getDumpObject(obj:Dynamic, level:Int) : String
-	{
-		var prefix = ""; for (i in 0...level) prefix += "\t";
-		var s = "";
-		for (fieldName in Reflect.fields(obj))
-		{
-			s += prefix + fieldName + " : " + getDump(Reflect.field(obj, fieldName), level);
-		}
-		return s;
-	}
-	
-	static function formatTime(dt:Float) : String
-	{
-		#if php
-		return StringTools.format("%.3f", dt);
-		#else
-		return Math.floor(dt) + "." + StringTools.lpad(Std.string(Math.floor((dt - Math.floor(dt)) * 1000)), "0", 3);
-		#end
-	}
     
     /**
      * Load bootstrap files from current folder to relativePath.
@@ -396,16 +319,6 @@ class Lib
 		
         trace(text);
     }
-	
-	static public function mail(email:String, fromEmail:String, subject:String, message:String) : Bool
-	{
-		var headers : String = "MIME-Version: 1.0\r\n";
-		headers += "Content-Type: text/plain; charset=utf-8\r\n";
-		headers += "Date: " + Date.now() + "\r\n";
-		headers += "From: " + fromEmail + "\r\n";
-		headers += "X-Mailer: My Send E-mail\r\n";
-		return untyped __call__("mail", email, subject, message, headers);
-	}
 	
 	static public function getCompilationDate() : Date
 	{
@@ -579,54 +492,6 @@ class Lib
 	public static inline function getClientHeader(name:String) : String { return Web.getClientHeader(name); }	
 	public static inline function getURI() : String { return Web.getURI();  }
 	public static inline function setReturnCode(status:Int) : Void { Web.setReturnCode(status); }
-	
-    ////////////////////////////////////////////////
-    // official methods
-    ////////////////////////////////////////////////    
-	/**
-		Print the specified value on the default output.
-	**/
     public static inline function print( v : Dynamic ) : Void { isHeadersSent = true; HaxeLib.print(v); }
-
-	/**
-		Print the specified value on the default output followed by a newline character.
-	**/
 	public static inline function println( v : Dynamic ) : Void { isHeadersSent = true; HaxeLib.println(v); }
-
-	#if php
-	public static inline function extensionLoaded(name : String) { return HaxeLib.extensionLoaded(name); }
-	public static inline function isCli() : Bool { return HaxeLib.isCli(); }
-	public static inline function printFile(file : String) : Void { isHeadersSent = true; HaxeLib.printFile(file); }
-	
-	public static inline function dump(v : Dynamic) : Void { isHeadersSent = true; HaxeLib.dump(v); }
-	
-	/**
-		Serialize using native PHP serialization. This will return a Binary string that can be
-		stored for long term usage.
-	**/
-	public static inline function serialize( v : Dynamic ) : String { return HaxeLib.serialize(v); }
-
-	/**
-		Unserialize a string using native PHP serialization. See [serialize].
-	**/
-	public static inline function unserialize( s : String ) : Dynamic { return HaxeLib.unserialize(s); }
-	
-	public static inline function toPhpArray(a : Array<Dynamic>) : php.NativeArray { return HaxeLib.toPhpArray(a); }
-	public static inline function toHaxeArray(a : php.NativeArray) : Array<Dynamic> { return HaxeLib.toHaxeArray(a); }
-	public static inline function hashOfAssociativeArray<T>(arr : php.NativeArray) : Hash<T> { return HaxeLib.hashOfAssociativeArray(arr); }
-	public static inline function associativeArrayOfHash(hash : Hash<Dynamic>) : php.NativeArray { return HaxeLib.associativeArrayOfHash(hash); }
-	
-	/**
-	*  Loads types defined in the specified directory.
- 	*/
- 	public static inline function loadLib(pathToLib : String) : Void { return HaxeLib.loadLib(pathToLib); }
-	#end
-
-	/**
-		For neko compatibility only.
-	**/
-	public static inline function rethrow( e : Dynamic ) { return HaxeLib.rethrow(e); }
-
-	public static inline function getClasses() { return HaxeLib.getClasses(); }
-	
 }
