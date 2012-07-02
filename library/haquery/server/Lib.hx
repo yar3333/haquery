@@ -69,7 +69,7 @@ class Lib
         return haquery.StringTools.trim(s, '&');
     }
 
-    static public function run() : Void
+    public static function run() : Void
     {
 		isRedirected = false;
 		isHeadersSent = false;
@@ -371,7 +371,7 @@ class Lib
         trace(text);
     }
 	
-	static public function getCompilationDate() : Date
+	public static function getCompilationDate() : Date
 	{
 		var path = Web.getCwd() + "/" + #if php "index.php" #elseif neko "index.n" #end;
 		if (FileSystem.exists(path))
