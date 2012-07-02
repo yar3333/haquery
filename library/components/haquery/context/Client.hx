@@ -50,14 +50,14 @@ class Client extends HaqComponent
 			{
 				timer.stop();
 			}
-            timer = haxe.Timer.delay(function() { q('#p').hide(); timer = null; }, 500);
+            timer = haxe.Timer.delay(function() { q('#container').hide(); timer = null; }, 500);
         }
     }
     
     function show()
     {
-        q('#p').show();
-        q('#p').offset(getContextPosition(elem));
+        q('#container').show();
+        q('#container').offset(getContextPosition(elem));
         event_show.call({ elem:elem });
     }
 	
@@ -69,7 +69,7 @@ class Client extends HaqComponent
 	{
 		var pos = elem.offset();
 		return {
-			 left: Math.round(pos.left + elem.width() - q('#p').width())
+			 left: Math.round(pos.left + elem.width() - q('#container').width())
 			,top:  Math.round(pos.top)
 		};
 	}
