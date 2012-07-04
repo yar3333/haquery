@@ -5,14 +5,7 @@ package haquery.server.db;
 import haquery.server.db.HaqDbDriver;
 import haquery.server.db.HaqDbDriver_mysql;
 import haquery.server.HaqProfiler;
-
-#if php
-import php.db.ResultSet;
-#elseif neko
-import neko.db.ResultSet;
-#elseif cpp
-import cpp.db.ResultSet;
-#end
+import sys.db.ResultSet;
 
 class HaqDb
 {
