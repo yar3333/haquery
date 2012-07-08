@@ -78,19 +78,13 @@ class StringTools
 	#if !js
 	public static inline function jsonEncode(x : Dynamic) : String
 	{
-		#if php
-		return untyped __call__('json_encode', x);
-		#else
 		return hxjson2.JSON.encode(x);
-		#end
 	}
 	#end
 	
 	public static inline function jsonDecode(s : String) : Dynamic
 	{
-		#if php
-		return untyped __call__('json_decode', s);
-		#elseif js
+		#if js
 		return js.Lib.eval("(" + s + ")");
 		#else
 		return hxjson2.JSON.decode(s);
