@@ -171,7 +171,7 @@ class Lib
 			catch (e:HaqRouterException)
 			{
 				setReturnCode(e.code);
-				Lib.println("<h1>Error " + e.code + "</h1>");
+				println("<h1>Error " + e.code + "</h1>");
 			}
         }
 		catch (e:Dynamic)
@@ -191,7 +191,7 @@ class Lib
 	
     public static function redirect(url:String) : Void
     {
-        if (Lib.isPostback)
+        if (isPostback)
 		{
 			addAjaxResponse("haquery.client.Lib.redirect('" + url.addcslashes() + "');");
 		}
@@ -205,7 +205,7 @@ class Lib
 
 	public static function reload() : Void
 	{
-        if (Lib.isPostback)
+        if (isPostback)
 		{
 			addAjaxResponse("window.location.reload(true);");
 		}
@@ -232,9 +232,9 @@ class Lib
 	
 	static function trace(v:Dynamic, ?pos : haxe.PosInfos) : Void
     {
-		if (Lib.config.filterTracesByIP != '')
+		if (config.filterTracesByIP != '')
         {
-            if (Lib.config.filterTracesByIP != getClientIP()) return;
+            if (config.filterTracesByIP != getClientIP()) return;
         }
         
         var text = '';
@@ -415,7 +415,7 @@ class Lib
 		
 		#if php
 		
-		var nativeFiles : Hash<php.NativeArray> = Lib.hashOfAssociativeArray(untyped __var__("_FILES"));
+		var nativeFiles : Hash<php.NativeArray> = php.Lib.hashOfAssociativeArray(untyped __var__("_FILES"));
 		for (id in nativeFiles.keys())
 		{
 			var file : php.NativeArray = nativeFiles.get(id);
@@ -435,7 +435,7 @@ class Lib
 		var lastParamValue : String = null;
 		var error : HaqUploadError = null;
 		
-		var maxUploadDataSize = Lib.config.maxPostSize;
+		var maxUploadDataSize = config.maxPostSize;
 		
 		Web.parseMultipart(
 			function(partName:String, fileName:String)
