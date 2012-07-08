@@ -112,6 +112,8 @@ class HaqPage extends HaqComponent
     
     function getScriptLink(url:String) : String
     {
+		if (url == null) return "";
+		
 		if (url.startsWith("<")) return url;
 		
 		if (!url.startsWith("http://") && !url.startsWith("/"))
@@ -125,6 +127,8 @@ class HaqPage extends HaqComponent
     
 	function getStyleLink(url:String) : String
     {
+		if (url == null) return "";
+		
 		if (url.startsWith("<")) return url;
 		
 		if (!url.startsWith("http://") && !url.startsWith("/"))
