@@ -1,5 +1,14 @@
-<haq:placeholder id="styles" />
+<haq:placeholder id="styles">
+	<style>
+		.~container
+		{
+			display: inline-block;
+		}
+	</style>
+</haq:placeholder>
 
 <haq:placeholder id="html">
-	<input type="checkbox" id="cb" /> <haq:literal id="text" />
+	<div class="~container">
+		<input type="checkbox" id="cb" /> <label id="text" for="cb"></label>
+	</div>
 </haq:placeholder>

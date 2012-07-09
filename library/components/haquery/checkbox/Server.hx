@@ -35,9 +35,15 @@ class Server extends HaqComponent
 	
     function preRender()
     {
+		var template = new TemplateServer(this);
+		
 		if (text != null)
 		{
-			cast(components.get("text"), components.haquery.literal.Server).text = " " + text;
+			template.text.html(text);
+		}
+		else
+		{
+			template.text.remove();
 		}
     }
 	
