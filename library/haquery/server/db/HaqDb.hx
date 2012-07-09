@@ -23,7 +23,7 @@ class HaqDb
 	
     public function new(connectionString:String, logLevel=0, ?profiler:HaqProfiler) : Void
     {
-		var re = new EReg('^([a-z]+)\\://([_a-zA-Z0-9]+)\\:(.+?)@([_.a-zA-Z0-9]+)(?:[:](\\d+))?/([_a-zA-Z0-9]+)$', '');
+		var re = new EReg('^([a-z]+)\\://([_a-zA-Z0-9]+)\\:(.+?)@([-_.a-zA-Z0-9]+)(?:[:](\\d+))?/([-_a-zA-Z0-9]+)$', '');
 		if (!re.match(connectionString))
 		{
 			throw "Connection string invalid format.";
