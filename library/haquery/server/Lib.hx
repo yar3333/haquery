@@ -275,7 +275,10 @@ class Lib
             }
             else
             {
-                HaxeLib.println("<script>if (console) console.debug(decodeURIComponent(\"" + StringTools.urlEncode("SERVER " + text) + "\"));</script>");
+                if (!isPostback)
+				{
+					HaxeLib.println("<script>if (console) console.debug(decodeURIComponent(\"" + StringTools.urlEncode("SERVER " + text) + "\"));</script>");
+				}
             }
         }
 		
