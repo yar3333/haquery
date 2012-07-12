@@ -235,11 +235,6 @@ class HaqComponent extends haquery.base.HaqComponent
 		}
     }
     
-    /*function getSupportPath() : String
-    {
-        return manager.getSupportPath(tag);
-    }*/
-	
 	/**
 	 * Tells HaQuery to load JS file from support component folder.
 	 * @param	url Url to js file (global or related to support component folder).
@@ -262,8 +257,15 @@ class HaqComponent extends haquery.base.HaqComponent
 		manager.registerStyle(fullTag, url);
 	}
 	
-	function getSupportPath()
+	function getSupportPath() : String
 	{
 		return manager.get(fullTag).getSupportFilePath("");
+	}
+	
+	function resolveFilePath(relpath:String) : String
+	{
+		return relpath.startsWith("~/")
+			? manager.get(fullTag).getSupportFilePath(relpath.substr(2))
+			: relpath;
 	}
 }
