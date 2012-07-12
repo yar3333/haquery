@@ -262,10 +262,24 @@ class HaqComponent extends haquery.base.HaqComponent
 		return manager.get(fullTag).getSupportFilePath("");
 	}
 	
+	/**
+	 * Search for file (can search in "support" folders if relpath starts with "~/").
+	 * @param	relpath File name or path (can starts with "~/").
+	 * @return	Path to finded file or null if file not found.
+	 */
 	function resolveFilePath(relpath:String) : String
 	{
-		return relpath.startsWith("~/")
-			? manager.get(fullTag).getSupportFilePath(relpath.substr(2))
-			: relpath;
+		if (relpath.startsWith("~/"))
+		{
+			relpath = manager.get(fullTag).getSupportFilePath(relpath.substr(2));
+		}
+		else
+		{
+			if (!FileSystem.exists(relpath))
+			{
+				relpath = null;
+			}
+		}
+		return relpath;
 	}
 }
