@@ -59,11 +59,36 @@ class FileSystem
 	/**
 		Delete a given file.
 	*/
-	public static inline function deleteFile(path:String) : Void { sys.FileSystem.deleteFile(path); }
+	public static inline function deleteFile(path:String) : Void
+	{
+		if (exists(path))
+		{
+			sys.FileSystem.deleteFile(path);
+		}
+	}
+	
 	/**
 		Delete a given directory.
 	*/
-	public static inline function deleteDirectory(path:String) : Void { sys.FileSystem.deleteDirectory(path); }
+	public static function deleteDirectory(path:String) : Void
+	{
+		if (exists(path))
+		{
+			for (file in readDirectory(path))
+			{
+				var s = path + "/" + file;
+				if (isDirectory(s))
+				{
+					deleteDirectory(s);
+				}
+				else
+				{
+					deleteFile(s);
+				}
+			}
+			sys.FileSystem.deleteDirectory(path);
+		}
+	}
 
 	/**
 		Read all the files/directories stored into the given directory.
