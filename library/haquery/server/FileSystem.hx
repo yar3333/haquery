@@ -61,7 +61,7 @@ class FileSystem
 	*/
 	public static inline function deleteFile(path:String) : Void
 	{
-		if (exists(path))
+		if (path != null && path != "" && exists(path))
 		{
 			sys.FileSystem.deleteFile(path);
 		}
