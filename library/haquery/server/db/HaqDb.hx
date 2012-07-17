@@ -56,7 +56,7 @@ class HaqDb
 		catch (e:HaqDbException)
 		{
             if (profiler != null) profiler.end();
-			throw new Exception("database\n\tSQL QUERY: " + sql + "\n\tSQL RESULT: error code = " + e.code + ".", e);
+			throw new Exception("DATABASE\n\tSQL QUERY: " + sql + "\n\tSQL RESULT: error code = " + e.code + ".", e);
 		}
 		catch (e:Dynamic)
 		{
