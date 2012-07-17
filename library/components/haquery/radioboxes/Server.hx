@@ -1,5 +1,6 @@
 package components.haquery.radioboxes;
 
+import haquery.Exception;
 import haquery.server.Lib;
 import haquery.server.Web;
 import haquery.server.HaqComponent;
@@ -55,7 +56,7 @@ class Server extends HaqComponent
         }
         else
         {
-            throw "Setting radioboxes value on postback is not supported.";
+            throw new Exception("Setting radioboxes value on postback is not supported.");
         }
         return v;
     }

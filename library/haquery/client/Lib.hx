@@ -1,5 +1,6 @@
 package haquery.client;
 
+import haquery.Exception;
 import haxe.Stack;
 import haxe.Firebug;
 import haquery.client.HaqInternals;
@@ -42,8 +43,8 @@ class Lib
 		{
 			if (!e) 
 			{
-				if (errorMessage == null) errorMessage = "ASSERT";
-				throw errorMessage + " in " + pos.fileName + ' at line ' + pos.lineNumber;
+				if (errorMessage == null) errorMessage = "";
+				throw new Exception("HAQUERY ASSERT " + errorMessage + " in " + pos.fileName + " at line " + pos.lineNumber + ".");
 			}
 		}
 	#else

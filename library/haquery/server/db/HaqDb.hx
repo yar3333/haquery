@@ -2,6 +2,7 @@
 
 package haquery.server.db;
 
+import haquery.Exception;
 import haquery.server.db.HaqDbDriver;
 import haquery.server.db.HaqDbDriver_mysql;
 import haquery.server.HaqProfiler;
@@ -26,7 +27,7 @@ class HaqDb
 		var re = new EReg('^([a-z]+)\\://([_a-zA-Z0-9]+)\\:(.+?)@([-_.a-zA-Z0-9]+)(?:[:](\\d+))?/([-_a-zA-Z0-9]+)$', '');
 		if (!re.match(connectionString))
 		{
-			throw "Connection string invalid format.";
+			throw new Exception("Connection string invalid format.");
 		}
 		
         if (profiler != null) profiler.begin("openDatabase");
@@ -55,14 +56,13 @@ class HaqDb
 		catch (e:HaqDbException)
 		{
             if (profiler != null) profiler.end();
-			throw "SQL EXCEPTION:\n"
-				+ "SQL QUERY: " + sql + "\n"
-				+ "SQL RESULT: error code = " + e.code + " (" + e.message + ").";
+			throw new Exception("database\n\tSQL QUERY: " + sql + "\n\tSQL RESULT: error code = " + e.code + ".", e);
 		}
 		catch (e:Dynamic)
 		{
 			if (profiler != null) profiler.end();
-			throw e;
+			Exception.rethrow(e);
+			return null;
 		}
     }
 

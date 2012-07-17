@@ -1,14 +1,19 @@
 package haquery.server;
 
 import haquery.common.HaqDefines;
+import haquery.Exception;
 import haquery.server.FileSystem;
-
 using haquery.StringTools;
 
-class HaqRouterException
+class HaqRouterException extends Exception
 {
 	public var code(default, null) : Int;
-	public function new(code:Int) this.code = code
+	
+	public function new(code:Int)
+	{
+		super();
+		this.code = code;
+	}
 }
 
 class HaqRouter

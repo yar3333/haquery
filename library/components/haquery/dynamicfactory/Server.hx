@@ -2,6 +2,7 @@ package components.haquery.dynamicfactory;
 
 import haxe.htmlparser.HtmlNodeElement;
 import haxe.Serializer;
+import haquery.Exception;
 
 using haquery.StringTools;
 
@@ -24,7 +25,7 @@ class Server extends components.haquery.factory.Server
 				var t = manager.findTemplate(parentFullTag, tag);
 				if (t == null)
 				{
-					throw "Could not find template for the '" + tag + "' component for the '" + parentFullTag + "' parent component.";
+					throw new Exception("Could not find template for the '" + tag + "' component for the '" + parentFullTag + "' parent component.");
 				}
 				
 				if (storage.get(t.fullTag) == null)

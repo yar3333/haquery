@@ -1,5 +1,6 @@
 package haquery.server;
 
+import haquery.Exception;
 import haxe.htmlparser.HtmlDocument;
 import haxe.htmlparser.HtmlNodeElement;
 import sys.io.File;
@@ -167,18 +168,9 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser<HaqTemplateConfig
 			var node : HtmlNodeElement = doc.children[i];
 			if (node.name == 'style' && !node.hasAttribute('id'))
 			{
-				if (node.getAttribute('type') == "text/less")
-				{
-					#if php
-					css += new php.Lessc().parse(cssGlobalizer.styles(node.innerHTML));
-					#else
-					css += "\n// Lessc supported for the php target only.\n\n";
-					#end
-				}
-				else
-				{
-					css += cssGlobalizer.styles(node.innerHTML);
-				}
+				Lib.assert(node.getAttribute('type') != "text/less", "Less compiler is no more supported.");
+				
+				css += cssGlobalizer.styles(node.innerHTML);
 				
 				node.remove();
 				i--;

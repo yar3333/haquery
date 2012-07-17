@@ -1,5 +1,6 @@
 package haquery.server;
 
+import haquery.Exception;
 import haxe.htmlparser.HtmlDocument;
 import haxe.htmlparser.HtmlNodeElement;
 import haquery.server.db.HaqDb;
@@ -122,6 +123,6 @@ class HaqConfig
 	
 	function throwBadConfigFileRecord(path:String, node:HtmlNodeElement) : Void
 	{
-		throw "HAQUERY ERROR: Bad config file ('" + path + "') record ('" + node + "').";
+		throw new Exception("HAQUERY ERROR: Bad config file ('" + path + "') record ('" + node + "').");
 	}
 }
