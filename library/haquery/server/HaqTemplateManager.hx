@@ -1,6 +1,7 @@
 package haquery.server;
 
 import haquery.common.HaqDefines;
+import haquery.Exception;
 import haquery.server.FileSystem;
 import haquery.server.HaqComponent;
 import haquery.server.HaqTemplate;
@@ -108,7 +109,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		}
 		catch (e:Dynamic)
 		{
-			throw "Class cast error: " + template.serverClassName + " must be extends from haquery.server.HaqPage.";
+			throw new Exception("Class cast error: '" + template.serverClassName + "' must be extends from haquery.server.HaqPage.");
 		}
 	}
 	

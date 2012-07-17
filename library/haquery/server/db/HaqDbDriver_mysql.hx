@@ -1,5 +1,6 @@
 package haquery.server.db;
 
+import haquery.Exception;
 import Type;
 import haquery.server.db.HaqDbDriver;
 
@@ -122,7 +123,7 @@ class HaqDbDriver_mysql implements HaqDbDriver
             default:
         }
         
-        throw "Unsupported parameter type '" + Type.getClassName(Type.getClass(v)) + "'.";
+        throw new Exception("Unsupported parameter type '" + Type.getClassName(Type.getClass(v)) + "'.");
     }
 
     public function lastInsertId() : Int

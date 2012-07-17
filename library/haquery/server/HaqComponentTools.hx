@@ -1,5 +1,6 @@
 package haquery.server;
 
+import haquery.Exception;
 import haxe.htmlparser.HtmlNodeElement;
 import haquery.common.HaqDefines;
 using haquery.StringTools;
@@ -70,7 +71,7 @@ class HaqComponentTools
 		}
 		else
 		{
-			throw "Method " + method + "() of the " + component.fullTag + " component's server class must exists and marked @shared to be callable from the client.";
+			throw new Exception("Method " + component.fullTag + ".Server." + method + "() must exists and marked with '@shared' to be callable from the client.");
 		}
         
         return result;

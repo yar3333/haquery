@@ -1,5 +1,6 @@
 package components.haquery.dynamicfactoryitem;
 
+import haquery.Exception;
 import js.JQuery;
 import haxe.htmlparser.HtmlDocument;
 import haxe.htmlparser.HtmlNodeElement;
@@ -74,7 +75,7 @@ class Client extends components.haquery.factoryitem.Client
 				var t = manager.findTemplate(fullTag, tag);
 				if (t == null)
 				{
-					throw "Component template '" + tag + "' not found for parent component '" + fullTag + "'.";
+					throw new Exception("Component template '" + tag + "' not found for parent component '" + fullTag + "'.");
 				}
 				var doc = new components.haquery.dynamicfactory.DocStorage(manager).get(t.fullTag);
 				r.push( { 

@@ -1,5 +1,6 @@
 package components.haquery.factory;
 
+import haquery.Exception;
 import haquery.HashTools;
 import haquery.server.HaqComponent;
 import haquery.server.Lib;
@@ -30,7 +31,7 @@ class Server extends Base
 			var len = length;
 			if (limit > 0 && len > limit)
 			{
-				throw "HAQUERY LIMIT [" + fullID + "] " + fullTag + " (" + len + " > " + limit + ".";
+				throw new Exception("HAQUERY LIMIT [" + fullID + "] " + fullTag + " (" + len + " > " + limit + ".");
 			}
 			for (i in 0...len)
 			{

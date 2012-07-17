@@ -1,6 +1,7 @@
 package haquery.server.cache;
 
 #if neko
+import haquery.Exception;
 import memcached.Client;
 #end
 
@@ -19,7 +20,7 @@ class HaqCache
 			var re = new EReg('^([a-z]+)\\://([_.a-zA-Z0-9]+)(?:[:](\\d+))?(?:/([-_.a-zA-Z0-9/]+)?)?$', '');
 			if (!re.match(connectionString))
 			{
-				throw "Connection string invalid format. Example: 'memcached://localhost/mykeyprefix'.";
+				throw new Exception("Connection string invalid format. Example: 'memcached://localhost/mykeyprefix'.");
 			}
 			
 			switch (re.matched(1))
@@ -37,7 +38,7 @@ class HaqCache
 					driver = new HaqCacheDriver_filesystem(re.matched(2) + "/" + re.matched(4));
 				
 				default:
-					throw "Cache driver '" + re.matched(1) + "' is not supported on this platform.";
+					throw new Exception("Cache driver '" + re.matched(1) + "' is not supported on this platform.");
 			}
 			
 			if (keyPrefix != "")
@@ -75,7 +76,7 @@ class HaqCache
 			return calc();
 		}
 		
-		throw "Cache is not initialized.";
+		throw new Exception("Cache is not initialized.");
 	}
 	
 	public function set(key:String, value:Dynamic) : Void

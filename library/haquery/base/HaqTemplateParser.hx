@@ -7,13 +7,12 @@ private typedef TemplateParser = haquery.client.HaqTemplateParser;
 #end
 
 import haquery.common.HaqDefines;
+import haquery.Exception;
 using haquery.StringTools;
 
-class HaqTemplateException
+class HaqTemplateException extends Exception
 {
-	var message : String;
-	public function new(message:String) { this.message = message; }
-	public function toString() { return message; }
+	override function toString() return message
 }
 
 class HaqTemplateNotFoundException extends HaqTemplateException
@@ -46,13 +45,13 @@ class HaqTemplateParser<TemplateConfig:HaqTemplateConfig>
 	
 	function isTemplateExist(fullTag:String) : Bool
 	{
-		throw "This method must be overriden.";
+		throw new Exception("This method must be overriden.");
 		return false;
 	}
 	
 	function getParentParser() : TemplateParser
 	{
-		throw "This method must be overriden.";
+		throw new Exception("This method must be overriden.");
 		return null;
 	}
 	
@@ -63,7 +62,7 @@ class HaqTemplateParser<TemplateConfig:HaqTemplateConfig>
 	
 	function getShortClassName() : String
 	{
-		throw "This method must be overriden.";
+		throw new Exception("This method must be overriden.");
 		return null;
 	}
 	
@@ -91,7 +90,7 @@ class HaqTemplateParser<TemplateConfig:HaqTemplateConfig>
 	
 	function getConfig() : TemplateConfig
 	{
-		throw "This method must be overriden.";
+		throw new Exception("This method must be overriden.");
 		return null;
 	}
 	

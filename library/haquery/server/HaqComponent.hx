@@ -1,5 +1,6 @@
 package haquery.server;
 
+import haquery.Exception;
 import haquery.Std;
 import haquery.server.HaqCssGlobalizer;
 import haxe.htmlparser.HtmlDocument;
@@ -201,7 +202,7 @@ class HaqComponent extends haquery.base.HaqComponent
 			return new HaqQuery(cssGlobalizer, prefixID, query, nodes);
 		}
         
-		throw "HaqComponent.q() error - 'query' parameter must be a String, HaqQuery or HtmlNodeElement.";
+		throw new Exception("HaqComponent.q() error - 'query' parameter must be a String, HaqQuery or HtmlNodeElement.");
     }
 
 	/**
@@ -229,9 +230,10 @@ class HaqComponent extends haquery.base.HaqComponent
 		{
 			if (e == "Invalid call")
 			{
-				throw "Invalid call: " + Type.getClassName(Type.getClass(this)) + "::" + handler + "(t, e)";
+				throw new Exception("Invalid call: " + Type.getClassName(Type.getClass(this)) + "." + handler + "(t, e).", e);
 			}
-			throw e;
+			Exception.rethrow(e);
+			return null;
 		}
     }
     

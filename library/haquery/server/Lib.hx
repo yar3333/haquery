@@ -14,6 +14,7 @@ typedef Web = php.Web;
 typedef Web = neko.Web;
 #end
 
+import haquery.Exception;
 import haxe.io.Bytes;
 import haxe.io.Path;
 import haxe.Stack;
@@ -148,7 +149,7 @@ class Lib
 						}
 						else
 						{
-							throw "Component id = '" + componentID + "' not found.";
+							throw new Exception("Component id = '" + componentID + "' not found.");
 						}
 					}
 				profiler.end();
@@ -177,6 +178,7 @@ class Lib
 		catch (e:Dynamic)
         {
 			traceException(e);
+			
 			if (db != null)
 			{
 				db.close();
@@ -185,7 +187,8 @@ class Lib
 			{
 				cache.dispose();
 			}
-			throw e;
+			
+			Exception.rethrow(e);
         }
     }
 	
@@ -220,8 +223,8 @@ class Lib
 		{
 			if (!e) 
 			{
-				if (errorMessage == null) errorMessage = "HAQUERY ASSERT";
-				throw errorMessage + " in " + pos.fileName + " at line " + pos.lineNumber;
+				if (errorMessage == null) errorMessage = "";
+				throw "HAQUERY ASSERT " + errorMessage + " in " + pos.fileName + " at line " + pos.lineNumber;
 			}
 		}
 	#else
@@ -326,7 +329,7 @@ class Lib
 				}
 				catch (e:Dynamic)
 				{
-					throw "Bootsrap '" + className + "' problem. " + e;
+					throw new Exception("Bootstrap '" + className + "' problem.", e);
 				}
             }
         }
@@ -338,31 +341,6 @@ class Lib
     {
         var text = "HAXE EXCEPTION: " + Std.string(e) + "\n"
                  + "Stack trace:" + Stack.toString(Stack.exceptionStack()).replace("\n", "\n\t");
-        
-		#if php		 
-		var nativeStack : Array<Hash<Dynamic>> = php.Stack.nativeExceptionStack();
-        if (nativeStack != null)
-		{
-			text += "\n\n";
-			text += "NATIVE EXCEPTION: " + Std.string(e) + "\n";
-			text += "Stack trace:\n";
-			for (row in nativeStack)
-			{
-				text += "\t";
-				if (row.exists('class')) text += row.get("class") + row.get("type");
-				text += row.get('function');
-
-				if (row.exists('file'))
-				{
-					text += " in " + row.get('file') + " at line " + row.get("line") + "\n";
-				}
-				else
-				{
-					text += "\n";
-				}
-			}
-		}
-		#end
 		
         trace(text);
     }

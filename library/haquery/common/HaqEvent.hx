@@ -1,6 +1,7 @@
 package haquery.common;
 
 #if !client
+import haquery.Exception;
 import haquery.server.HaqComponent;
 import haquery.server.Lib;
 import haquery.server.HaqQuery;
@@ -57,9 +58,9 @@ class HaqEvent<EventArgs:Dynamic>
 			{
 				if (e == "Invalid call")
 				{
-					throw "Invalid call: " + Type.getClassName(Type.getClass(obj)) + "::" + func + "(t, e)";
+					throw new Exception("Invalid call: " + Type.getClassName(Type.getClass(obj)) + "." + func + "(t, e)", e);
 				}
-				throw e;
+				Exception.rethrow(e);
 			}
 		}
 		return true;
