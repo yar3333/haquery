@@ -26,7 +26,6 @@ import haquery.common.HaqDumper;
 import haquery.common.HaqDefines;
 import haquery.server.db.HaqDb;
 import haquery.server.FileSystem;
-import haquery.server.cache.HaqCache;
 import haquery.server.HaqConfig;
 import haquery.server.HaqRouter;
 import haquery.server.HaqProfiler;
@@ -40,7 +39,6 @@ class Lib
 	public static var config : HaqConfig;
 	public static var cookie : HaqCookie;
     public static var profiler : HaqProfiler;
-	public static var cache : HaqCache;
 	public static var db : HaqDb;
 	public static var isRedirected(default, null) : Bool;
     public static var isHeadersSent(default, null) : Bool;
@@ -90,7 +88,6 @@ class Lib
 				var bootstraps = loadBootstraps(route.path);
 				
 				profiler = new HaqProfiler(config.enableProfiling);
-				cache = new HaqCache(config.cacheConnectionString);
 				
 				profiler.begin("HAQUERY");
 				
@@ -166,7 +163,6 @@ class Lib
 				}
 				
 				profiler.end();
-				cache.dispose();
 				profiler.traceResults();		
 			}
 			catch (e:HaqRouterException)
@@ -182,10 +178,6 @@ class Lib
 			if (db != null)
 			{
 				db.close();
-			}
-			if (cache != null)
-			{
-				cache.dispose();
 			}
 			
 			Exception.rethrow(e);
