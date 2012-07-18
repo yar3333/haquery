@@ -87,7 +87,7 @@ class Lib
 				
 				var bootstraps = loadBootstraps(route.path);
 				
-				if (route.pageID != null && route.pageID.startsWith("haquery-") && route.path == "")
+				if (route.pageID != null && route.pageID.startsWith("haquery-"))
 				{
 					runSystemCommand(route);
 				}
@@ -201,22 +201,15 @@ class Lib
 			case "haquery-flush":
 				println("<b>HAQUERY FLUSH</b><br /><br />");
 				var path = HaqDefines.folders.temp;
-				if (FileSystem.exists(path))
-				{
-					for (file in FileSystem.readDirectory(path))
-					{
-						var s = path + "/" + file;
-						println("delete '" + s + "'<br />");
-						if (FileSystem.isDirectory(s))
-						{
-							FileSystem.deleteDirectory(s);
-						}
-						else
-						{
-							FileSystem.deleteFile(s);
-						}
-					}
-				}
+				
+				println("delete '" + path + "/haquery.log" + "'<br />");
+				FileSystem.deleteFile(path + "/haquery.log");
+				
+				println("delete '" + path + "/cache" + "'<br />");
+				FileSystem.deleteDirectory(path + "/cache");
+				
+				println("delete '" + path + "/templates" + "'<br />");
+				FileSystem.deleteDirectory(path + "/templates");
 				
 			default:
 				println("HAQUERY ERROR: system command '" + route.pageID + "' is not supported.");
