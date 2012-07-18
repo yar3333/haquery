@@ -67,6 +67,8 @@ class Lib
 		ajaxResponse = "";
 		params_cached = null;
 		uploadedFiles_cached = null;
+		db = null;
+		cookie = null;
 		
 		#if neko
 		Sys.setCwd(getCwd());
@@ -83,87 +85,16 @@ class Lib
 			{
 				var route = new HaqRouter().getRoute(params.get('route'));
 				
-				cookie = new HaqCookie();
-				
 				var bootstraps = loadBootstraps(route.path);
 				
-				profiler = new HaqProfiler(config.enableProfiling);
-				
-				profiler.begin("HAQUERY");
-				
-				if (config.databaseConnectionString != null && config.databaseConnectionString != "")
+				if (route.pageID != null && route.pageID.startsWith("haquery-") && route.path == "")
 				{
-					db = new HaqDb(config.databaseConnectionString, config.sqlLogLevel, profiler);
+					runSystemCommand(route);
 				}
 				else
 				{
-					db = null;
+					runApplicationPage(route, bootstraps);
 				}
-				
-				isPostback = params.get('HAQUERY_POSTBACK') != null;
-				
-				for (bootstrap in bootstraps)
-				{
-					bootstrap.start();
-				}
-				
-				if (manager == null)
-				{
-					profiler.begin('manager');
-						manager = new HaqTemplateManager();
-					profiler.end();
-				}
-				
-				if (route.pageID != null)
-				{
-					params.set("pageID", route.pageID);
-				}
-				
-				profiler.begin("page");
-					trace("HAQUERY START pageFullTag = " + route.fullTag +  ", HTTP_HOST = " + getHttpHost() + ", clientIP = " + getClientIP() + ", pageID = " + route.pageID);
-					page = manager.createPage(route.fullTag, params);
-					if (!isPostback)
-					{
-						var html = page.render();
-						trace("HAQUERY FINISH");
-						if (!isRedirected)
-						{
-							Web.setHeader('Content-Type', page.contentType);
-							print(html);
-						}
-					}
-					else
-					{
-						page.forEachComponent('preEventHandlers');
-						var componentID = params.get('HAQUERY_COMPONENT');
-						var component = page.findComponent(componentID);
-						if (component != null)
-						{
-							var result = HaqComponentTools.callMethod(component, params.get('HAQUERY_METHOD'), Unserializer.run(params.get('HAQUERY_PARAMS')));
-							trace("HAQUERY FINISH");
-							Web.setHeader('Content-Type', 'text/plain; charset=utf-8');
-							print('HAQUERY_OK' + Serializer.run(result) + "\n" + ajaxResponse);
-						}
-						else
-						{
-							throw new Exception("Component id = '" + componentID + "' not found.");
-						}
-					}
-				profiler.end();
-				
-				bootstraps.reverse();
-				for (bootstrap in bootstraps)
-				{
-					bootstrap.finish();
-				}
-				
-				if (db != null)
-				{
-					db.close();
-				}
-				
-				profiler.end();
-				profiler.traceResults();		
 			}
 			catch (e:HaqRouterException)
 			{
@@ -183,6 +114,114 @@ class Lib
 			Exception.rethrow(e);
         }
     }
+	
+	static function runApplicationPage(route:HaqRoute, bootstraps:Array<HaqBootstrap>) : Void
+	{
+		profiler = new HaqProfiler(config.enableProfiling);
+		
+		profiler.begin("HAQUERY");
+		
+			if (config.databaseConnectionString != null && config.databaseConnectionString != "")
+			{
+				db = new HaqDb(config.databaseConnectionString, config.sqlLogLevel, profiler);
+			}
+			
+			isPostback = params.get('HAQUERY_POSTBACK') != null;
+			
+			cookie = new HaqCookie();
+			
+			for (bootstrap in bootstraps)
+			{
+				bootstrap.start();
+			}
+			
+			if (manager == null)
+			{
+				profiler.begin('manager');
+					manager = new HaqTemplateManager();
+				profiler.end();
+			}
+			
+			if (route.pageID != null)
+			{
+				params.set("pageID", route.pageID);
+			}
+			
+			profiler.begin("page");
+				trace("HAQUERY START pageFullTag = " + route.fullTag +  ", HTTP_HOST = " + getHttpHost() + ", clientIP = " + getClientIP() + ", pageID = " + route.pageID);
+				page = manager.createPage(route.fullTag, params);
+				if (!isPostback)
+				{
+					var html = page.render();
+					trace("HAQUERY FINISH");
+					if (!isRedirected)
+					{
+						Web.setHeader('Content-Type', page.contentType);
+						print(html);
+					}
+				}
+				else
+				{
+					page.forEachComponent('preEventHandlers');
+					var componentID = params.get('HAQUERY_COMPONENT');
+					var component = page.findComponent(componentID);
+					if (component != null)
+					{
+						var result = HaqComponentTools.callMethod(component, params.get('HAQUERY_METHOD'), Unserializer.run(params.get('HAQUERY_PARAMS')));
+						trace("HAQUERY FINISH");
+						Web.setHeader('Content-Type', 'text/plain; charset=utf-8');
+						print('HAQUERY_OK' + Serializer.run(result) + "\n" + ajaxResponse);
+					}
+					else
+					{
+						throw new Exception("Component id = '" + componentID + "' not found.");
+					}
+				}
+			profiler.end();
+			
+			bootstraps.reverse();
+			for (bootstrap in bootstraps)
+			{
+				bootstrap.finish();
+			}
+			
+			if (db != null)
+			{
+				db.close();
+			}
+		
+		profiler.end();
+		profiler.traceResults();		
+	}
+	
+	static function runSystemCommand(route:HaqRoute)
+	{
+		switch (route.pageID)
+		{
+			case "haquery-flush":
+				println("<b>HAQUERY FLUSH</b><br /><br />");
+				var path = HaqDefines.folders.temp;
+				if (FileSystem.exists(path))
+				{
+					for (file in FileSystem.readDirectory(path))
+					{
+						var s = path + "/" + file;
+						println("delete '" + s + "'<br />");
+						if (FileSystem.isDirectory(s))
+						{
+							FileSystem.deleteDirectory(s);
+						}
+						else
+						{
+							FileSystem.deleteFile(s);
+						}
+					}
+				}
+				
+			default:
+				println("HAQUERY ERROR: system command '" + route.pageID + "' is not supported.");
+		}
+	}
 	
     public static function redirect(url:String) : Void
     {

@@ -16,11 +16,18 @@ class HaqRouterException extends Exception
 	}
 }
 
+typedef HaqRoute = 
+{
+	var path : String;
+	var fullTag : String;
+	var pageID : String;
+}
+
 class HaqRouter
 {
 	public function new() {}
 	
-	public function getRoute(url:String) : { path:String, fullTag:String, pageID:String }
+	public function getRoute(url:String) : HaqRoute
 	{
 		if (url == null) url = "";
 		
