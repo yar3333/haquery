@@ -1,6 +1,7 @@
 package haquery;
 
 import haxe.Stack;
+using haquery.StringTools;
 
 class Exception 
 {
@@ -28,13 +29,6 @@ class Exception
 		
 		stackTrace = Stack.callStack();
 		stackTrace.shift();
-		
-		var c : Class<Dynamic> = Type.getClass(this);
-		while (c != Exception) 
-		{ 
-			stackTrace.shift();
-			c = Type.getSuperClass(c);
-		}
 	}
 
 	function baseException_getter() 
@@ -50,7 +44,9 @@ class Exception
 	public function toString() : String
 	{
 		var innerString = innerException != null ? innerException.toString() : "";
-		return "EXCEPTION: " + message + Stack.toString(stackTrace) + (innerString != "" ? "INNER " + innerString : "");
+		return message 
+			+ "\n\tStack trace:" + Stack.toString(stackTrace).replace("\n", "\n\t\t") 
+			+ (innerString != "" ? "INNER EXCEPTION: " + innerString : "");
 	}
 	
 	static function isExceptionInstance(obj:Dynamic) : Bool
@@ -73,9 +69,25 @@ class Exception
 		}
 		else
 		{
-			var r = new Exception(Std.string(exception), null);
+			var r = new Exception(Std.string(exception));
 			r.stackTrace = haxe.Stack.exceptionStack();
 			throw r;
 		}
+	}
+	
+	public static function trace(e:Dynamic) : Void
+	{
+		var text = "EXCEPTION: ";
+		
+		if (isExceptionInstance(e))
+		{
+			text += e.toString();
+		}
+		else
+		{
+			text += Std.string(e) + "\n\tStack trace:" + Stack.toString(Stack.exceptionStack()).replace("\n", "\n\t\t");
+		}
+		
+		trace(text);
 	}
 }

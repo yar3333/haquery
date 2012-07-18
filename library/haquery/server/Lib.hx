@@ -104,7 +104,7 @@ class Lib
         }
 		catch (e:Dynamic)
         {
-			traceException(e);
+			Exception.trace(e);
 			
 			if (db != null)
 			{
@@ -281,7 +281,7 @@ class Lib
             {
                 try
                 {
-                    if (text.startsWith('HAXE EXCEPTION'))
+                    if (text.startsWith('EXCEPTION:'))
                     {
                         FirePHP.getInstance(true).error(text);
                     }
@@ -359,14 +359,6 @@ class Lib
         }
 		
 		return bootstraps;
-    }
-    
-    static function traceException(e:Dynamic) : Void
-    {
-        var text = "HAXE EXCEPTION: " + Std.string(e) + "\n"
-                 + "Stack trace:" + Stack.toString(Stack.exceptionStack()).replace("\n", "\n\t");
-		
-        trace(text);
     }
 	
 	public static function getCompilationDate() : Date
