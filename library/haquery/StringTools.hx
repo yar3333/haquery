@@ -2,9 +2,6 @@ package haquery;
 
 class StringTools 
 {
-	static var lower = [ "а","б","в","г","д","е","ё","ж","з","и","й","к","л","м","н","о","п","р","с","т","у","ф","х","ц","ч","ш","щ","ь","ы","ъ","э","ю","я" ];
-	static var upper = [ "А","Б","В","Г","Д","Е","Ё","Ж","З","И","Й","К","Л","М","Н","О","П","Р","С","Т","У","Ф","Х","Ц","Ч","Ш","Щ","Ь","Ы","Ъ","Э","Ю","Я" ];
-	
 	public static inline function urlEncode( s : String ) : String untyped { return std.StringTools.urlEncode(s); }
 	
 	public static inline function urlDecode( s : String ) : String untyped { return std.StringTools.urlDecode(s); }
@@ -78,64 +75,20 @@ class StringTools
 
 	public static inline function isEOF( c : Int ) : Bool { return std.StringTools.isEOF(c); }
     
-	#if !js
-	public static inline function jsonEncode(x : Dynamic) : String
+	public static inline function jsonEncode(o:Dynamic) : String
 	{
-		return hxjson2.JSON.encode(x);
-	}
-	#end
+		return hxjson2.JSON.encode(o);
+	}		
 	
-	public static inline function jsonDecode(s : String) : Dynamic
+	public static inline function jsonDecode(s:String) : Dynamic
 	{
 		#if js
 		return js.Lib.eval("(" + s + ")");
 		#else
 		return hxjson2.JSON.decode(s);
 	    #end
-	}
-
-    public static inline function toUpperCaseNational(s : String) : String
-    {
-		#if php
-		return untyped __call__('mb_strtoupper', s, 'UTF-8');
-		#else
-		return substituteNational(s, lower, upper);
-		#end
-    }
-    
-    public static inline function toLowerCaseNational(s : String) : String
-    {
-        #if php
-		return untyped __call__('mb_strtolower', s, 'UTF-8');
-		#else
-		return substituteNational(s, upper, lower);
-		#end
-    }
+	}		
 	
-	static function substituteNational(s : String, from : Array<String>, to : Array<String>)
-	{
-		var r = "";
-		for (i in 0...lengthNational(s))
-		{
-			var isAdded = false;
-			var c = haxe.Utf8.sub(s, i, 1);
-			for (j in 0...from.length)
-			{
-				if (c == from[j])
-				{
-					r += to[j];
-					isAdded = true;
-					break;
-				}
-			}
-			if (!isAdded)
-			{
-				r += c;
-			}
-		}
-		return r;
-	}
-    
 	public static inline function hexdec(s : String) : Int
 	{
 		#if php
@@ -144,28 +97,6 @@ class StringTools
 		return Std.parseInt("0x" + s);
 		#end
 	}
-    
-    public static inline function lengthNational(s:String) : Int
-    {
-        #if php
-		return untyped __call__('mb_strlen', s, 'UTF-8');
-		#else
-		return haxe.Utf8.length(s);
-		#end
-    }
-    
-    public static function substrNational(s:String, pos:Int, ?len:Int) : String
-    {
-        #if php
-        return len != null 
-            ? untyped __call__('mb_substr', s, pos, len, 'UTF-8')
-            : untyped __call__('mb_substr', s, pos, lengthNational(s) - pos, 'UTF-8');
-		#else
-        return len != null 
-            ? haxe.Utf8.sub(s, pos, len)
-            : haxe.Utf8.sub(s, pos, lengthNational(s) - pos);
-		#end
-    }
 	
 	public static function addcslashes(s:String) : String
     {
