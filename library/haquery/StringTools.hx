@@ -2,6 +2,9 @@ package haquery;
 
 class StringTools 
 {
+	static var lower = [ "а","б","в","г","д","е","ё","ж","з","и","й","к","л","м","н","о","п","р","с","т","у","ф","х","ц","ч","ш","щ","ь","ы","ъ","э","ю","я" ];
+	static var upper = [ "А","Б","В","Г","Д","Е","Ё","Ж","З","И","Й","К","Л","М","Н","О","П","Р","С","Т","У","Ф","Х","Ц","Ч","Ш","Щ","Ь","Ы","Ъ","Э","Ю","Я" ];
+	
 	public static inline function urlEncode( s : String ) : String untyped { return std.StringTools.urlEncode(s); }
 	
 	public static inline function urlDecode( s : String ) : String untyped { return std.StringTools.urlDecode(s); }
@@ -96,10 +99,7 @@ class StringTools
 		#if php
 		return untyped __call__('mb_strtoupper', s, 'UTF-8');
 		#else
-		//var lower = "абвгдеёжзийклмнопрстуфхцчшщьыъэюя";
-		//var upper = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭЮЯ";
-		// TODO: toUpperCaseNational
-		return s.toUpperCase();
+		return substituteNational(s, lower, upper);
 		#end
     }
     
@@ -108,12 +108,33 @@ class StringTools
         #if php
 		return untyped __call__('mb_strtolower', s, 'UTF-8');
 		#else
-		//var lower = "абвгдеёжзийклмнопрстуфхцчшщьыъэюя";
-		//var upper = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭЮЯ";
-		// TODO: toLowerCaseNational
-		return s.toLowerCase();
+		return substituteNational(s, upper, lower);
 		#end
     }
+	
+	static function substituteNational(s : String, from : Array<String>, to : Array<String>)
+	{
+		var r = "";
+		for (i in 0...lengthNational(s))
+		{
+			var isAdded = false;
+			var c = haxe.Utf8.sub(s, i, 1);
+			for (j in 0...from.length)
+			{
+				if (c == from[j])
+				{
+					r += to[j];
+					isAdded = true;
+					break;
+				}
+			}
+			if (!isAdded)
+			{
+				r += c;
+			}
+		}
+		return r;
+	}
     
 	public static inline function hexdec(s : String) : Int
 	{
