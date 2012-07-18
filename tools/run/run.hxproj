@@ -31,7 +31,6 @@
     <library name="HtmlParser" />
     <library name="hxjson2" />
     <library name="FirePhp" />
-    <library name="memcached" />
   </haxelib>
   <!-- Class files to compile (other referenced classes will automatically be included) -->
   <compileTargets>
