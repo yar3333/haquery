@@ -1,11 +1,23 @@
 package pages;
 
-import haquery.server.HaqConfig;
+import haquery.server.Lib;
 
-class Bootstrap
+class Bootstrap extends haquery.server.HaqBootstrap
 {
-    static function init(config:HaqConfig)
+    function new()
     {
-       // your code to config application
+       super();
+       
+       // tune Lib.config if need
+    }
+    
+    override function start()
+    {
+		// code to run before page processing
+    }
+    
+    override function finish()
+    {
+		// code to run after page processing
     }
 }
