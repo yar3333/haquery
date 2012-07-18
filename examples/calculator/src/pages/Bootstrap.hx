@@ -1,10 +1,13 @@
 package pages;
 
-import haquery.server.HaqConfig;
+import haquery.server.HaqBootstrap;
 
-class Bootstrap
+class Bootstrap extends HaqBootstrap
 {
-	static function init(config:HaqConfig) : Void
+	function new()
 	{
+		super();
+		
+		// tune Lib.config if need
 	}
 }

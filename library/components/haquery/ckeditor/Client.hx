@@ -18,7 +18,7 @@ class Client extends HaqComponent
 		var ta = q('#e');
         if (ta.length > 0)
         {
-            editor = CKEditor.replace(ta[0].id, {
+            editor = CKEditor.replace(ta[0].id, cast {
                 toolbar: [
                     ['Source'], ['Undo','Redo','-','Cut','Copy','Paste','PasteText','PasteFromWord'], ['Find','Replace'], ['Styles'], ['Print'], ['Maximize'], '/',
                     ['Font','FontSize'], ['NumberedList','BulletedList'], ['Outdent','Indent','Blockquote'], ['Format'], ['BGColor'], '/',

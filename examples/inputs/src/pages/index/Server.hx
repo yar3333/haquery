@@ -20,8 +20,9 @@ class Server extends HaqPage
 	function updateStatus()
 	{
 		q('#status').html(
-			  "check = " + (template.awesome.checked ? "true" : "false") + "; "
-			+ "radio = " + template.gender.value
+			  "Status: "
+			+ "check = " + (template.awesome.checked ? "true" : "false") + "; "
+			+ "radio = " + (template.gender.value != null ? template.gender.value : "unselected")
 		);
 	}
 }

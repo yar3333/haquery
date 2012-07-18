@@ -1,10 +1,9 @@
 package components.haquery.radioboxes;
 
 import haquery.Exception;
+import haquery.common.HaqDefines;
 import haquery.server.Lib;
-import haquery.server.Web;
 import haquery.server.HaqComponent;
-import haquery.server.HaqDefines;
 import haxe.htmlparser.HtmlNodeElement;
 
 using haquery.StringTools;
@@ -34,7 +33,7 @@ class Server extends HaqComponent
         }
         else
         {
-            return Web.getParams().get(prefixID + "v");
+            return Lib.params.get(prefixID + "v");
         }
     }
     
