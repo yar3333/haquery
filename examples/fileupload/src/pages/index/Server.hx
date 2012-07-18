@@ -1,7 +1,7 @@
 package pages.index;
 
 import haquery.server.HaqPage;
-import haquery.server.io.Path;
+import haxe.io.Path;
 
 class Server extends HaqPage
 {

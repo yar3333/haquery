@@ -11,7 +11,7 @@ class Server extends HaqComponent
         "The village of battery? So take that!",
         "Need to calculate the square of the circle? This is not a problem.",
         "Now banana.",
-        "Year 2300. I think - I think, therefore I exist."
+        "Year 2300. I think, therefore I am."
      ];
 
     function preRender()

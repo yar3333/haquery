@@ -2,7 +2,6 @@ package pages.index;
 
 import haquery.client.HaqComponent;
 import haquery.client.HaqPage;
-import haquery.client.HaqSystem;
 
 class Client extends HaqPage
 {
