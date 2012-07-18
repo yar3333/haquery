@@ -1,9 +1,13 @@
 <project name='HaQuery' url='http://haquery.com/haquery' license='LGPL'>
-    <user name='yar3333'/>
-    <tag v='js'/>
-    <tag v='php'/>
-    <description>Web framework with PHP and JavaScript target.</description>
-    <version name='3.0'>Major changes. Calling client methods from the server and vice versa. Components imports. XML-based config files.</version>
-    <depends name="HtmlParser"/>
-    <depends name="FirePHP"/>
+    <user name='yar3333' />
+    <tag v='js' />
+    <tag v='php' />
+    <tag v='neko' />
+    <tag v='haquery' />
+    <tag v='web' />
+    <description>Web framework with php/neko and js target.</description>
+    <version name='4.0'>Neko as a target server platform. Creating components on the client. Major improvements in config files parsing, bootstraps processing, events and database using. Added haXe 2.10 support.</version>
+    <depends name="HtmlParser" />
+    <depends name="FirePHP" />
+    <depends name="hxJson2" />
 </project>
