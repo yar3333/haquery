@@ -2,7 +2,7 @@ package components.haquery.urlmenu;
 
 import haquery.server.HaqComponent;
 import haquery.server.HaqQuery;
-import haquery.server.Web;
+import haquery.server.Lib;
 
 using haquery.StringTools;
 
@@ -35,7 +35,7 @@ class Server extends HaqComponent
             
             elem.setAttribute('href', href);
             
-            var uri = Web.getURI().rtrim('/') + '/';
+            var uri = Lib.getURI().rtrim('/') + '/';
             if (uri == href || uri.startsWith(href))
             {
                 if (bestLink == null || href.split('/').length > bestDeep)
