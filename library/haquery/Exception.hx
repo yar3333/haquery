@@ -16,7 +16,7 @@ class Exception
 		
 		if (innerException != null)
 		{
-			if (isExceptionInstance(innerException))
+			if (Std.is(innerException, Exception))
 			{
 				this.innerException = innerException;
 			}
@@ -49,21 +49,9 @@ class Exception
 			+ (innerString != "" ? "INNER EXCEPTION: " + innerString : "");
 	}
 	
-	static function isExceptionInstance(obj:Dynamic) : Bool
-	{
-		var c : Class<Dynamic> = Type.getClass(obj);
-		
-		do {
-			if (c == Exception) return true;
-			c = Type.getSuperClass(c);
-		} while (c != null);
-		
-		return false;
-	}
-	
 	public static function rethrow(exception:Dynamic) : Void
 	{
-		if (isExceptionInstance(exception))
+		if (Std.is(exception, Exception))
 		{
 			throw exception;
 		}
@@ -79,7 +67,7 @@ class Exception
 	{
 		var text = "EXCEPTION: ";
 		
-		if (isExceptionInstance(e))
+		if (Std.is(e, Exception))
 		{
 			text += e.toString();
 		}
