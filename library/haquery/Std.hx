@@ -13,7 +13,7 @@ class Std
 	public static function parseInt( x : String, ?defaultValue:Int ) : Null<Int>
 	{
 		return x != null
-			? (~/^\s*[+-]?\s*(?:0x)?\d{1,9}\s*$/.match(x) ? std.Std.parseInt(x) : defaultValue)
+			? (~/^\s*[+-]?\s*((?:0x[0-9a-fA-F]{1,7})|(?:\d{1,9}))\s*$/.match(x) ? std.Std.parseInt(x) : defaultValue)
 			: defaultValue;
 	}
 	
