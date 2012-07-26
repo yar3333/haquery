@@ -1,15 +1,7 @@
 package haquery.server.db;
 
-#if php
-import php.db.Connection;
-import php.db.ResultSet;
-#elseif neko
-import neko.db.Connection;
-import neko.db.ResultSet;
-#elseif cpp
-import cpp.db.Connection;
-import cpp.db.ResultSet;
-#end
+import sys.db.Connection;
+import sys.db.ResultSet;
 
 typedef HaqDbTableFieldData = {
 	var name : String;
