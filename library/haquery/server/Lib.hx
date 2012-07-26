@@ -363,7 +363,12 @@ class Lib
 	
 	public static function getCompilationDate() : Date
 	{
-		var path = getCwd() + "/" + #if php "index.php" #elseif neko "index.n" #end;
+		#if php
+		var path = getCwd() + "/index.php";
+		#elseif neko
+		var path = getCwd() + "/index.n";
+		#end
+		
 		if (FileSystem.exists(path))
 		{
 			return FileSystem.stat(path).mtime;
