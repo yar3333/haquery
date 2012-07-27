@@ -1,22 +1,11 @@
 package haquery.server.db;
 
-import haquery.Exception;
 import Type;
+import sys.db.Connection;
+import sys.db.Mysql;
+import sys.db.ResultSet;
+import haquery.Exception;
 import haquery.server.db.HaqDbDriver;
-
-#if php
-import php.db.Connection;
-import php.db.Mysql;
-import php.db.ResultSet;
-#elseif neko
-import neko.db.Connection;
-import neko.db.Mysql;
-import neko.db.ResultSet;
-#elseif cpp
-import cpp.db.Connection;
-import cpp.db.Mysql;
-import cpp.db.ResultSet;
-#end
 
 class HaqDbDriver_mysql implements HaqDbDriver
 {
@@ -97,12 +86,12 @@ class HaqDbDriver_mysql implements HaqDbDriver
 		switch (Type.typeof(v))
         {
             case ValueType.TClass(cls):
-                if (cls == String)
+                if (Std.is(v, String))
                 {
                     return connection.quote(v);
                 }
                 else
-                if (cls == Date)
+                if (Std.is(v, Date))
                 {
                     var date : Date = cast(v, Date);
                     return "'" + date.toString() + "'";

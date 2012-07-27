@@ -1,5 +1,3 @@
-#if !client
-
 package haquery.server.db;
 
 import haquery.Exception;
@@ -83,5 +81,3 @@ class HaqDb
 		connection = null;
 	}
 }
-
-#end
