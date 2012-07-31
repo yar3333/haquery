@@ -1,7 +1,10 @@
 <style>
-	
+	.~container
+	{
+		
+	}
 </style>
 
-<div>
+<div class="~container">
 	$(EntryPoint)
 </div>
