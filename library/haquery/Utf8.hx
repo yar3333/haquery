@@ -60,7 +60,7 @@ class Utf8 extends haxe.Utf8
 	static function substitute(s : String, from : Array<String>, to : Array<String>)
 	{
 		var r = "";
-		for (i in 0...lengthNational(s))
+		for (i in 0...length(s))
 		{
 			var isAdded = false;
 			var c = haxe.Utf8.sub(s, i, 1);
