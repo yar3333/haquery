@@ -31,13 +31,13 @@ class Tasks
 		new Setup(exeDir).install();
 	}
 	
-	public function genOrm(databaseConnectionString:String, destBasePath:String)
+	public function genOrm(databaseConnectionString:String, project:FlashDevelopProject)
     {
 		var log = new Log(2);
         
 		log.start("Generate object related mapping classes");
 		
-		OrmGenerator.run(new HaqDb(databaseConnectionString), log, destBasePath);
+		OrmGenerator.run(new HaqDb(databaseConnectionString), log, project);
         
         log.finishOk();
     }

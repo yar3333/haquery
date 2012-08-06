@@ -33,7 +33,7 @@ class Main
 				var databaseConnectionString = args.length > 1 ? args[1] : new HaqConfig(project.srcPath + "config.xml").databaseConnectionString;
 				if (databaseConnectionString != null && databaseConnectionString != "")
 				{
-					tasks.genOrm(databaseConnectionString, project.srcPath);
+					tasks.genOrm(databaseConnectionString, project);
 				}
 				else
 				{

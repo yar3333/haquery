@@ -196,4 +196,18 @@ class FlashDevelopProject
 		
 		return "";
 	}
+	
+	public function findFile(relativeFilePath:String) : String
+	{
+		var i = allClassPaths.length - 1;
+		while (i >= 0)
+		{
+			if (FileSystem.exists(allClassPaths[i] + relativeFilePath))
+			{
+				return allClassPaths[i] + relativeFilePath;
+			}
+			i--;
+		}
+		return null;
+	}
 }
