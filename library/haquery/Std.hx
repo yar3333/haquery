@@ -20,7 +20,7 @@ class Std
 	public static function parseFloat( x : String, ?defaultValue:Float ) : Null<Float>
 	{
 		return x != null
-			? (~/^\s*[+-]?\s*\d{1,9}(?:[.]\d{1,9})?(?:e[+-]?\d{1,9})?\s*$/.match(x) ? std.Std.parseFloat(x) : defaultValue)
+			? (~/^\s*[+-]?\s*\d{1,9}(?:[.]\d+)?(?:e[+-]?\d{1,9})?\s*$/.match(x) ? std.Std.parseFloat(x) : defaultValue)
 			: defaultValue;
 	}
 	
