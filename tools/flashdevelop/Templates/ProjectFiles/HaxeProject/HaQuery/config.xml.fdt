@@ -1,11 +1,11 @@
 <config>
-    <!--
+    <!-- use to specify inhehitance
     <extend>
         <component package="" />
     </extend>
     -->
     
-    <!--
+    <!-- specify components packages for using in template.html
     <imports>
         <components package="" />
         <components package="" />
@@ -13,7 +13,7 @@
     </imports>
     -->
     
-    <!--
+    <!-- need in very rare case to prevent excluding dynamically used components
     <requires>
         <component package="" />
         <component package="" />
