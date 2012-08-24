@@ -39,11 +39,12 @@ class HaqDb
 		this.profiler = profiler;
     }
 
-    public function query(sql:String) : ResultSet
+    public function query(sql:String, ?params:Dynamic) : ResultSet
     {
 		try
 		{
 			if (profiler != null) profiler.begin('SQL query');
+			if (params != null) sql = bind(sql, params);
 			if (logLevel >= 1) trace("SQL QUERY: " + sql);
 			var startTime = logLevel >= 2 ? Sys.time() : 0;
 			var r = connection.query(sql);
@@ -79,5 +80,18 @@ class HaqDb
 		try { connection.close(); } 
 		catch (e:Dynamic) {}
 		connection = null;
+	}
+	
+	public function bind(sql:String, params:Dynamic) : String
+	{
+		return new EReg("[{]([_a-zA-Z][_a-zA-Z0-9]*)[}]", "").customReplace(sql, function(re) 
+		{
+			var name = re.matched(1);
+			if (Reflect.hasField(params, name))
+			{
+				return quote(Reflect.field(params, name));
+			}
+			throw "Param '" + name + "' not found while binding sql query '" + sql + "'.";
+		});
 	}
 }
