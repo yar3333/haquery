@@ -83,7 +83,7 @@ class Lib
 			
 			try
 			{
-				var route = new HaqRouter().getRoute(params.get('route'));
+				var route = new HaqRouter().getRoute(params.get('route') != null ? params.get('route') : (Sys.args().length > 0 ? Sys.args()[0] : ""));
 				
 				var bootstraps = loadBootstraps(route.path);
 				
@@ -385,7 +385,9 @@ class Lib
 	
 	public static function getHttpHost() : String 
 	{
-        #if php
+        if (Sys.args().length > 0) return "";
+		
+		#if php
 		return untyped __var__("_SERVER", "HTTP_HOST"); 
 		#else
 		return getClientHeader("Host");
@@ -414,6 +416,8 @@ class Lib
 	{
 		params_cached = Web.getParams();
 		uploadedFiles_cached = new Hash<HaqUploadedFile>();
+		
+		if (Sys.args().length > 0) return;
 		
 		#if php
 		
