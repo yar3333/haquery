@@ -83,7 +83,7 @@ class Lib
 			
 			try
 			{
-				var route = new HaqRouter().getRoute(params.get('route') != null ? params.get('route') : (Sys.args().length > 0 ? Sys.args()[0] : ""));
+				var route = new HaqRouter().getRoute(!isCli() ? params.get('route') : (Sys.args().length > 0 ? Sys.args()[0] : ""));
 				
 				var bootstraps = loadBootstraps(route.path);
 				
@@ -126,7 +126,7 @@ class Lib
 				db = new HaqDb(config.databaseConnectionString, config.sqlLogLevel, profiler);
 			}
 			
-			isPostback = params.get('HAQUERY_POSTBACK') != null;
+			isPostback = !isCli() && params.get('HAQUERY_POSTBACK') != null;
 			
 			cookie = new HaqCookie();
 			
@@ -148,8 +148,8 @@ class Lib
 			}
 			
 			profiler.begin("page");
-				trace("HAQUERY START pageFullTag = " + route.fullTag +  ", HTTP_HOST = " + getHttpHost() + ", clientIP = " + getClientIP() + ", pageID = " + route.pageID);
-				page = manager.createPage(route.fullTag, params);
+				trace("HAQUERY START " + (isCli() ? "CLI" : "WEB") + " pageFullTag = " + route.fullTag +  ", HTTP_HOST = " + getHttpHost() + ", clientIP = " + getClientIP() + ", pageID = " + route.pageID);
+				page = manager.createPage(route.fullTag, !isCli() ? params : new Hash<String>());
 				if (!isPostback)
 				{
 					var html = page.render();
@@ -385,8 +385,6 @@ class Lib
 	
 	public static function getHttpHost() : String 
 	{
-        if (Sys.args().length > 0) return "";
-		
 		#if php
 		return untyped __var__("_SERVER", "HTTP_HOST"); 
 		#else
@@ -416,8 +414,6 @@ class Lib
 	{
 		params_cached = Web.getParams();
 		uploadedFiles_cached = new Hash<HaqUploadedFile>();
-		
-		if (Sys.args().length > 0) return;
 		
 		#if php
 		
@@ -550,6 +546,15 @@ class Lib
         s = re.replace(s, '');
         return haquery.StringTools.trim(s, '&');
     }
+	
+	public static function isCli() : Bool
+	{
+		#if php
+		return untyped __php__("PHP_SAPI == 'cli'");
+		#elseif neko
+		return !neko.Web.isModNeko && !neko.Web.isTora;
+		#end
+	}
 	
 	public static function getCwd() { return Web.getCwd().replace("\\", "/").rtrim("/"); }
 	
