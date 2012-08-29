@@ -1,7 +1,6 @@
 package ;
 
 import haquery.server.HaqConfig;
-import haquery.tools.CommandLineOptionsParser;
 import haquery.tools.FlashDevelopProject;
 import neko.Lib;
 import neko.Sys;
@@ -33,9 +32,6 @@ class Main
 			switch (command)
 			{
 				case 'gen-orm': 
-					//var parser = new CommandLineOptionsParser();
-					//parser.addOption([ "-pmo", "--package-models" ]
-					
 					var project = new FlashDevelopProject("", exeDir);
 					var databaseConnectionString = args.length > 1 ? args[1] : new HaqConfig(project.srcPath + "config.xml").databaseConnectionString;
 					if (databaseConnectionString != null && databaseConnectionString != "")
