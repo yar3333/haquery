@@ -9,15 +9,13 @@ typedef User = {
 
 class Client extends HaqPage
 {
-	var template : TemplateClient;
-    
 	function init()
 	{
-		template.users.create(template.table, { login : "admin" });
-		template.users.create(template.table, { login : "user" });
+		template().users.create(template().table, { login : "admin" });
+		template().users.create(template().table, { login : "user" });
 		
-		template.users2.create(template.table2, { login : "admin" });
-		template.users2.create(template.table2, { login : "user" });
+		template().users2.create(template().table2, { login : "admin" });
+		template().users2.create(template().table2, { login : "user" });
 	}
 	
 	function pagebt_click(t:HaqComponent, e)

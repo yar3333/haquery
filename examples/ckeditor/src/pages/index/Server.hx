@@ -8,6 +8,6 @@ class Server extends HaqPage
 	
 	function save_click(t, e)
 	{
-		q('#status').html("SAVED:<br />" + template.editor.text);
+		q('#status').html("SAVED:<br />" + template().editor.text);
 	}
 }

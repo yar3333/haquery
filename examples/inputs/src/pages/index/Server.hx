@@ -21,8 +21,8 @@ class Server extends HaqPage
 	{
 		q('#status').html(
 			  "Status: "
-			+ "check = " + (template.awesome.checked ? "true" : "false") + "; "
-			+ "radio = " + (template.gender.value != null ? template.gender.value : "unselected")
+			+ "check = " + (template().awesome.checked ? "true" : "false") + "; "
+			+ "radio = " + (template().gender.value != null ? template().gender.value : "unselected")
 		);
 	}
 }
