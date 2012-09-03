@@ -5,19 +5,17 @@ import haquery.common.HaqEvent;
 
 #if !client
 import haquery.server.Lib;
-import haquery.server.HaqTemplate;
 import haquery.server.HaqTemplateManager;
 private typedef Component = haquery.server.HaqComponent;
 #else
 import haquery.client.Lib;
-import haquery.client.HaqTemplate;
 import haquery.client.HaqTemplateManager;
 private typedef Component = haquery.client.HaqComponent;
 #end
 
 using haquery.StringTools;
 
-class HaqComponent
+class HaqComponent extends haquery.macros.HaqComponent
 {
     public var manager(default,null) : HaqTemplateManager;
 	
@@ -52,14 +50,9 @@ class HaqComponent
 	
 	function new() : Void
 	{
+		super();
 		components = new Hash<Component>();
 		nextAnonimID = 0;
-		
-		var templateClass = HaqComponentTools.getTemplateClass(Type.getClass(this));
-		if (templateClass != null)
-		{
-			Reflect.setField(this, "template", Type.createInstance(templateClass, [this]));
-		}
 	}
 	
 	function commonConstruct(manager:HaqTemplateManager, fullTag:String, parent:Component, id:String) 
