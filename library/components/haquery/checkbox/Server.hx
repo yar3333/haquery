@@ -35,15 +35,13 @@ class Server extends HaqComponent
 	
     function preRender()
     {
-		var template = new TemplateServer(this);
-		
 		if (text != null)
 		{
-			template.text.html(text);
+			template().text.html(text);
 		}
 		else
 		{
-			template.text.remove();
+			template().text.remove();
 		}
     }
 	
