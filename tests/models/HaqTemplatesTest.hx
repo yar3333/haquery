@@ -1,12 +1,11 @@
 package models;
 
-import haquery.server.HaqSystem;
 import haxe.unit.TestCase;
 import php.FileSystem;
 import haquery.server.HaqComponent;
 import haquery.server.HaqTemplateManager;
 import haquery.server.Lib;
-import haquery.server.HaqDefines;
+import haquery.common.HaqDefines;
 
 using haquery.StringTools;
 
@@ -24,7 +23,7 @@ class HaqTemplatesTest extends TestCase
 		assertTrue(manager != null);
 		
 		manager.createPage("pages.test0", null);
-		var page = HaqSystem.page;
+		var page = Lib.page;
 		assertTrue(page != null);
 		
 		var template = manager.findTemplate(page.fullTag, "text");
@@ -41,7 +40,7 @@ class HaqTemplatesTest extends TestCase
 		assertTrue(manager != null);
 		
 		manager.createPage("pages.test1", null);
-		assertTrue(HaqSystem.page != null);
+		assertTrue(Lib.page != null);
 		
 		var template = manager.get("components.set1.randnum");
 		assertTrue(template != null);
@@ -56,7 +55,7 @@ class HaqTemplatesTest extends TestCase
 		assertTrue(manager != null);
         
 		manager.createPage("pages.test1", null);
-		var page = HaqSystem.page;
+		var page = Lib.page;
 		assertTrue(page != null);
 		
 		var template = manager.get("components.set1.randnum");
@@ -83,7 +82,7 @@ class HaqTemplatesTest extends TestCase
         //assertEquals(0, template.doc.children.length);
         
 		manager.createPage("pages.test2", null);
-		assertTrue(HaqSystem.page != null);
+		assertTrue(Lib.page != null);
 		
 		//trace("RESULT = " + page.render());
 		
