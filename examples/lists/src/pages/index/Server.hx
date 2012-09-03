@@ -10,8 +10,6 @@ typedef User = {
 
 class Server extends HaqPage
 {
-	var template : TemplateServer;
-	
 	public function init()
 	{
 		if (!Lib.isPostback)

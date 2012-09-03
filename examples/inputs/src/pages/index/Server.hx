@@ -5,8 +5,6 @@ import haquery.server.Lib;
 
 class Server extends HaqPage
 {
-	var template : TemplateServer;
-	
 	function preRender()
 	{
 		updateStatus();
