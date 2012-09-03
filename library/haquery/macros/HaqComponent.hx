@@ -15,7 +15,7 @@ class HaqComponent
 	{
 		var pos = haxe.macro.Context.currentPos();
 		var localClass = haxe.macro.Context.getLocalClass().get();
-		if (localClass.pack.length > 0 && (localClass.pack[0] == "components" || localClass.pack[0] == "page") && (localClass.name == "Server" || localClass.name == "Client"))
+		if (localClass.pack.length > 0 && (localClass.pack[0] == "components" || localClass.pack[0] == "pages") && (localClass.name == "Server" || localClass.name == "Client"))
 		{
 			var typePath = { sub:null, params:[], pack:localClass.pack, name:"Template" + localClass.name };
 			var t = { expr:haxe.macro.Expr.ExprDef.EField(ethis, "_template"), pos:pos };
