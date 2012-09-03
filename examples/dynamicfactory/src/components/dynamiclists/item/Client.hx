@@ -5,8 +5,6 @@ import haquery.client.HaqComponent;
 
 class Client extends HaqComponent
 {
-    var template : TemplateClient;
-
     function init()
 	{
 		trace("client item.fullID = " + fullID);
