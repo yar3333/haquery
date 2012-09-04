@@ -14,12 +14,19 @@ class HaqComponent
 	@:macro public function template(ethis:haxe.macro.Expr)
 	{
 		var pos = haxe.macro.Context.currentPos();
-		var localClass = haxe.macro.Context.getLocalClass().get();
-		if (localClass.pack.length > 0 && (localClass.pack[0] == "components" || localClass.pack[0] == "pages") && (localClass.name == "Server" || localClass.name == "Client"))
+		
+		switch (haxe.macro.Context.typeof(ethis))
 		{
-			var typePath = { sub:null, params:[], pack:localClass.pack, name:"Template" + localClass.name };
-			return { expr:haxe.macro.Expr.ExprDef.ENew(typePath, [ ethis ]), pos:pos };
+			case haxe.macro.Type.TInst(t, params):
+				var clas = t.get();
+				if (clas.pack.length > 0 && (clas.pack[0] == "components" || clas.pack[0] == "pages") && (clas.name == "Server" || clas.name == "Client"))
+				{
+					var typePath = { sub:null, params:[], pack:clas.pack, name:"Template" + clas.name };
+					return { expr:haxe.macro.Expr.ExprDef.ENew(typePath, [ ethis ]), pos:pos };
+				}
+			default:
 		}
+		
 		return haxe.macro.Context.makeExpr(null, pos);
 	}
 }
