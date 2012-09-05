@@ -57,7 +57,7 @@ class HaqComponent
 							if (eventParamType != null)
 							{
 								Context.warning("Type = " + eventParamType, handler.pos);
-								var resultType = convertTypeToComplexType(eventParamType);
+								var resultType = tink.macro.tools.TypeTools.toComplex(eventParamType);
 								if (resultType != null)
 								{
 									handler.f.args[1].type = resultType;
@@ -86,10 +86,10 @@ class HaqComponent
 		return null;
 	}
 	
-	#if macro
-	
 	static function getComponentClassHandlers(fields:Array<Field>) : Array<{ name:String, pos:Position, f:Function }>
 	{
+		#if macro
+		
 		var handlers : Array<{ name:String, pos:Position, f:Function }> = [];
 		
 		for (field in fields)
@@ -135,10 +135,19 @@ class HaqComponent
 		}
 		
 		return handlers;
+		
+		#else
+		
+		throw "Not supported.";
+		return null;
+		
+		#end
 	}
 	
 	static function getComponentClassEventClassParamType(componentClass:ClassType, eventName:String) : Type
 	{
+		#if macro
+		
 		for (field in componentClass.fields.get())
 		{
 			if (field.name == "event_" + eventName)
@@ -150,6 +159,7 @@ class HaqComponent
 						{
 							if (params != null && params.length == 1)
 							{
+								Context.getModule(t.get().module);
 								Context.warning("Event's param is " + params[0] + ".", field.pos);
 								return params[0];
 							}
@@ -172,11 +182,25 @@ class HaqComponent
 			}
 		}
 		
+		if (componentClass.superClass != null)
+		{
+			return getComponentClassEventClassParamType(componentClass.superClass.t.get(), eventName);
+		}
+		
 		return null;
+		
+		#else
+		
+		throw "Not supported.";
+		return null;
+		
+		#end
 	}
 	
 	static function getTemplateClass(componentClass:ClassType) : ClassType
 	{
+		#if macro
+		
 		var templateClassTypes = Context.getModule(componentClass.pack.join(".") + ".Template" + componentClass.name);
 		for (templateClassType in templateClassTypes)
 		{
@@ -194,10 +218,19 @@ class HaqComponent
 		}
 		
 		return null;
+		
+		#else
+		
+		throw "Not supported.";
+		return null;
+		
+		#end
 	}
 	
 	static function getTemplateClassFieldClass(templateClass:ClassType, fieldName:String) : ClassType
 	{
+		#if macro
+		
 		for (field in templateClass.fields.get())
 		{
 			if (field.name == fieldName)
@@ -225,12 +258,12 @@ class HaqComponent
 			}
 		}
 		return null;
+		
+		#else
+		
+		throw "Not supported.";
+		return null;
+		
+		#end
 	}
-	
-	static function convertTypeToComplexType(type:Type) : ComplexType
-	{
-		return tink.macro.tools.TypeTools.toComplex(type);
-	}
-	
-	#end
 }
