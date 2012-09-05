@@ -15,7 +15,7 @@ private typedef Component = haquery.client.HaqComponent;
 
 using haquery.StringTools;
 
-class HaqComponent extends haquery.macros.HaqComponent
+@:autoBuild(haquery.macros.HaqComponent.build()) class HaqComponent extends haquery.macros.HaqComponent
 {
     public var manager(default,null) : HaqTemplateManager;
 	
@@ -50,9 +50,14 @@ class HaqComponent extends haquery.macros.HaqComponent
 	
 	function new() : Void
 	{
-		super();
 		components = new Hash<Component>();
 		nextAnonimID = 0;
+		
+		var templateClass = haquery.base.HaqComponentTools.getTemplateClass(Type.getClass(this));
+		if (templateClass != null)
+		{
+			Reflect.setField(this, "_template", Type.createInstance(templateClass, [ this ]));
+		}
 	}
 	
 	function commonConstruct(manager:HaqTemplateManager, fullTag:String, parent:Component, id:String) 
