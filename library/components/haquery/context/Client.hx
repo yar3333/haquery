@@ -4,19 +4,15 @@ import js.JQuery;
 import haquery.common.HaqEvent;
 import haquery.client.HaqComponent;
 
-typedef ShowEventArgs = {
-	var elem : JQuery;
-}
-
 class Client extends HaqComponent
 {
-    var event_show : HaqEvent<ShowEventArgs>;
+    var event_show : HaqEvent<{ elem : JQuery }>;
     
     var elem : JQuery;
     var timer : haxe.Timer;
     
-    public var dataID(dataID_getter, null) : String;
-    function dataID_getter() : String
+    public var dataID(getDataID, null) : String;
+    function getDataID() : String
     {
         return q('#dataID').val();
     }
@@ -93,12 +89,12 @@ class Client extends HaqComponent
         innerMouseOut();
     }
     
-    function p_mouseover(t, e)
+    function container_mouseover(t, e)
     {
         innerMouseOver();
     }
     
-    function p_mouseout(t, e)
+    function container_mouseout(t, e)
     {
         innerMouseOut();
     }

@@ -9,6 +9,12 @@ import sys.io.File;
 
 using haquery.StringTools;
 
+enum HaxeClassField
+{
+	VarGetter(v:HaxeVarGetter);
+	Var(v:HaxeVar);
+}
+
 class TrmGenerator
 {
 	var manager : HaqTemplateManager;
@@ -58,14 +64,21 @@ class TrmGenerator
 		}
 	}
 	
-	function generateTrmClass(vars:Array<HaxeVarGetter>, className:String, classFilePath:String, stdComponentClassName:String)
+	function generateTrmClass(vars:Array<HaxeClassField>, className:String, classFilePath:String, stdComponentClassName:String)
 	{
 		var haxeClass = new HaxeClass(className);
 		haxeClass.addVar(createVar("component", stdComponentClassName), true);
 		
 		for (v in vars)
 		{
-			haxeClass.addVarGetter(v, false, false, true);
+			switch (v)
+			{
+				case HaxeClassField.VarGetter(vv):
+					haxeClass.addVarGetter(vv, false, false, true);
+				
+				case HaxeClassField.Var(vv):
+					haxeClass.addVar(vv, true, false);
+			}
 		}
 		
 		haxeClass.addMethod(
@@ -83,9 +96,9 @@ class TrmGenerator
 		);
 	}
 	
-	function getTemplateVars(fullTag:String, node:HtmlNodeElement, queryClassName:String, isServer:Bool) : Array<HaxeVarGetter>
+	function getTemplateVars(fullTag:String, node:HtmlNodeElement, queryClassName:String, isServer:Bool, isFactoryInner=false) : Array<HaxeClassField>
 	{
-		var r : Array<HaxeVarGetter> = [];
+		var r : Array<HaxeClassField> = [];
 		var children = node.children;
 		for (child in children)
 		{
@@ -107,13 +120,17 @@ class TrmGenerator
 					body = "return cast component.components.get('" + componentID + "');";
 				}
 				
-				r.push({ haxeName:componentID, haxeType:type, haxeBody:body });
+				if (!isFactoryInner)
+				{
+					r.push(HaxeClassField.VarGetter( { haxeName:componentID, haxeType:type, haxeBody:body } ));
+				}
+				else
+				{
+					r.push(HaxeClassField.Var( { haxeName:componentID, haxeType:type, haxeDefVal:null } ));
+				}
 			}
 			
-			if (isProcessNodeInner(fullTag, child.name))
-			{
-				r = r.concat(getTemplateVars(fullTag, child, queryClassName, isServer));
-			}
+			r = r.concat(getTemplateVars(fullTag, child, queryClassName, isServer, isFactoryInner || isFactoryNode(fullTag, child.name)));
 		}
 		return r;
 	}
@@ -127,7 +144,7 @@ class TrmGenerator
 		};
 	}
 	
-	function isProcessNodeInner(fullTag:String, nodeName:String)
+	function isFactoryNode(fullTag:String, nodeName:String)
 	{
 		if (nodeName.startsWith("haq:"))
 		{
@@ -138,11 +155,11 @@ class TrmGenerator
 			{
 				if (template.fullTag == "components.haquery.factory")
 				{
-					return false;
+					return true;
 				}
 				template = template.extend != null && template.extend != "" ? manager.get(template.extend) : null;
 			}
 		}
-		return true;
+		return false;
 	}
 }

@@ -10,7 +10,7 @@ using haquery.StringTools;
 
 class Server extends HaqComponent
 {
-    public var value(value_getter, value_setter) : String;
+    public var value(getValue, setValue) : String;
     
     function getInputElements() : List<HtmlNodeElement>
     {
@@ -18,7 +18,7 @@ class Server extends HaqComponent
         return Lambda.filter(inputs, function(input) return input.getAttribute('type').toLowerCase()=='radio');
     }
     
-    function value_getter() : String
+    function getValue() : String
     {
         if (!Lib.isPostback)
         {
@@ -37,7 +37,7 @@ class Server extends HaqComponent
         }
     }
     
-    function value_setter(v:String) : String
+    function setValue(v:String) : String
     {
         if (!Lib.isPostback)
         {

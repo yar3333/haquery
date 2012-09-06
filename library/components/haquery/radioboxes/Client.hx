@@ -7,7 +7,7 @@ import js.JQuery;
 
 class Client extends HaqComponent
 {
-    public var value(value_getter, value_setter) : String;
+    public var value(getValue, setValue) : String;
     
     var event_change : HaqEvent<JqEvent>;
     
@@ -32,7 +32,7 @@ class Client extends HaqComponent
         return inputs;
     }
     
-    function value_getter() : String
+    function getValue() : String
     {
         for (elem in getInputElements())
         {
@@ -44,7 +44,7 @@ class Client extends HaqComponent
         return null;
     }
     
-    function value_setter(v:String) : String
+    function setValue(v:String) : String
     {
         for (elem in getInputElements())
         {

@@ -7,7 +7,7 @@ import js.JQuery;
 
 class Client extends HaqComponent
 {
-    public var active(active_getter, active_setter) : Int;
+    public var active(getActive, setActive) : Int;
 
     function init()
     {
@@ -25,7 +25,7 @@ class Client extends HaqComponent
         active = 0;
     }
     
-    function active_getter() : Int
+    function getActive() : Int
     {
         var panels = q('#tabs>*:eq(1)>*').get();
 		for (i in 0...panels.length)
@@ -35,7 +35,7 @@ class Client extends HaqComponent
         return -1;
     }
 
-    function active_setter(n:Int) : Int
+    function setActive(n:Int) : Int
     {
         q('#tabs>*:eq(0)>*').removeClass('active');
         q('#tabs>*:eq(0)>*:eq(' + n + ')').addClass('active');
