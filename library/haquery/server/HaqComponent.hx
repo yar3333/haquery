@@ -205,19 +205,6 @@ class HaqComponent extends haquery.base.HaqComponent
 		throw new Exception("HaqComponent.q() error - 'query' parameter must be a String, HaqQuery or HtmlNodeElement.");
     }
 
-	/**
-	 * Delayed call client method, marked as @shared.
-	 */
-	function callSharedMethod(method:String, ?params:Array<Dynamic>) : Void
-	{
-		Lib.assert(Lib.isPostback, "HaqComponent.callSharedMethod() allowed on the postback only.");
-        
-        Lib.addAjaxResponse(
-			  "haquery.client.Lib.page." + (fullID != "" ? "findComponent('" + fullID + "')." : "") + method
-			+ "(" + Lambda.map(params != null ? params : [], function(p) return "haxe.Unserializer.run('" + Serializer.run(p) + "')").join(",") + ');'
-		);
-	}
-    
     public function callElemEventHandler(elemID:String, eventName:String) : Dynamic
     {
 		var handler = elemID + '_' + eventName;
