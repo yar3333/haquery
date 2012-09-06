@@ -24,12 +24,6 @@ class Server extends HaqComponent
 	function checked_setter(v:Bool) : Bool
 	{
 		q('#cb').val(v);
-		
-		if (Lib.isPostback)
-		{
-			callSharedMethod("setChecked", [ v ]);
-		}
-		
 		return v;
 	}
 	
