@@ -1,6 +1,9 @@
 package haquery.macros;
 
+#if macro
 import haxe.macro.Context;
+#end
+
 import haxe.macro.Expr;
 import haxe.macro.Type;
 
@@ -32,65 +35,59 @@ class HaqComponent
 		
 		if (componentClass.name == "Server" || componentClass.name == "Client")
 		{
-			//Context.warning("Build class " + componentClass.pack.join(".") + componentClass.name, pos);
-			
 			var fields = Context.getBuildFields();
-			
-			var handlers = getComponentClassHandlers(fields);
-			if (handlers != null && handlers.length > 0)
-			{
-				var templateClass = getTemplateClass(componentClass);
-				if (templateClass != null)
-				{
-					for (handler in handlers)
-					{
-						handler.f.args[0].type = ComplexType.TPath( { sub:null, params:[], pack:[ "haquery", (componentClass.name == "Server" ? "server" : "client") ], name:"HaqComponent" } );
-							
-						var splittedHandlerName = handler.name.split("_");
-						var templateFieldName = splittedHandlerName.slice(0, splittedHandlerName.length - 1).join("_");
-						var eventName = splittedHandlerName[splittedHandlerName.length - 1];
-						
-						var getTemplateClassFieldClass = getTemplateClassFieldClass(templateClass, templateFieldName);
-						if (getTemplateClassFieldClass != null)
-						{
-							var eventParamType = getComponentClassEventClassParamType(getTemplateClassFieldClass, eventName);
-							if (eventParamType != null)
-							{
-								//Context.warning("Type = " + eventParamType, handler.pos);
-								var resultType = tink.macro.tools.TypeTools.toComplex(eventParamType);
-								if (resultType != null)
-								{
-									handler.f.args[1].type = resultType;
-								}
-								else
-								{
-									Context.error("Can't convert field type to complex (" + eventParamType + ").", pos);
-								}
-							}
-						}
-						else
-						{
-							Context.error("Field '" + templateFieldName + "' is not found in template.", handler.pos);
-						}
-					}
-				}
-				else
-				{
-					Context.error("To use handlers you need to have Template" + componentClass.name + " class. Check file 'template.html' existance.", pos);
-				}
-			}
-			
+			setComponentClassEventHandlersArgTypes(componentClass, fields);
 			return fields;
 		}
 		
 		return null;
 	}
 	
-	static function getComponentClassHandlers(fields:Array<Field>) : Array<{ name:String, pos:Position, f:Function }>
+	#if macro
+	
+	static function setComponentClassEventHandlersArgTypes(componentClass:ClassType, fields:Array<Field>)
 	{
-		#if macro
+		//Context.warning("setComponentClassEventHandlersArgTypes for class " + componentClass.pack.join(".") + componentClass.name, componentClass.po);
 		
-		var handlers : Array<{ name:String, pos:Position, f:Function }> = [];
+		var handlers = getComponentClassHandlers(fields);
+		if (handlers != null && handlers.length > 0)
+		{
+			var templateClass = getTemplateClass(componentClass);
+			if (templateClass != null)
+			{
+				for (handler in handlers)
+				{
+					handler.args[0].type = ComplexType.TPath( { sub:null, params:[], pack:[ "haquery", (componentClass.name == "Server" ? "server" : "client") ], name:"HaqComponent" } );
+						
+					var splittedHandlerName = handler.name.split("_");
+					var templateFieldName = splittedHandlerName.slice(0, splittedHandlerName.length - 1).join("_");
+					var eventName = splittedHandlerName[splittedHandlerName.length - 1];
+					
+					var getTemplateClassFieldClass = getTemplateClassFieldClass(templateClass, templateFieldName);
+					if (getTemplateClassFieldClass != null)
+					{
+						var eventParamType = getComponentClassEventClassParamType(getTemplateClassFieldClass, eventName);
+						if (eventParamType != null)
+						{
+							handler.args[1].type = tink.macro.tools.TypeTools.toComplex(eventParamType);
+						}
+					}
+					else
+					{
+						Context.error("Field '" + templateFieldName + "' is not found in template.", handler.pos);
+					}
+				}
+			}
+			else
+			{
+				Context.error("To use handlers you need to have Template" + componentClass.name + " class. Check file 'template.html' existance.", componentClass.pos);
+			}
+		}
+	}
+	
+	static function getComponentClassHandlers(fields:Array<Field>) : Array<{ name:String, pos:Position, args:Array<FunctionArg> }>
+	{
+		var handlers : Array<{ name:String, pos:Position, args:Array<FunctionArg> }> = [];
 		
 		for (field in fields)
 		{
@@ -107,7 +104,7 @@ class HaqComponent
 							{
 								if (f.args[0].type == null && f.args[1].type == null)
 								{
-									handlers.push({ name:field.name, pos:field.pos, f:f });
+									handlers.push({ name:field.name, pos:field.pos, args:f.args });
 								}
 								else
 								{
@@ -135,19 +132,10 @@ class HaqComponent
 		}
 		
 		return handlers;
-		
-		#else
-		
-		throw "Not supported.";
-		return null;
-		
-		#end
 	}
 	
 	static function getComponentClassEventClassParamType(componentClass:ClassType, eventName:String) : Type
 	{
-		#if macro
-		
 		for (field in componentClass.fields.get())
 		{
 			if (field.name == "event_" + eventName)
@@ -188,19 +176,10 @@ class HaqComponent
 		}
 		
 		return null;
-		
-		#else
-		
-		throw "Not supported.";
-		return null;
-		
-		#end
 	}
 	
 	static function getTemplateClass(componentClass:ClassType) : ClassType
 	{
-		#if macro
-		
 		var templateClassTypes = Context.getModule(componentClass.pack.join(".") + ".Template" + componentClass.name);
 		for (templateClassType in templateClassTypes)
 		{
@@ -218,19 +197,10 @@ class HaqComponent
 		}
 		
 		return null;
-		
-		#else
-		
-		throw "Not supported.";
-		return null;
-		
-		#end
 	}
 	
 	static function getTemplateClassFieldClass(templateClass:ClassType, fieldName:String) : ClassType
 	{
-		#if macro
-		
 		for (field in templateClass.fields.get())
 		{
 			if (field.name == fieldName)
@@ -258,12 +228,7 @@ class HaqComponent
 			}
 		}
 		return null;
-		
-		#else
-		
-		throw "Not supported.";
-		return null;
-		
-		#end
 	}
+	
+	#end
 }
