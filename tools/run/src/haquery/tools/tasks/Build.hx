@@ -179,7 +179,7 @@ class Build
 		params = params.concat([ '-D', 'noEmbedJS' ]);
 		params = params.concat([ '-D', 'client' ]);
 		
-		var r = hant.runWaiter(hant.getHaxePath() + "haxe.exe", params, 5000);
+		var r = hant.runWaiter(hant.getHaxePath() + "haxe.exe", params, 10000);
         
 		if (FileSystem.exists(clientPath + "/haquery.js")
 		 && FileSystem.exists(clientPath + "/haquery.js.old"))
