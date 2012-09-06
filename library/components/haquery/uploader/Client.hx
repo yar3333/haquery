@@ -24,11 +24,11 @@ class Client extends Base
     {
         if (!enabled) return;
         
-        var container = q('#container');
-        var file = q('#file');
+        var container = q("#container");
+        var file = q("#file");
         var offset = container.offset();
         
-        q('#file').offset({
+        q("#file").offset({
             left: Std.int(Math.min(offset.left + container.width() - file.width(), Math.max(offset.left, e.pageX - 50))),
             top:  Std.int(Math.min(offset.top + container.height() - file.height(), Math.max(offset.top,  e.pageY - 10)))
         });
@@ -41,15 +41,15 @@ class Client extends Base
     
     function file_change(t, e) : Bool
     {
-        var fileName : String = q('#file').val();
-        fileName = fileName.replace('\\', '/');
-        if (fileName.lastIndexOf('/') > 0)
+        var fileName : String = q("#file").val();
+        fileName = fileName.replace("\\", "/");
+        if (fileName.lastIndexOf("/") > 0)
         {
             fileName = fileName.substr(fileName.lastIndexOf('/') + 1);
         }
         
-        var filter = q('#filter').val();
-        if (filter != '')
+        var filter = q("#filter").val();
+        if (filter != "")
         {
             var re = new EReg(filter, "i");
             if (!re.match(fileName))
@@ -64,36 +64,34 @@ class Client extends Base
         event_uploading.call(null);
         enabled = false;
 
-        var frame : IFrame = cast q('#frame')[0];
-        q(frame).unbind('load').load(function(e:JqEvent) {
-            var elem : HtmlDom = frame.contentWindow.document.body.firstChild;
-            var text = elem.innerHTML;
-            HaqElemEventManager.callServerHandlersCallbackFunction(text); 
+        var frame : IFrame = cast q("#frame")[0];
+        q(frame).unbind("load").load(function(e:JqEvent) 
+		{
+            var text = frame.contentWindow.document.body.firstChild.innerHTML;
+            HaqElemEventManager.callServerHandlersCallbackFunction(text, function(e:{ errorCode:Int })
+			{
+				enabled = true;
+				event_complete.call(e);
+			}); 
         });
         
-        var form : HaqQuery = q('#form');
-        var sendData = HaqElemEventManager.getDataObjectForSendToServer(fullID, 'upload');
+		var form : HaqQuery = q("#form");
+        var sendData = HaqElemEventManager.getDataObjectForSendToServer(fullID, "upload");
         for (key in Reflect.fields(sendData))
         {
             form.append("<input type='hidden' id='HAQUERY_DATA-" + key + "' name='" + key + "' />\n");
-            new JQuery('#HAQUERY_DATA-' + key).val(Reflect.field(sendData, key));
+            new JQuery("#HAQUERY_DATA-" + key).val(Reflect.field(sendData, key));
         }
         cast(form[0]).submit();
         
         for (key in Reflect.fields(sendData))
         {
-            if (key != prefixID + 'file')
+            if (key != prefixID + "file")
             {
-                (new JQuery('#HAQUERY_DATA-' + key)).remove();
+                new JQuery("#HAQUERY_DATA-" + key).remove();
             }
         }
         
         return true;
-    }
-    
-    @shared function fileUploadComplete(errorCode:Int)
-    {
-        enabled = true;
-        event_complete.call({ errorCode:errorCode });
     }
 }
