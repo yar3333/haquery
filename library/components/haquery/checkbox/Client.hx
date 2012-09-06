@@ -8,26 +8,21 @@ class Client extends HaqComponent
 {
     var event_change : HaqEvent<JqEvent>;
 	
-	public var checked(checked_getter, checked_setter) : Bool;
+	public var checked(getChecked, setChecked) : Bool;
     
-    function checked_getter() : Bool
+    function getChecked() : Bool
     {
         return cast q('#cb').prop('checked');
     }
     
-    function checked_setter(v:Bool) : Bool
+    @shared function setChecked(v:Bool) : Bool
     {
         q('#cb').prop('checked', v);
         return v;
     }
     
-    function cb_change(t, e:JqEvent)
+    function cb_change(t, e)
     {
 		event_change.call(e);
     }
-	
-	@shared function setChecked(v:Bool)
-	{
-		checked = v;
-	}
 }

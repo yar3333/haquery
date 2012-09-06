@@ -84,10 +84,25 @@ class HaqComponent
 					var templateFieldName = splittedHandlerName.slice(0, splittedHandlerName.length - 1).join("_");
 					var eventName = splittedHandlerName[splittedHandlerName.length - 1];
 					
-					var getTemplateClassFieldClass = getTemplateClassFieldClass(templateClass, templateFieldName);
-					if (getTemplateClassFieldClass != null)
+					var templateClassFieldClass = getTemplateClassFieldClass(templateClass, templateFieldName);
+					if (templateClassFieldClass != null)
 					{
-						var eventParamType = getComponentClassEventClassParamType(getTemplateClassFieldClass, eventName);
+						var eventParamType = null;
+						var typePath = templateClassFieldClass.pack.join(".") + "." + templateClassFieldClass.name;
+						if (typePath == "haquery.client.HaqQuery" || typePath == "js.JQuery")
+						{
+							eventParamType = getModuleType("js.JQuery", "JqEvent");
+						}
+						else
+						if (typePath == "haquery.server.HaqQuery")
+						{
+							eventParamType = Context.getType("Dynamic");
+						}
+						else
+						{
+							eventParamType = getComponentClassEventClassParamType(templateClassFieldClass, eventName);
+						}
+						
 						if (eventParamType != null)
 						{
 							handler.args[1].type = tink.macro.tools.TypeTools.toComplex(eventParamType);
@@ -112,43 +127,32 @@ class HaqComponent
 		
 		for (field in fields)
 		{
-			if (Lambda.exists(field.meta, function(m) return m.name == "handler"))
+			switch (field.kind)
 			{
-				//Context.warning("Handler found: " + field.name, field.pos);
-				
-				switch (field.kind)
-				{
-					case FieldType.FFun(f):
-						if (field.name.indexOf("_") > 0)
+				case FieldType.FFun(f):
+					if (field.name.indexOf("_") > 0)
+					{
+						//Context.warning("Handler found: " + field.name, field.pos);
+						if (f.args.length == 2)
 						{
-							if (f.args.length == 2)
+							if (f.args[0].type == null && f.args[1].type == null)
 							{
-								if (f.args[0].type == null && f.args[1].type == null)
-								{
-									handlers.push({ name:field.name, pos:field.pos, args:f.args });
-								}
-								else
-								{
-									Context.error("Event handler's arguments types must not be specified.", field.pos);
-									return null;
-								}
+								handlers.push({ name:field.name, pos:field.pos, args:f.args });
 							}
 							else
 							{
-								Context.error("Event handler must be defined with exactly two arguments.", field.pos);
+								Context.error("Event handler's arguments types must not be specified.", field.pos);
 								return null;
 							}
 						}
 						else
 						{
-							Context.error("Event handler's name must have format 'objectID_eventName'.", field.pos);
+							Context.error("Event handler must be defined with exactly two arguments.", field.pos);
 							return null;
 						}
-					
-					default:
-						Context.error("Using @handler is possible with methods only.", field.pos);
-						return null;
-				}
+					}
+				
+				default:
 			}
 		}
 		
@@ -248,6 +252,22 @@ class HaqComponent
 				}
 			}
 		}
+		return null;
+	}
+	
+	static function getModuleType(module:String, typeName:String) : Type
+	{
+		for (type in Context.getModule(module))
+		{
+			switch(type)
+			{
+				case Type.TType(t, _):
+					if (t.get().name == typeName) return t.get().type;
+				
+				default:
+			}
+		}
+		
 		return null;
 	}
 	

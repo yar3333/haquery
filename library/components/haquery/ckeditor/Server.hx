@@ -6,14 +6,14 @@ import haquery.common.HaqEvent;
 
 class Server extends HaqComponent
 {
-    public var text(text_getter, text_setter) : String;
+    public var text(getText, setText) : String;
     
-    function text_getter()
+    function getText()
     {
         return q('#e').html();
     }
     
-    function text_setter(v:String)
+    function setText(v:String)
     {
         q('#e').html(v);
         return v;

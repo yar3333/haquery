@@ -6,10 +6,10 @@ import haquery.Std;
 
 class Server extends HaqComponent
 {
-    public var checked(checked_getter, checked_setter) : Bool;
+    public var checked(getChecked, setChecked) : Bool;
 	public var text : String;
     
-	function checked_getter() : Bool
+	function getChecked() : Bool
 	{
 		if (!Lib.isPostback)
 		{
@@ -21,7 +21,7 @@ class Server extends HaqComponent
 		}
 	}
 	
-	function checked_setter(v:Bool) : Bool
+	function setChecked(v:Bool) : Bool
 	{
 		q('#cb').val(v);
 		return v;

@@ -7,7 +7,7 @@ class Client extends Base
 {
     var event_click : HaqEvent<JqEvent>;
     
-    function b_click(t, e:JqEvent)
+    function b_click(t, e)
     {
         return enabled ? event_click.call(e) : false;
     }

@@ -5,17 +5,17 @@ import haquery.client.HaqComponent;
 
 class Client extends HaqComponent
 {
-	@handler function a_checkA(t, e)
+	function a_checkA(t, e)
 	{
 		//t.
 	}
 	
-	@handler function b_checkB(t, e)
+	function b_checkB(t, e)
 	{
 		//e.
 	}
 	
-	@handler function b_checkA(t, e)
+	function b_checkA(t, e)
 	{
 		//e.zzz;
 	}

@@ -55,7 +55,7 @@ class OrmTools
 	static function field2var(f:HaqDbTableFieldData) : HaxeVar
 	{ 
 		return {
-			haxeName : f.name
+			 haxeName : f.name
 			,haxeType : sqlType2haxeType(f.type)
 			,haxeDefVal : (f.name == 'position' ? 'null' : null)
 			

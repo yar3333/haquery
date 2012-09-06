@@ -9,9 +9,9 @@ class Client extends HaqComponent
 {
     var editor : CKEditor;
 
-    public var text(text_getter, text_setter) : String;
-	function text_getter() : String { return editor.getData(); }
-	function text_setter(t:String) : String { editor.setData(t); return t; }
+    public var text(getText, setText) : String;
+	function getText() : String { return editor.getData(); }
+	function setText(t:String) : String { editor.setData(t); return t; }
     
 	function init()
     {
