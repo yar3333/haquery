@@ -1,6 +1,7 @@
 <config>
 	<imports>
 		<components package="components.events" />
+        <components package="components.macrotests" />
 		<components package="components.haquery" />
 	</imports> 
 </config>

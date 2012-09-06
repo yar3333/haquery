@@ -56,7 +56,7 @@ class HaqComponent
 							var eventParamType = getComponentClassEventClassParamType(getTemplateClassFieldClass, eventName);
 							if (eventParamType != null)
 							{
-								Context.warning("Type = " + eventParamType, handler.pos);
+								//Context.warning("Type = " + eventParamType, handler.pos);
 								var resultType = tink.macro.tools.TypeTools.toComplex(eventParamType);
 								if (resultType != null)
 								{
@@ -96,7 +96,7 @@ class HaqComponent
 		{
 			if (Lambda.exists(field.meta, function(m) return m.name == "handler"))
 			{
-				Context.warning("Handler found: " + field.name, field.pos);
+				//Context.warning("Handler found: " + field.name, field.pos);
 				
 				switch (field.kind)
 				{
@@ -159,8 +159,8 @@ class HaqComponent
 						{
 							if (params != null && params.length == 1)
 							{
-								Context.getModule(t.get().module);
-								Context.warning("Event's param is " + params[0] + ".", field.pos);
+								//Context.getModule(t.get().module);
+								//Context.warning("Event's param is " + params[0] + ".", field.pos);
 								return params[0];
 							}
 							else
