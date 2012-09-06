@@ -15,7 +15,7 @@ private typedef Component = haquery.client.HaqComponent;
 
 using haquery.StringTools;
 
-@:autoBuild(haquery.macros.HaqComponent.build()) class HaqComponent extends haquery.macros.HaqComponent
+class HaqComponent extends haquery.macros.HaqComponent
 {
     public var manager(default,null) : HaqTemplateManager;
 	

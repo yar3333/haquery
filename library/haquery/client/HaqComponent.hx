@@ -7,7 +7,7 @@ import js.JQuery;
 
 using haquery.StringTools;
 
-class HaqComponent extends haquery.base.HaqComponent
+@:autoBuild(haquery.macros.HaqComponent.build()) class HaqComponent extends haquery.base.HaqComponent
 {
 	var isDynamic : Bool;
 	

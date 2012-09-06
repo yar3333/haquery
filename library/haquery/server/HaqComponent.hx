@@ -12,7 +12,7 @@ import haxe.Serializer;
 
 using haquery.StringTools;
 
-class HaqComponent extends haquery.base.HaqComponent
+@:autoBuild(haquery.macros.HaqComponent.build()) class HaqComponent extends haquery.base.HaqComponent
 {
     /**
      * template.html as DOM tree.

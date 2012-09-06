@@ -39,14 +39,35 @@ class HaqComponent
 			setComponentClassEventHandlersArgTypes(componentClass, fields);
 			return fields;
 		}
+		else
+		{
+			log("SKIPPED: " + componentClass.pack.join(".") + "." + componentClass.name);
+		}
 		
 		return null;
 	}
 	
 	#if macro
 	
+	static function log(s:String) : Void
+	{
+		/*
+		if (sys.FileSystem.exists("build.log"))
+		{
+			var log = sys.io.File.append("build.log", false);
+			log.writeString(s + "\n");
+			log.close();
+		}
+		else
+		{
+			sys.io.File.saveContent("build.log", s + "\n");
+		}
+		*/
+	}
+	
 	static function setComponentClassEventHandlersArgTypes(componentClass:ClassType, fields:Array<Field>)
 	{
+		log("setComponentClassEventHandlersArgTypes for class " + componentClass.pack.join(".") + "." + componentClass.name);
 		//Context.warning("setComponentClassEventHandlersArgTypes for class " + componentClass.pack.join(".") + componentClass.name, componentClass.po);
 		
 		var handlers = getComponentClassHandlers(fields);
