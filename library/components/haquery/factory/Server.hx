@@ -10,33 +10,18 @@ using haquery.StringTools;
 
 class Server extends Base
 {
-    public var items(default, null) : Array<HaqComponent>;
-	
-	/**
-	 * Limit to creating components on postback. Use to prevent too big server load.
-	 * Default is 0 (no limit).
-	 */
-	public var limit(default, null) : Int = 0;
-    
-    function new()
-    {
-		super();
-		items = new Array<HaqComponent>();
-    }
-    
     override function createChildComponents():Void 
 	{
-        if (Lib.isPostback)
+        if (!Lib.isPostback)
+		{
+			components = new DirectItems();
+		}
+		else
         {
-			var len = length;
-			if (limit > 0 && len > limit)
+			components = new LazyItems(length, function(id:String)
 			{
-				throw new Exception("HAQUERY LIMIT [" + fullID + "] " + fullTag + " (" + len + " > " + limit + ".");
-			}
-			for (i in 0...len)
-			{
-				manager.createComponent(this, "factoryitem", Std.string(i), null, innerNode, false);
-			}
+				return manager.createComponent(this, "factoryitem", id, null, innerNode, false);
+			});
         }
 	}
 	
@@ -46,7 +31,6 @@ class Server extends Base
 		
 		var n = length;
 		var r = manager.createComponent(this, "factoryitem", Std.string(n), cast HashTools.hashify(params), getItemInnerNode(), true);
-		items.push(r);
 		q('#length').val(n + 1);
 		return r;
 	}
@@ -54,7 +38,7 @@ class Server extends Base
     override function render()
     {
         var r = "";
-		for (item in items)
+		for (item in components)
         {
             r += item.render().trim() + "\n";
         }

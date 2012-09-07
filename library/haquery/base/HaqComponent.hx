@@ -44,7 +44,7 @@ class HaqComponent extends haquery.macros.HaqComponent
     /**
      * Children components.
      */
-    public var components(default, null) : Hash<Component>;
+    public var components(default, null) : HaqComponents<Component>;
 	
     var nextAnonimID : Int;
 	
@@ -121,7 +121,7 @@ class HaqComponent extends haquery.macros.HaqComponent
 			Reflect.callMethod(this, Reflect.field(this, f), []);
         }
         
-        for (component in this.components) component.forEachComponent(f, isFromTopToBottom);
+        for (component in components) component.forEachComponent(f, isFromTopToBottom);
         
         if (!isFromTopToBottom && Reflect.isFunction(Reflect.field(this, f)))
         {
