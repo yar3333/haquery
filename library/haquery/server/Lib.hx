@@ -62,6 +62,8 @@ class Lib
     
     public static function run() : Void
     {
+		haquery.macros.HaqBuild.preBuild();
+		
 		isRedirected = false;
 		isHeadersSent = false;
 		ajaxResponse = "";

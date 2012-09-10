@@ -87,7 +87,7 @@ using haquery.StringTools;
 	/**
 	 * Call server method, marked as @shared.
 	 */
-	function callSharedMethod(method:String, ?params:Array<Dynamic>, ?callbackFunc:Dynamic->Void) : Void
+	public function callSharedMethod(method:String, ?params:Array<Dynamic>, ?callbackFunc:Dynamic->Void) : Void
 	{
 		HaqElemEventManager.callServerMethod(fullID, method, params, callbackFunc);
 	}
