@@ -15,6 +15,8 @@ class Lib
 	
 	static public function run(pageFullTag:String)
     {
+		haquery.macros.HaqBuild.preBuild();
+		
 		haxe.Log.trace = Firebug.detect() 
 			? Firebug.trace 
 			: haquery.client.Lib.trace;

@@ -1,54 +1,36 @@
 package haquery.macros;
 
-#if macro
 import haxe.macro.Context;
-#end
-
 import haxe.macro.Expr;
 import haxe.macro.Type;
 
 class HaqBuild
 {
-	@:macro public static function postBuild()
+	@:macro public static function preBuild()
 	{
-		/*
-		Context.onGenerate(function(types:Array<Type>)
+		if (Context.defined("haqueryPreBuild"))
 		{
-			for (type in types)
+			Context.onGenerate(function(types:Array<Type>)
 			{
-				switch (type)
+				for (type in types)
 				{
-					case Type.TInst(t, params):
-						var clas = t.get();
-						if (clas.pack.length > 0 && (clas.pack[0] == "components" || clas.pack[0] == "pages"))
-						{
-							if (isExtendsFrom(clas, "haquery.base.HaqComponent"))
+					switch (type)
+					{
+						case Type.TInst(t, params):
+							var clas = t.get();
+							if (clas.pack.length > 0 && (clas.pack[0] == "components" || clas.pack[0] == "pages"))
 							{
-								setComponentClassEventHandlersArgTypes2(clas, clas.fields.get());
+								if (HaqTools.isExtendsFrom(clas, "haquery.base.HaqComponent"))
+								{
+									HaqSharedGenerator.generate(clas);
+								}
 							}
-						}
-					default:
+						default:
+					}
 				}
-			}
-		});
-		*/
-		return Context.makeExpr(null, Context.currentPos());
-	}
-	
-	#if macro
-	
-	static function isExtendsFrom(t:ClassType, parentClassPath:String) : Bool
-	{
-		while (t.superClass != null)
-		{
-			t = t.superClass.t.get();
-			if (t.pack.join(".") + "." + t.name == parentClassPath)
-			{
-				return true;
-			}
+			});
 		}
-		return false;
+		
+		return macro null;
 	}
-	
-	#end
 }

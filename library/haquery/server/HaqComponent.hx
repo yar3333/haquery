@@ -208,7 +208,7 @@ using haquery.StringTools;
 	/**
 	 * Delayed call client method, marked as @shared.
 	 */
-	function callSharedMethod(method:String, ?params:Array<Dynamic>) : Void
+	public function callSharedMethod(method:String, ?params:Array<Dynamic>) : Void
 	{
 		Lib.assert(Lib.isPostback, "HaqComponent.callSharedMethod() allowed on the postback only.");
         

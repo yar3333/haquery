@@ -163,7 +163,7 @@ class Hant
 			}
 		}
     }
-    
+	
     public function deleteFile(path:String)
     {
         if (FileSystem.exists(path))
@@ -180,6 +180,21 @@ class Hant
 			}
 		}
     }
+	
+	public function deleteAny(path:String)
+	{
+		if (FileSystem.exists(path))
+		{
+			if (FileSystem.isDirectory(path))
+			{
+				deleteDirectory(path);
+			}
+			else
+			{
+				deleteFile(path);
+			}
+		}
+	}
 	
 	public function run(fileName:String, args:Array<String>) : { exitCode:Int, stdOut:String, stdErr:String }
 	{

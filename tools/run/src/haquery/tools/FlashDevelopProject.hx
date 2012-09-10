@@ -5,6 +5,7 @@ import haquery.Std;
 import sys.io.File;
 
 using haquery.StringTools;
+using haquery.HashTools;
 
 class FlashDevelopProject 
 {
@@ -209,5 +210,37 @@ class FlashDevelopProject
 			i--;
 		}
 		return null;
+	}
+	
+	public function getBuildParams(platformPrefix:String, destPath:String, defines:Array<String>) : Array<String>
+	{
+        var params = new Array<String>();
+        
+		for (path in classPaths)
+        {
+			params.push("-cp"); params.push(path.rtrim("/"));
+        }
+        
+		for (name in libPaths.keysIterable())
+        {
+			params.push("-lib"); params.push(name);
+		}
+		
+		params = params.concat([ 
+			  platformPrefix, destPath
+			, "-main", "Main"
+		]);
+		
+		if (isDebug)
+		{
+			params.push("-debug");
+		}
+		
+		for (d in defines)
+		{
+			params = params.concat([ "-D", d ]);
+		}
+		
+		return params;
 	}
 }
