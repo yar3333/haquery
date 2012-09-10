@@ -133,7 +133,7 @@ class HaqSharedGenerator
 		var callParams = [ 
 			  name.toExpr()
 			, Lambda.map(args, function(a) return Context.parse(a.name, pos)).toArray()
-			, macro callb
+			, !HaqTools.isVoid(ret) ? macro callb : macro function(_) callb()
 		];
 		var callExpr = ExprDef.EBlock( [ ExprDef.ECall(macro component.callSharedMethod, callParams).at(pos) ] ).at(pos);
 		return HaqTools.makeMethod(name, args2, macro : Void, callExpr);
@@ -145,7 +145,7 @@ class HaqSharedGenerator
 			  name.toExpr()
 			, Lambda.map(args, function(a) return Context.parse(a.name, pos)).toArray()
 		];
-		var callExpr = ExprDef.ECall(macro component.callSharedMethod, callParams).at(pos);
+		var callExpr = ExprDef.EBlock([ ExprDef.ECall(macro component.callSharedMethod, callParams).at(pos) ]).at(pos);
 		return HaqTools.makeMethod(name, args, macro : Void, callExpr);
 	}
 	

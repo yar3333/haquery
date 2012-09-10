@@ -178,5 +178,19 @@ class HaqTools
 		}
     }
 	
+	public static function isVoid(t:Null<ComplexType>) : Bool
+	{
+		if (t != null)
+		{
+			switch (t)
+			{
+				case ComplexType.TPath(p):
+					return p.pack.length == 0 && p.name == "Void";
+				default:
+			}
+		}
+		return false;
+	}
+	
 	#end
 }
