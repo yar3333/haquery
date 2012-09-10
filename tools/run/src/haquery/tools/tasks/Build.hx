@@ -160,7 +160,7 @@ class Build
 		hant.createDirectory(clientPath);
         
         var params = project.getBuildParams("-js", clientPath + "/haquery.js", [ "noEmbedJS", "client" ]);
-		var r = hant.runWaiter(hant.getHaxePath() + "haxe.exe", params, 5000);
+		var r = hant.runWaiter(hant.getHaxePath() + "haxe.exe", params, 10000);
         
 		if (FileSystem.exists(clientPath + "/haquery.js")
 		 && FileSystem.exists(clientPath + "/haquery.js.old"))
@@ -216,12 +216,12 @@ class Build
         var tempPath = "temp-haquery-get-shared";
 		
 		var params = project.getBuildParams("-" + project.platform.toLowerCase(), tempPath, [ "haqueryPreBuild" ]);
-		var r = hant.runWaiter(hant.getHaxePath() + "haxe.exe", params, 5000);
+		var r = hant.runWaiter(hant.getHaxePath() + "haxe.exe", params, 10000);
 		hant.deleteAny(tempPath);
 		if (r != 0) return false;
 		
 		params = project.getBuildParams("-js", tempPath, [ "noEmbedJS", "client", "haqueryPreBuild" ]);
-		r = hant.runWaiter(hant.getHaxePath() + "haxe.exe", params, 5000);
+		r = hant.runWaiter(hant.getHaxePath() + "haxe.exe", params, 10000);
 		hant.deleteAny(tempPath);
 		hant.deleteFile(tempPath + ".map");
 		if (r != 0) return false;
