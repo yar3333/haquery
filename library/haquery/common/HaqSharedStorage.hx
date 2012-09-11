@@ -1,6 +1,7 @@
 package haquery.common;
 
 import haquery.base.HaqComponent;
+using haquery.StringTools;
 
 class HaqSharedStorage
 {
@@ -32,29 +33,33 @@ class HaqSharedStorage
 	function getClassName(clas:Class<HaqComponent>)
 	{
 		var name = Type.getClassName(clas);
-		if (name != "haquery.server.HaqComponent" && name != "haquery.server.HaqComponent")
+		if (name.startsWith("components.") || name.startsWith("pages."))
 		{
 			return name.substr(0, name.lastIndexOf("."));
 		}
-		return "haquery.HaqComponent";
+		else
+		{
+			throw "HaqSharedStorage may be used for classes in 'components' and 'pages' packages only.";
+			return null;
+		}
 	}
 	
-	public function setComponentTemplateVar(clas:Class<HaqComponent>, key:String, value:Dynamic)
+	public function setStaticVar(clas:Class<HaqComponent>, key:String, value:Dynamic)
 	{
 		set(getClassName(clas), key, value);
 	}
 	
-	public function getComponentTemplateVar(clas:Class<HaqComponent>, key:String) : Dynamic
+	public function getStaticVar(clas:Class<HaqComponent>, key:String) : Dynamic
 	{
 		return get(getClassName(clas), key);
 	}
 	
-	public function setComponentInstanceVar(component:HaqComponent, key:String, value:Dynamic)
+	public function setInstanceVar(component:HaqComponent, key:String, value:Dynamic)
 	{
 		set(component.fullID, key, value);
 	}
 	
-	public function getComponentInstanceVar(component:HaqComponent, key:String) : Dynamic
+	public function getInstanceVar(component:HaqComponent, key:String) : Dynamic
 	{
 		return get(component.fullID, key);
 	}

@@ -23,12 +23,12 @@ class DocStorage
 	
 	public function set(fullTag:String, doc:HtmlNodeElement)
 	{
-		manager.sharedStorage.setComponentTemplateVar(StoreType, "doc:" + fullTag, doc.toString());
+		manager.sharedStorage.setStaticVar(StoreType, "doc:" + fullTag, doc.toString());
 	}
 	
 	public function get(fullTag:String) : HtmlNodeElement
 	{
-		var html = manager.sharedStorage.getComponentTemplateVar(StoreType, "doc:" + fullTag);
+		var html = manager.sharedStorage.getStaticVar(StoreType, "doc:" + fullTag);
 		if (html == null)
 		{
 			return null;
