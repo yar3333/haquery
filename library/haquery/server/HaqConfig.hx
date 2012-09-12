@@ -21,12 +21,6 @@ class HaqConfig
 	 */
 	public var maxPostSize = 16 * 1024 * 1024;
 	
-	/**
-     * Cache system connection string in TYPE://HOST form.
-	 * For example: memcached://localhost
-     */
-	public var cacheConnectionString : String;
-
     /**
      * Level of tracing SQL:
 	 * 0 - show errors only;
@@ -85,9 +79,6 @@ class HaqConfig
 						
 						case "maxPostSize":
 							maxPostSize = Std.parseInt(value);
-						
-						case "cacheConnectionString":
-							cacheConnectionString = value;
 						
 						case "sqlLogLevel":
 							sqlLogLevel = Std.parseInt(value);
