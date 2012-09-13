@@ -8,7 +8,7 @@ class HaqBuild
 {
 	@:macro public static function preBuild()
 	{
-		if (Context.defined("haqueryPreBuild"))
+		if (!Context.defined("display"))
 		{
 			Context.onGenerate(function(types:Array<Type>)
 			{

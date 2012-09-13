@@ -18,7 +18,7 @@ class Tasks
     
 	public function preBuild()
 	{
-		new Build(exeDir).preBuild();
+		return new Build(exeDir).preBuild();
 	}
 	
 	public function postBuild() : Bool
