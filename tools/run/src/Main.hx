@@ -8,12 +8,11 @@ import haquery.tools.Tasks;
 
 class Main 
 {
-	static function main() 
+	static function main()
 	{
-        var args = Sys.args();
-        
 		var exeDir = Sys.getCwd();
         
+		var args = Sys.args();
 		if (args.length > 0)
 		{
 			Sys.setCwd(args.pop());
@@ -21,8 +20,10 @@ class Main
 		else
 		{
 			Lib.println("To run this program use haxelib utility.");
-			return 1;
+			Sys.exit(1);
 		}
+		
+		var exitCode = 0;
 		
 		var tasks = new Tasks(exeDir);
         
@@ -47,19 +48,21 @@ class Main
 						Lib.println("\t</config>");
 						Lib.println("or in the command line:");
 						Lib.println("\thaxelib run HaQuery gen-orm mysql://USER:PASSWORD@HOST/DATABASE");
+						exitCode = 1;
 					}
 				
 				case 'pre-build': 
-					tasks.preBuild();
+					exitCode = tasks.preBuild() ? 0 : 1;
 				
 				case 'post-build': 
-					return tasks.postBuild() ? 0 : 1;
+					exitCode = tasks.postBuild() ? 0 : 1;
 					
 				case 'install':
 					tasks.install();
 				
 				default:
 					Lib.println("ERROR: command '" + command + "' is not supported.");
+					exitCode = 1;
 			}
         }
 		else
@@ -71,9 +74,9 @@ class Main
 			Lib.println("\t\tpost-build                          Do post-build step.");
 			Lib.println("\t\tinstall                             Install FlashDevelop templates.");
 			Lib.println("\t\tgen-orm [databaseConnectionString]  Generate object-related classes (managers and models).");
-			return 1;
+			exitCode = 1;
 		}
         
-        return 0;
+        Sys.exit(exitCode);
 	}
 }

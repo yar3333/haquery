@@ -48,9 +48,9 @@ class Build
 			{
 				saveLastMods(manager);
 				try { saveLibFolder(); } catch (e:Dynamic) { }
+				log.finishOk();
+				return true;
 			}
-			
-			log.finishOk();
 		}
 		catch (e:HaqTemplateNotFoundException)
 		{
@@ -60,6 +60,7 @@ class Build
 		{
 			log.finishFail("ERROR: recursive extend detected [ " + e.toString() + " ].");
 		}
+		return false;
     }
 	
     public function postBuild() : Bool
@@ -213,18 +214,25 @@ class Build
 	
 	function genShared(project:FlashDevelopProject) : Bool
 	{
-        var tempPath = "temp-haquery-get-shared";
+        var tempPath = "trm/temp-haquery-gen-shared.js";
 		
-		var params = project.getBuildParams("-" + project.platform.toLowerCase(), tempPath, [ "haqueryPreBuild" ]);
+		/*
+		log.start("Generate shared server classes");
+		var params = project.getBuildParams("-" + project.platform.toLowerCase(), tempPath, []);
 		var r = hant.runWaiter(hant.getHaxePath() + "haxe.exe", params, 10000);
 		hant.deleteAny(tempPath);
 		if (r != 0) return false;
+        log.finishOk();
+		*/
 		
-		params = project.getBuildParams("-js", tempPath, [ "noEmbedJS", "client", "haqueryPreBuild" ]);
-		r = hant.runWaiter(hant.getHaxePath() + "haxe.exe", params, 10000);
-		hant.deleteAny(tempPath);
+		log.start("Generate shared classes from client");
+		hant.createDirectory(Path.directory(tempPath));
+		var params = project.getBuildParams("-js", tempPath, [ "noEmbedJS", "client" ]);
+		var r = hant.runWaiter(hant.getHaxePath() + "haxe.exe", params, 10000);
+		hant.deleteFile(tempPath);
 		hant.deleteFile(tempPath + ".map");
 		if (r != 0) return false;
+        log.finishOk();
 		
 		return true;
 	}
