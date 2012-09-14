@@ -84,4 +84,26 @@ class HaqTemplateManager<Template:HaqTemplate>
 		}
 		return '';
 	}
+	
+	#if !client
+	public function tagDocToPackage(tag:String) : String
+	{
+		var r = "";
+		var i = 0;
+		while (i < tag.length)
+		{
+			var c = tag.charAt(i++);
+			if (c != "-") r += c;
+			else
+			{
+				if (i < tag.length)
+				{
+					c = tag.charAt(i++);
+					r += c.toUpperCase();
+				}
+			}
+		}
+		return r;
+	}
+	#end
 }

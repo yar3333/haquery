@@ -145,8 +145,6 @@ class Build
 		return Lambda.map(files, function(s) return s.substr(srcPath.length, s.length - srcPath.length - ".hx".length).replace("/", "."));
 	}
 	
-	
-	
 	function buildJs() : Bool
     {
 		var clientPath = project.binPath + '/haquery/client';
@@ -215,15 +213,6 @@ class Build
 	function genShared(project:FlashDevelopProject) : Bool
 	{
         var tempPath = "trm/temp-haquery-gen-shared.js";
-		
-		/*
-		log.start("Generate shared server classes");
-		var params = project.getBuildParams("-" + project.platform.toLowerCase(), tempPath, []);
-		var r = hant.runWaiter(hant.getHaxePath() + "haxe.exe", params, 10000);
-		hant.deleteAny(tempPath);
-		if (r != 0) return false;
-        log.finishOk();
-		*/
 		
 		log.start("Generate shared classes from client");
 		hant.createDirectory(Path.directory(tempPath));
