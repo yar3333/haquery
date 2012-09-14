@@ -195,7 +195,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
             
             if (node.name.startsWith('haq:'))
             {
-				var tag = node.name.substr('haq:'.length).replace("-", ".");
+				var tag = tagDocToPackage(node.name.substr('haq:'.length));
 				r.push(createComponent(parent, tag, node.getAttribute('id'), node.getAttributesAssoc(), node, isCustomRender));
             }
 			else

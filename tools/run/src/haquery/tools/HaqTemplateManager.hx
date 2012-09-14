@@ -138,7 +138,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		{
 			if (node.name.startsWith("haq:"))
 			{
-				r.push(node.name.substr("haq:".length));
+				r.push(tagDocToPackage(node.name.substr("haq:".length)));
 			}
 			r = r.concat(detectUnusedTemplates_getDocTags(node));
 		}

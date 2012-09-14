@@ -110,7 +110,7 @@ class TrmGenerator
 				var body = "return component.q('#" + componentID + "');";
 				if (child.name.startsWith("haq:"))
 				{
-					var tag = child.name.substr("haq:".length).replace("-", ".");
+					var tag = manager.tagDocToPackage(child.name.substr("haq:".length));
 					var template = manager.findTemplate(fullTag, tag);
 					if (template == null)
 					{
@@ -148,7 +148,7 @@ class TrmGenerator
 	{
 		if (nodeName.startsWith("haq:"))
 		{
-			var tag = nodeName.substr("haq:".length).replace("-", ".");
+			var tag = manager.tagDocToPackage(nodeName.substr("haq:".length));
 			var template = manager.findTemplate(fullTag, tag);
 			
 			while (template != null)
