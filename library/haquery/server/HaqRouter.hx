@@ -1,6 +1,5 @@
 package haquery.server;
 
-import haquery.common.HaqDefines;
 import haquery.Exception;
 import haquery.server.FileSystem;
 using haquery.StringTools;
@@ -25,34 +24,35 @@ typedef HaqRoute =
 
 class HaqRouter
 {
-	public function new() {}
+	var pagesFolderPath : String;
+	
+	public function new(pagesFolderPath:String)
+	{
+		this.pagesFolderPath = pagesFolderPath;
+	}
 	
 	public function getRoute(url:String) : HaqRoute
 	{
 		if (url == null) url = "";
 		
+		url = url.trim('/');
+		
 		if (url == 'index.php' 
 		 || url == 'index.n' 
 		 || url == 'index' 
 		 || url.endsWith('/index')
-		 || url == 'index.php/' 
-		 || url == 'index.n/' 
-		 || url == 'index/' 
-		 || url.endsWith('/index/')
 		) {
 			throw new HaqRouterException(403);
 		}
 		
-		url = url.trim('/');
-		if (url == '') url = 'index';
-		var path = HaqDefines.folders.pages + '/' + url;
+		var path = pagesFolderPath + "/" + (url != "" ? url : "index");
+		
+		if (isPageExist(path + "/index"))
+		{
+			path += "/index";
+		}
 		
 		var pageID : String = null;
-		
-		if (isPageExist(path + '/index'))
-		{
-			path = path + '/index';
-		}
 		
 		if (!isPageExist(path))
 		{

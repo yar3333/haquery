@@ -85,7 +85,7 @@ class Lib
 			
 			try
 			{
-				var route = new HaqRouter().getRoute(!isCli() ? params.get('route') : (Sys.args().length > 0 ? Sys.args()[0] : ""));
+				var route = new HaqRouter(HaqDefines.folders.pages).getRoute(!isCli() ? params.get('route') : HaqCli.getUrl());
 				
 				var bootstraps = loadBootstraps(route.path);
 				
@@ -279,7 +279,7 @@ class Lib
 
 		if (text != '')
         {
-            if (!isHeadersSent)
+            if (!isHeadersSent || isCli())
             {
                 try
                 {
@@ -414,104 +414,112 @@ class Lib
 	
 	static function fillParamsAndUploadedFiles()
 	{
-		params_cached = Web.getParams();
-		uploadedFiles_cached = new Hash<HaqUploadedFile>();
-		
-		#if php
-		
-		var nativeFiles : Hash<php.NativeArray> = php.Lib.hashOfAssociativeArray(untyped __var__("_FILES"));
-		for (id in nativeFiles.keys())
+		if (!isCli())
 		{
-			var file : php.NativeArray = nativeFiles.get(id);
-            uploadedFiles_cached.set(id, new HaqUploadedFile(
-                 file[untyped "tmp_name"]
-                ,file[untyped "name"]
-                ,file[untyped "size"]
-                ,Type.createEnumIndex(HaqUploadError, file[untyped "error"])
-            ));
-        }
-		
-		#elseif neko
-		
-		var lastPartName : String = null;
-		var lastFileName : String = null;
-		var lastTempFileName : String = null;
-		var lastParamValue : String = null;
-		var error : HaqUploadError = null;
-		
-		var maxUploadDataSize = config.maxPostSize;
-		
-		Web.parseMultipart(
-			function(partName:String, fileName:String)
+			params_cached = Web.getParams();
+			uploadedFiles_cached = new Hash<HaqUploadedFile>();
+			
+			#if php
+			
+			var nativeFiles : Hash<php.NativeArray> = php.Lib.hashOfAssociativeArray(untyped __var__("_FILES"));
+			for (id in nativeFiles.keys())
 			{
-				if (partName != lastPartName)
+				var file : php.NativeArray = nativeFiles.get(id);
+				uploadedFiles_cached.set(id, new HaqUploadedFile(
+					 file[untyped "tmp_name"]
+					,file[untyped "name"]
+					,file[untyped "size"]
+					,Type.createEnumIndex(HaqUploadError, file[untyped "error"])
+				));
+			}
+			
+			#elseif neko
+			
+			var lastPartName : String = null;
+			var lastFileName : String = null;
+			var lastTempFileName : String = null;
+			var lastParamValue : String = null;
+			var error : HaqUploadError = null;
+			
+			var maxUploadDataSize = config.maxPostSize;
+			
+			Web.parseMultipart(
+				function(partName:String, fileName:String)
 				{
-					if (lastPartName != null)
+					if (partName != lastPartName)
 					{
-						if (lastFileName != null)
+						if (lastPartName != null)
 						{
-							trace("set = " + lastPartName + ", " + lastFileName);
-							uploadedFiles_cached.set(
-								lastPartName
-							   ,new HaqUploadedFile(lastTempFileName, lastFileName, FileSystem.stat(lastTempFileName).size, error)
-							);
+							if (lastFileName != null)
+							{
+								trace("set = " + lastPartName + ", " + lastFileName);
+								uploadedFiles_cached.set(
+									lastPartName
+								   ,new HaqUploadedFile(lastTempFileName, lastFileName, FileSystem.stat(lastTempFileName).size, error)
+								);
+							}
+							else
+							{
+								params_cached.set(lastPartName, lastParamValue);
+							}
+						}
+						
+						lastPartName = partName;
+						lastFileName = fileName;
+						lastTempFileName = getTempUploadedFilePath();
+						lastParamValue = "";
+						error = HaqUploadError.OK;
+					}
+				}
+			   ,function(data:Bytes, offset:Int, length:Int)
+				{
+					if (lastFileName != null)
+					{
+						maxUploadDataSize -= length;
+						if (maxUploadDataSize >= 0)
+						{
+							var h = File.append(lastTempFileName);
+							h.writeBytes(data, 0, length);
+							h.close();
 						}
 						else
 						{
-							params_cached.set(lastPartName, lastParamValue);
+							error = HaqUploadError.INI_SIZE;
+							if (FileSystem.exists(lastTempFileName))
+							{
+								FileSystem.deleteFile(lastTempFileName);
+							}
 						}
-					}
-					
-					lastPartName = partName;
-					lastFileName = fileName;
-					lastTempFileName = getTempUploadedFilePath();
-					lastParamValue = "";
-					error = HaqUploadError.OK;
-				}
-			}
-		   ,function(data:Bytes, offset:Int, length:Int)
-			{
-				if (lastFileName != null)
-				{
-					maxUploadDataSize -= length;
-					if (maxUploadDataSize >= 0)
-					{
-						var h = File.append(lastTempFileName);
-						h.writeBytes(data, 0, length);
-						h.close();
 					}
 					else
 					{
-						error = HaqUploadError.INI_SIZE;
-						if (FileSystem.exists(lastTempFileName))
-						{
-							FileSystem.deleteFile(lastTempFileName);
-						}
+						lastParamValue += data.readString(0, length);
 					}
+				}
+			);
+			
+			if (lastPartName != null)
+			{
+				if (lastFileName != null)
+				{
+					uploadedFiles_cached.set(
+						lastPartName
+					   ,new HaqUploadedFile(lastTempFileName, lastFileName, FileSystem.stat(lastTempFileName).size, error)
+					);
 				}
 				else
 				{
-					lastParamValue += data.readString(0, length);
+					params_cached.set(lastPartName, lastParamValue);
 				}
 			}
-		);
-		
-		if (lastPartName != null)
-		{
-			if (lastFileName != null)
-			{
-				uploadedFiles_cached.set(
-					lastPartName
-				   ,new HaqUploadedFile(lastTempFileName, lastFileName, FileSystem.stat(lastTempFileName).size, error)
-				);
-			}
-			else
-			{
-				params_cached.set(lastPartName, lastParamValue);
-			}
+			
+			#end
 		}
-		
-		#end
+		else
+		{
+			params_cached = HaqCli.getParams();
+			uploadedFiles_cached = new Hash<HaqUploadedFile>();
+		}
 	}
 	
 	static function getTempUploadedFilePath()
