@@ -277,9 +277,9 @@ class Lib
             text += "DUMP\n" + HaqDumper.getDump(v);
         }
 
-		if (text != '')
+		if (text != '' && !isCli())
         {
-            if (!isHeadersSent || isCli())
+			if (!isHeadersSent)
             {
                 try
                 {
