@@ -4,8 +4,6 @@ package haquery.server;
 private typedef HaxeLib = php.Lib;
 #elseif neko
 private typedef HaxeLib = neko.Lib;
-#elseif cpp
-private typedef HaxeLib = cpp.Lib;
 #end
 
 #if php
@@ -21,7 +19,6 @@ import haxe.Stack;
 import haxe.FirePHP;
 import haxe.Serializer;
 import haxe.Unserializer;
-import haquery.common.HaqCookie;
 import haquery.common.HaqDumper;
 import haquery.common.HaqDefines;
 import haquery.server.db.HaqDb;
@@ -36,41 +33,17 @@ using haquery.StringTools;
 
 class Lib
 {
-	public static var config : HaqConfig;
-	public static var cookie : HaqCookie;
-    public static var profiler : HaqProfiler;
-	public static var db : HaqDb;
 	public static var isRedirected(default, null) : Bool;
     public static var isHeadersSent(default, null) : Bool;
-	public static var page(default, null) : HaqPage;
-	
-    /**
-     * Ajax ? calling server event handler : rendering HTML.
-     */
-    public static var isPostback(default, null) : Bool;
-    
-	static var params_cached : Hash<String>;
-	public static var params(params_getter, null) : Hash<String>;
-	
-	static var uploadedFiles_cached : Hash<HaqUploadedFile>;
-	public static var uploadedFiles(uploadedFiles_getter, null) : Hash<HaqUploadedFile>;
     
 	static var manager : HaqTemplateManager;
-	static var ajaxResponse : String;
 	
-	static var startTime : Float;
-    
     public static function run() : Void
     {
 		haquery.macros.HaqBuild.preBuild();
 		
 		isRedirected = false;
 		isHeadersSent = false;
-		ajaxResponse = "";
-		params_cached = null;
-		uploadedFiles_cached = null;
-		db = null;
-		cookie = null;
 		
 		#if neko
 		Sys.setCwd(getCwd());
@@ -80,22 +53,19 @@ class Lib
 		
 		try
         {
-			startTime = Sys.time();
 			haxe.Log.trace = Lib.trace;
 			
 			try
 			{
 				var route = new HaqRouter(HaqDefines.folders.pages).getRoute(!isCli() ? params.get('route') : HaqCli.getUrl());
-				
 				var bootstraps = loadBootstraps(route.path);
-				
 				if (route.pageID != null && route.pageID.startsWith("haquery-"))
 				{
 					runSystemCommand(route);
 				}
 				else
 				{
-					runApplicationPage(route, bootstraps);
+					HaqPage.run(route, bootstraps);
 				}
 			}
 			catch (e:HaqRouterException)
@@ -107,93 +77,9 @@ class Lib
 		catch (e:Dynamic)
         {
 			Exception.trace(e);
-			
-			if (db != null)
-			{
-				db.close();
-			}
-			
 			Exception.rethrow(e);
         }
-    }
 	
-	static function runApplicationPage(route:HaqRoute, bootstraps:Array<HaqBootstrap>) : Void
-	{
-		profiler = new HaqProfiler(config.enableProfiling);
-		
-		profiler.begin("HAQUERY");
-		
-			if (config.databaseConnectionString != null && config.databaseConnectionString != "")
-			{
-				db = new HaqDb(config.databaseConnectionString, config.sqlLogLevel, profiler);
-			}
-			
-			isPostback = !isCli() && params.get('HAQUERY_POSTBACK') != null;
-			
-			cookie = new HaqCookie();
-			
-			for (bootstrap in bootstraps)
-			{
-				bootstrap.start();
-			}
-			
-			if (manager == null)
-			{
-				profiler.begin('manager');
-					manager = new HaqTemplateManager();
-				profiler.end();
-			}
-			
-			if (route.pageID != null)
-			{
-				params.set("pageID", route.pageID);
-			}
-			
-			profiler.begin("page");
-				trace("HAQUERY START " + (isCli() ? "CLI" : "WEB") + " pageFullTag = " + route.fullTag +  ", HTTP_HOST = " + getHttpHost() + ", clientIP = " + getClientIP() + ", pageID = " + route.pageID);
-				page = manager.createPage(route.fullTag, !isCli() ? params : new Hash<String>());
-				if (!isPostback)
-				{
-					var html = page.render();
-					trace("HAQUERY FINISH");
-					if (!isRedirected)
-					{
-						Web.setHeader('Content-Type', page.contentType);
-						print(html);
-					}
-				}
-				else
-				{
-					page.forEachComponent('preEventHandlers');
-					var componentID = params.get('HAQUERY_COMPONENT');
-					var component = page.findComponent(componentID);
-					if (component != null)
-					{
-						var result = HaqComponentTools.callMethod(component, params.get('HAQUERY_METHOD'), Unserializer.run(params.get('HAQUERY_PARAMS')));
-						trace("HAQUERY FINISH");
-						Web.setHeader('Content-Type', 'text/plain; charset=utf-8');
-						print('HAQUERY_OK' + Serializer.run(result) + "\n" + ajaxResponse);
-					}
-					else
-					{
-						throw new Exception("Component id = '" + componentID + "' not found.");
-					}
-				}
-			profiler.end();
-			
-			bootstraps.reverse();
-			for (bootstrap in bootstraps)
-			{
-				bootstrap.finish();
-			}
-			
-			if (db != null)
-			{
-				db.close();
-			}
-		
-		profiler.end();
-		profiler.traceResults();		
 	}
 	
 	static function runSystemCommand(route:HaqRoute)
@@ -394,160 +280,6 @@ class Lib
 		#end
     }
 	
-	static function params_getter() : Hash<String>
-	{
-		if (params_cached == null)
-		{
-			fillParamsAndUploadedFiles();
-		}
-		return params_cached;
-	}
-	
-	static function uploadedFiles_getter() : Hash<HaqUploadedFile>
-	{
-		if (uploadedFiles_cached == null)
-		{
-			fillParamsAndUploadedFiles();
-		}
-		return uploadedFiles_cached;
-	}
-	
-	static function fillParamsAndUploadedFiles()
-	{
-		if (!isCli())
-		{
-			params_cached = Web.getParams();
-			uploadedFiles_cached = new Hash<HaqUploadedFile>();
-			
-			#if php
-			
-			var nativeFiles : Hash<php.NativeArray> = php.Lib.hashOfAssociativeArray(untyped __var__("_FILES"));
-			for (id in nativeFiles.keys())
-			{
-				var file : php.NativeArray = nativeFiles.get(id);
-				uploadedFiles_cached.set(id, new HaqUploadedFile(
-					 file[untyped "tmp_name"]
-					,file[untyped "name"]
-					,file[untyped "size"]
-					,Type.createEnumIndex(HaqUploadError, file[untyped "error"])
-				));
-			}
-			
-			#elseif neko
-			
-			var lastPartName : String = null;
-			var lastFileName : String = null;
-			var lastTempFileName : String = null;
-			var lastParamValue : String = null;
-			var error : HaqUploadError = null;
-			
-			var maxUploadDataSize = config.maxPostSize;
-			
-			Web.parseMultipart(
-				function(partName:String, fileName:String)
-				{
-					if (partName != lastPartName)
-					{
-						if (lastPartName != null)
-						{
-							if (lastFileName != null)
-							{
-								trace("set = " + lastPartName + ", " + lastFileName);
-								uploadedFiles_cached.set(
-									lastPartName
-								   ,new HaqUploadedFile(lastTempFileName, lastFileName, FileSystem.stat(lastTempFileName).size, error)
-								);
-							}
-							else
-							{
-								params_cached.set(lastPartName, lastParamValue);
-							}
-						}
-						
-						lastPartName = partName;
-						lastFileName = fileName;
-						lastTempFileName = getTempUploadedFilePath();
-						lastParamValue = "";
-						error = HaqUploadError.OK;
-					}
-				}
-			   ,function(data:Bytes, offset:Int, length:Int)
-				{
-					if (lastFileName != null)
-					{
-						maxUploadDataSize -= length;
-						if (maxUploadDataSize >= 0)
-						{
-							var h = File.append(lastTempFileName);
-							h.writeBytes(data, 0, length);
-							h.close();
-						}
-						else
-						{
-							error = HaqUploadError.INI_SIZE;
-							if (FileSystem.exists(lastTempFileName))
-							{
-								FileSystem.deleteFile(lastTempFileName);
-							}
-						}
-					}
-					else
-					{
-						lastParamValue += data.readString(0, length);
-					}
-				}
-			);
-			
-			if (lastPartName != null)
-			{
-				if (lastFileName != null)
-				{
-					uploadedFiles_cached.set(
-						lastPartName
-					   ,new HaqUploadedFile(lastTempFileName, lastFileName, FileSystem.stat(lastTempFileName).size, error)
-					);
-				}
-				else
-				{
-					params_cached.set(lastPartName, lastParamValue);
-				}
-			}
-			
-			#end
-		}
-		else
-		{
-			params_cached = HaqCli.getParams();
-			uploadedFiles_cached = new Hash<HaqUploadedFile>();
-		}
-	}
-	
-	static function getTempUploadedFilePath()
-	{
-		var s = Std.string(Sys.time() * 1000);
-		if (s.indexOf(".") >= 0) s = s.substr(0, s.indexOf("."));
-		s += "_" + Std.int(Math.random() * 999999);
-		s += "_" + Std.int(Math.random() * 999999);
-		
-		var tempDir = getCwd() + "/" + HaqDefines.folders.temp;
-		if (!FileSystem.exists(tempDir))
-		{
-			FileSystem.createDirectory(tempDir);
-		}
-		
-		var uploadsDir = tempDir + "/uploads";
-		if (!FileSystem.exists(uploadsDir))
-		{
-			FileSystem.createDirectory(uploadsDir);
-		}
-		
-		return uploadsDir + "/" + s;
-	}
-	
-	public static inline function addAjaxResponse(jsCode:String) 
-	{
-		ajaxResponse += jsCode + "\n";
-	}
 	
     public static function getParamsString()
     {
