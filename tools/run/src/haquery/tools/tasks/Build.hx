@@ -216,7 +216,7 @@ class Build
 		
 		log.start("Generate shared classes from client");
 		hant.createDirectory(Path.directory(tempPath));
-		var params = project.getBuildParams("-js", tempPath, [ "noEmbedJS", "client" ]);
+		var params = project.getBuildParams("-js", tempPath, [ "noEmbedJS", "client", "haqueryPreBuild" ]);
 		var r = hant.runWaiter(hant.getHaxePath() + "haxe.exe", params, 10000);
 		hant.deleteFile(tempPath);
 		hant.deleteFile(tempPath + ".map");
