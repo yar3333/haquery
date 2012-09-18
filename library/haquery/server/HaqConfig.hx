@@ -72,7 +72,7 @@ class HaqConfig
 					var name = node.getAttribute("name");
 					var value = node.getAttribute("value");
 					
-					switch (node.getAttribute("name"))
+					switch (name)
 					{
 						case "databaseConnectionString":
 							databaseConnectionString = value;
