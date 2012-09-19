@@ -1,5 +1,7 @@
 package haquery.tools.tasks;
 
+import neko.Lib;
+
 import sys.io.File;
 import haxe.io.Path;
 
@@ -160,6 +162,8 @@ class Build
         
         var params = project.getBuildParams("-js", clientPath + "/haquery.js", [ "noEmbedJS", "client" ]);
 		var r = hant.run(hant.getHaxePath() + "haxe.exe", params);
+		Lib.print(r.stdOut);
+		Lib.print(r.stdErr);
         
 		if (FileSystem.exists(clientPath + "/haquery.js")
 		 && FileSystem.exists(clientPath + "/haquery.js.old"))
@@ -220,6 +224,8 @@ class Build
 		var r = hant.run(hant.getHaxePath() + "haxe.exe", params);
 		hant.deleteFile(tempPath);
 		hant.deleteFile(tempPath + ".map");
+		Lib.print(r.stdOut);
+		Lib.print(r.stdErr);
 		if (r.exitCode != 0) return false;
         log.finishOk();
 		
