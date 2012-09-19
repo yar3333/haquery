@@ -159,7 +159,7 @@ class Build
 		hant.createDirectory(clientPath);
         
         var params = project.getBuildParams("-js", clientPath + "/haquery.js", [ "noEmbedJS", "client" ]);
-		var r = hant.runWaiter(hant.getHaxePath() + "haxe.exe", params, 10000);
+		var r = hant.run(hant.getHaxePath() + "haxe.exe", params);
         
 		if (FileSystem.exists(clientPath + "/haquery.js")
 		 && FileSystem.exists(clientPath + "/haquery.js.old"))
@@ -168,7 +168,7 @@ class Build
 			hant.deleteFile(clientPath + "/haquery.js.old");
 		}
 		
-		if (r == 0)
+		if (r.exitCode == 0)
 		{
 			if (!project.isDebug)
 			{
@@ -183,7 +183,7 @@ class Build
 			catch (e:Dynamic) {}
 		}
 		
-		return r == 0;
+		return r.exitCode == 0;
     }
 	
 	function saveLastMods(manager:HaqTemplateManager)
@@ -217,10 +217,10 @@ class Build
 		log.start("Generate shared classes from client");
 		hant.createDirectory(Path.directory(tempPath));
 		var params = project.getBuildParams("-js", tempPath, [ "noEmbedJS", "client", "haqueryPreBuild" ]);
-		var r = hant.runWaiter(hant.getHaxePath() + "haxe.exe", params, 10000);
+		var r = hant.run(hant.getHaxePath() + "haxe.exe", params);
 		hant.deleteFile(tempPath);
 		hant.deleteFile(tempPath + ".map");
-		if (r != 0) return false;
+		if (r.exitCode != 0) return false;
         log.finishOk();
 		
 		return true;
