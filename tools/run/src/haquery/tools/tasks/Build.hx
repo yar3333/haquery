@@ -100,9 +100,10 @@ class Build
     
 	function genImports(manager:HaqTemplateManager, srcPath:String)
     {
-        log.start("Generate imports to '" + srcPath + "Imports.hx'");
+        log.start("Generate imports to 'trm/Imports.hx'");
         
-        var fo = File.write(srcPath + "Imports.hx", false);
+        hant.createDirectory("trm");
+		var fo = File.write("trm/Imports.hx", false);
         
         var serverClassNames = new Hash<Int>();
         var clientClassNames = new Hash<Int>();
