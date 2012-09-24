@@ -1,5 +1,7 @@
 package haquery.tools.tasks;
 
+import neko.Lib;
+
 import sys.io.File;
 import haxe.io.Path;
 
@@ -98,9 +100,10 @@ class Build
     
 	function genImports(manager:HaqTemplateManager, srcPath:String)
     {
-        log.start("Generate imports to '" + srcPath + "Imports.hx'");
+        log.start("Generate imports to 'trm/Imports.hx'");
         
-        var fo = File.write(srcPath + "Imports.hx", false);
+        hant.createDirectory("trm");
+		var fo = File.write("trm/Imports.hx", false);
         
         var serverClassNames = new Hash<Int>();
         var clientClassNames = new Hash<Int>();
@@ -159,7 +162,9 @@ class Build
 		hant.createDirectory(clientPath);
         
         var params = project.getBuildParams("-js", clientPath + "/haquery.js", [ "noEmbedJS", "client" ]);
-		var r = hant.runWaiter(hant.getHaxePath() + "haxe.exe", params, 10000);
+		var r = hant.run(hant.getHaxePath() + "haxe.exe", params);
+		Lib.print(r.stdOut);
+		Lib.print(r.stdErr);
         
 		if (FileSystem.exists(clientPath + "/haquery.js")
 		 && FileSystem.exists(clientPath + "/haquery.js.old"))
@@ -168,7 +173,7 @@ class Build
 			hant.deleteFile(clientPath + "/haquery.js.old");
 		}
 		
-		if (r == 0)
+		if (r.exitCode == 0)
 		{
 			if (!project.isDebug)
 			{
@@ -183,7 +188,7 @@ class Build
 			catch (e:Dynamic) {}
 		}
 		
-		return r == 0;
+		return r.exitCode == 0;
     }
 	
 	function saveLastMods(manager:HaqTemplateManager)
@@ -216,11 +221,13 @@ class Build
 		
 		log.start("Generate shared classes from client");
 		hant.createDirectory(Path.directory(tempPath));
-		var params = project.getBuildParams("-js", tempPath, [ "noEmbedJS", "client" ]);
-		var r = hant.runWaiter(hant.getHaxePath() + "haxe.exe", params, 10000);
+		var params = project.getBuildParams("-js", tempPath, [ "noEmbedJS", "client", "haqueryPreBuild" ]);
+		var r = hant.run(hant.getHaxePath() + "haxe.exe", params);
 		hant.deleteFile(tempPath);
 		hant.deleteFile(tempPath + ".map");
-		if (r != 0) return false;
+		Lib.print(r.stdOut);
+		Lib.print(r.stdErr);
+		if (r.exitCode != 0) return false;
         log.finishOk();
 		
 		return true;

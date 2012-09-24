@@ -28,7 +28,7 @@ class FlashDevelopProject
 		var xml = Xml.parse(File.getContent(projectFilePath));
 		
 		binPath = getBinPath(xml);
-		classPaths = getClassPaths(xml, exeDir);
+		classPaths = getClassPaths(xml);
 		libPaths = getLibPaths(xml, exeDir);
 		allClassPaths = Lambda.array(libPaths).concat(classPaths);
 		isDebug = getIsDebug(xml);
@@ -71,7 +71,7 @@ class FlashDevelopProject
 		return "bin";
 	}
 	
-    function getClassPaths(xml:Xml, exeDir:String) : Array<String>
+    function getClassPaths(xml:Xml) : Array<String>
     {
         var r = new Array<String>();
 		var fast = new haxe.xml.Fast(xml.firstElement());
@@ -101,6 +101,7 @@ class FlashDevelopProject
         var r = new Hash<String>();
 		var fast = new haxe.xml.Fast(xml.firstElement());
 		
+		var libs = new Array<String>();
 		if (fast.hasNode.haxelib)
 		{
 			var haxelibs = fast.node.haxelib;
@@ -108,35 +109,31 @@ class FlashDevelopProject
 			{
 				if (elem.name == 'library' && elem.has.name)
 				{
-					var path = getLibPath(elem.att.name, exeDir);
-					if (path == "")
-					{
-						path = ".";
-					}
-					r.set(elem.att.name.toLowerCase(), path.rtrim("/") + "/");
+					libs.push(elem.att.name);
+				}
+			}
+		}
+		
+		var hant = new Hant(new Log(0), exeDir);
+		var haxelib = Sys.environment().get("HAXEPATH").replace("\\", "/").rtrim("/") + "/haxelib.exe";
+		var lines = hant.run(haxelib, [ "path" ].concat(libs)).stdOut.split("\n");
+		for (i in 0...Std.int(lines.length / 2))
+		{
+			var compilerOption = lines[i * 2 + 1].trim();
+			if (compilerOption.startsWith("-D "))
+			{
+				var lib = compilerOption.substr("-D ".length);
+				if (Lambda.has(libs, lib))
+				{
+					var path = lines[i * 2].trim();
+					if (path == "") path = ".";
+					r.set(lib.toLowerCase(), path.replace("\\", "/").rtrim("/") + "/");
 				}
 			}
 		}
 		
 		return r;
     }
-	
-	function getLibPath(name:String, exeDir:String)
-	{
-		var hant = new Hant(new Log(0), exeDir);
-		var haxelib = Sys.environment().get("HAXEPATH").replace("\\", "/").rtrim("/") + "/haxelib.exe";
-		var paths = hant.run(haxelib, [ "path", name ]).stdOut.split("\n");
-		
-		for (path in paths)
-		{
-			if (!path.startsWith("-"))
-			{
-				return path.replace("\\", "/").rtrim("/") + "/";
-			}
-		}
-		
-		return null;
-	}
 	
 	function getIsDebug(xml:Xml) : Bool
 	{

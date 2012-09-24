@@ -199,30 +199,29 @@ class Hant
 	public function run(fileName:String, args:Array<String>) : { exitCode:Int, stdOut:String, stdErr:String }
 	{
 		var p = new Process(fileName.replace("/", "\\"), args);
+		
+		var stdOut = "";
+		try
+		{
+			while (true)
+			{
+				Sys.sleep(0.1);
+				stdOut += p.stdout.readLine() + "\n";
+			}
+		}
+		catch (e:haxe.io.Eof) {}
+		
 		var exitCode = p.exitCode();
-		var stdOut = p.stdout.readAll().toString().replace("\r\n", "\n");
 		var stdErr = p.stderr.readAll().toString().replace("\r\n", "\n");
 		p.close();
+		
 		if (exitCode != 0)
 		{
-			Lib.print(fileName.replace("/", "\\") + " " + args.join(" ") + " ");
-			Lib.println("run error: " + exitCode);
+			Lib.println(fileName.replace("/", "\\") + " " + args.join(" ") + " ");
+			Lib.println("Run error: " + exitCode);
 		}
+		
 		return { exitCode:exitCode, stdOut:stdOut, stdErr:stdErr };
-	}
-	
-	public function runWaiter(fileName:String, args:Array<String>, waitTimeMS:Int) : Int
-	{
-		var result = run(exeDir + "runwaiter.exe", [ Std.string(waitTimeMS), fileName.replace("/", "\\") ].concat(args));
-		if (result.stdOut != "")
-		{
-			Lib.print(result.stdOut);
-		}
-		if (result.stdErr != "")
-		{
-			Lib.print(result.stdErr);
-		}
-		return result.exitCode;
 	}
 	
 	/*public function runCmd(fileName:String, args:Array<String>)
