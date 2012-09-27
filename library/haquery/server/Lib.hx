@@ -42,7 +42,6 @@ class Lib
 	public static var db : HaqDb;
 	public static var isRedirected(default, null) : Bool;
     public static var isHeadersSent(default, null) : Bool;
-	public static var page(default, null) : HaqPage;
 	
     /**
      * Ajax ? calling server event handler : rendering HTML.
@@ -151,7 +150,7 @@ class Lib
 			
 			profiler.begin("page");
 				trace("HAQUERY START " + (isCli() ? "CLI" : "WEB") + " pageFullTag = " + route.fullTag +  ", HTTP_HOST = " + getHttpHost() + ", clientIP = " + getClientIP() + ", pageID = " + route.pageID);
-				page = manager.createPage(route.fullTag, !isCli() ? params : new Hash<String>());
+				var page = manager.createPage(route.fullTag, !isCli() ? params : new Hash<String>());
 				if (!isPostback)
 				{
 					var html = page.render();
