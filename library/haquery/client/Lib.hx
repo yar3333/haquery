@@ -11,7 +11,6 @@ using haquery.StringTools;
 class Lib
 {
     public static var cookie(default, null) : HaqCookie;
-	public static var page(default, null) : HaqPage;
 	
 	static public function run(pageFullTag:String)
     {
@@ -24,7 +23,7 @@ class Lib
 		cookie = new HaqCookie();
 			
 		var manager = new HaqTemplateManager();
-        page = manager.createPage(pageFullTag);
+        var page = manager.createPage(pageFullTag);
 		page.forEachComponent("preInit", true);
 		page.forEachComponent("init", false);
     }
