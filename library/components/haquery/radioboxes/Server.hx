@@ -20,7 +20,7 @@ class Server extends HaqComponent
     
     function getValue() : String
     {
-        if (!Lib.isPostback)
+        if (!page.isPostback)
         {
             for (elem in getInputElements())
             {
@@ -39,7 +39,7 @@ class Server extends HaqComponent
     
     function setValue(v:String) : String
     {
-        if (!Lib.isPostback)
+        if (!page.isPostback)
         {
             for (elem in getInputElements())
             {
@@ -75,7 +75,7 @@ class Server extends HaqComponent
 	{
 		super.loadFieldValues(params);
 		
-		if (!Lib.isPostback)
+		if (!page.isPostback)
 		{
 			if (params.exists("value"))
 			{

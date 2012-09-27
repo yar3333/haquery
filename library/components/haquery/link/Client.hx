@@ -6,7 +6,7 @@ class Client extends Base
 {
     function link_click(t, e)
     {
-        Lib.redirect(q('#href').val());
+        page.redirect(q('#href').val());
         return false;
     }
 }

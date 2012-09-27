@@ -28,17 +28,6 @@ class Lib
 		page.forEachComponent("init", false);
     }
 	
-    static public function redirect(url:String) : Void
-    {
-        if (url == js.Lib.window.location.href) js.Lib.window.location.reload(true);
-        else js.Lib.window.location.href = url;
-    }
-
-	static public function reload() : Void
-	{
-        js.Lib.window.location.reload(true);
-	}
-
 	#if debug
 		static public function assert(e:Bool, errorMessage:String=null, ?pos : haxe.PosInfos) : Void
 		{

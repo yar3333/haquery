@@ -11,7 +11,7 @@ class Server extends HaqComponent
     
 	function getChecked() : Bool
 	{
-		if (!Lib.isPostback)
+		if (!page.isPostback)
 		{
 			return Std.bool(q('#cb').attr("checked"));
 		}
@@ -43,7 +43,7 @@ class Server extends HaqComponent
 	{
 		super.loadFieldValues(params);
 		
-		if (!Lib.isPostback)
+		if (!page.isPostback)
 		{
 			if (params.exists("checked"))
 			{

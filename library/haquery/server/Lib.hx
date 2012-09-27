@@ -40,13 +40,8 @@ class Lib
 	public static var cookie : HaqCookie;
     public static var profiler : HaqProfiler;
 	public static var db : HaqDb;
-	public static var isRedirected(default, null) : Bool;
+	public static var isRedirected : Bool;
     public static var isHeadersSent(default, null) : Bool;
-	
-    /**
-     * Ajax ? calling server event handler : rendering HTML.
-     */
-    public static var isPostback(default, null) : Bool;
     
 	static var params_cached : Hash<String>;
 	public static var params(params_getter, null) : Hash<String>;
@@ -127,8 +122,6 @@ class Lib
 				db = new HaqDb(config.databaseConnectionString, config.sqlLogLevel, profiler);
 			}
 			
-			isPostback = !isCli() && params.get('HAQUERY_POSTBACK') != null;
-			
 			cookie = new HaqCookie();
 			
 			for (bootstrap in bootstraps)
@@ -143,9 +136,13 @@ class Lib
 				profiler.end();
 			}
 			
+			var isPostback = !isCli() && params.get('HAQUERY_POSTBACK') != null;
+			
+			var pageParams = new Hash<String>();
+			pageParams.set("isPostback", isPostback ? "true" : "false");
 			if (route.pageID != null)
 			{
-				params.set("pageID", route.pageID);
+				pageParams.set("pageID", route.pageID);
 			}
 			
 			profiler.begin("page");
@@ -216,32 +213,6 @@ class Lib
 				println("HAQUERY ERROR: system command '" + route.pageID + "' is not supported.");
 		}
 	}
-	
-    public static function redirect(url:String) : Void
-    {
-        if (isPostback)
-		{
-			addAjaxResponse("haquery.client.Lib.redirect('" + url.addcslashes() + "');");
-		}
-        else
-		{
-			setReturnCode(302); // Moved Temporarily
-			setHeader("Location", url);
-			isRedirected = true;
-		}
-    }
-
-	public static function reload() : Void
-	{
-        if (isPostback)
-		{
-			addAjaxResponse("window.location.reload(true);");
-		}
-        else
-		{
-			redirect(getURI());
-		}
-	}
 
 	#if debug
 		public static function assert(e:Bool, errorMessage:String=null, ?pos:haxe.PosInfos) : Void
@@ -303,10 +274,11 @@ class Lib
             }
             else
             {
-                if (!isPostback)
+                // TODO: trace fix
+				/*if (!isPostback)
 				{
 					HaxeLib.println("<script>if (console) console.debug(decodeURIComponent(\"" + StringTools.urlEncode("SERVER " + text) + "\"));</script>");
-				}
+				}*/
             }
         }
 		
