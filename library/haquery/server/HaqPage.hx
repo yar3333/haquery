@@ -25,12 +25,20 @@ class HaqPage extends HaqComponent
      * For example, if your request "http://site.com/news/123"
      * then pageID will be "123".
      */
-    public var pageID : String;
+    public var pageID(default, null) : String;
 	
     /**
      * Disable special CSS and JS inserts to your HTML pages.
      */
 	public var disableSystemHtmlInserts : Bool;
+	
+	public var ajaxResponse(default, null) : String;
+	
+	public function new()
+	{
+		super();
+		ajaxResponse = "";
+	}
 	
 	override public function render() : String 
 	{
@@ -149,7 +157,7 @@ class HaqPage extends HaqComponent
     {
         if (isPostback)
 		{
-			Lib.addAjaxResponse("haquery.client.page.redirect('" + url.addcslashes() + "');");
+			addAjaxResponse("haquery.client.page.redirect('" + url.addcslashes() + "');");
 		}
         else
 		{
@@ -163,11 +171,16 @@ class HaqPage extends HaqComponent
 	{
         if (isPostback)
 		{
-			Lib.addAjaxResponse("window.location.reload(true);");
+			addAjaxResponse("window.location.reload(true);");
 		}
         else
 		{
 			redirect(Lib.getURI());
 		}
+	}
+	
+	public inline function addAjaxResponse(jsCode:String) 
+	{
+		ajaxResponse += jsCode + "\n";
 	}
 }
