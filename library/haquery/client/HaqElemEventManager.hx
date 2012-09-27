@@ -77,7 +77,7 @@ class HaqElemEventManager
 		if (callClientElemEventHandlers(componentWithHandlers, componentWithEvents, elem, e))
 		{
 			var serverHandlers = manager.get(componentWithHandlers.fullTag).serverHandlers;
-			callServerElemEventHandlers(elem.id, e.type, serverHandlers);
+			callServerElemEventHandlers(componentWithHandlers.page, elem.id, e.type, serverHandlers);
 		}
     }
 	
@@ -94,7 +94,7 @@ class HaqElemEventManager
 		return true;
 	}
 	
-	public static function callServerElemEventHandlers(fullElemID:String, event:String, serverHandlers:Hash<Array<String>>) : Bool
+	public static function callServerElemEventHandlers(page:HaqPage, fullElemID:String, event:String, serverHandlers:Hash<Array<String>>) : Bool
 	{
 		var n = fullElemID.lastIndexOf(HaqDefines.DELIMITER);
 		var elemID = n > 0 ? fullElemID.substr(n + 1) : fullElemID;
@@ -104,23 +104,23 @@ class HaqElemEventManager
 			if (Lambda.has(serverHandlers.get(elemID), event))
 			{
 				var componentID = n > 0 ? fullElemID.substr(0, n) : "";
-				callServerMethod(componentID, elemID + "_" + event);
+				callServerMethod(page, componentID, elemID + "_" + event);
 			}
 		}
 		
         return true;
 	}
     
-	public static function callServerMethod(componentID:String, method:String, ?params:Array<Dynamic>, ?callbackFunc:Dynamic->Void) : Void
+	public static function callServerMethod(page:HaqPage, componentID:String, method:String, ?params:Array<Dynamic>, ?callbackFunc:Dynamic->Void) : Void
 	{
 		var sendData = getDataObjectForSendToServer(componentID, method, params);
 		JQuery.postAjax(Lib.window.location.href, sendData, function(data:String) : Void
 		{ 
-			callServerHandlersCallbackFunction(data, callbackFunc);
+			callServerHandlersCallbackFunction(page, data, callbackFunc);
 		});
 	}
 	
-	public static function callServerHandlersCallbackFunction(data:String, ?callbackFunc:Dynamic->Void) : Void
+	public static function callServerHandlersCallbackFunction(page:HaqPage, data:String, ?callbackFunc:Dynamic->Void) : Void
 	{
 		var okMsg = "HAQUERY_OK";
 		if (data.startsWith(okMsg))
@@ -134,7 +134,7 @@ class HaqElemEventManager
 				trace("AJAX result:");
 				trace(result);
 				trace("AJAX code:\n" + code);
-				untyped __js__("eval(code)");
+				Lib.eval(code);
 				if (callbackFunc != null)
 				{
 					callbackFunc(result);
