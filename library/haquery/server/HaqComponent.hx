@@ -213,7 +213,7 @@ using haquery.StringTools;
 		Lib.assert(page.isPostback, "HaqComponent.callSharedMethod() allowed on the postback only.");
         
         page.addAjaxResponse(
-			  "haquery.client.Lib.page." + (fullID != "" ? "findComponent('" + fullID + "')." : "") + method
+			  "page." + (fullID != "" ? "findComponent('" + fullID + "')." : "") + method
 			+ "(" + Lambda.map(params != null ? params : [], function(p) return "haxe.Unserializer.run('" + Serializer.run(p) + "')").join(",") + ');'
 		);
 	}
