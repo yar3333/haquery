@@ -10,6 +10,11 @@ using haquery.StringTools;
 
 class HaqPage extends HaqComponent
 {
+    /**
+     * Ajax ? calling server event handler : rendering HTML.
+     */
+    public var isPostback(default, null) : Bool;
+	
 	/**
 	 * Default value is "text/html; charset=utf-8".
 	 */
@@ -139,4 +144,30 @@ class HaqPage extends HaqComponent
 		
         return "<link rel='stylesheet' type='text/css' href='" + url + "' />";
     }
+	
+    public function redirect(url:String) : Void
+    {
+        if (isPostback)
+		{
+			Lib.addAjaxResponse("haquery.client.page.redirect('" + url.addcslashes() + "');");
+		}
+        else
+		{
+			Lib.setReturnCode(302); // Moved Temporarily
+			Lib.setHeader("Location", url);
+			Lib.isRedirected = true;
+		}
+    }
+
+	public function reload() : Void
+	{
+        if (isPostback)
+		{
+			Lib.addAjaxResponse("window.location.reload(true);");
+		}
+        else
+		{
+			redirect(Lib.getURI());
+		}
+	}
 }

@@ -12,7 +12,7 @@ class Server extends Base
 {
     override function createChildComponents():Void 
 	{
-        if (!Lib.isPostback)
+        if (!page.isPostback)
 		{
 			components = new DirectItems();
 		}
@@ -27,7 +27,7 @@ class Server extends Base
 	
 	public function create(params:Dynamic) : HaqComponent
 	{
-        Lib.assert(!Lib.isPostback, "Component creating on the postback is not supported.");
+        Lib.assert(!page.isPostback, "Component creating on the postback is not supported.");
 		
 		var n = length;
 		var r = manager.createComponent(this, "factoryitem", Std.string(n), cast HashTools.hashify(params), getItemInnerNode(), true);

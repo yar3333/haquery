@@ -179,27 +179,27 @@ using haquery.StringTools;
 		
 		if (query == null)
 		{
-			return new HaqQuery(cssGlobalizer, prefixID, '', null);
+			return new HaqQuery(this, cssGlobalizer, '', null);
 		}
         
 		
 		if (Type.getClass(query) == HtmlNodeElement)
 		{
-			Lib.assert(!Lib.isPostback, "Calling of the HaqComponent.q() with HtmlNodeElement parameter do not possible on the postback.");
-			return new HaqQuery(cssGlobalizer, prefixID, "", [ query ]);
+			Lib.assert(!page.isPostback, "Calling of the HaqComponent.q() with HtmlNodeElement parameter do not possible on the postback.");
+			return new HaqQuery(this, cssGlobalizer, "", [ query ]);
 		}
 		
 		if (Type.getClass(query) == Array)
 		{
-			Lib.assert(!Lib.isPostback, "Calling of the HaqComponent.q() with Array parameter do not possible on the postback.");
-			return new HaqQuery(cssGlobalizer, prefixID, "", query);
+			Lib.assert(!page.isPostback, "Calling of the HaqComponent.q() with Array parameter do not possible on the postback.");
+			return new HaqQuery(this, cssGlobalizer, "", query);
 		}
         
 		if (Type.getClass(query) == String)
 		{
 			
 			var nodes = doc.find(cssGlobalizer.selector(query));
-			return new HaqQuery(cssGlobalizer, prefixID, query, nodes);
+			return new HaqQuery(this, cssGlobalizer, query, nodes);
 		}
         
 		throw new Exception("HaqComponent.q() error - 'query' parameter must be a String, HaqQuery or HtmlNodeElement.");
@@ -210,7 +210,7 @@ using haquery.StringTools;
 	 */
 	public function callSharedMethod(method:String, ?params:Array<Dynamic>) : Void
 	{
-		Lib.assert(Lib.isPostback, "HaqComponent.callSharedMethod() allowed on the postback only.");
+		Lib.assert(page.isPostback, "HaqComponent.callSharedMethod() allowed on the postback only.");
         
         Lib.addAjaxResponse(
 			  "haquery.client.Lib.page." + (fullID != "" ? "findComponent('" + fullID + "')." : "") + method
