@@ -29,7 +29,7 @@ class HaqQuery
     
     function jQueryCall(method)
     {
-        Lib.addAjaxResponse("$('" + query.replace('#', '#' + prefixID) + "')." + method + ";");
+        page.addAjaxResponse("$('" + query.replace('#', '#' + prefixID) + "')." + method + ";");
     }
     
 	public function new(component:HaqComponent, cssGlobalizer:HaqCssGlobalizer, query:String, nodes:Array<HtmlNodeElement>)

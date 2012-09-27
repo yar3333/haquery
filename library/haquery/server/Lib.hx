@@ -50,7 +50,6 @@ class Lib
 	public static var uploadedFiles(uploadedFiles_getter, null) : Hash<HaqUploadedFile>;
     
 	static var manager : HaqTemplateManager;
-	static var ajaxResponse : String;
 	
 	static var startTime : Float;
     
@@ -60,7 +59,6 @@ class Lib
 		
 		isRedirected = false;
 		isHeadersSent = false;
-		ajaxResponse = "";
 		params_cached = null;
 		uploadedFiles_cached = null;
 		db = null;
@@ -168,7 +166,7 @@ class Lib
 						var result = HaqComponentTools.callMethod(component, params.get('HAQUERY_METHOD'), Unserializer.run(params.get('HAQUERY_PARAMS')));
 						trace("HAQUERY FINISH");
 						Web.setHeader('Content-Type', 'text/plain; charset=utf-8');
-						print('HAQUERY_OK' + Serializer.run(result) + "\n" + ajaxResponse);
+						print('HAQUERY_OK' + Serializer.run(result) + "\n" + page.ajaxResponse);
 					}
 					else
 					{
@@ -513,11 +511,6 @@ class Lib
 		}
 		
 		return uploadsDir + "/" + s;
-	}
-	
-	public static inline function addAjaxResponse(jsCode:String) 
-	{
-		ajaxResponse += jsCode + "\n";
 	}
 	
     public static function getParamsString()
