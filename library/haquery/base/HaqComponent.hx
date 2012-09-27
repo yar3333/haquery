@@ -5,12 +5,10 @@ import haquery.common.HaqEvent;
 
 #if !client
 import haquery.server.Lib;
-import haquery.server.HaqPage;
 import haquery.server.HaqTemplateManager;
 private typedef Component = haquery.server.HaqComponent;
 #else
 import haquery.client.Lib;
-import haquery.client.HaqPage;
 import haquery.client.HaqTemplateManager;
 private typedef Component = haquery.client.HaqComponent;
 #end
@@ -20,8 +18,8 @@ using haquery.StringTools;
 class HaqComponent extends haquery.macros.HaqComponent
 {
     public var manager(default,null) : HaqTemplateManager;
+	
 	public var parent(default,null) : Component;
-	public var page(default,null) : HaqPage;
 
     /**
      * Component package name (for example: 'components.haquery.button').
@@ -69,7 +67,6 @@ class HaqComponent extends haquery.macros.HaqComponent
 		this.manager = manager;
 		this.fullTag = fullTag;
 		this.parent = parent;
-		this.page = parent != null ? parent.page : cast(this, HaqPage);
 		this.id = id;
 		
 		this.fullID = (parent!=null ? parent.prefixID : '') + id;

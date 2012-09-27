@@ -2,12 +2,7 @@ package haquery.server;
 
 class HaqBootstrap
 {
-	var config : HaqConfig;
-	
-	public function new(config:HaqConfig)
-	{
-		this.config = config;
-	}
+	public function new() {}
 	
 	public function start() : Void
 	{
