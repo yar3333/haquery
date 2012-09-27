@@ -10,11 +10,6 @@ using haquery.StringTools;
 
 class HaqPage extends HaqComponent
 {
-    /**
-     * Ajax ? calling server event handler : rendering HTML.
-     */
-    public var isPostback(default, null) : Bool;
-	
 	/**
 	 * Default value is "text/html; charset=utf-8".
 	 */
@@ -32,11 +27,17 @@ class HaqPage extends HaqComponent
      */
 	public var disableSystemHtmlInserts : Bool;
 	
+    /**
+     * Ajax ? calling server event handler : rendering HTML.
+     */
+    public var isPostback(default, null) : Bool;
+	
 	public var ajaxResponse(default, null) : String;
 	
 	public function new()
 	{
 		super();
+		isPostback = false;
 		ajaxResponse = "";
 	}
 	

@@ -145,7 +145,7 @@ class Lib
 			
 			profiler.begin("page");
 				trace("HAQUERY START " + (isCli() ? "CLI" : "WEB") + " pageFullTag = " + route.fullTag +  ", HTTP_HOST = " + getHttpHost() + ", clientIP = " + getClientIP() + ", pageID = " + route.pageID);
-				var page = manager.createPage(route.fullTag, !isCli() ? params : new Hash<String>());
+				var page = manager.createPage(route.fullTag, pageParams);
 				if (!isPostback)
 				{
 					var html = page.render();
