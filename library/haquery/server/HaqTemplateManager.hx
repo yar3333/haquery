@@ -98,7 +98,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		registerStyle(null, templatesCacheStyleFilePath);
 	}
 	
-	public function createPage(pageFullTag:String, attr:Hash<String>) : HaqPage
+	public function createPage(pageFullTag:String, attr:Hash<Dynamic>) : HaqPage
 	{
         var template : HaqTemplate = get(pageFullTag);
 		Lib.assert(template != null, "HAQUERY ERROR could't find page '" + pageFullTag + "'.");
@@ -113,14 +113,14 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		}
 	}
 	
-	public function createComponent(parent:HaqComponent, tag:String, id:String, attr:Hash<String>, parentNode:HtmlNodeElement, isCustomRender:Bool) : HaqComponent
+	public function createComponent(parent:HaqComponent, tag:String, id:String, attr:Hash<Dynamic>, parentNode:HtmlNodeElement, isCustomRender:Bool) : HaqComponent
 	{
         var template = Lib.config.templateSelector.findTemplateToInstance(this, parent, tag);
 		Lib.assert(template != null, "HAQUERY ERROR could't find component '" + tag + "' for parent '" + parent.fullTag + "'.");
 		return newComponent(template, parent, id, attr, parentNode, isCustomRender);
 	}
 	
-	function newComponent(template:HaqTemplate, parent:HaqComponent, id:String, attr:Hash<String>, parentNode:HtmlNodeElement, isCustomRender:Bool) : HaqComponent
+	function newComponent(template:HaqTemplate, parent:HaqComponent, id:String, attr:Hash<Dynamic>, parentNode:HtmlNodeElement, isCustomRender:Bool) : HaqComponent
 	{
         Lib.profiler.begin('newComponent');
             var r : HaqComponent = Type.createInstance(Type.resolveClass(template.serverClassName), []);

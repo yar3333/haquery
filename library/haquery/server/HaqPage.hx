@@ -1,5 +1,6 @@
 package haquery.server;
 
+import haquery.common.HaqCookie;
 import haxe.htmlparser.HtmlNodeElement;
 import haxe.htmlparser.HtmlNodeText;
 import haquery.common.HaqDefines;
@@ -35,6 +36,10 @@ class HaqPage extends HaqComponent
 	public var ajaxResponse(default, null) : String;
 	
 	public var params(default, null) : Hash<String>;
+	
+	public var cookie(default, null) : HaqCookie;
+	
+	public var uploadedFiles(default, null) : Hash<HaqUploadedFile>;
 	
 	public function new()
 	{

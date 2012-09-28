@@ -18,7 +18,7 @@ class Server extends Base
     
     @shared function upload() : { errorCode:Int }
     {
-		var file = Lib.uploadedFiles.get(prefixID + "file");
+		var file = page.uploadedFiles.get(prefixID + "file");
 		var customResult = new Hash<Dynamic>();
         event_upload.call({ file:file });
         return { errorCode:Type.enumIndex(file.error) };

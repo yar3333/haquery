@@ -1,11 +1,9 @@
 package haquery.server;
 
 #if php
-private typedef HaxeLib = php.Lib;
+private typedef NativeLib = php.Lib;
 #elseif neko
-private typedef HaxeLib = neko.Lib;
-#elseif cpp
-private typedef HaxeLib = cpp.Lib;
+private typedef NativeLib = neko.Lib;
 #end
 
 #if php
@@ -37,17 +35,10 @@ using haquery.StringTools;
 class Lib
 {
 	public static var config : HaqConfig;
-	public static var cookie : HaqCookie;
     public static var profiler : HaqProfiler;
 	public static var db : HaqDb;
 	public static var isRedirected : Bool;
     public static var isHeadersSent(default, null) : Bool;
-    
-	static var params_cached : Hash<String>;
-	public static var params(params_getter, null) : Hash<String>;
-	
-	static var uploadedFiles_cached : Hash<HaqUploadedFile>;
-	public static var uploadedFiles(uploadedFiles_getter, null) : Hash<HaqUploadedFile>;
     
 	static var manager : HaqTemplateManager;
 	
@@ -59,10 +50,7 @@ class Lib
 		
 		isRedirected = false;
 		isHeadersSent = false;
-		params_cached = null;
-		uploadedFiles_cached = null;
 		db = null;
-		cookie = null;
 		
 		#if neko
 		Sys.setCwd(getCwd());
@@ -77,7 +65,7 @@ class Lib
 			
 			try
 			{
-				var route = new HaqRouter(HaqDefines.folders.pages).getRoute(!isCli() ? params.get('route') : HaqCli.getUrl());
+				var route = new HaqRouter(HaqDefines.folders.pages).getRoute(!isCli() ? Web.getParams().get('route') : HaqCli.getUrl());
 				
 				var bootstraps = loadBootstraps(route.path);
 				
@@ -120,8 +108,6 @@ class Lib
 				db = new HaqDb(config.databaseConnectionString, config.sqlLogLevel, profiler);
 			}
 			
-			cookie = new HaqCookie();
-			
 			for (bootstrap in bootstraps)
 			{
 				bootstrap.start();
@@ -134,18 +120,21 @@ class Lib
 				profiler.end();
 			}
 			
-			var isPostback = !isCli() && params.get('HAQUERY_POSTBACK') != null;
-			
-			var pageParams = new Hash<String>();
-			pageParams.set("isPostback", isPostback ? "true" : "false");
-			if (route.pageID != null)
-			{
-				pageParams.set("pageID", route.pageID);
-			}
+			var cookie = new HaqCookie();
+			var isPostback = !isCli() && Web.getParams().get('HAQUERY_POSTBACK') != null;
+			var webParams = !isCli() ? Web.getParams() : HaqCli.getParams();
 			
 			profiler.begin("page");
 				trace("HAQUERY START " + (isCli() ? "CLI" : "WEB") + " pageFullTag = " + route.fullTag +  ", HTTP_HOST = " + getHttpHost() + ", clientIP = " + getClientIP() + ", pageID = " + route.pageID);
+				
+				var pageParams = new Hash<Dynamic>();
+				pageParams.set("isPostback", isPostback);
+				pageParams.set("pageID", route.pageID);
+				pageParams.set("params", webParams);
+				pageParams.set("cookie", cookie);
+				pageParams.set("uploadedFiles", getUploadedFiles(webParams));
 				var page = manager.createPage(route.fullTag, pageParams);
+				
 				if (!isPostback)
 				{
 					var html = page.render();
@@ -159,11 +148,11 @@ class Lib
 				else
 				{
 					page.forEachComponent('preEventHandlers');
-					var componentID = params.get('HAQUERY_COMPONENT');
+					var componentID = webParams.get('HAQUERY_COMPONENT');
 					var component = page.findComponent(componentID);
 					if (component != null)
 					{
-						var result = HaqComponentTools.callMethod(component, params.get('HAQUERY_METHOD'), Unserializer.run(params.get('HAQUERY_PARAMS')));
+						var result = HaqComponentTools.callMethod(component, webParams.get('HAQUERY_METHOD'), Unserializer.run(webParams.get('HAQUERY_PARAMS')));
 						trace("HAQUERY FINISH");
 						Web.setHeader('Content-Type', 'text/plain; charset=utf-8');
 						print('HAQUERY_OK' + Serializer.run(result) + "\n" + page.ajaxResponse);
@@ -178,7 +167,7 @@ class Lib
 			bootstraps.reverse();
 			for (bootstrap in bootstraps)
 			{
-				bootstrap.finish();
+				bootstrap.finish(page);
 			}
 			
 			if (db != null)
@@ -275,7 +264,7 @@ class Lib
                 // TODO: trace fix
 				/*if (!isPostback)
 				{
-					HaxeLib.println("<script>if (console) console.debug(decodeURIComponent(\"" + StringTools.urlEncode("SERVER " + text) + "\"));</script>");
+					NativeLib.println("<script>if (console) console.debug(decodeURIComponent(\"" + StringTools.urlEncode("SERVER " + text) + "\"));</script>");
 				}*/
             }
         }
@@ -363,38 +352,19 @@ class Lib
 		#end
     }
 	
-	static function params_getter() : Hash<String>
+	static function getUploadedFiles(params:Hash<String>) : Hash<HaqUploadedFile>
 	{
-		if (params_cached == null)
-		{
-			fillParamsAndUploadedFiles();
-		}
-		return params_cached;
-	}
-	
-	static function uploadedFiles_getter() : Hash<HaqUploadedFile>
-	{
-		if (uploadedFiles_cached == null)
-		{
-			fillParamsAndUploadedFiles();
-		}
-		return uploadedFiles_cached;
-	}
-	
-	static function fillParamsAndUploadedFiles()
-	{
+		var uploadedFiles = new Hash<HaqUploadedFile>();
+		
 		if (!isCli())
 		{
-			params_cached = Web.getParams();
-			uploadedFiles_cached = new Hash<HaqUploadedFile>();
-			
 			#if php
 			
 			var nativeFiles : Hash<php.NativeArray> = php.Lib.hashOfAssociativeArray(untyped __var__("_FILES"));
 			for (id in nativeFiles.keys())
 			{
 				var file : php.NativeArray = nativeFiles.get(id);
-				uploadedFiles_cached.set(id, new HaqUploadedFile(
+				uploadedFiles.set(id, new HaqUploadedFile(
 					 file[untyped "tmp_name"]
 					,file[untyped "name"]
 					,file[untyped "size"]
@@ -422,14 +392,14 @@ class Lib
 							if (lastFileName != null)
 							{
 								trace("set = " + lastPartName + ", " + lastFileName);
-								uploadedFiles_cached.set(
+								uploadedFiles.set(
 									lastPartName
 								   ,new HaqUploadedFile(lastTempFileName, lastFileName, FileSystem.stat(lastTempFileName).size, error)
 								);
 							}
 							else
 							{
-								params_cached.set(lastPartName, lastParamValue);
+								params.set(lastPartName, lastParamValue);
 							}
 						}
 						
@@ -471,24 +441,21 @@ class Lib
 			{
 				if (lastFileName != null)
 				{
-					uploadedFiles_cached.set(
+					uploadedFiles.set(
 						lastPartName
 					   ,new HaqUploadedFile(lastTempFileName, lastFileName, FileSystem.stat(lastTempFileName).size, error)
 					);
 				}
 				else
 				{
-					params_cached.set(lastPartName, lastParamValue);
+					params.set(lastPartName, lastParamValue);
 				}
 			}
 			
 			#end
 		}
-		else
-		{
-			params_cached = HaqCli.getParams();
-			uploadedFiles_cached = new Hash<HaqUploadedFile>();
-		}
+		
+		return uploadedFiles;
 	}
 	
 	static function getTempUploadedFilePath()
@@ -536,6 +503,6 @@ class Lib
 	public static inline function getClientHeader(name:String) : String { return Web.getClientHeader(name); }	
 	public static inline function getURI() : String { return Web.getURI();  }
 	public static inline function setReturnCode(status:Int) : Void { Web.setReturnCode(status); }
-    public static inline function print( v : Dynamic ) : Void { isHeadersSent = true; HaxeLib.print(v); }
-	public static inline function println( v : Dynamic ) : Void { isHeadersSent = true; HaxeLib.println(v); }
+    public static inline function print( v : Dynamic ) : Void { isHeadersSent = true; NativeLib.print(v); }
+	public static inline function println( v : Dynamic ) : Void { isHeadersSent = true; NativeLib.println(v); }
 }
