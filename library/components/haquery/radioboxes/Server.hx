@@ -33,7 +33,7 @@ class Server extends HaqComponent
         }
         else
         {
-            return Lib.params.get(prefixID + "v");
+            return page.params.get(prefixID + "v");
         }
     }
     

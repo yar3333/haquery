@@ -9,7 +9,7 @@ class HaqBootstrap
 		// nothing to do
 	}
 	
-	public function finish() : Void
+	public function finish(page:HaqPage) : Void
 	{
 		// nothing to do
 	}

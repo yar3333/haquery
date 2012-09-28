@@ -175,9 +175,9 @@ class HaqQuery
             if (page.isPostback && node.name == 'textarea' && node.hasAttribute('id'))
             {
                 var fullID = prefixID + node.getAttribute('id');
-                if (Lib.params.exists(fullID))
+                if (page.params.exists(fullID))
 				{
-					return Lib.params.get(fullID);
+					return page.params.get(fullID);
 				}
             }
             return node.innerHTML;
@@ -229,9 +229,9 @@ class HaqQuery
                 if (page.isPostback && node.hasAttribute('id'))
                 {
                     var fullID = prefixID + node.getAttribute('id');
-                    if (Lib.params.exists(fullID))
+                    if (page.params.exists(fullID))
 					{
-						return Lib.params.get(fullID);
+						return page.params.get(fullID);
 					}
                 }
                 
@@ -256,7 +256,7 @@ class HaqQuery
 					else
 					{
 						var fullID = prefixID + node.getAttribute('id');
-						return Std.bool(Lib.params.get(fullID));
+						return Std.bool(page.params.get(fullID));
 					}
                 }
                 
@@ -271,9 +271,9 @@ class HaqQuery
                     if (re.match(query))
                     {
                         var fullID = prefixID + re.matched(1);
-                        if (Lib.params.exists(fullID))
+                        if (page.params.exists(fullID))
 						{
-							return Lib.params.get(fullID);
+							return page.params.get(fullID);
 						}
                     }
                 }
@@ -287,9 +287,9 @@ class HaqQuery
             if (page.isPostback && node.hasAttribute('id'))
             {
                 var fullID = prefixID + node.getAttribute('id');
-				if (Lib.params.exists(fullID))
+				if (page.params.exists(fullID))
 				{
-					Lib.params.set(fullID, val);
+					page.params.set(fullID, val);
 				}
             }
             
