@@ -7,7 +7,7 @@ import haxe.htmlparser.HtmlNodeElement;
 
 class Server extends Base
 {
-	override public function construct(manager:HaqTemplateManager, fullTag:String, parent:HaqComponent, id:String, doc:HtmlDocument, params:Hash<String>, innerNode:HtmlNodeElement, isInnerComponent:Bool):Void 
+	override public function construct(manager:HaqTemplateManager, fullTag:String, parent:HaqComponent, id:String, doc:HtmlDocument, params:Hash<Dynamic>, innerNode:HtmlNodeElement, isInnerComponent:Bool):Void 
 	{
         var xml = Tools.applyHtmlParams(innerNode.innerHTML, params);
         super.construct(manager, fullTag, parent, id, xml, params, null, isInnerComponent);

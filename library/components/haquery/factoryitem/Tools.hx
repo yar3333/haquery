@@ -4,7 +4,7 @@ import haxe.htmlparser.HtmlDocument;
 
 class Tools
 {
-    static public function applyHtmlParams(html:String, params:Hash<String>) : HtmlDocument
+    static public function applyHtmlParams(html:String, params:Hash<Dynamic>) : HtmlDocument
     {
         if (params != null)
 		{
@@ -15,7 +15,7 @@ class Tools
                 var const = re.matched(1);
                 if (params.exists(const))
                 {
-                    return params.get(const);
+					return Std.string(params.get(const));
                 }
                 return re.matched(0);
             });

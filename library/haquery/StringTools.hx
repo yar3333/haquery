@@ -75,20 +75,6 @@ class StringTools
 
 	public static inline function isEOF( c : Int ) : Bool { return std.StringTools.isEOF(c); }
     
-	public static inline function jsonEncode(o:Dynamic) : String
-	{
-		return hxjson2.JSON.encode(o);
-	}		
-	
-	public static inline function jsonDecode(s:String) : Dynamic
-	{
-		#if js
-		return js.Lib.eval("(" + s + ")");
-		#else
-		return hxjson2.JSON.decode(s);
-	    #end
-	}		
-	
 	public static inline function hexdec(s : String) : Int
 	{
 		#if php

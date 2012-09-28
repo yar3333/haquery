@@ -47,7 +47,7 @@ using haquery.StringTools;
 		visible = true;
 	}
     
-    public function construct(manager:HaqTemplateManager, fullTag:String, parent:HaqComponent, id:String, doc:HtmlDocument, params:Hash<String>, innerNode:HtmlNodeElement, isInnerComponent:Bool) : Void
+    public function construct(manager:HaqTemplateManager, fullTag:String, parent:HaqComponent, id:String, doc:HtmlDocument, params:Hash<Dynamic>, innerNode:HtmlNodeElement, isInnerComponent:Bool) : Void
     {
 		super.commonConstruct(manager, fullTag, parent, id);
         
@@ -82,7 +82,7 @@ using haquery.StringTools;
         }
     }
 	
-	function loadFieldValues(params:Hash<String>) : Void
+	function loadFieldValues(params:Hash<Dynamic>) : Void
 	{
 		var fields = HaqComponentTools.getFieldsToLoadParams(this);
 		
@@ -95,8 +95,8 @@ using haquery.StringTools;
 				var field = fields.exists(k) ? fields.get(k) : fields.get(k + "_");
 				switch (Type.typeof(Reflect.field(this, field)))
 				{
-					case ValueType.TInt:    v = Std.parseInt(v);
-					case ValueType.TFloat:  v = Std.parseFloat(v);
+					case ValueType.TInt:    v = Std.is(v, Int) ? v : Std.parseInt(v);
+					case ValueType.TFloat:  v = Std.is(v, Float) ? v : Std.parseFloat(v);
 					case ValueType.TBool:   v = Std.bool(v);
 					default:                // nothing to do
 				}
