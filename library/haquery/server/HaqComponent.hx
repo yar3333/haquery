@@ -69,17 +69,6 @@ using haquery.StringTools;
 		Lib.profiler.begin("createChildComponents");
 		createChildComponents();
 		Lib.profiler.end();
-		
-        if (Reflect.isFunction(Reflect.field(this, 'init')))
-        {
-			Lib.profiler.begin("init");
-            if (Lib.config.isTraceComponent)
-			{
-				trace("HAQUERY [" + fullID + "] " + fullTag + ".init...");
-			}
-			Reflect.callMethod(this, Reflect.field(this, 'init'), []);
-			Lib.profiler.end();
-        }
     }
 	
 	function loadFieldValues(params:Hash<Dynamic>) : Void
