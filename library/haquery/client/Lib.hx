@@ -23,7 +23,9 @@ class Lib
 		cookie = new HaqCookie();
 			
 		var manager = new HaqTemplateManager();
-        var page = manager.createPage(pageFullTag);
+        
+		var page = manager.createPage(pageFullTag);
+		
 		page.forEachComponent("preInit", true);
 		page.forEachComponent("init", false);
     }

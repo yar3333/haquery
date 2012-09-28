@@ -133,7 +133,11 @@ class Lib
 				pageParams.set("params", webParams);
 				pageParams.set("cookie", cookie);
 				pageParams.set("uploadedFiles", getUploadedFiles(webParams));
+				
 				var page = manager.createPage(route.fullTag, pageParams);
+				
+				page.forEachComponent("preInit", true);
+				page.forEachComponent("init", false);
 				
 				if (!isPostback)
 				{
