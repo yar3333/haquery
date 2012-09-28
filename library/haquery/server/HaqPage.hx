@@ -34,6 +34,8 @@ class HaqPage extends HaqComponent
 	
 	public var ajaxResponse(default, null) : String;
 	
+	public var params(default, null) : Hash<String>;
+	
 	public function new()
 	{
 		super();

@@ -39,7 +39,7 @@ class Server extends HaqComponent
 		}
     }
 	
-	override function loadFieldValues(params:Hash<String>) 
+	override function loadFieldValues(params:Hash<Dynamic>) 
 	{
 		super.loadFieldValues(params);
 		

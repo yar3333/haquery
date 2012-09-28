@@ -21,7 +21,7 @@ class Server extends Base
 		event_click.call(e);
 	}
 	
-	override function loadFieldValues(params:Hash<String>) 
+	override function loadFieldValues(params:Hash<Dynamic>) 
 	{
 		super.loadFieldValues(params);
 		
