@@ -1,10 +1,8 @@
 package haquery.tools.tasks;
 
 import neko.Lib;
-
 import sys.io.File;
 import haxe.io.Path;
-
 import haquery.common.HaqDefines;
 import haquery.server.FileSystem;
 import haquery.tools.Excludes;
@@ -13,12 +11,9 @@ import haquery.tools.JSMin;
 import haquery.tools.PackageTree;
 import haquery.tools.FlashDevelopProject;
 import haquery.tools.trm.TrmGenerator;
-
 import haquery.base.HaqTemplateParser.HaqTemplateNotFoundException;
 import haquery.base.HaqTemplateParser.HaqTemplateRecursiveExtendException;
-
 using haquery.StringTools;
-using haquery.HashTools;
 
 class Build 
 {
@@ -116,10 +111,10 @@ class Build
 			}
 		}
 		
-		var arrServerClassNames = Lambda.array(serverClassNames.keysIterable());
+		var arrServerClassNames = Lambda.array({ iterator:serverClassNames.keys });
 		arrServerClassNames.sort(strcmp);
 		
-		var arrClientClassNames = Lambda.array(clientClassNames.keysIterable());
+		var arrClientClassNames = Lambda.array({ iterator:clientClassNames.keys });
 		arrClientClassNames.sort(strcmp);
 		
 		fo.writeString("#if !client\n\n");
@@ -200,7 +195,7 @@ class Build
 		File.saveContent(
 			 serverPath + "/templates.dat"
 			,Lambda.map(
-				 Lambda.filter(lastMods.keysIterable(), function(fullTag) return !Lambda.has(manager.unusedTemplates, fullTag))
+				 Lambda.filter({ iterator:lastMods.keys }, function(fullTag) return !Lambda.has(manager.unusedTemplates, fullTag))
 				,function(fullTag) return fullTag + "\t" + Math.round(lastMods.get(fullTag).getTime() / 10000.0)
 			 ).join("\n")
 		);

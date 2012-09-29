@@ -4,7 +4,7 @@ import haquery.Exception;
 import haxe.Stack;
 import haxe.Firebug;
 import haquery.client.HaqInternals;
-import haquery.common.HaqCookie;
+import haquery.client.HaqCookie;
 
 using haquery.StringTools;
 

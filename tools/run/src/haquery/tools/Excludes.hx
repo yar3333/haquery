@@ -3,9 +3,7 @@ package haquery.tools;
 import haquery.server.FileSystem;
 import haxe.io.Path;
 import sys.io.File;
-
 using haquery.StringTools;
-using haquery.HashTools;
 
 class Excludes 
 {
@@ -85,7 +83,7 @@ class Excludes
 		srcPath = FileSystem.fullPath(srcPath).replace("\\", "/").rtrim("/") + "/";
 		
 		var r = Reflect.copy(reGlobals);
-		for (localPath in reLocals.keysIterable())
+		for (localPath in reLocals.keys())
 		{
 			if (localPath == srcPath)
 			{

@@ -5,9 +5,7 @@ import haquery.common.HaqDefines;
 import haquery.server.FileSystem;
 import haquery.tools.HaqTemplate;
 import haxe.htmlparser.HtmlNodeElement;
-
 using haquery.StringTools;
-using haquery.HashTools;
 
 class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 {
@@ -163,7 +161,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 	public function getStaticTemplateDataForJs() : String
 	{
 		var r = "\nhaquery.client.HaqInternals.templates = haquery.HashTools.hashify({\n";
-		r += Lambda.map(templates.keysIterable(), function(fullTag) {
+		r += Lambda.map({ iterator:templates.keys }, function(fullTag) {
 			var template = get(fullTag);
 			var importsParam = "[" + Lambda.map(template.imports, function(s) return "'" + s + "'").join(",") + "]";
 			return "'" + fullTag + "' : new haquery.client.HaqTemplate(" + importsParam + ", '" + template.clientClassName + "')";
