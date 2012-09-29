@@ -1,50 +1,61 @@
 package haquery.server;
 
-import haquery.common.HaqCookie;
 import haxe.htmlparser.HtmlNodeElement;
 import haxe.htmlparser.HtmlNodeText;
 import haquery.common.HaqDefines;
 import haquery.server.HaqComponent;
+import haquery.server.HaqCookie;
 import haquery.server.FileSystem;
 import haquery.server.Lib;
 using haquery.StringTools;
 
+#if php
+import php.Web;
+#elseif neko
+import neko.Web;
+#end
+
 class HaqPage extends HaqComponent
 {
-	/**
-	 * Default value is "text/html; charset=utf-8".
-	 */
-    public var contentType = "text/html; charset=utf-8";
-    
+	public var uri(default, null) : String;
+	
     /**
      * Last unexist URL part will be placed to this var. 
      * For example, if your request "http://site.com/news/123"
      * then pageID will be "123".
      */
     public var pageID(default, null) : String;
+    
+	/**
+     * false => rendering html, true => calling server event handler.
+     */
+    public var isPostback(default, null) : Bool;
+
+	public var params(default, null) : Hash<String>;
 	
+	public var cookie(default, null) : HaqCookie;
+	
+	public var headers(default, null) : HaqHeaders;
+	
+	public var uploadedFiles(default, null) : Hash<HaqUploadedFile>;
+	
+	/**
+	 * Default value is "text/html; charset=utf-8".
+	 */
+    public var contentType = "text/html; charset=utf-8";
+    
     /**
      * Disable special CSS and JS inserts to your HTML pages.
      */
 	public var disableSystemHtmlInserts : Bool;
 	
-    /**
-     * Ajax ? calling server event handler : rendering HTML.
-     */
-    public var isPostback(default, null) : Bool;
-	
 	public var ajaxResponse(default, null) : String;
 	
-	public var params(default, null) : Hash<String>;
-	
-	public var cookie(default, null) : HaqCookie;
-	
-	public var uploadedFiles(default, null) : Hash<HaqUploadedFile>;
+	public var returnCode : Int = 0;
 	
 	public function new()
 	{
 		super();
-		isPostback = false;
 		ajaxResponse = "";
 	}
 	
@@ -165,13 +176,12 @@ class HaqPage extends HaqComponent
     {
         if (isPostback)
 		{
-			addAjaxResponse("haquery.client.page.redirect('" + url.addcslashes() + "');");
+			addAjaxResponse("page.redirect('" + url.addcslashes() + "');");
 		}
         else
 		{
-			Lib.setReturnCode(302); // Moved Temporarily
-			Lib.setHeader("Location", url);
-			Lib.isRedirected = true;
+			returnCode = 302; // Moved Temporarily
+			headers.set("Location", url);
 		}
     }
 
@@ -183,7 +193,7 @@ class HaqPage extends HaqComponent
 		}
         else
 		{
-			redirect(Lib.getURI());
+			redirect(uri);
 		}
 	}
 	

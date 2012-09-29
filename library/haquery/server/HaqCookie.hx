@@ -1,4 +1,4 @@
-package haquery.common;
+package haquery.server;
 
 #if php
 import php.Web;
@@ -8,28 +8,27 @@ import neko.Web;
 
 class HaqCookie
 {
-    var cookies : Hash<String>;
+    var isPostback : Bool;
 	
-	public function new() : Void
+	var cookies : Hash<String>;
+	
+	public function new(isPostback:Bool) : Void
 	{
-		#if !client
-		cookies = Web.getCookies();
-		#else
-		cookies = js.Cookie.all();
-		#end
+		this.isPostback = isPostback;
+		this.cookies = Web.getCookies();
 	}
 	
-	public function all() : Hash<String>
+	public inline function all() : Hash<String>
     {
 		return cookies;
     }
     
-    public function exists(name:String) : Bool
+    public inline function exists(name:String) : Bool
     {
 		return cookies.exists(name);
     }
     
-    public function get(name:String) : String
+    public inline function get(name:String) : String
     {
 		return cookies.get(name);
     }
@@ -37,25 +36,15 @@ class HaqCookie
 	public function set(name:String, value:String, ?expire:Date, ?path:String, ?domain:String) : Void
 	{
 		cookies.set(name, value);
-		
-		#if !client
 		Web.setCookie(name, value, expire, domain, path);
-		#else
-		js.Cookie.set(name, value, expire != null ? Std.int((expire.getTime() - Date.now().getTime()) / 1000) : null, path, domain);
-		#end
 	}
     
     public function remove(name:String, ?path:String, ?domain:String) : Void
     {
-        cookies.remove(name);
-		
-		#if !client
 		if (exists(name))
 		{
+			cookies.remove(name);
 			set(name, null, new Date(2000,1,1,0,0,0), domain, path);
 		}
-        #else
-		js.Cookie.remove(name, path, domain);
-        #end
     }
 }

@@ -11,9 +11,7 @@ import haquery.server.Lib;
 import haxe.htmlparser.HtmlNodeElement;
 import haxe.Serializer;
 import haxe.Unserializer;
-
 using haquery.StringTools;
-using haquery.HashTools;
 
 class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 {
@@ -235,8 +233,8 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
     {
 		var tagIDs = fillTagIDs(page, new Hash<Array<String>>());
 		
-		var s = "haquery.client.HaqInternals.tagIDs = haquery.HashTools.hashify({\n"
-		      + Lambda.map(tagIDs.keysIterable(), function(tag) {
+		var s = "haquery.client.HaqInternals.tagIDs = haquery.Std.hash({\n"
+		      + Lambda.map({ iterator:tagIDs.keys }, function(tag) {
 					return "'" + tag + "':" + array2json(tagIDs.get(tag));
 				}).join(",\n")
 			  + "\n});\n";
@@ -250,15 +248,15 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 	
 	function getStaticClientCode() : String
 	{
-		var s = "haquery.client.HaqInternals.templates = haquery.HashTools.hashify({\n"
-		      + Lambda.map(templates.keysIterable(), function(tag) {
+		var s = "haquery.client.HaqInternals.templates = haquery.Std.hash({\n"
+		      + Lambda.map({ iterator:templates.keys }, function(tag) {
 					var t = get(tag);
 					return "'" + tag + "':"
 						 + "{" 
 							 + "config:" + array2json([ t.extend ].concat(t.imports))
 							 + ", "
 							 + "serverHandlers:haquery.HashTools.hashify({" 
-								+ Lambda.map(t.serverHandlers.keysIterable(), function(elemID) {
+							 + Lambda.map({ iterator:t.serverHandlers.keys }, function(elemID) {
 									return "'" + elemID + "':" + array2json(t.serverHandlers.get(elemID));
 								  }).join(",")
 							 + "})"

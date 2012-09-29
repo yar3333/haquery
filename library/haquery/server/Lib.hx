@@ -19,12 +19,12 @@ import haxe.Stack;
 import haxe.FirePHP;
 import haxe.Serializer;
 import haxe.Unserializer;
-import haquery.common.HaqCookie;
 import haquery.common.HaqDumper;
 import haquery.common.HaqDefines;
 import haquery.server.db.HaqDb;
 import haquery.server.FileSystem;
 import haquery.server.HaqConfig;
+import haquery.server.HaqCookie;
 import haquery.server.HaqRouter;
 import haquery.server.HaqProfiler;
 import haquery.server.HaqUploadedFile.HaqUploadError;
@@ -120,21 +120,22 @@ class Lib
 				profiler.end();
 			}
 			
-			var cookie = new HaqCookie();
 			var isPostback = !isCli() && Web.getParams().get('HAQUERY_POSTBACK') != null;
-			var webParams = !isCli() ? Web.getParams() : HaqCli.getParams();
+			var params = !isCli() ? Web.getParams() : HaqCli.getParams();
 			
 			profiler.begin("page");
 				trace("HAQUERY START " + (isCli() ? "CLI" : "WEB") + " pageFullTag = " + route.fullTag +  ", HTTP_HOST = " + getHttpHost() + ", clientIP = " + getClientIP() + ", pageID = " + route.pageID);
 				
-				var pageParams = new Hash<Dynamic>();
-				pageParams.set("isPostback", isPostback);
-				pageParams.set("pageID", route.pageID);
-				pageParams.set("params", webParams);
-				pageParams.set("cookie", cookie);
-				pageParams.set("uploadedFiles", getUploadedFiles(webParams));
-				
-				var page = manager.createPage(route.fullTag, pageParams);
+				var request = {
+					  uri: Web.getURI()
+					, pageID: route.pageID
+					, isPostback: isPostback
+					, params: params
+					, cookie: new HaqCookie(isPostback)
+					, headers: new HaqHeaders(isPostback)
+					, uploadedFiles: getUploadedFiles(params)
+				};
+				var page = manager.createPage(route.fullTag, Std.hash(request));
 				
 				page.forEachComponent("preInit", true);
 				page.forEachComponent("init", false);
@@ -152,11 +153,11 @@ class Lib
 				else
 				{
 					page.forEachComponent('preEventHandlers');
-					var componentID = webParams.get('HAQUERY_COMPONENT');
+					var componentID = params.get('HAQUERY_COMPONENT');
 					var component = page.findComponent(componentID);
 					if (component != null)
 					{
-						var result = HaqComponentTools.callMethod(component, webParams.get('HAQUERY_METHOD'), Unserializer.run(webParams.get('HAQUERY_PARAMS')));
+						var result = HaqComponentTools.callMethod(component, params.get('HAQUERY_METHOD'), Unserializer.run(params.get('HAQUERY_PARAMS')));
 						trace("HAQUERY FINISH");
 						Web.setHeader('Content-Type', 'text/plain; charset=utf-8');
 						print('HAQUERY_OK' + Serializer.run(result) + "\n" + page.ajaxResponse);
@@ -341,9 +342,9 @@ class Lib
 		throw "File '" + Path.withoutDirectory(path) + "' is not found.";
 	}
 	
-	public static function getClientIP() : String
+	static function getClientIP() : String
 	{
-		var realIP = getClientHeader("X-Real-IP");
+		var realIP = Web.getClientHeader("X-Real-IP");
 		return realIP != null && realIP != "" ? realIP : Web.getClientIP();
 	}
 	
@@ -352,7 +353,7 @@ class Lib
 		#if php
 		return untyped __var__("_SERVER", "HTTP_HOST"); 
 		#else
-		return getClientHeader("Host");
+		return Web.getClientHeader("Host");
 		#end
     }
 	
@@ -501,12 +502,12 @@ class Lib
 		#end
 	}
 	
-	public static function getCwd() { return Web.getCwd().replace("\\", "/").rtrim("/"); }
+	/*public*/ static function getCwd() { return Web.getCwd().replace("\\", "/").rtrim("/"); }
 	
-	public static inline function setHeader(name:String, value:String) : Void { Web.setHeader(name, value); }	
-	public static inline function getClientHeader(name:String) : String { return Web.getClientHeader(name); }	
-	public static inline function getURI() : String { return Web.getURI();  }
-	public static inline function setReturnCode(status:Int) : Void { Web.setReturnCode(status); }
-    public static inline function print( v : Dynamic ) : Void { isHeadersSent = true; NativeLib.print(v); }
-	public static inline function println( v : Dynamic ) : Void { isHeadersSent = true; NativeLib.println(v); }
+	//public static inline function setHeader(name:String, value:String) : Void { Web.setHeader(name, value); }	
+	//public static inline function getClientHeader(name:String) : String { return Web.getClientHeader(name); }	
+	/*public */static inline function getURI() : String { return Web.getURI();  }
+	/*public */static inline function setReturnCode(status:Int) : Void { Web.setReturnCode(status); }
+    /*public */static inline function print( v : Dynamic ) : Void { isHeadersSent = true; NativeLib.print(v); }
+	/*public */static inline function println( v : Dynamic ) : Void { isHeadersSent = true; NativeLib.println(v); }
 }

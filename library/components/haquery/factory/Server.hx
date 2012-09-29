@@ -1,11 +1,10 @@
 package components.haquery.factory;
 
 import haquery.Exception;
-import haquery.HashTools;
 import haquery.server.HaqComponent;
 import haquery.server.Lib;
+import haquery.Std;
 import haxe.htmlparser.HtmlNodeElement;
-
 using haquery.StringTools;
 
 class Server extends Base
@@ -30,7 +29,7 @@ class Server extends Base
         Lib.assert(!page.isPostback, "Component creating on the postback is not supported.");
 		
 		var n = length;
-		var r = manager.createComponent(this, "factoryitem", Std.string(n), cast HashTools.hashify(params), getItemInnerNode(), true);
+		var r = manager.createComponent(this, "factoryitem", Std.string(n), Std.hash(params), getItemInnerNode(), true);
 		q('#length').val(n + 1);
 		return r;
 	}

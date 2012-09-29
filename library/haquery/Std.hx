@@ -52,4 +52,17 @@ class Std
 		
 		return value;
 	}
+	
+    /**
+     * Make hash from object's fields.
+     */
+	public static function hash(obj:Dynamic) : Hash<Dynamic>
+    {
+       var r = new Hash<Dynamic>();
+       for (key in Reflect.fields(obj))
+       {
+          r.set(key, Reflect.field(obj, key));
+       }
+       return r;
+    }
 }

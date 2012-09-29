@@ -1,9 +1,8 @@
 package haquery.tools.tasks;
 
+import neko.Lib;
 import neko.zip.Reader;
-
 import haquery.server.FileSystem;
-import haquery.server.Lib;
 import haxe.io.Path;
 import sys.io.File;
 

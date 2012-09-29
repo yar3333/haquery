@@ -1,7 +1,7 @@
 package haquery.client;
 
 import haquery.client.HaqComponent;
-import haquery.common.HaqCookie;
+import haquery.client.HaqCookie;
 
 class HaqPage extends HaqComponent
 {

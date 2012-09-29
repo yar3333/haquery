@@ -3,9 +3,7 @@ package haquery.tools;
 import haquery.server.FileSystem;
 import haquery.Std;
 import sys.io.File;
-
 using haquery.StringTools;
-using haquery.HashTools;
 
 class FlashDevelopProject 
 {
@@ -218,7 +216,7 @@ class FlashDevelopProject
 			params.push("-cp"); params.push(path.rtrim("/"));
         }
         
-		for (name in libPaths.keysIterable())
+		for (name in libPaths.keys())
         {
 			params.push("-lib"); params.push(name);
 		}

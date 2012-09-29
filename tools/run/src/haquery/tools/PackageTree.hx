@@ -1,7 +1,6 @@
 package haquery.tools;
 
 using haquery.StringTools;
-using haquery.HashTools;
 
 class PackageTree 
 {
@@ -40,7 +39,7 @@ class PackageTree
 	
 	public function toString()
 	{
-		var paths = Lambda.map(children.keysIterable(), function(name)
+		var paths = Lambda.map({ iterator:children.keys }, function(name)
 		{
 			var child = children.get(name);
 			if (child == null)
