@@ -10,8 +10,6 @@ using haquery.StringTools;
 
 class Lib
 {
-    public static var cookie(default, null) : HaqCookie;
-	
 	static public function run(pageFullTag:String)
     {
 		haquery.macros.HaqBuild.preBuild();
@@ -20,14 +18,8 @@ class Lib
 			? Firebug.trace 
 			: haquery.client.Lib.trace;
         
-		cookie = new HaqCookie();
-			
 		var manager = new HaqTemplateManager();
-        
 		var page = manager.createPage(pageFullTag);
-		
-		page.forEachComponent("preInit", true);
-		page.forEachComponent("init", false);
     }
 	
 	#if debug

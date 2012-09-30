@@ -39,6 +39,8 @@ class HaqPage extends HaqComponent
 	
 	public var uploadedFiles(default, null) : Hash<HaqUploadedFile>;
 	
+	public var clientIP(default, null) : String;
+	
 	/**
 	 * Default value is "text/html; charset=utf-8".
 	 */

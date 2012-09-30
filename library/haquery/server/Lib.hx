@@ -126,7 +126,7 @@ class Lib
 			profiler.begin("page");
 				trace("HAQUERY START " + (isCli() ? "CLI" : "WEB") + " pageFullTag = " + route.fullTag +  ", HTTP_HOST = " + getHttpHost() + ", clientIP = " + getClientIP() + ", pageID = " + route.pageID);
 				
-				var request = {
+				var request : HaqRequest = {
 					  uri: Web.getURI()
 					, pageID: route.pageID
 					, isPostback: isPostback
@@ -134,11 +134,9 @@ class Lib
 					, cookie: new HaqCookie(isPostback)
 					, headers: new HaqHeaders(isPostback)
 					, uploadedFiles: getUploadedFiles(params)
+					, clientIP : getClientIP()
 				};
 				var page = manager.createPage(route.fullTag, Std.hash(request));
-				
-				page.forEachComponent("preInit", true);
-				page.forEachComponent("init", false);
 				
 				if (!isPostback)
 				{

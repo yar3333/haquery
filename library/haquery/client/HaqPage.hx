@@ -10,7 +10,7 @@ class HaqPage extends HaqComponent
     public function new()
     {
 		super();
-		cookie = Lib.cookie;
+		cookie = new HaqCookie();
     }
     
     public function redirect(url:String) : Void
