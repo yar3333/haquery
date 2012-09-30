@@ -23,4 +23,6 @@ typedef HaqRequest =
 	var headers : HaqHeaders;
 	
 	var uploadedFiles : Hash<HaqUploadedFile>;
+	
+	var clientIP : String;
 }

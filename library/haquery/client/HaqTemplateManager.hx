@@ -22,7 +22,14 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 	
 	public function createPage(pageFullTag:String) : HaqPage
     {
-		return cast(newComponent(get(pageFullTag), null, '', null), HaqPage);
+		var component = newComponent(get(pageFullTag), null, '', null);
+		
+		var page = cast(component, HaqPage);
+		
+		page.forEachComponent("preInit", true);
+		page.forEachComponent("init", false);
+
+		return page;
     }
 	
 	public function createComponent(parent:HaqComponent, fullTag:String, id:String, isDynamic:Bool, dynamicParams:Dynamic=null) : HaqComponent

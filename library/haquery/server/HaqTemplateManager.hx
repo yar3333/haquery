@@ -101,14 +101,21 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
         var template : HaqTemplate = get(pageFullTag);
 		Lib.assert(template != null, "HAQUERY ERROR could't find page '" + pageFullTag + "'.");
 		var component = newComponent(template, null, '', attr, null, false);
+		
+		var page : HaqPage;
 		try 
 		{
-			return cast(component, HaqPage);
+			page = cast(component, HaqPage);
 		}
 		catch (e:Dynamic)
 		{
 			throw new Exception("Class cast error: '" + template.serverClassName + "' must be extends from haquery.server.HaqPage.");
 		}
+		
+		page.forEachComponent("preInit", true);
+		page.forEachComponent("init", false);
+		
+		return page;
 	}
 	
 	public function createComponent(parent:HaqComponent, tag:String, id:String, attr:Hash<Dynamic>, parentNode:HtmlNodeElement, isCustomRender:Bool) : HaqComponent
