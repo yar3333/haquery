@@ -27,4 +27,6 @@ typedef HaqRequest =
 	var uri : String;
 	
 	var host : String;
+	
+	var queryString : String;
 }

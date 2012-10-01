@@ -273,12 +273,4 @@ using haquery.StringTools;
 		}
 		return relpath;
 	}
-	
-	function trace(v:Dynamic, ?pos:haxe.PosInfos)
-	{
-		if (Lib.config.filterTracesByIP == null || Lib.config.filterTracesByIP == '' || Lib.config.filterTracesByIP == page.clientIP)
-		{
-			HaqLog.trace(v, pos);
-		}
-	}
 }

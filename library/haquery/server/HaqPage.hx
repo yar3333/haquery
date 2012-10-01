@@ -43,6 +43,8 @@ class HaqPage extends HaqComponent
 	
 	public var host(default, null) : String;
 	
+	public var queryString(default, null) : String;
+	
 	/**
 	 * Default value is "text/html; charset=utf-8".
 	 */
