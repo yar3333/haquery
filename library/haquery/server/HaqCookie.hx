@@ -1,28 +1,16 @@
 package haquery.server;
 
-#if php
-import php.Web;
-#elseif neko
-import neko.Web;
-#end
-
 class HaqCookie
 {
-    var isPostback : Bool;
-	
 	var cookies : Hash<String>;
+	var response : HaqResponseCookie;
 	
-	public function new(isPostback:Bool) : Void
+	public function new() : Void
 	{
-		this.isPostback = isPostback;
-		this.cookies = Web.getCookies();
+		cookies = Web.getCookies();
+		response = new HaqResponseCookie();
 	}
 	
-	public inline function all() : Hash<String>
-    {
-		return cookies;
-    }
-    
     public inline function exists(name:String) : Bool
     {
 		return cookies.exists(name);
@@ -36,7 +24,7 @@ class HaqCookie
 	public function set(name:String, value:String, ?expire:Date, ?path:String, ?domain:String) : Void
 	{
 		cookies.set(name, value);
-		Web.setCookie(name, value, expire, domain, path);
+		response.set(name, value, expire, path, domain);
 	}
     
     public function remove(name:String, ?path:String, ?domain:String) : Void
@@ -44,7 +32,12 @@ class HaqCookie
 		if (exists(name))
 		{
 			cookies.remove(name);
-			set(name, null, new Date(2000,1,1,0,0,0), domain, path);
+			response.remove(name, path, domain);
 		}
     }
+	
+	public inline function send() : Void
+	{
+		response.send();
+	}
 }

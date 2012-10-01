@@ -33,7 +33,7 @@ class HaqPage extends HaqComponent
 	
 	public var cookie(default, null) : HaqCookie;
 	
-	public var headers(default, null) : HaqHeaders;
+	public var requestHeaders(default, null) : HaqRequestHeaders;
 	
 	public var uploadedFiles(default, null) : Hash<HaqUploadedFile>;
 	
@@ -57,7 +57,9 @@ class HaqPage extends HaqComponent
 	
 	public var ajaxResponse(default, null) : String;
 	
-	public var returnCode : Int = 0;
+	public var statusCode : Int = 0;
+	
+	public var responseHeaders(default, null) : HaqResponseHeaders;
 	
 	public function new()
 	{
@@ -65,7 +67,69 @@ class HaqPage extends HaqComponent
 		ajaxResponse = "";
 	}
 	
-	override public function render() : String 
+	public function process() : HaqResponse
+	{
+		if (!isPostback)
+		{
+			var content = render();
+			
+			var isRedirected = statusCode == 301 || statusCode == 307;
+			
+			if (!isRedirected)
+			{
+				responseHeaders.set('Content-Type', contentType);
+			}
+			else
+			{
+				content = "";
+			}
+			
+			return {
+				  responseHeaders : responseHeaders
+				, statusCode : statusCode
+				, cookie : cookie
+				, content : content
+			};
+		}
+		else
+		{
+			forEachComponent('preEventHandlers');
+			var componentID = params.get('HAQUERY_COMPONENT');
+			var component = findComponent(componentID);
+			if (component != null)
+			{
+				var result = HaqComponentTools.callMethod(component, params.get('HAQUERY_METHOD'), Unserializer.run(params.get('HAQUERY_PARAMS')));
+				//trace("HAQUERY FINISH");
+				
+				var content = "HAQUERY_OK" + Serializer.run(result) + "\n" + ajaxResponse;
+				
+				var isRedirected = statusCode == 301 || statusCode == 307;				
+				
+				if (!isRedirected)
+				{
+					responseHeaders.set("Content-Type", "text/plain; charset=utf-8");
+				}
+				else
+				{
+					content = "";
+				}
+				
+				return {
+					  responseHeaders : responseHeaders
+					, statusCode : statusCode
+					, cookie : cookie
+					, content : content
+				};
+			}
+			else
+			{
+				throw new Exception("Component id = '" + componentID + "' not found.");
+				return null;
+			}
+		}
+	}
+	
+	override function render() : String 
 	{
         Lib.profiler.begin("preRender");
 		forEachComponent('preRender');

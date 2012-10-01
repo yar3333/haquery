@@ -18,7 +18,7 @@ typedef HaqRequest =
 	
 	var cookie : HaqCookie;
 	
-	var headers : HaqHeaders;
+	var requestHeaders : HaqRequestHeaders;
 	
 	var uploadedFiles : Hash<HaqUploadedFile>;
 	

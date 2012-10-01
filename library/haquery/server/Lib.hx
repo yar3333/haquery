@@ -34,9 +34,8 @@ class Lib
 	public static var config : HaqConfig;
     public static var profiler : HaqProfiler;
 	public static var db : HaqDb;
-	public static var isRedirected : Bool;
     
-	static var manager : HaqTemplateManager;
+	public static var manager : HaqTemplateManager;
 	
 	static var startTime : Float;
     
@@ -44,13 +43,11 @@ class Lib
     {
 		haquery.macros.HaqBuild.preBuild();
 		
-		isRedirected = false;
-		db = null;
-		
 		#if neko
 		Sys.setCwd(getCwd());
 		#end
 		
+		db = null;
 		config = new HaqConfig("config.xml");
 		
 		try
@@ -70,7 +67,34 @@ class Lib
 				}
 				else
 				{
-					runApplicationPage(route, bootstraps);
+					var request = getRequest(route.pageID);
+					var response : HaqResponse;
+					
+					if (config.daemons.iterator().hasNext())
+					{
+						var names = Lambda.array( { iterator:config.daemons.keys } );
+						var hostAndPort = config.daemons.get(Std.random(names.length));
+						response = HaqDaemon.requestServer(hostAndPort.host, hostAndPort.port, request);
+						
+					}
+					else
+					{
+						response = runApplicationPage(request, route, bootstraps);
+					}
+					
+					if (response != null)
+					{
+						if (response.statusCode != 0)
+						{
+							Web.setReturnCode(statusCode);
+						}
+						
+						response.responseHeaders.send();
+						
+						response.cookie.send();
+						
+						NativeLib.print(response.content);
+					}
 				}
 			}
 			catch (e:HaqRouterException)
@@ -92,11 +116,33 @@ class Lib
         }
     }
 	
-	static function runApplicationPage(route:HaqRoute, bootstraps:Array<HaqBootstrap>) : Void
+	static function getRequest(pageID:String) : HaqRequest
+	{
+		var params = !isCli() ? Web.getParams() : HaqCli.getParams();
+		return {
+			  uri: Web.getURI()
+			, pageID: pageID
+			, isPostback: !isCli() && Web.getParams().get('HAQUERY_POSTBACK') != null
+			, params: params
+			, cookie: new HaqCookie(isPostback)
+			, headers: new HaqHeaders(isPostback)
+			, uploadedFiles: getUploadedFiles(params)
+			, clientIP: getClientIP()
+			, host: getHttpHost()
+			, queryString: getParamsString()
+		};
+	}
+	
+	static function runApplicationPage(request:HaqRequest, route:HaqRoute, bootstraps:Array<HaqBootstrap>) : Void
 	{
 		profiler = new HaqProfiler(config.enableProfiling);
 		
 		profiler.begin("HAQUERY");
+		
+			for (bootstrap in bootstraps)
+			{
+				bootstrap.init(request);
+			}
 		
 			if (config.databaseConnectionString != null && config.databaseConnectionString != "")
 			{
@@ -115,53 +161,11 @@ class Lib
 				profiler.end();
 			}
 			
-			var isPostback = !isCli() && Web.getParams().get('HAQUERY_POSTBACK') != null;
-			var params = !isCli() ? Web.getParams() : HaqCli.getParams();
-			
 			profiler.begin("page");
 				trace("HAQUERY START " + (isCli() ? "CLI" : "WEB") + " pageFullTag = " + route.fullTag +  ", HTTP_HOST = " + getHttpHost() + ", clientIP = " + getClientIP() + ", pageID = " + route.pageID);
 				
-				var request : HaqRequest = {
-					  uri: Web.getURI()
-					, pageID: route.pageID
-					, isPostback: isPostback
-					, params: params
-					, cookie: new HaqCookie(isPostback)
-					, headers: new HaqHeaders(isPostback)
-					, uploadedFiles: getUploadedFiles(params)
-					, clientIP: getClientIP()
-					, host: getHttpHost()
-					, queryString: getParamsString()
-				};
 				var page = manager.createPage(route.fullTag, Std.hash(request));
-				
-				if (!isPostback)
-				{
-					var html = page.render();
-					trace("HAQUERY FINISH");
-					if (!isRedirected)
-					{
-						Web.setHeader('Content-Type', page.contentType);
-						NativeLib.print(html);
-					}
-				}
-				else
-				{
-					page.forEachComponent('preEventHandlers');
-					var componentID = params.get('HAQUERY_COMPONENT');
-					var component = page.findComponent(componentID);
-					if (component != null)
-					{
-						var result = HaqComponentTools.callMethod(component, params.get('HAQUERY_METHOD'), Unserializer.run(params.get('HAQUERY_PARAMS')));
-						trace("HAQUERY FINISH");
-						Web.setHeader('Content-Type', 'text/plain; charset=utf-8');
-						NativeLib.print('HAQUERY_OK' + Serializer.run(result) + "\n" + page.ajaxResponse);
-					}
-					else
-					{
-						throw new Exception("Component id = '" + componentID + "' not found.");
-					}
-				}
+				var response = page.process();
 			profiler.end();
 			
 			bootstraps.reverse();
@@ -176,7 +180,9 @@ class Lib
 			}
 		
 		profiler.end();
-		profiler.traceResults();		
+		profiler.traceResults();	
+		
+		return response;
 	}
 	
 	static function runSystemCommand(route:HaqRoute)
@@ -196,6 +202,39 @@ class Lib
 				NativeLib.println("delete '" + path + "/templates" + "'<br />");
 				FileSystem.deleteDirectory(path + "/templates");
 				
+			case "haquery-daemon":
+				if (isCli())
+				{
+					var args = Sys.args();
+					if (args.length >= 3)
+					{
+						if (config.daemons.exists(args[1]))
+						{
+							switch (args[2])
+							{
+								case "run":		runDaemon(args[1]);
+								case "start":	startDaemon(args[1]);
+								case "stop":	stopDaemon(args[1]);
+								
+								default:
+									NativeLib.println("Unknow <daemon_command>. Supported: 'run', 'start' and 'stop'.");
+							}
+						}
+						else
+						{
+							NativeLib.println("Daemon '" + args[1] + "' is not found.");
+						}
+					}
+					else
+					{
+						NativeLib.println("Need arguments: <daemon_name> and <daemon_command>.");
+					}
+				}
+				else
+				{
+					NativeLib.println("This command allowed from the command-line only.");
+				}
+			
 			default:
 				NativeLib.println("HAQUERY ERROR: system command '" + route.pageID + "' is not supported.");
 		}
@@ -423,4 +462,21 @@ class Lib
 	}
 	
 	static function getCwd() { return Web.getCwd().replace("\\", "/").rtrim("/"); }
+	
+	static function runDaemon(name:String)
+	{
+		var hostAndPort = config.daemons.get(name);
+		var daemon = new HaqDaemon();
+		daemon.run(hostAndPort.host, hostAndPort.port);
+	}
+	
+	static function startDaemon(name:String)
+	{
+		var p = new sys.io.Process("neko", [ "index.n", "haquery-daemon", name, "run" ]);
+		NativeLib.println("Daemon '" + name + "' PID: " + p.getPid());
+	}
+	
+	static function stopDaemon(name:String)
+	{
+	}
 }
