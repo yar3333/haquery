@@ -2,8 +2,6 @@ package haquery.server;
 
 typedef HaqRequest =
 {
-	var uri : String;
-	
     /**
      * Last unexist URL part will be placed to this var. 
      * For example, if your request "http://site.com/news/123"
@@ -25,4 +23,8 @@ typedef HaqRequest =
 	var uploadedFiles : Hash<HaqUploadedFile>;
 	
 	var clientIP : String;
+	
+	var uri : String;
+	
+	var host : String;
 }
