@@ -107,7 +107,7 @@ using haquery.StringTools;
 		}
 	}
 
-    public function render() : String
+    function render() : String
     {
 		if (!visible)
 		{
