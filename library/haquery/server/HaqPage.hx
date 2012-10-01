@@ -17,8 +17,6 @@ import neko.Web;
 
 class HaqPage extends HaqComponent
 {
-	public var uri(default, null) : String;
-	
     /**
      * Last unexist URL part will be placed to this var. 
      * For example, if your request "http://site.com/news/123"
@@ -40,6 +38,10 @@ class HaqPage extends HaqComponent
 	public var uploadedFiles(default, null) : Hash<HaqUploadedFile>;
 	
 	public var clientIP(default, null) : String;
+	
+	public var uri(default, null) : String;
+	
+	public var host(default, null) : String;
 	
 	/**
 	 * Default value is "text/html; charset=utf-8".
