@@ -28,7 +28,7 @@ class FileSystem
 	public static inline function isDirectory(path:String) : Bool { return sys.FileSystem.isDirectory(path); }
 
 	/**
-		Create the given directory. Not recursive : the parent directory must exists.
+		Create the given directory. Recursive: the parent directory will be created too.
 	*/
 	public static function createDirectory(path:String) : Void
 	{

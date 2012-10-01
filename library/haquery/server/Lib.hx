@@ -15,9 +15,9 @@ typedef Web = neko.Web;
 import haquery.Exception;
 import haxe.io.Bytes;
 import haxe.io.Path;
-import haxe.Stack;
 import haxe.Serializer;
 import haxe.Unserializer;
+import haxe.PosInfos;
 import haquery.common.HaqDefines;
 import haquery.server.db.HaqDb;
 import haquery.server.FileSystem;
@@ -26,7 +26,6 @@ import haquery.server.HaqCookie;
 import haquery.server.HaqRouter;
 import haquery.server.HaqProfiler;
 import haquery.server.HaqUploadedFile.HaqUploadError;
-import sys.io.FileOutput;
 import sys.io.File;
 using haquery.StringTools;
 
@@ -36,7 +35,6 @@ class Lib
     public static var profiler : HaqProfiler;
 	public static var db : HaqDb;
 	public static var isRedirected : Bool;
-    public static var isHeadersSent(default, null) : Bool;
     
 	static var manager : HaqTemplateManager;
 	
@@ -47,7 +45,6 @@ class Lib
 		haquery.macros.HaqBuild.preBuild();
 		
 		isRedirected = false;
-		isHeadersSent = false;
 		db = null;
 		
 		#if neko
@@ -59,7 +56,7 @@ class Lib
 		try
         {
 			startTime = Sys.time();
-			haxe.Log.trace = HaqLog.trace;
+			haxe.Log.trace = function(v:Dynamic, ?pos:PosInfos) HaqLog.globalTrace(startTime, v, pos);
 			
 			try
 			{
@@ -78,8 +75,8 @@ class Lib
 			}
 			catch (e:HaqRouterException)
 			{
-				setReturnCode(e.code);
-				println("<h1>Error " + e.code + "</h1>");
+				Web.setReturnCode(e.code);
+				NativeLib.println("<h1>Error " + e.code + "</h1>");
 			}
         }
 		catch (e:Dynamic)
@@ -132,7 +129,9 @@ class Lib
 					, cookie: new HaqCookie(isPostback)
 					, headers: new HaqHeaders(isPostback)
 					, uploadedFiles: getUploadedFiles(params)
-					, clientIP : getClientIP()
+					, clientIP: getClientIP()
+					, host: getHttpHost()
+					, queryString: getParamsString()
 				};
 				var page = manager.createPage(route.fullTag, Std.hash(request));
 				
@@ -143,7 +142,7 @@ class Lib
 					if (!isRedirected)
 					{
 						Web.setHeader('Content-Type', page.contentType);
-						print(html);
+						NativeLib.print(html);
 					}
 				}
 				else
@@ -156,7 +155,7 @@ class Lib
 						var result = HaqComponentTools.callMethod(component, params.get('HAQUERY_METHOD'), Unserializer.run(params.get('HAQUERY_PARAMS')));
 						trace("HAQUERY FINISH");
 						Web.setHeader('Content-Type', 'text/plain; charset=utf-8');
-						print('HAQUERY_OK' + Serializer.run(result) + "\n" + page.ajaxResponse);
+						NativeLib.print('HAQUERY_OK' + Serializer.run(result) + "\n" + page.ajaxResponse);
 					}
 					else
 					{
@@ -185,20 +184,20 @@ class Lib
 		switch (route.pageID)
 		{
 			case "haquery-flush":
-				println("<b>HAQUERY FLUSH</b><br /><br />");
+				NativeLib.println("<b>HAQUERY FLUSH</b><br /><br />");
 				var path = HaqDefines.folders.temp;
 				
-				println("delete '" + path + "/haquery.log" + "'<br />");
+				NativeLib.println("delete '" + path + "/haquery.log" + "'<br />");
 				FileSystem.deleteFile(path + "/haquery.log");
 				
-				println("delete '" + path + "/cache" + "'<br />");
+				NativeLib.println("delete '" + path + "/cache" + "'<br />");
 				FileSystem.deleteDirectory(path + "/cache");
 				
-				println("delete '" + path + "/templates" + "'<br />");
+				NativeLib.println("delete '" + path + "/templates" + "'<br />");
 				FileSystem.deleteDirectory(path + "/templates");
 				
 			default:
-				println("HAQUERY ERROR: system command '" + route.pageID + "' is not supported.");
+				NativeLib.println("HAQUERY ERROR: system command '" + route.pageID + "' is not supported.");
 		}
 	}
 
@@ -423,10 +422,5 @@ class Lib
 		#end
 	}
 	
-	/*public*/ static function getCwd() { return Web.getCwd().replace("\\", "/").rtrim("/"); }
-	
-	//static inline function getURI() : String { return Web.getURI();  }
-	//static inline function setReturnCode(status:Int) : Void { Web.setReturnCode(status); }
-    //static inline function print( v : Dynamic ) : Void { isHeadersSent = true; NativeLib.print(v); }
-	//static inline function println( v : Dynamic ) : Void { isHeadersSent = true; NativeLib.println(v); }
+	static function getCwd() { return Web.getCwd().replace("\\", "/").rtrim("/"); }
 }
