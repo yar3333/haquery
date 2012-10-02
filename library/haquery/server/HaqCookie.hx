@@ -1,14 +1,21 @@
 package haquery.server;
 
+#if php
+import php.Web;
+#elseif neko
+import neko.Web;
+#end
+
 class HaqCookie
 {
 	var cookies : Hash<String>;
-	var response : HaqResponseCookie;
+	
+	public var response(default, null) : HaqResponseCookie;
 	
 	public function new() : Void
 	{
-		cookies = Web.getCookies();
-		response = new HaqResponseCookie();
+		this.cookies = Web.getCookies();
+		this.response = new HaqResponseCookie();
 	}
 	
     public inline function exists(name:String) : Bool
@@ -35,9 +42,4 @@ class HaqCookie
 			response.remove(name, path, domain);
 		}
     }
-	
-	public inline function send() : Void
-	{
-		response.send();
-	}
 }

@@ -1,5 +1,6 @@
 package haquery.server;
 
+import haquery.common.HaqDefines;
 import haxe.Serializer;
 import haxe.Unserializer;
 import neko.Sys;
@@ -42,7 +43,8 @@ class HaqDaemon
 			{
 				case HaqDaemonConnection.Server(request):
 					trace("server");
-					var page = Lib.manager.createPage();
+					var route = new HaqRouter(HaqDefines.folders.pages).getRoute(request.params.get("route"));
+					var page = Lib.manager.createPage(request.pageFullTag, Std.hash(request));
 					var response = page.process();
 					client.ws.send(Serializer.run(response));
 					pages.set(Uuid.newUuid(), page);
@@ -62,7 +64,7 @@ class HaqDaemon
 	
 	public static function requestServer(host:String, port:Int, request:HaqRequest) : HaqResponse
 	{
-		var ws = WebSocket.connect(host, port, "haquery", hostAndPort.host);
+		var ws = WebSocket.connect(host, port, "haquery", host);
 		ws.send(Serializer.run(HaqDaemonConnection.Server(request)));
 		return Unserializer.run(ws.recv());
 	}

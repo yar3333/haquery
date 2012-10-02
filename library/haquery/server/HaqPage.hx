@@ -7,6 +7,8 @@ import haquery.server.HaqComponent;
 import haquery.server.HaqCookie;
 import haquery.server.FileSystem;
 import haquery.server.Lib;
+import haxe.Serializer;
+import haxe.Unserializer;
 using haquery.StringTools;
 
 #if php
@@ -87,7 +89,7 @@ class HaqPage extends HaqComponent
 			return {
 				  responseHeaders : responseHeaders
 				, statusCode : statusCode
-				, cookie : cookie
+				, cookie : cookie.response
 				, content : content
 			};
 		}
@@ -117,7 +119,7 @@ class HaqPage extends HaqComponent
 				return {
 					  responseHeaders : responseHeaders
 					, statusCode : statusCode
-					, cookie : cookie
+					, cookie : cookie.response
 					, content : content
 				};
 			}
@@ -250,8 +252,8 @@ class HaqPage extends HaqComponent
 		}
         else
 		{
-			returnCode = 302; // Moved Temporarily
-			headers.set("Location", url);
+			statusCode = 302; // Moved Temporarily
+			responseHeaders.set("Location", url);
 		}
     }
 

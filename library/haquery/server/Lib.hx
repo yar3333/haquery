@@ -67,13 +67,13 @@ class Lib
 				}
 				else
 				{
-					var request = getRequest(route.pageID);
+					var request = getRequest(route);
 					var response : HaqResponse;
 					
 					if (config.daemons.iterator().hasNext())
 					{
 						var names = Lambda.array( { iterator:config.daemons.keys } );
-						var hostAndPort = config.daemons.get(Std.random(names.length));
+						var hostAndPort = config.daemons.get(names[Std.random(names.length)]);
 						response = HaqDaemon.requestServer(hostAndPort.host, hostAndPort.port, request);
 						
 					}
@@ -86,7 +86,7 @@ class Lib
 					{
 						if (response.statusCode != 0)
 						{
-							Web.setReturnCode(statusCode);
+							Web.setReturnCode(response.statusCode);
 						}
 						
 						response.responseHeaders.send();
@@ -116,16 +116,17 @@ class Lib
         }
     }
 	
-	static function getRequest(pageID:String) : HaqRequest
+	static function getRequest(route:HaqRoute) : HaqRequest
 	{
 		var params = !isCli() ? Web.getParams() : HaqCli.getParams();
 		return {
-			  uri: Web.getURI()
-			, pageID: pageID
+			  pageFullTag: route.fullTag
+			, uri: Web.getURI()
+			, pageID: route.pageID
 			, isPostback: !isCli() && Web.getParams().get('HAQUERY_POSTBACK') != null
 			, params: params
-			, cookie: new HaqCookie(isPostback)
-			, headers: new HaqHeaders(isPostback)
+			, cookie: new HaqCookie()
+			, requestHeaders: new HaqRequestHeaders()
 			, uploadedFiles: getUploadedFiles(params)
 			, clientIP: getClientIP()
 			, host: getHttpHost()
@@ -133,7 +134,7 @@ class Lib
 		};
 	}
 	
-	static function runApplicationPage(request:HaqRequest, route:HaqRoute, bootstraps:Array<HaqBootstrap>) : Void
+	static function runApplicationPage(request:HaqRequest, route:HaqRoute, bootstraps:Array<HaqBootstrap>) : HaqResponse
 	{
 		profiler = new HaqProfiler(config.enableProfiling);
 		
