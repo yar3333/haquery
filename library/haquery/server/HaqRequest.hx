@@ -2,6 +2,8 @@ package haquery.server;
 
 typedef HaqRequest =
 {
+	var pageFullTag : String;
+	
     /**
      * Last unexist URL part will be placed to this var. 
      * For example, if your request "http://site.com/news/123"

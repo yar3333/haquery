@@ -17,7 +17,7 @@ class HaqResponseCookie
 	
 	public function set(name:String, value:String, ?expire:Date, ?path:String, ?domain:String) : Void
 	{
-		cookies.set(name, { value:value, expire:expire, path:path });
+		cookies.set(name, { value:value, expire:expire, path:path, domain:domain });
 	}
     
     public function remove(name:String, ?path:String, ?domain:String) : Void

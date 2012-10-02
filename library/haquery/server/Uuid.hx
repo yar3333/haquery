@@ -1,5 +1,11 @@
 package haquery.server;
 
+#if php
+import php.Web;
+#elseif neko
+import neko.Web;
+#end
+
 using haquery.StringTools;
 
 class Uuid 
@@ -10,13 +16,13 @@ class Uuid
         return getHexClientIP().substr(0, 8).rpad("0", 8) 
 			 + "-" + StringTools.hex(Math.floor(time / 65536), 8)
 			 + "-" + StringTools.hex(time % 65536, 8)
-			 + "-" + StringTools.hex(Math.floor(Math.random() * 65536), 4)
-			 + "-" + StringTools.hex(Math.floor(Math.random() * 65536), 4);
+			 + "-" + StringTools.hex(Std.random(65536), 4)
+			 + "-" + StringTools.hex(Std.random(65536), 4);
 	}
 	
 	static function getHexClientIP()
     {
-        var ip = Lib.getClientIP();
+        var ip = Web.getClientIP();
         var hex = "";
         for (part in ip.split('.'))
         {
