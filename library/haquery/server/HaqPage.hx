@@ -75,7 +75,7 @@ class HaqPage extends HaqComponent
 	}
 	
 	
-	public function generateResponseByRender() : HaqResponse
+	public function generateResponseOnRender() : HaqResponse
 	{
 		var content = render();
 		
@@ -87,7 +87,7 @@ class HaqPage extends HaqComponent
 		};
 	}
 
-	public function generateResponseByCallSharedMethod(componentFullID:String, method:String, params:Array<Dynamic>) : HaqResponse
+	public function generateResponseOnPostback(componentFullID:String, method:String, params:Array<Dynamic>) : HaqResponse
 	{
 		forEachComponent('preEventHandlers');
 		var component = findComponent(componentFullID);

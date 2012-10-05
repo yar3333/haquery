@@ -99,7 +99,7 @@ using haquery.StringTools;
 	{
 		if (Lib.daemon != null)
 		{
-			Lib.daemon.callSharedMethod(page.pageUuid, fullID, method, params, callb);
+			Lib.daemon.callSharedMethod(fullID, method, params, callb);
 		}
 		else
 		{

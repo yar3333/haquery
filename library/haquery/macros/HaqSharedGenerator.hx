@@ -55,6 +55,9 @@ class HaqSharedGenerator
 		{
 			if (field.meta.has("shared"))
 			{
+				var shared = Lambda.filter(field.meta.get(), function(m) return m.name == "shared").first();
+				var IsWebsocketSupported = shared.params.length > 0 && HaqTools.stringConstExpr2string(shared.params[0]) == "websocket";
+				
 				var typedFieldExpr = field.expr();
 				if (typedFieldExpr != null)
 				{
@@ -68,7 +71,7 @@ class HaqSharedGenerator
 								case ExprDef.EFunction(name, f):
 									if (componentClass.name == "Server")
 									{
-										r.push(makeSharedClientClassMethod(field.name, f.args, f.ret, componentClass.pos));
+										r.push(makeSharedClientClassMethod(IsWebsocketSupported, field.name, f.args, f.ret, componentClass.pos));
 									}
 									else
 									{
@@ -97,7 +100,7 @@ class HaqSharedGenerator
 						case Type.TFun(args, ret):
 							if (componentClass.name == "Server")
 							{
-								r.push(makeSharedClientClassMethod(field.name, HaqTools.funArgsToFunctionArgs(args), HaqTools.safeToComplex(ret), componentClass.pos));
+								r.push(makeSharedClientClassMethod(IsWebsocketSupported, field.name, HaqTools.funArgsToFunctionArgs(args), HaqTools.safeToComplex(ret), componentClass.pos));
 							}
 							else
 							{
@@ -125,7 +128,7 @@ class HaqSharedGenerator
 		return HaqTools.makeMethod("new", [ "component".toArg(("haquery." + (clas.name == "Server" ? "client" : "server") + ".HaqComponent").asComplexType()) ], ComplexType.TPath("Void".asTypePath()), assignExpr);
 	}
 	
-	static function makeSharedClientClassMethod(name:String, args:Array<FunctionArg>, ret:Null<ComplexType>, pos:Position) : Field
+	static function makeSharedClientClassMethod(IsWebsocketSupported:Bool, name:String, args:Array<FunctionArg>, ret:Null<ComplexType>, pos:Position) : Field
 	{
 		var args2 : Array<FunctionArg> = Reflect.copy(args);
 		args2.push("callb".toArg(macro : $ret->Void, true));
@@ -135,7 +138,9 @@ class HaqSharedGenerator
 			, Lambda.map(args, function(a) return Context.parse(a.name, pos)).toArray()
 			, !HaqTools.isVoid(ret) ? macro callb : macro function(_) callb()
 		];
-		var callExpr = ExprDef.EBlock( [ ExprDef.ECall(macro component.callSharedMethod, callParams).at(pos) ] ).at(pos);
+		var callExpr = IsWebsocketSupported
+			? ExprDef.EBlock( [ ExprDef.ECall(macro component.callSharedMethodWebsocket, callParams).at(pos) ] ).at(pos)
+			: ExprDef.EBlock( [ ExprDef.ECall(macro component.callSharedMethodAjax,      callParams).at(pos) ] ).at(pos);
 		return HaqTools.makeMethod(name, args2, macro : Void, callExpr);
 	}
 	
