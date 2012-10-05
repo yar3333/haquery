@@ -112,9 +112,6 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 			throw new Exception("Class cast error: '" + template.serverClassName + "' must be extends from haquery.server.HaqPage.");
 		}
 		
-		page.forEachComponent("preInit", true);
-		page.forEachComponent("init", false);
-		
 		return page;
 	}
 	
@@ -246,8 +243,12 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 				}).join(",\n")
 			  + "\n});\n";
 		
-		s += "haquery.client.HaqInternals.sharedStorage = haxe.Unserializer.run(\"" + Serializer.run(sharedStorage) + "\");\n";
+		s += "haquery.client.HaqInternals.sharedStorage = haxe.Unserializer.run('" + Serializer.run(sharedStorage) + "');\n";
 			  
+		s += "haquery.client.HaqInternals.daemon = '" + (Lib.daemon != null ? Lib.daemon.getUri() : "") + "';\n";
+		
+		s += "haquery.client.HaqInternals.pageUuid = '" + page.pageUuid + "';\n";
+		
 		s += "haquery.client.Lib.run('" + page.fullTag + "');\n";
 
         return s;
@@ -262,7 +263,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 						 + "{" 
 							 + "config:" + array2json([ t.extend ].concat(t.imports))
 							 + ", "
-							 + "serverHandlers:haquery.HashTools.hashify({" 
+							 + "serverHandlers:haquery.Std.hash({" 
 							 + Lambda.map({ iterator:t.serverHandlers.keys }, function(elemID) {
 									return "'" + elemID + "':" + array2json(t.serverHandlers.get(elemID));
 								  }).join(",")

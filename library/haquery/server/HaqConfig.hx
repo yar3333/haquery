@@ -51,13 +51,13 @@ class HaqConfig
 	 */
 	public var templateSelector : HaqTemplateSelector;
 	
-	public var daemons : Hash<{ host:String, port:Int, autorun:Bool }>;
+	public var daemons : Hash<HaqDaemon>;
 	
 	public function new(filePath:String)
 	{
 		customs = new Hash<Dynamic>();
 		templateSelector = new HaqTemplateSelector();
-		daemons = new Hash<{ host:String, port:Int, autorun:Bool }>();
+		daemons = new Hash<HaqDaemon>();
 		
 		load(filePath);
 	}
@@ -113,15 +113,15 @@ class HaqConfig
 				}
 			}
 			
-			for (node in xml.find(">config>daemons>listener"))
+			for (node in xml.find(">config>daemon"))
 			{
-				if (node.hasAttribute("port"))
+				if (node.hasAttribute("name") && node.hasAttribute("host") && node.hasAttribute("port"))
 				{
-					daemons.set(node.getAttribute("name"), { 
-						  host: node.getAttribute("host")
-						, port: Std.parseInt(node.getAttribute("port"), 20000)
-						, autorun: Std.bool(node.getAttribute("autorun"))
-					});
+					daemons.set(node.getAttribute("name"), new HaqDaemon(
+						  node.getAttribute("host")
+						, Std.parseInt(node.getAttribute("port"), 20000)
+						, Std.bool(node.getAttribute("autorun"))
+					));
 				}
 			}
 		}

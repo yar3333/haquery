@@ -9,10 +9,8 @@ import haquery.client.HaqInternals;
 import haquery.client.HaqTemplateManager;
 import haquery.client.HaqComponent;
 import haquery.client.HaqElemEventManager;
-import haquery.HashTools;
-
+import haquery.Std;
 using haquery.StringTools;
-using haquery.HashTools;
 
 typedef Tools = components.haquery.factoryitem.Tools;
 
@@ -41,7 +39,7 @@ class Client extends components.haquery.factoryitem.Client
 		var html:String = dynamicParams.html;
 		var params:Dynamic = dynamicParams.params;
 		
-		var doc = Tools.applyHtmlParams(html, cast HashTools.hashify(params));
+		var doc = Tools.applyHtmlParams(html, Std.hash(params));
 		childComponents = prepareDoc(manager, parent.parent.fullTag, parent.prefixID + id + HaqDefines.DELIMITER, doc);
 		parentElem.append(doc.innerHTML);
 		HaqElemEventManager.elemsWasChanged();

@@ -25,6 +25,12 @@ class HaqInternals
 
 	static var componentIDs_cached : Hash<String>;
 	
+	public static var sharedStorage(default, null) : HaqSharedStorage;
+	
+	public static var daemon(default, null) : String;
+	
+	public static var pageUuid(default, null) : String;
+	
 	/**
 	 * @return componentID => fullTag
 	 */
@@ -62,6 +68,4 @@ class HaqInternals
 	{
 		getComponentIDs().set(fullID, fullTag);
 	}
-	
-	public static var sharedStorage(default, null) : HaqSharedStorage;
 }

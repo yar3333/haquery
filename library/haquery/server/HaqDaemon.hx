@@ -1,71 +1,43 @@
 package haquery.server;
 
-import haquery.common.HaqDefines;
 import haxe.Serializer;
 import haxe.Unserializer;
-import neko.Sys;
 import sys.net.WebSocket;
-
-enum HaqDaemonConnection
-{
-	Server(request:HaqRequest);
-	Client(uid:String);
-}
-
-class ClientData extends neko.net.WebSocketServerLoop.ClientData
-{
-	var connection : HaqDaemonConnection;
-}
+import haquery.common.HaqDaemonMessage;
 
 class HaqDaemon
 {
-	var pages : Hash<HaqPage>;
-	var server : neko.net.WebSocketServerLoop<ClientData>;
+	var host : String;
+	var port : Int;
+	var autorun : Bool;
 	
-	public function new()
+	public function new(host:String, port:Int, autorun:Bool) 
 	{
-		pages = new Hash<HaqPage>();
-		server = new neko.net.WebSocketServerLoop<ClientData>();
-		server.processIncomingMessage = processIncomingMessage;
+		this.host = host;
+		this.port = port;
+		this.autorun = autorun;
 	}
 	
-	public function run(host:String, port:Int)
+	public function getUri()
 	{
-		server.run(new sys.net.Host(host), port);
+		return "ws://" + host + ":" + port;
 	}
 	
-	function processIncomingMessage(client:ClientData, text:String)
+	public function makeRequest(request:HaqRequest) : HaqResponse
 	{
-		var obj = Unserializer.run(text);
-		if (Std.is(obj, HaqDaemonConnection))
-		{
-			switch (cast(obj, HaqDaemonConnection))
-			{
-				case HaqDaemonConnection.Server(request):
-					trace("server");
-					var route = new HaqRouter(HaqDefines.folders.pages).getRoute(request.params.get("route"));
-					var page = Lib.manager.createPage(request.pageFullTag, Std.hash(request));
-					var response = page.process();
-					client.ws.send(Serializer.run(response));
-					pages.set(Uuid.newUuid(), page);
-				
-				case HaqDaemonConnection.Client(uid):
-					trace("client");
-					var page = pages.get(uid);
-					var response = page.process();
-					client.ws.send(Serializer.run(response));
-			}
-		}
-		else
-		{
-			// disconnect
-		}
-	}
-	
-	public static function requestServer(host:String, port:Int, request:HaqRequest) : HaqResponse
-	{
+		trace("requestServer to " + host + ":" + port);
 		var ws = WebSocket.connect(host, port, "haquery", host);
-		ws.send(Serializer.run(HaqDaemonConnection.Server(request)));
-		return Unserializer.run(ws.recv());
+		trace("Send request object to server...");
+		ws.send(Serializer.run(HaqDaemonMessage.Server(request)));
+		trace("Wait response...");
+		var r = ws.recv();
+		trace("Response received");
+		return Unserializer.run(r);
+	}
+	
+	public function run()
+	{
+		var server = new HaqDaemonServerLoop();
+		server.run(host, port);
 	}
 }
