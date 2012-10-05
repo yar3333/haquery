@@ -9,6 +9,8 @@ import haquery.server.FileSystem;
 import haquery.server.Lib;
 import haxe.Serializer;
 import haxe.Unserializer;
+import haxe.PosInfos;
+import haquery.server.HaqRouter;
 using haquery.StringTools;
 
 #if php
@@ -59,31 +61,46 @@ class HaqPage extends HaqComponent
 	
 	public var ajaxResponse(default, null) : String;
 	
-	public var statusCode : Int = 0;
+	public var statusCode = 200;
 	
 	public var responseHeaders(default, null) : HaqResponseHeaders;
+	
+	public var pageUuid(default, null) : String;
 	
 	public function new()
 	{
 		super();
 		ajaxResponse = "";
+		responseHeaders = new HaqResponseHeaders();
 	}
 	
-	public function process() : HaqResponse
+	
+	public function generateResponseByRender() : HaqResponse
 	{
-		if (!isPostback)
+		var content = render();
+		
+		return {
+			  responseHeaders : responseHeaders
+			, statusCode : statusCode
+			, cookie : cookie.response
+			, content : content
+		};
+	}
+
+	public function generateResponseByCallSharedMethod(componentFullID:String, method:String, params:Array<Dynamic>) : HaqResponse
+	{
+		forEachComponent('preEventHandlers');
+		var component = findComponent(componentFullID);
+		if (component != null)
 		{
-			var content = render();
+			var result = HaqComponentTools.callMethod(component, method, params);
+			//trace("HAQUERY FINISH");
 			
-			var isRedirected = statusCode == 301 || statusCode == 307;
-			
-			if (!isRedirected)
+			var content = ""; 
+			if (statusCode != 301 && statusCode != 307)
 			{
-				responseHeaders.set('Content-Type', contentType);
-			}
-			else
-			{
-				content = "";
+				responseHeaders.set("Content-Type", "text/plain; charset=utf-8");
+				content = "HAQUERY_OK" + Serializer.run(result) + "\n" + ajaxResponse;
 			}
 			
 			return {
@@ -95,39 +112,8 @@ class HaqPage extends HaqComponent
 		}
 		else
 		{
-			forEachComponent('preEventHandlers');
-			var componentID = params.get('HAQUERY_COMPONENT');
-			var component = findComponent(componentID);
-			if (component != null)
-			{
-				var result = HaqComponentTools.callMethod(component, params.get('HAQUERY_METHOD'), Unserializer.run(params.get('HAQUERY_PARAMS')));
-				//trace("HAQUERY FINISH");
-				
-				var content = "HAQUERY_OK" + Serializer.run(result) + "\n" + ajaxResponse;
-				
-				var isRedirected = statusCode == 301 || statusCode == 307;				
-				
-				if (!isRedirected)
-				{
-					responseHeaders.set("Content-Type", "text/plain; charset=utf-8");
-				}
-				else
-				{
-					content = "";
-				}
-				
-				return {
-					  responseHeaders : responseHeaders
-					, statusCode : statusCode
-					, cookie : cookie.response
-					, content : content
-				};
-			}
-			else
-			{
-				throw new Exception("Component id = '" + componentID + "' not found.");
-				return null;
-			}
+			throw new Exception("Component id = '" + componentFullID + "' not found.");
+			return null;
 		}
 	}
 	
@@ -137,19 +123,30 @@ class HaqPage extends HaqComponent
 		forEachComponent('preRender');
         Lib.profiler.end();
 		
-		if (!disableSystemHtmlInserts)
-		{
-			insertStyles(manager.getRegisteredStyles());
-			insertScripts([ 'haquery/client/jquery.js', HaqDefines.haqueryClientFilePath ].concat(manager.getRegisteredScripts()));
-			insertInitBlock(
-				  "<script>\n"
-				+ "    if(typeof haquery=='undefined') alert('" + HaqDefines.haqueryClientFilePath + " must be loaded!');\n"
-				+ "    " + manager.getDynamicClientCode(this).replace('\n', '\n    ') + '\n'
-				+ "</script>"
-			);
-		}
+		var isRedirected = statusCode == 301 || statusCode == 307;
 		
-		return super.render();
+		if (!isRedirected)
+		{
+			responseHeaders.set('Content-Type', contentType);
+			
+			if (!disableSystemHtmlInserts)
+			{
+				insertStyles(manager.getRegisteredStyles());
+				insertScripts([ 'haquery/client/jquery.js', HaqDefines.haqueryClientFilePath ].concat(manager.getRegisteredScripts()));
+				insertInitBlock(
+					  "<script>\n"
+					+ "    if(typeof haquery=='undefined') alert('" + HaqDefines.haqueryClientFilePath + " must be loaded!');\n"
+					+ "    " + manager.getDynamicClientCode(this).replace("\n", "\n    ") + "\n"
+					+ "</script>"
+				);
+			}
+			
+			return super.render();
+		}
+		else
+		{
+			return "";
+		}
 	}
     
     function insertStyles(links:Array<String>)

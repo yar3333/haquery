@@ -31,4 +31,6 @@ typedef HaqRequest =
 	var host : String;
 	
 	var queryString : String;
+	
+	var pageUuid : String;
 }

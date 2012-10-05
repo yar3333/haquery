@@ -20,11 +20,7 @@ import haxe.Unserializer;
 import haxe.PosInfos;
 import haquery.common.HaqDefines;
 import haquery.server.db.HaqDb;
-import haquery.server.FileSystem;
-import haquery.server.HaqConfig;
-import haquery.server.HaqCookie;
 import haquery.server.HaqRouter;
-import haquery.server.HaqProfiler;
 import haquery.server.HaqUploadedFile.HaqUploadError;
 import sys.io.File;
 using haquery.StringTools;
@@ -38,6 +34,8 @@ class Lib
 	public static var manager : HaqTemplateManager;
 	
 	static var startTime : Float;
+	
+	public static var daemon(default, null) : HaqDaemon;
     
     public static function run() : Void
     {
@@ -67,32 +65,16 @@ class Lib
 				}
 				else
 				{
-					var request = getRequest(route);
-					var response : HaqResponse;
-					
-					if (config.daemons.iterator().hasNext())
-					{
-						var names = Lambda.array( { iterator:config.daemons.keys } );
-						var hostAndPort = config.daemons.get(names[Std.random(names.length)]);
-						response = HaqDaemon.requestServer(hostAndPort.host, hostAndPort.port, request);
-						
-					}
-					else
-					{
-						response = runApplicationPage(request, route, bootstraps);
-					}
+					var daemon = getDaemonToDispatch();
+					var response = daemon != null
+								 ? daemon.makeRequest(getRequest(route))
+								 : runPage(getRequest(route), route, bootstraps).response;
 					
 					if (response != null)
 					{
-						if (response.statusCode != 0)
-						{
-							Web.setReturnCode(response.statusCode);
-						}
-						
+						Web.setReturnCode(response.statusCode);
 						response.responseHeaders.send();
-						
 						response.cookie.send();
-						
 						NativeLib.print(response.content);
 					}
 				}
@@ -116,6 +98,16 @@ class Lib
         }
     }
 	
+	static function getDaemonToDispatch() : HaqDaemon
+	{
+		if (config.daemons.iterator().hasNext())
+		{
+			var names = Lambda.array( { iterator:config.daemons.keys } );
+			return config.daemons.get(names[Std.random(names.length)]);
+		}
+		return null;
+	}
+	
 	static function getRequest(route:HaqRoute) : HaqRequest
 	{
 		var params = !isCli() ? Web.getParams() : HaqCli.getParams();
@@ -131,11 +123,14 @@ class Lib
 			, clientIP: getClientIP()
 			, host: getHttpHost()
 			, queryString: getParamsString()
+			, pageUuid: Uuid.newUuid()
 		};
 	}
 	
-	static function runApplicationPage(request:HaqRequest, route:HaqRoute, bootstraps:Array<HaqBootstrap>) : HaqResponse
+	public static function runPage(request:HaqRequest, route:HaqRoute, bootstraps:Array<HaqBootstrap>) : { page:HaqPage, response:HaqResponse }
 	{
+		var startTime =  Sys.time();
+		
 		profiler = new HaqProfiler(config.enableProfiling);
 		
 		profiler.begin("HAQUERY");
@@ -166,7 +161,16 @@ class Lib
 				trace("HAQUERY START " + (isCli() ? "CLI" : "WEB") + " pageFullTag = " + route.fullTag +  ", HTTP_HOST = " + getHttpHost() + ", clientIP = " + getClientIP() + ", pageID = " + route.pageID);
 				
 				var page = manager.createPage(route.fullTag, Std.hash(request));
-				var response = page.process();
+				var saveTrace = haxe.Log.trace;
+				haxe.Log.trace = function(v:Dynamic, ?pos:PosInfos) HaqLog.pageTrace(startTime, page, v, pos);
+				page.forEachComponent("preInit", true);
+				page.forEachComponent("init", false);
+				
+				var response = !request.isPostback
+					? page.generateResponseByRender()
+					: page.generateResponseByCallSharedMethod(request.params.get('HAQUERY_COMPONENT'), request.params.get('HAQUERY_METHOD'), Unserializer.run(request.params.get('HAQUERY_PARAMS')));
+				
+				haxe.Log.trace = saveTrace;
 			profiler.end();
 			
 			bootstraps.reverse();
@@ -183,7 +187,7 @@ class Lib
 		profiler.end();
 		profiler.traceResults();	
 		
-		return response;
+		return { page:page, response:response };
 	}
 	
 	static function runSystemCommand(route:HaqRoute)
@@ -260,7 +264,7 @@ class Lib
     /**
      * Load bootstrap files from current folder to relativePath.
      */
-    static function loadBootstraps(relativePath:String) : Array<HaqBootstrap>
+    public static function loadBootstraps(relativePath:String) : Array<HaqBootstrap>
     {
         var bootstraps = [];
 		
@@ -466,9 +470,8 @@ class Lib
 	
 	static function runDaemon(name:String)
 	{
-		var hostAndPort = config.daemons.get(name);
-		var daemon = new HaqDaemon();
-		daemon.run(hostAndPort.host, hostAndPort.port);
+		daemon = config.daemons.get(name);
+		daemon.run();
 	}
 	
 	static function startDaemon(name:String)

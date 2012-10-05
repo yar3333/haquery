@@ -6,6 +6,7 @@ import sys.FileSystem;
 import sys.io.File;
 #end
 
+import haxe.macro.Compiler;
 import haxe.macro.Expr;
 import haxe.macro.Type;
 
@@ -36,6 +37,21 @@ class HaqComponent
 	{
 		var componentClass = Context.getLocalClass().get();
         var pos = Context.currentPos();
+		
+		HaqTools.log("BUILD = " + componentClass.name);
+		var fileAndPos = Compiler.getDisplayPos();
+		if (fileAndPos != null)
+		{
+			HaqTools.log("FILE = " + fileAndPos.file);
+			if (new EReg("(?:^|[\\/])server[\\/]|(?:^|[\\/]Server[.]hx$)", "i").match(fileAndPos.file))
+			{
+				if (componentClass.name == "Client")
+				{
+					componentClass.exclude();
+					return [];
+				}
+			}
+		}
 		
 		if (componentClass.name == "Server" || componentClass.name == "Client")
 		{

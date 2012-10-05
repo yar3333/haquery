@@ -1,15 +1,14 @@
 package haquery.client;
 
 import haquery.Exception;
-import haxe.Stack;
 import haxe.Firebug;
 import haquery.client.HaqInternals;
-import haquery.client.HaqCookie;
-
-using haquery.StringTools;
 
 class Lib
 {
+	public static var ajax(default, null) : HaqAjax;
+	public static var daemon(default, null) : HaqDaemon;
+	
 	static public function run(pageFullTag:String)
     {
 		haquery.macros.HaqBuild.preBuild();
@@ -18,6 +17,9 @@ class Lib
 			? Firebug.trace 
 			: haquery.client.Lib.trace;
         
+		ajax = new HaqAjax();
+		daemon = HaqInternals.daemon != "" ? new HaqDaemon(HaqInternals.daemon) : null;
+		
 		var manager = new HaqTemplateManager();
 		var page = manager.createPage(pageFullTag);
     }

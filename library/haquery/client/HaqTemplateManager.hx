@@ -4,8 +4,6 @@ import haquery.client.HaqComponent;
 import haquery.client.HaqTemplate;
 import haquery.common.HaqDefines;
 
-using haquery.StringTools;
-
 class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 {
 	public function new()

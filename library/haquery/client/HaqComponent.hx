@@ -87,8 +87,23 @@ using haquery.StringTools;
 	/**
 	 * Call server method, marked as @shared.
 	 */
-	public function callSharedMethod(method:String, ?params:Array<Dynamic>, ?callbackFunc:Dynamic->Void) : Void
+	public function callSharedMethodAjax(method:String, ?params:Array<Dynamic>, ?callb:Dynamic->Void) : Void
 	{
-		HaqElemEventManager.callServerMethod(page, fullID, method, params, callbackFunc);
+		Lib.ajax.callSharedMethod(fullID, method, params, callb);
+	}
+	
+	/**
+	 * Call server method, marked as @shared("websocket").
+	 */
+	public function callSharedMethodWebsocket(method:String, ?params:Array<Dynamic>, ?callb:Dynamic->Void) : Void
+	{
+		if (Lib.daemon != null)
+		{
+			Lib.daemon.callSharedMethod(page.pageUuid, fullID, method, params, callb);
+		}
+		else
+		{
+			callSharedMethodAjax(method, params, callb);
+		}
 	}
 }
