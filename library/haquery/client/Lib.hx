@@ -18,7 +18,7 @@ class Lib
 			: haquery.client.Lib.trace;
         
 		ajax = new HaqAjax();
-		daemon = HaqInternals.daemon != "" ? new HaqDaemon(HaqInternals.daemon) : null;
+		daemon = HaqInternals.daemon != "" ? new HaqDaemon(HaqInternals.daemon, HaqInternals.pageUuid) : null;
 		
 		var manager = new HaqTemplateManager();
 		var page = manager.createPage(pageFullTag);

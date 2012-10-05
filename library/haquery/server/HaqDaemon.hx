@@ -28,7 +28,7 @@ class HaqDaemon
 		trace("requestServer to " + host + ":" + port);
 		var ws = WebSocket.connect(host, port, "haquery", host);
 		trace("Send request object to server...");
-		ws.send(Serializer.run(HaqDaemonMessage.Server(request)));
+		ws.send(Serializer.run(HaqDaemonMessage.MakeRequest(request)));
 		trace("Wait response...");
 		var r = ws.recv();
 		trace("Response received");

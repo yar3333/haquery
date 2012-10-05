@@ -167,8 +167,8 @@ class Lib
 				page.forEachComponent("init", false);
 				
 				var response = !request.isPostback
-					? page.generateResponseByRender()
-					: page.generateResponseByCallSharedMethod(request.params.get('HAQUERY_COMPONENT'), request.params.get('HAQUERY_METHOD'), Unserializer.run(request.params.get('HAQUERY_PARAMS')));
+					? page.generateResponseOnRender()
+					: page.generateResponseOnPostback(request.params.get('HAQUERY_COMPONENT'), request.params.get('HAQUERY_METHOD'), Unserializer.run(request.params.get('HAQUERY_PARAMS')));
 				
 				haxe.Log.trace = saveTrace;
 			profiler.end();

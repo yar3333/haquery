@@ -5,20 +5,25 @@ import haxe.Unserializer;
 import haquery.common.HaqDefines;
 import haquery.common.HaqDaemonMessage;
 import neko.net.WebSocketServerLoop;
+import sys.net.WebSocket;
 
 class ClientData extends WebSocketServerLoop.ClientData
 {
-	var connection : HaqDaemonMessage;
+	public var pageUuid : String;
 }
 
 class HaqDaemonServerLoop
 {
-	var pages : Hash<HaqPage>;
+	var waitedPages : Hash<{ page:HaqPage, created:Date }>;
+	var activePages : Hash<{ page:HaqPage, ws:WebSocket }>;
+	
 	var server : WebSocketServerLoop<ClientData>;
 	
 	public function new()
 	{
-		pages = new Hash<HaqPage>();
+		waitedPages = new Hash<{ page:HaqPage, created:Date }>();
+		activePages = new Hash<{ page:HaqPage, ws:WebSocket }>();
+		
 		server = new WebSocketServerLoop<ClientData>(function(socket) return new ClientData(socket));
 		server.processIncomingMessage = processIncomingMessage;
 	}
@@ -35,19 +40,34 @@ class HaqDaemonServerLoop
 		{
 			switch (cast(obj, HaqDaemonMessage))
 			{
-				case HaqDaemonMessage.Server(request):
-					trace("server");
+				case HaqDaemonMessage.MakeRequest(request):
+					neko.Lib.println("INCOMING MakeRequest [" + request.pageUuid + "] URI = " + request.uri);
 					var route = new HaqRouter(HaqDefines.folders.pages).getRoute(request.params.get("route"));
 					var bootstraps = Lib.loadBootstraps(route.path);
 					var r = Lib.runPage(request, route, bootstraps);
-					pages.set(r.page.pageUuid, r.page);
+					waitedPages.set(r.page.pageUuid, { page:r.page, created:Date.now() });
 					client.ws.send(Serializer.run(r.response));
 				
-				case HaqDaemonMessage.Client(pageUuid, componentFullID, method, params):
-					trace("client");
-					var page = pages.get(pageUuid);
-					var response = page.generateResponseByCallSharedMethod(componentFullID, method, params);
-					client.ws.send(Serializer.run(response));
+				case HaqDaemonMessage.ConnectToPage(pageUuid):
+					neko.Lib.println("INCOMING ConnectToPage [" + pageUuid + "]");
+					client.pageUuid = pageUuid;
+					var p = waitedPages.get(pageUuid);
+					waitedPages.remove(pageUuid);
+					activePages.set(pageUuid, { page:p.page, ws:client.ws });
+				
+				case HaqDaemonMessage.CallSharedMethod(componentFullID, method, params):
+					neko.Lib.println("INCOMING CallSharedMethod [" + client.pageUuid + "] method = " + componentFullID + "." + method);
+					var p = activePages.get(client.pageUuid);
+					var component = p.page.findComponent(componentFullID);
+					if (component != null)
+					{
+						var r = HaqComponentTools.callMethod(component, method, params);
+						client.ws.send(Serializer.run(r));
+					}
+					else
+					{
+						client.ws.send("alert('ERROR')");
+					}
 			}
 		}
 		else

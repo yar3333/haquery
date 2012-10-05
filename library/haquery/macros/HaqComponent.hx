@@ -38,6 +38,7 @@ class HaqComponent
 		var componentClass = Context.getLocalClass().get();
         var pos = Context.currentPos();
 		
+		/*
 		HaqTools.log("BUILD = " + componentClass.name);
 		var fileAndPos = Compiler.getDisplayPos();
 		if (fileAndPos != null)
@@ -52,6 +53,7 @@ class HaqComponent
 				}
 			}
 		}
+		*/
 		
 		if (componentClass.name == "Server" || componentClass.name == "Client")
 		{

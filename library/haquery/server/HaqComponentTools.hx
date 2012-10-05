@@ -114,5 +114,5 @@ class HaqComponentTools
 			return isMethodShared(cast Type.getSuperClass(cls), method);
 		}
 		return false;
-	}	
+	}
 }

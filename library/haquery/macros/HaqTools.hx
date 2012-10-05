@@ -192,5 +192,20 @@ class HaqTools
 		return false;
 	}
 	
+	public static function stringConstExpr2string(expr:Expr) : String
+	{
+		switch (expr.expr)
+		{
+			case ExprDef.EConst(c):
+				switch (c)
+				{
+					case Constant.CString(s): return s;
+					default:
+				}
+			default:
+		}
+		return null;
+	}
+	
 	#end
 }
