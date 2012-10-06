@@ -1,6 +1,6 @@
 package haquery.common;
 
-enum HaqDaemonMessage
+enum HaqMessage
 {
 	#if !client
 	MakeRequest(request:haquery.server.HaqRequest);

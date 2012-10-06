@@ -1,14 +1,13 @@
 package haquery.client;
 
 import haxe.Serializer;
-import haxe.Unserializer;
 import js.Dom;
-import haquery.client.Lib;
 import js.JQuery;
+import haquery.client.Lib;
 import haquery.common.HaqDefines;
 using haquery.StringTools;
 
-class HaqAjax 
+class HaqServerCallerAjax extends HaqServerCallerBase
 {
 	public function new() {}
 	
@@ -17,40 +16,10 @@ class HaqAjax
 		var sendData = getDataObjectForSendToServer(componentID, method, params);
 		JQuery.postAjax(Lib.window.location.href, sendData, function(data:String) : Void
 		{ 
-			callServerHandlersCallbackFunction(data, callbackFunc);
+			processServerAnswer(data, callbackFunc);
 		});
 	}
 	
-	function callServerHandlersCallbackFunction(data:String, ?callbackFunc:Dynamic->Void) : Void
-	{
-		var okMsg = "HAQUERY_OK";
-		if (data.startsWith(okMsg))
-		{
-			var resultAndCode = data.substr(okMsg.length);
-			var n = resultAndCode.indexOf("\n");
-			if (n >= 0)
-			{
-				var result = Unserializer.run(resultAndCode.substr(0, n));
-				var code = resultAndCode.substr(n + 1);
-				trace("AJAX result:");
-				trace(result);
-				trace("AJAX code:\n" + code);
-				Lib.eval(code);
-				if (callbackFunc != null)
-				{
-					callbackFunc(result);
-				}
-			}
-		}
-		else
-		{
-			if (data != '')
-			{
-				var errWin = Lib.window.open("", "HAQUERY_ERROR_AJAX");
-				errWin.document.write(data);
-			}
-		}
-	}
 	
     function getDataObjectForSendToServer(componentID:String, method:String, ?params:Array<Dynamic>) : Dynamic
     {

@@ -35,7 +35,7 @@ class Lib
 	
 	static var startTime : Float;
 	
-	public static var daemon(default, null) : HaqDaemon;
+	public static var listener(default, null) : HaqWebsocketListener;
     
     public static function run() : Void
     {
@@ -61,13 +61,13 @@ class Lib
 				
 				if (route.pageID != null && route.pageID.startsWith("haquery-"))
 				{
-					runSystemCommand(route);
+					HaqSystem.run(route.pageID);
 				}
 				else
 				{
-					var daemon = getDaemonToDispatch();
-					var response = daemon != null
-								 ? daemon.makeRequest(getRequest(route))
+					var listener = getListenerToDispatchRequest();
+					var response = listener != null
+								 ? listener.makeRequest(getRequest(route))
 								 : runPage(getRequest(route), route, bootstraps).response;
 					
 					if (response != null)
@@ -98,12 +98,12 @@ class Lib
         }
     }
 	
-	static function getDaemonToDispatch() : HaqDaemon
+	static function getListenerToDispatchRequest() : HaqWebsocketListener
 	{
-		if (config.daemons.iterator().hasNext())
+		if (config.listeners.iterator().hasNext())
 		{
-			var names = Lambda.array( { iterator:config.daemons.keys } );
-			return config.daemons.get(names[Std.random(names.length)]);
+			var names = Lambda.array( { iterator:config.listeners.keys } );
+			return config.listeners.get(names[Std.random(names.length)]);
 		}
 		return null;
 	}
@@ -190,61 +190,6 @@ class Lib
 		return { page:page, response:response };
 	}
 	
-	static function runSystemCommand(route:HaqRoute)
-	{
-		switch (route.pageID)
-		{
-			case "haquery-flush":
-				NativeLib.println("<b>HAQUERY FLUSH</b><br /><br />");
-				var path = HaqDefines.folders.temp;
-				
-				NativeLib.println("delete '" + path + "/haquery.log" + "'<br />");
-				FileSystem.deleteFile(path + "/haquery.log");
-				
-				NativeLib.println("delete '" + path + "/cache" + "'<br />");
-				FileSystem.deleteDirectory(path + "/cache");
-				
-				NativeLib.println("delete '" + path + "/templates" + "'<br />");
-				FileSystem.deleteDirectory(path + "/templates");
-				
-			case "haquery-daemon":
-				if (isCli())
-				{
-					var args = Sys.args();
-					if (args.length >= 3)
-					{
-						if (config.daemons.exists(args[1]))
-						{
-							switch (args[2])
-							{
-								case "run":		runDaemon(args[1]);
-								case "start":	startDaemon(args[1]);
-								case "stop":	stopDaemon(args[1]);
-								
-								default:
-									NativeLib.println("Unknow <daemon_command>. Supported: 'run', 'start' and 'stop'.");
-							}
-						}
-						else
-						{
-							NativeLib.println("Daemon '" + args[1] + "' is not found.");
-						}
-					}
-					else
-					{
-						NativeLib.println("Need arguments: <daemon_name> and <daemon_command>.");
-					}
-				}
-				else
-				{
-					NativeLib.println("This command allowed from the command-line only.");
-				}
-			
-			default:
-				NativeLib.println("HAQUERY ERROR: system command '" + route.pageID + "' is not supported.");
-		}
-	}
-
 	#if debug
 		public static function assert(e:Bool, errorMessage:String=null, ?pos:haxe.PosInfos) : Void
 		{
@@ -467,20 +412,4 @@ class Lib
 	}
 	
 	static function getCwd() { return Web.getCwd().replace("\\", "/").rtrim("/"); }
-	
-	static function runDaemon(name:String)
-	{
-		daemon = config.daemons.get(name);
-		daemon.run();
-	}
-	
-	static function startDaemon(name:String)
-	{
-		var p = new sys.io.Process("neko", [ "index.n", "haquery-daemon", name, "run" ]);
-		NativeLib.println("Daemon '" + name + "' PID: " + p.getPid());
-	}
-	
-	static function stopDaemon(name:String)
-	{
-	}
 }

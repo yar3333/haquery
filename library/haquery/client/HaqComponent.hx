@@ -97,9 +97,9 @@ using haquery.StringTools;
 	 */
 	public function callSharedMethodWebsocket(method:String, ?params:Array<Dynamic>, ?callb:Dynamic->Void) : Void
 	{
-		if (Lib.daemon != null)
+		if (Lib.websocket != null)
 		{
-			Lib.daemon.callSharedMethod(fullID, method, params, callb);
+			Lib.websocket.callSharedMethod(fullID, method, params, callb);
 		}
 		else
 		{

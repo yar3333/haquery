@@ -6,8 +6,8 @@ import haquery.client.HaqInternals;
 
 class Lib
 {
-	public static var ajax(default, null) : HaqAjax;
-	public static var daemon(default, null) : HaqDaemon;
+	public static var ajax(default, null) : HaqServerCallerAjax;
+	public static var websocket(default, null) : HaqServerCallerWebsocket;
 	
 	static public function run(pageFullTag:String)
     {
@@ -17,8 +17,8 @@ class Lib
 			? Firebug.trace 
 			: haquery.client.Lib.trace;
         
-		ajax = new HaqAjax();
-		daemon = HaqInternals.daemon != "" ? new HaqDaemon(HaqInternals.daemon, HaqInternals.pageUuid) : null;
+		ajax = new HaqServerCallerAjax();
+		websocket = HaqInternals.listener != "" ? new HaqServerCallerWebsocket(HaqInternals.listener, HaqInternals.pageUuid) : null;
 		
 		var manager = new HaqTemplateManager();
 		var page = manager.createPage(pageFullTag);

@@ -10,9 +10,9 @@ class HaqResponseCookie
 {
 	var cookies : Hash<{ value:String, expire:Date, path:String, domain:String }>;
 	
-	public function new() : Void
+	public function new()
 	{
-		cookies = new Hash<{ value:String, expire:Date, path:String, domain:String }>();
+		reset();
 	}
 	
 	public function set(name:String, value:String, ?expire:Date, ?path:String, ?domain:String) : Void
@@ -32,5 +32,10 @@ class HaqResponseCookie
 			var d = cookies.get(name);
 			Web.setCookie(name, d.value, d.expire, d.domain, d.path);
 		}
+	}
+	
+	public function reset() : Void
+	{
+		cookies = new Hash<{ value:String, expire:Date, path:String, domain:String }>();
 	}
 }
