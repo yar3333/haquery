@@ -18,7 +18,6 @@ class Client extends HaqPage
 	
 	function testCallShared_click(t, e)
 	{
-		Lib.alert("call");
 		shared().testShared(1, "abc", function(e)
 		{
 			Lib.alert("callb = " + e);

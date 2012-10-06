@@ -1,11 +1,11 @@
 package haquery.client;
 
-import haquery.common.HaqDaemonMessage;
+import haquery.common.HaqMessage;
 import haxe.Serializer;
 import haxe.Unserializer;
 import js.WebSocket;
 
-class HaqDaemon 
+class HaqServerCallerWebsocket extends HaqServerCallerBase
 {
 	var callQueue : Array<{ componentFullID:String, method:String, params:Array<Dynamic> }>;
 	var callbacks : Array<Dynamic->Void>;
@@ -22,17 +22,13 @@ class HaqDaemon
 		
 		socket.onopen = function() 
 		{
-			socket.send(Serializer.run(HaqDaemonMessage.ConnectToPage(pageUuid)));
+			socket.send(Serializer.run(HaqMessage.ConnectToPage(pageUuid)));
 			isConnected = true;
 		};
 		
 		socket.onmessage = function(e)
 		{
-			var callb = callbacks.shift();
-			if (callb != null)
-			{
-				callb(Unserializer.run(e.data));
-			}
+			processServerAnswer(e.data, callbacks.shift());
 		};
 		
 		socket.onclose = function() 
@@ -51,7 +47,7 @@ class HaqDaemon
 			while (callQueue.length > 0)
 			{
 				var c = callQueue.shift();
-				socket.send(Serializer.run(HaqDaemonMessage.CallSharedMethod(componentFullID, method, params)));
+				socket.send(Serializer.run(HaqMessage.CallSharedMethod(componentFullID, method, params)));
 			}
 		}
 	}

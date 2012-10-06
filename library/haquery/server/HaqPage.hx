@@ -87,9 +87,16 @@ class HaqPage extends HaqComponent
 		};
 	}
 
+	public function prepareNewPostback() : Void
+	{
+		isPostback = true;
+		responseHeaders = new HaqResponseHeaders();
+		cookie.response.reset();
+		ajaxResponse = "";
+	}
+	
 	public function generateResponseOnPostback(componentFullID:String, method:String, params:Array<Dynamic>) : HaqResponse
 	{
-		forEachComponent('preEventHandlers');
 		var component = findComponent(componentFullID);
 		if (component != null)
 		{

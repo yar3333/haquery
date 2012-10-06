@@ -51,13 +51,13 @@ class HaqConfig
 	 */
 	public var templateSelector : HaqTemplateSelector;
 	
-	public var daemons : Hash<HaqDaemon>;
+	public var listeners : Hash<HaqWebsocketListener>;
 	
 	public function new(filePath:String)
 	{
 		customs = new Hash<Dynamic>();
 		templateSelector = new HaqTemplateSelector();
-		daemons = new Hash<HaqDaemon>();
+		listeners = new Hash<HaqWebsocketListener>();
 		
 		load(filePath);
 	}
@@ -113,11 +113,11 @@ class HaqConfig
 				}
 			}
 			
-			for (node in xml.find(">config>daemon"))
+			for (node in xml.find(">config>listeners>websocket"))
 			{
 				if (node.hasAttribute("name") && node.hasAttribute("host") && node.hasAttribute("port"))
 				{
-					daemons.set(node.getAttribute("name"), new HaqDaemon(
+					listeners.set(node.getAttribute("name"), new HaqWebsocketListener(
 						  node.getAttribute("host")
 						, Std.parseInt(node.getAttribute("port"), 20000)
 						, Std.bool(node.getAttribute("autorun"))

@@ -27,7 +27,7 @@ class HaqInternals
 	
 	public static var sharedStorage(default, null) : HaqSharedStorage;
 	
-	public static var daemon(default, null) : String;
+	public static var listener(default, null) : String;
 	
 	public static var pageUuid(default, null) : String;
 	

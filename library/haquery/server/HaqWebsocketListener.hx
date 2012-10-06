@@ -3,9 +3,9 @@ package haquery.server;
 import haxe.Serializer;
 import haxe.Unserializer;
 import sys.net.WebSocket;
-import haquery.common.HaqDaemonMessage;
+import haquery.common.HaqMessage;
 
-class HaqDaemon
+class HaqWebsocketListener
 {
 	var host : String;
 	var port : Int;
@@ -28,7 +28,7 @@ class HaqDaemon
 		trace("requestServer to " + host + ":" + port);
 		var ws = WebSocket.connect(host, port, "haquery", host);
 		trace("Send request object to server...");
-		ws.send(Serializer.run(HaqDaemonMessage.MakeRequest(request)));
+		ws.send(Serializer.run(HaqMessage.MakeRequest(request)));
 		trace("Wait response...");
 		var r = ws.recv();
 		trace("Response received");
@@ -37,7 +37,7 @@ class HaqDaemon
 	
 	public function run()
 	{
-		var server = new HaqDaemonServerLoop();
+		var server = new HaqWebsocketServerLoop();
 		server.run(host, port);
 	}
 }

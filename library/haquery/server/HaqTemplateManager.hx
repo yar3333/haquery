@@ -245,7 +245,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		
 		s += "haquery.client.HaqInternals.sharedStorage = haxe.Unserializer.run('" + Serializer.run(sharedStorage) + "');\n";
 			  
-		s += "haquery.client.HaqInternals.daemon = '" + (Lib.daemon != null ? Lib.daemon.getUri() : "") + "';\n";
+		s += "haquery.client.HaqInternals.listener = '" + (Lib.listener != null ? Lib.listener.getUri() : "") + "';\n";
 		
 		s += "haquery.client.HaqInternals.pageUuid = '" + page.pageUuid + "';\n";
 		
