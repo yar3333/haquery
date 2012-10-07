@@ -32,10 +32,6 @@ class Lib
 	public static var db : HaqDb;
     
 	public static var manager : HaqTemplateManager;
-	
-	static var startTime : Float;
-	
-	public static var listener(default, null) : HaqWebsocketListener;
     
     public static function run() : Void
     {
@@ -50,8 +46,7 @@ class Lib
 		
 		try
         {
-			startTime = Sys.time();
-			haxe.Log.trace = function(v:Dynamic, ?pos:PosInfos) HaqLog.globalTrace(startTime, v, pos);
+			haxe.Log.trace = function(v:Dynamic, ?pos:PosInfos) HaqTrace.global(v, pos);
 			
 			try
 			{
@@ -129,8 +124,6 @@ class Lib
 	
 	public static function runPage(request:HaqRequest, route:HaqRoute, bootstraps:Array<HaqBootstrap>) : { page:HaqPage, response:HaqResponse }
 	{
-		var startTime =  Sys.time();
-		
 		profiler = new HaqProfiler(config.enableProfiling);
 		
 		profiler.begin("HAQUERY");
@@ -162,7 +155,8 @@ class Lib
 				
 				var page = manager.createPage(route.fullTag, Std.hash(request));
 				var saveTrace = haxe.Log.trace;
-				haxe.Log.trace = function(v:Dynamic, ?pos:PosInfos) HaqLog.pageTrace(startTime, page, v, pos);
+				haxe.Log.trace = function(v:Dynamic, ?pos:PosInfos) HaqTrace.page(page, v, pos);
+				
 				page.forEachComponent("preInit", true);
 				page.forEachComponent("init", false);
 				
@@ -253,8 +247,8 @@ class Lib
 	
 	static function getClientIP() : String
 	{
-		var realIP = Web.getClientHeader("X-Real-IP");
-		return realIP != null && realIP != "" ? realIP : Web.getClientIP();
+		var ip = Web.getClientHeader("X-Real-IP");
+		return ip != null && ip != "" ? ip : Web.getClientIP();
 	}
 	
 	static function getHttpHost() : String 

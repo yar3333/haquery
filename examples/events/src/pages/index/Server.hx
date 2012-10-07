@@ -4,7 +4,12 @@ import haquery.server.HaqPage;
 
 class Server extends HaqPage
 {
-    function simpleButton_click(t, e)
+    function init()
+	{
+		trace("server init");
+	}
+	
+	function simpleButton_click(t, e)
 	{
 		q('#status').html("simpleButton pressed on server");
 	}
@@ -16,6 +21,7 @@ class Server extends HaqPage
 	
 	@shared("websocket") function testShared(a:Int, b:String) : String
 	{
+		trace("server testShared");
 		return "answer:" + a + "-" + b;
 	}
 }

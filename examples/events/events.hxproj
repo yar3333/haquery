@@ -30,8 +30,6 @@
   <!-- haxelib libraries -->
   <haxelib>
     <library name="HtmlParser" />
-    <library name="FirePHP" />
-    <library name="hxJson2" />
     <library name="tink_core" />
     <library name="tink_macros" />
     <library name="WebSocket" />

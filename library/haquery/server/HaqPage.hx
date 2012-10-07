@@ -74,7 +74,6 @@ class HaqPage extends HaqComponent
 		responseHeaders = new HaqResponseHeaders();
 	}
 	
-	
 	public function generateResponseOnRender() : HaqResponse
 	{
 		var content = render();

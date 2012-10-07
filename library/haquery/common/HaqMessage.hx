@@ -11,4 +11,8 @@ enum HaqMessage
 	ConnectToPage(pageUuid:String);
 	
 	CallSharedMethod(componentFullID:String, method:String, params:Array<Dynamic>);
+	
+	Status;
+	
+	Stop;
 }

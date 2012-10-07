@@ -7,12 +7,14 @@ import haquery.common.HaqMessage;
 
 class HaqWebsocketListener
 {
-	var host : String;
-	var port : Int;
-	var autorun : Bool;
+	public var name(default, null) : String;
+	public var host(default, null) : String;
+	public var port(default, null) : Int;
+	public var autorun(default, null) : Bool;
 	
-	public function new(host:String, port:Int, autorun:Bool) 
+	public function new(name:String, host:String, port:Int, autorun:Bool) 
 	{
+		this.name = name;
 		this.host = host;
 		this.port = port;
 		this.autorun = autorun;
@@ -35,9 +37,38 @@ class HaqWebsocketListener
 		return Unserializer.run(r);
 	}
 	
+	public function status() : String
+	{
+		try
+		{
+			var ws = WebSocket.connect(host, port, "haquery", host);
+			ws.send(Serializer.run(HaqMessage.Status));
+			var r = ws.recv();
+			ws.socket.close();
+			return r;
+		}
+		catch (e:Dynamic)
+		{
+			return null;
+		}
+	}
+	
+	public function stop()
+	{
+		try
+		{
+			var ws = WebSocket.connect(host, port, "haquery", host);
+			ws.send(Serializer.run(HaqMessage.Stop));
+			ws.socket.close();
+		}
+		catch (e:Dynamic)
+		{
+		}
+	}
+	
 	public function run()
 	{
-		var server = new HaqWebsocketServerLoop();
+		var server = new HaqWebsocketServerLoop(name);
 		server.run(host, port);
 	}
 }
