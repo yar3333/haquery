@@ -209,24 +209,6 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		return r;
     }
 	
-	function fillTagIDs(component:HaqComponent, destTagIDs:Hash<Array<String>>) : Hash<Array<String>>
-	{
-		if (component.visible)
-		{
-			if (!destTagIDs.exists(component.fullTag))
-			{
-				destTagIDs.set(component.fullTag, []);
-			}
-			destTagIDs.get(component.fullTag).push(component.fullID);
-			
-			for (child in component.components)
-			{
-				fillTagIDs(child, destTagIDs);
-			}
-		}
-		
-		return destTagIDs;
-	}
 	
 	function array2json(a:Iterable<String>) : String
 	{
@@ -238,17 +220,13 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		var tagIDs = fillTagIDs(page, new Hash<Array<String>>());
 		
 		var s = "haquery.client.HaqInternals.tagIDs = haquery.Std.hash({\n"
-		      + Lambda.map({ iterator:tagIDs.keys }, function(tag) {
-					return "'" + tag + "':" + array2json(tagIDs.get(tag));
-				}).join(",\n")
+		      + Lambda.map({ iterator:tagIDs.keys }, function(tag) return "'" + tag + "':" + array2json(tagIDs.get(tag))).join(",\n")
 			  + "\n});\n";
 		
 		s += "haquery.client.HaqInternals.sharedStorage = haxe.Unserializer.run('" + Serializer.run(sharedStorage) + "');\n";
-			  
-		s += "haquery.client.HaqInternals.listener = '" + (Lib.listener != null ? Lib.listener.getUri() : "") + "';\n";
-		
+		s += "haquery.client.HaqInternals.listener = '" + (HaqSystem.listener != null ? HaqSystem.listener.getUri() : "") + "';\n";
 		s += "haquery.client.HaqInternals.pageUuid = '" + page.pageUuid + "';\n";
-		
+		s += page.ajaxResponse;
 		s += "haquery.client.Lib.run('" + page.fullTag + "');\n";
 
         return s;
@@ -286,5 +264,24 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 			}
 		}
 		return text;
+	}
+	
+	function fillTagIDs(component:HaqComponent, destTagIDs:Hash<Array<String>>) : Hash<Array<String>>
+	{
+		if (component.visible)
+		{
+			if (!destTagIDs.exists(component.fullTag))
+			{
+				destTagIDs.set(component.fullTag, []);
+			}
+			destTagIDs.get(component.fullTag).push(component.fullID);
+			
+			for (child in component.components)
+			{
+				fillTagIDs(child, destTagIDs);
+			}
+		}
+		
+		return destTagIDs;
 	}
 }

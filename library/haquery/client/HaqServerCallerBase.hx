@@ -16,9 +16,6 @@ class HaqServerCallerBase
 			{
 				var result = Unserializer.run(resultAndCode.substr(0, n));
 				var code = resultAndCode.substr(n + 1);
-				trace("AJAX result:");
-				trace(result);
-				trace("AJAX code:\n" + code);
 				Lib.eval(code);
 				if (callb != null)
 				{

@@ -7,9 +7,15 @@ private typedef NativeLib = neko.Lib;
 #end
 
 import haquery.common.HaqDefines;
+import sys.net.Host;
+import sys.net.Socket;
+import sys.net.WebSocket;
+using haquery.StringTools;
 
 class HaqSystem 
 {
+	public static var listener(default, null) : HaqWebsocketListener;
+	
 	public static function run(command:String)
 	{
 		var system = new HaqSystem();
@@ -17,10 +23,13 @@ class HaqSystem
 		switch (command)
 		{
 			case "haquery-flush":
-				system.flush();
+				system.doFlushCommnd();
 				
 			case "haquery-listener":
-				system.listener();
+				system.doListenerCommand();
+			
+			case "haquery-status":
+				system.doStatusCommand();
 			
 			default:
 				NativeLib.println("Unknow system command '" + command + "'.");
@@ -29,7 +38,7 @@ class HaqSystem
 	
 	function new() {}
 	
-	function flush()
+	function doFlushCommnd()
 	{
 		NativeLib.println("<b>HAQUERY FLUSH</b><br /><br />");
 		var path = HaqDefines.folders.temp;
@@ -44,7 +53,7 @@ class HaqSystem
 		FileSystem.deleteDirectory(path + "/templates");
 	}
 	
-	function listener()
+	function doListenerCommand()
 	{
 		if (Lib.isCli())
 		{
@@ -57,7 +66,7 @@ class HaqSystem
 						if (args.length >= 3)
 						{
 							var name = args[2];
-							var listener = Lib.config.listeners.get(name);
+							listener = Lib.config.listeners.get(name);
 							if (listener == null) throw "Unknow listener '" + name + "'.";
 							listener.run();
 						}
@@ -75,7 +84,19 @@ class HaqSystem
 						if (args.length >= 3)
 						{
 							var name = args[2];
-							if (!Lib.config.listeners.exists(name)) throw "Unknow listener '" + name + "'.";
+							var listener = Lib.config.listeners.get(name);
+							if (listener == null) throw "Unknow listener '" + name + "'.";
+							listener.stop();
+						}
+					
+					case "status":
+						if (args.length >= 3)
+						{
+							var name = args[2];
+							var listener = Lib.config.listeners.get(name);
+							if (listener == null) throw "Unknow listener '" + name + "'.";
+							var status = listener.status();
+							NativeLib.println(status != null ? status : "not run");
 						}
 					
 					default:
@@ -91,5 +112,22 @@ class HaqSystem
 		{
 			NativeLib.println("This command allowed from the command-line only.");
 		}
+	}
+	
+	function doStatusCommand()
+	{
+		var s = bold("[ Listeners ]") + "\n";
+		for (listener in Lib.config.listeners)
+		{
+			s += "* " + listener.name + "\n";
+			var status = listener.status();
+			s += status != null ? status : "not run";
+		}
+		NativeLib.println(s.replace("\n", "<br />"));
+	}
+	
+	function bold(s)
+	{
+		return Lib.isCli() ? s : "<b>" + s + "</b>";
 	}
 }

@@ -1,10 +1,18 @@
 package haquery.server;
 
+#if php
+private typedef NativeLib = php.Lib;
+#elseif neko
+private typedef NativeLib = neko.Lib;
+#end
+
+import haxe.PosInfos;
 import haxe.Serializer;
 import haxe.Unserializer;
 import haquery.common.HaqDefines;
 import haquery.common.HaqMessage;
 import neko.net.WebSocketServerLoop;
+import neko.vm.Gc;
 import sys.net.WebSocket;
 
 class ClientData extends WebSocketServerLoop.ClientData
@@ -14,22 +22,65 @@ class ClientData extends WebSocketServerLoop.ClientData
 
 class HaqWebsocketServerLoop
 {
-	var waitedPages : Hash<{ page:HaqPage, created:Date }>;
+	static inline var removeWaitedPageInterval = 60;
+	
+	var name : String;
+	var compilationDate : Date;
+	
+	var waitedPages : Hash<{ page:HaqPage, created:Float }>;
 	var activePages : Hash<{ page:HaqPage, ws:WebSocket }>;
 	
 	var server : WebSocketServerLoop<ClientData>;
 	
-	public function new()
+	public function new(name:String)
 	{
-		waitedPages = new Hash<{ page:HaqPage, created:Date }>();
-		activePages = new Hash<{ page:HaqPage, ws:WebSocket }>();
+		this.name = name;
+		this.compilationDate = Lib.getCompilationDate();
 		
-		server = new WebSocketServerLoop<ClientData>(function(socket) return new ClientData(socket));
-		server.processIncomingMessage = processIncomingMessage;
+		this.waitedPages = new Hash<{ page:HaqPage, created:Float }>();
+		this.activePages = new Hash<{ page:HaqPage, ws:WebSocket }>();
+		
+		this.server = new WebSocketServerLoop<ClientData>(function(socket) return new ClientData(socket));
+		
+		this.server.processIncomingMessage = processIncomingMessage;
+		
+		this.server.processDisconnect = function(client:ClientData)
+		{
+			if (client.pageUuid != null)
+			{
+				activePages.remove(client.pageUuid);
+			}
+		};
+		
+		this.server.processUpdate = function()
+		{
+			var now = Date.now().getTime() / 1000;
+			
+			for (pageUuid in waitedPages.keys())
+			{
+				if (now - waitedPages.get(pageUuid).created > removeWaitedPageInterval)
+				{
+					waitedPages.remove(pageUuid);
+				}
+			}
+			
+			var nowCompilationDate : Date = compilationDate; 
+			try { nowCompilationDate = Lib.getCompilationDate(); } catch (e:Dynamic) {}
+			
+			if (nowCompilationDate.getTime() != compilationDate.getTime())
+			{
+				NativeLib.print("AUTORESTART ");
+				server.stop();
+				var p = new sys.io.Process("neko", [ "index.n", "haquery-listener", "run", name ]);
+				NativeLib.println("PID = " + p.getPid());
+				Sys.exit(0);
+			}
+		};
 	}
 	
 	public function run(host:String, port:Int)
 	{
+		trace("HAQUERY LISTENER start at " + host + ":" + port);
 		server.run(new sys.net.Host(host), port);
 	}
 	
@@ -45,7 +96,7 @@ class HaqWebsocketServerLoop
 					var route = new HaqRouter(HaqDefines.folders.pages).getRoute(request.params.get("route"));
 					var bootstraps = Lib.loadBootstraps(route.path);
 					var r = Lib.runPage(request, route, bootstraps);
-					waitedPages.set(r.page.pageUuid, { page:r.page, created:Date.now() });
+					waitedPages.set(r.page.pageUuid, { page:r.page, created:Date.now().getTime() / 1000 });
 					client.ws.send(Serializer.run(r.response));
 				
 				case HaqMessage.ConnectToPage(pageUuid):
@@ -59,13 +110,27 @@ class HaqWebsocketServerLoop
 					neko.Lib.println("INCOMING CallSharedMethod [" + client.pageUuid + "] method = " + componentFullID + "." + method);
 					var p = activePages.get(client.pageUuid);
 					p.page.prepareNewPostback();
-					var response : HaqResponse = p.page.generateResponseOnPostback(componentFullID, method, params);
+					
+					var saveTrace = haxe.Log.trace;
+					haxe.Log.trace = function(v:Dynamic, ?pos:PosInfos) HaqTrace.page(p.page, v, pos);
+					var response = p.page.generateResponseOnPostback(componentFullID, method, params);
+					haxe.Log.trace = saveTrace;
+					
 					client.ws.send(response.content);
+				
+				case HaqMessage.Status:
+					var s = "pages active: " + Lambda.count(activePages) + "\n"
+						  + "pages waiting queue: " + Lambda.count(waitedPages) + "\n"
+						  + "memory heap: " + Math.round(Gc.stats().heap / 1024 / 1024) + " MB\n";
+					client.ws.send(s);
+				
+				case HaqMessage.Stop:
+					Sys.exit(0);
 			}
 		}
 		else
 		{
-			// disconnect
+			server.closeConnection(client.ws.socket);
 		}
 	}
 }

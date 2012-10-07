@@ -117,8 +117,10 @@ class HaqConfig
 			{
 				if (node.hasAttribute("name") && node.hasAttribute("host") && node.hasAttribute("port"))
 				{
-					listeners.set(node.getAttribute("name"), new HaqWebsocketListener(
-						  node.getAttribute("host")
+					var name = node.getAttribute("name");
+					listeners.set(name, new HaqWebsocketListener(
+						  name
+						, node.getAttribute("host")
 						, Std.parseInt(node.getAttribute("port"), 20000)
 						, Std.bool(node.getAttribute("autorun"))
 					));
