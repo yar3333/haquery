@@ -15,7 +15,7 @@ private typedef Component = haquery.client.HaqComponent;
 
 using haquery.StringTools;
 
-class HaqComponent extends haquery.macros.HaqComponent
+@:keep class HaqComponent extends haquery.macros.HaqComponent
 {
     public var manager(default,null) : HaqTemplateManager;
 	
@@ -48,7 +48,7 @@ class HaqComponent extends haquery.macros.HaqComponent
 	
     var nextAnonimID : Int;
 	
-	function new() : Void
+	public function new() : Void
 	{
 		components = new Hash<Component>();
 		nextAnonimID = 0;

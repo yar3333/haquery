@@ -1,6 +1,6 @@
 package haquery;
 
-class HashTools
+@:keep @:expose class HashTools
 {
     public static function add<T>(dest:Hash<T>, src:Hash<T>, overwrite = true)
     {

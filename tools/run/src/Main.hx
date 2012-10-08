@@ -55,7 +55,7 @@ class Main
 					exitCode = tasks.preBuild() ? 0 : 1;
 				
 				case 'post-build': 
-					exitCode = tasks.postBuild() ? 0 : 1;
+					exitCode = tasks.postBuild(Lambda.has(args, "--js-modern"), Lambda.has(args, "--dead-code-elimination")) ? 0 : 1;
 					
 				case 'install':
 					tasks.install();
@@ -70,10 +70,13 @@ class Main
 			Lib.println("HaQuery building support and deploying tool.");
 			Lib.println("Usage: haxelib run HaQuery <command>");
 			Lib.println("\twhere <command> may be:");
-			Lib.println("\t\tpre-build                           Do pre-build step.");
-			Lib.println("\t\tpost-build                          Do post-build step.");
-			Lib.println("\t\tinstall                             Install FlashDevelop templates.");
-			Lib.println("\t\tgen-orm [databaseConnectionString]  Generate object-related classes (managers and models).");
+			Lib.println("\t\tpre-build                      Do pre-build step.");
+			Lib.println("\t\tpost-build                     Do post-build step.");
+			Lib.println("\t\t\t[--js-modern]");
+			Lib.println("\t\t\t[--dead-code-elimination]");
+			Lib.println("\t\tinstall                        Install FlashDevelop templates.");
+			Lib.println("\t\tgen-orm                        Generate object-related classes (managers and models).");
+			Lib.println("\t\t\t[databaseConnectionString]");
 			exitCode = 1;
 		}
         

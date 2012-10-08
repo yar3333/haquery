@@ -205,7 +205,8 @@ class FlashDevelopProject
 			{
 				if (elem.name == "option" && elem.has.additional)
 				{
-					return ~/\s+/.split(StringTools.urlDecode(elem.att.additional));
+					var s = StringTools.urlDecode(elem.att.additional).trim();
+					return s != "" ? ~/\s+/.split(s) : [];
 				}
 			}
 		}
@@ -227,7 +228,7 @@ class FlashDevelopProject
 		return null;
 	}
 	
-	public function getBuildParams(platformPrefix:String, destPath:String, defines:Array<String>, additionalCompilerOptions:Array<String>) : Array<String>
+	public function getBuildParams(platformPrefix:String, destPath:String, defines:Array<String>) : Array<String>
 	{
         var params = new Array<String>();
         
@@ -255,8 +256,6 @@ class FlashDevelopProject
 		{
 			params = params.concat([ "-D", d ]);
 		}
-		
-		params.push("--js-modern");
 		
 		params = params.concat(additionalCompilerOptions);
 		
