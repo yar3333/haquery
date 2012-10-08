@@ -28,7 +28,22 @@ class HaqWebsocketListener
 	public function makeRequest(request:HaqRequest) : HaqResponse
 	{
 		trace("requestServer to " + host + ":" + port);
-		var ws = WebSocket.connect(host, port, "haquery", host);
+		
+		var ws : WebSocket;
+		try { ws = WebSocket.connect(host, port, "haquery", host); } 
+		catch (e:Dynamic)
+		{
+			if (autorun)
+			{
+				HaqSystem.startListener(name);
+				Sys.sleep(1);
+				ws = WebSocket.connect(host, port, "haquery", host);
+			}
+			else
+			{
+				return null;
+			}
+		}
 		trace("Send request object to server...");
 		ws.send(Serializer.run(HaqMessage.MakeRequest(request)));
 		trace("Wait response...");
