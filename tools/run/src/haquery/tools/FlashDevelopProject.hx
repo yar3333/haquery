@@ -201,11 +201,11 @@ class FlashDevelopProject
 		
 		if (fast.hasNode.build)
 		{
-			for (elem in fast.node.output.elements)
+			for (elem in fast.node.build.elements)
 			{
 				if (elem.name == "option" && elem.has.additional)
 				{
-					return StringTools.urlDecode(elem.att.additional).split("\n");
+					return ~/\s+/.split(StringTools.urlDecode(elem.att.additional));
 				}
 			}
 		}
