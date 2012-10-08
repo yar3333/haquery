@@ -29,10 +29,9 @@
   <haxelib>
     <library name="HaQuery" />
     <library name="HtmlParser" />
-    <library name="hxjson2" />
-    <library name="FirePhp" />
     <library name="tink_core" />
     <library name="tink_macros" />
+    <library name="WebSocket" />
   </haxelib>
   <!-- Class files to compile (other referenced classes will automatically be included) -->
   <compileTargets>

@@ -7,6 +7,7 @@ private typedef NativeLib = neko.Lib;
 #end
 
 import haquery.common.HaqDefines;
+import sys.io.Process;
 import sys.net.Host;
 import sys.net.Socket;
 import sys.net.WebSocket;
@@ -74,10 +75,8 @@ class HaqSystem
 					case "start":
 						if (args.length >= 3)
 						{
-							var name = args[2];
-							if (!Lib.config.listeners.exists(name)) throw "Unknow listener '" + name + "'.";
-							var p = new sys.io.Process("neko", [ "index.n", "haquery-listener", name, "run" ]);
-							NativeLib.println("Listener '" + name + "' PID: " + p.getPid());
+							var p = startListener(args[2]);
+							NativeLib.println("Listener '" + args[2] + "' PID: " + p.getPid());
 						}
 					
 					case "stop":
@@ -129,5 +128,11 @@ class HaqSystem
 	function bold(s)
 	{
 		return Lib.isCli() ? s : "<b>" + s + "</b>";
+	}
+	
+	public static function startListener(name:String) : Process
+	{
+		if (!Lib.config.listeners.exists(name)) throw "Unknow listener '" + name + "'.";
+		return new Process("neko", [ "index.n", "haquery-listener", name, "run" ]);
 	}
 }
