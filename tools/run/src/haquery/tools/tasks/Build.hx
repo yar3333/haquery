@@ -156,7 +156,7 @@ class Build
 		
 		hant.createDirectory(clientPath);
         
-        var params = project.getBuildParams("-js", clientPath + "/haquery.js", [ "noEmbedJS", "client" ]);
+        var params = project.getBuildParams("-js", clientPath + "/haquery.js", [ "noEmbedJS", "client" ], project.additionalCompilerOptions);
 		var r = hant.run(hant.getHaxePath() + "haxe.exe", params);
 		Lib.print(r.stdOut);
 		Lib.print(r.stdErr);
@@ -216,7 +216,7 @@ class Build
 		
 		log.start("Generate shared classes from client");
 		hant.createDirectory(Path.directory(tempPath));
-		var params = project.getBuildParams("-js", tempPath, [ "noEmbedJS", "client", "haqueryPreBuild" ]);
+		var params = project.getBuildParams("-js", tempPath, [ "noEmbedJS", "client", "haqueryPreBuild" ], project.additionalCompilerOptions);
 		var r = hant.run(hant.getHaxePath() + "haxe.exe", params);
 		hant.deleteFile(tempPath);
 		hant.deleteFile(tempPath + ".map");

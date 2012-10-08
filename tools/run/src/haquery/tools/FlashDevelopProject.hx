@@ -14,6 +14,7 @@ class FlashDevelopProject
 	public var isDebug(default, null) : Bool;
 	public var srcPath(default, null) : String;
 	public var platform(default, null) : String;
+	public var additionalCompilerOptions(default, null) : Array<String>;
 	
 	public function new(dir:String, exeDir:String) 
 	{
@@ -32,6 +33,7 @@ class FlashDevelopProject
 		isDebug = getIsDebug(xml);
 		srcPath = getSrcPath(xml);
 		platform = getPlatform(xml);
+		additionalCompilerOptions = getAdditionalCompilerOptions(xml);
 	}
 	
 	function findProjectFile(dir:String) : String
@@ -193,6 +195,24 @@ class FlashDevelopProject
 		return "";
 	}
 	
+	function getAdditionalCompilerOptions(xml:Xml) : Array<String>
+	{
+		var fast = new haxe.xml.Fast(xml.firstElement());
+		
+		if (fast.hasNode.build)
+		{
+			for (elem in fast.node.build.elements)
+			{
+				if (elem.name == "option" && elem.has.additional)
+				{
+					return ~/\s+/.split(StringTools.urlDecode(elem.att.additional));
+				}
+			}
+		}
+		
+		return [];
+	}
+	
 	public function findFile(relativeFilePath:String) : String
 	{
 		var i = allClassPaths.length - 1;
@@ -207,7 +227,7 @@ class FlashDevelopProject
 		return null;
 	}
 	
-	public function getBuildParams(platformPrefix:String, destPath:String, defines:Array<String>) : Array<String>
+	public function getBuildParams(platformPrefix:String, destPath:String, defines:Array<String>, additionalCompilerOptions:Array<String>) : Array<String>
 	{
         var params = new Array<String>();
         
@@ -235,6 +255,9 @@ class FlashDevelopProject
 		{
 			params = params.concat([ "-D", d ]);
 		}
+		
+		
+		params = params.concat(additionalCompilerOptions);
 		
 		return params;
 	}
