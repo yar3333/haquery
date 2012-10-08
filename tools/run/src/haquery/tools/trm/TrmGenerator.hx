@@ -106,27 +106,30 @@ class TrmGenerator
 			{
 				var componentID = child.getAttribute("id").trim();
 				
-				var type = queryClassName;
-				var body = "return component.q('#" + componentID + "');";
-				if (child.name.startsWith("haq:"))
+				if (componentID.indexOf(":") < 0 && componentID.indexOf("-") < 0)
 				{
-					var tag = manager.tagDocToPackage(child.name.substr("haq:".length));
-					var template = manager.findTemplate(fullTag, tag);
-					if (template == null)
+					var type = queryClassName;
+					var body = "return component.q('#" + componentID + "');";
+					if (child.name.startsWith("haq:"))
 					{
-						throw "Template not found: '" + tag + "' from '" + fullTag + "'.";
+						var tag = manager.tagDocToPackage(child.name.substr("haq:".length));
+						var template = manager.findTemplate(fullTag, tag);
+						if (template == null)
+						{
+							throw "Template not found: '" + tag + "' from '" + fullTag + "'.";
+						}
+						type = isServer ? template.serverClassName : template.clientClassName;
+						body = "return cast component.components.get('" + componentID + "');";
 					}
-					type = isServer ? template.serverClassName : template.clientClassName;
-					body = "return cast component.components.get('" + componentID + "');";
-				}
-				
-				if (!isFactoryInner)
-				{
-					r.push(HaxeClassField.VarGetter( { haxeName:componentID, haxeType:type, haxeBody:body } ));
-				}
-				else
-				{
-					r.push(HaxeClassField.Var( { haxeName:componentID, haxeType:type, haxeDefVal:null } ));
+					
+					if (!isFactoryInner)
+					{
+						r.push(HaxeClassField.VarGetter( { haxeName:componentID, haxeType:type, haxeBody:body } ));
+					}
+					else
+					{
+						r.push(HaxeClassField.Var( { haxeName:componentID, haxeType:type, haxeDefVal:null } ));
+					}
 				}
 			}
 			
