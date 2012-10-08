@@ -117,17 +117,17 @@ class FlashDevelopProject
 		var hant = new Hant(new Log(0), exeDir);
 		var haxelib = Sys.environment().get("HAXEPATH").replace("\\", "/").rtrim("/") + "/haxelib.exe";
 		var lines = hant.run(haxelib, [ "path" ].concat(libs)).stdOut.split("\n");
-		for (i in 0...Std.int(lines.length / 2))
+		for (i in 0...lines.length)
 		{
-			var compilerOption = lines[i * 2 + 1].trim();
-			if (compilerOption.startsWith("-D "))
+			if (lines[i].startsWith("-D "))
 			{
-				var lib = compilerOption.substr("-D ".length);
+				var lib = lines[i].substr("-D ".length);
 				if (Lambda.has(libs, lib))
 				{
-					var path = lines[i * 2].trim();
+					var path = lines[i - 1].trim();
 					if (path == "") path = ".";
-					r.set(lib.toLowerCase(), path.replace("\\", "/").rtrim("/") + "/");
+					var p = path.replace("\\", "/").rtrim("/") + "/";
+					r.set(lib.toLowerCase(), p);
 				}
 			}
 		}
@@ -256,6 +256,7 @@ class FlashDevelopProject
 			params = params.concat([ "-D", d ]);
 		}
 		
+		params.push("--js-modern");
 		
 		params = params.concat(additionalCompilerOptions);
 		
