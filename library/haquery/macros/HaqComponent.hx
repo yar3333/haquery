@@ -11,7 +11,7 @@ import haxe.macro.Type;
 
 using tink.macro.tools.MacroTools;
 
-class HaqComponent
+@:keep class HaqComponent
 {
 	@:macro public function template(ethis:Expr)
 	{

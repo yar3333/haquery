@@ -21,9 +21,9 @@ class Tasks
 		return new Build(exeDir).preBuild();
 	}
 	
-	public function postBuild() : Bool
+	public function postBuild(isJsModern:Bool, isDeadCodeElimination:Bool) : Bool
 	{
-		return new Build(exeDir).postBuild();
+		return new Build(exeDir).postBuild(isJsModern, isDeadCodeElimination);
 	}
 	
 	public function install()

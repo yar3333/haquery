@@ -1,6 +1,7 @@
 package haquery.client;
 
 import haquery.Exception;
+import haxe.Unserializer;
 import haxe.Stack;
 import haxe.Firebug;
 import haquery.client.HaqInternals;
@@ -8,7 +9,7 @@ import haquery.common.HaqCookie;
 
 using haquery.StringTools;
 
-class Lib
+@:keep @:expose class Lib
 {
     public static var cookie(default, null) : HaqCookie;
 	public static var page(default, null) : HaqPage;
@@ -64,6 +65,8 @@ class Lib
 	{
 		return untyped __js__("confirm")(js.Boot.__string_rec(v,""));
 	}
+	
+	static function unserialize(s:String) : String return Unserializer.run(s)
 	
     ////////////////////////////////////////////////
     // official methods

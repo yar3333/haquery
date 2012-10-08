@@ -214,7 +214,7 @@ using haquery.StringTools;
         
         Lib.addAjaxResponse(
 			  "haquery.client.Lib.page." + (fullID != "" ? "findComponent('" + fullID + "')." : "") + method
-			+ "(" + Lambda.map(params != null ? params : [], function(p) return "haxe.Unserializer.run('" + Serializer.run(p) + "')").join(",") + ');'
+			+ "(" + Lambda.map(params != null ? params : [], function(p) return "haquery.client.Lib.unserialize('" + Serializer.run(p) + "')").join(",") + ');'
 		);
 	}
 	

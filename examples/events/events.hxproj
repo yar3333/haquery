@@ -15,6 +15,7 @@
   </output>
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
+    <class path="..\..\library" />
     <class path="trm" />
     <class path="src" />
   </classpaths>
@@ -28,7 +29,6 @@
   </build>
   <!-- haxelib libraries -->
   <haxelib>
-    <library name="HaQuery" />
     <library name="HtmlParser" />
     <library name="FirePHP" />
     <library name="hxJson2" />

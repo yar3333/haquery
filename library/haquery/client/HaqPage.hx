@@ -2,6 +2,6 @@ package haquery.client;
 
 import haquery.client.HaqComponent;
 
-class HaqPage extends HaqComponent
+@:keep class HaqPage extends HaqComponent
 {
 }

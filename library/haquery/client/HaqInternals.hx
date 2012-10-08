@@ -3,7 +3,7 @@ package haquery.client;
 import haquery.common.HaqSharedStorage;
 import haquery.HashTools; /* do not remove this import */
 
-class HaqInternals 
+@:keep @:expose class HaqInternals 
 {
 	/**
 	 * Setted by the server.
