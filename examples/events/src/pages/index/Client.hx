@@ -3,7 +3,7 @@ package pages.index;
 import haquery.client.Lib;
 import haquery.client.HaqPage;
 
-class Client extends HaqPage
+@:keep class Client extends HaqPage
 {
 	function simpleButton_click(t, e)
 	{

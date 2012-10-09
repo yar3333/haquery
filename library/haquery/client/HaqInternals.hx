@@ -2,7 +2,7 @@ package haquery.client;
 
 import haquery.common.HaqSharedStorage;
 
-class HaqInternals 
+@:keep @:expose class HaqInternals 
 {
 	/**
 	 * Setted by the server.

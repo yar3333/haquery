@@ -223,7 +223,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		      + Lambda.map({ iterator:tagIDs.keys }, function(tag) return "'" + tag + "':" + array2json(tagIDs.get(tag))).join(",\n")
 			  + "\n});\n";
 		
-		s += "haquery.client.HaqInternals.sharedStorage = haxe.Unserializer.run('" + Serializer.run(sharedStorage) + "');\n";
+		s += "haquery.client.HaqInternals.sharedStorage = haquery.client.Lib.unserialize('" + Serializer.run(sharedStorage) + "');\n";
 		s += "haquery.client.HaqInternals.listener = '" + (HaqSystem.listener != null ? HaqSystem.listener.getUri() : "") + "';\n";
 		s += "haquery.client.HaqInternals.pageUuid = '" + page.pageUuid + "';\n";
 		s += page.ajaxResponse;

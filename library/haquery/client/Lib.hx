@@ -1,10 +1,11 @@
 package haquery.client;
 
 import haquery.Exception;
+import haxe.Unserializer;
 import haxe.Firebug;
 import haquery.client.HaqInternals;
 
-class Lib
+@:keep @:expose class Lib
 {
 	public static var ajax(default, null) : HaqServerCallerAjax;
 	public static var websocket(default, null) : HaqServerCallerWebsocket;
@@ -48,6 +49,8 @@ class Lib
 	{
 		return untyped __js__("confirm")(js.Boot.__string_rec(v,""));
 	}
+	
+	static function unserialize(s:String) : String return Unserializer.run(s)
 	
     ////////////////////////////////////////////////
     // official methods
