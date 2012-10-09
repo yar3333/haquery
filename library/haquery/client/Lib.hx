@@ -1,7 +1,6 @@
 package haquery.client;
 
 import haquery.Exception;
-import haxe.Unserializer;
 import haxe.Firebug;
 import haquery.client.HaqInternals;
 
@@ -49,8 +48,6 @@ import haquery.client.HaqInternals;
 	{
 		return untyped __js__("confirm")(js.Boot.__string_rec(v,""));
 	}
-	
-	static function unserialize(s:String) : String return Unserializer.run(s)
 	
     ////////////////////////////////////////////////
     // official methods

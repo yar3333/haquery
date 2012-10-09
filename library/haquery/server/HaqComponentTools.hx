@@ -115,4 +115,23 @@ class HaqComponentTools
 		}
 		return false;
 	}
+	
+	public static function fillTagIDs(component:HaqComponent, destTagIDs:Hash<Array<String>>) : Hash<Array<String>>
+	{
+		if (component.visible)
+		{
+			if (!destTagIDs.exists(component.fullTag))
+			{
+				destTagIDs.set(component.fullTag, []);
+			}
+			destTagIDs.get(component.fullTag).push(component.fullID);
+			
+			for (child in component.components)
+			{
+				fillTagIDs(child, destTagIDs);
+			}
+		}
+		
+		return destTagIDs;
+	}
 }
