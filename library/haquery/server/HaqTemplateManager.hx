@@ -5,6 +5,7 @@ import haquery.Exception;
 import haquery.server.FileSystem;
 import haquery.server.HaqComponent;
 import haquery.server.HaqTemplate;
+import haxe.Json;
 import sys.io.File;
 import haxe.io.Path;
 import haquery.server.Lib;
@@ -209,29 +210,6 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		return r;
     }
 	
-	
-	function array2json(a:Iterable<String>) : String
-	{
-		return "[" + Lambda.map(a, function(s) return s != null ? "'" + s + "'" : "null").join(",") + "]";
-	}
-	
-	public function getDynamicClientCode(page:HaqPage) : String
-    {
-		var tagIDs = fillTagIDs(page, new Hash<Array<String>>());
-		
-		var s = "haquery.client.HaqInternals.tagIDs = haquery.Std.hash({\n"
-		      + Lambda.map({ iterator:tagIDs.keys }, function(tag) return "'" + tag + "':" + array2json(tagIDs.get(tag))).join(",\n")
-			  + "\n});\n";
-		
-		s += "haquery.client.HaqInternals.sharedStorage = haquery.client.Lib.unserialize('" + Serializer.run(sharedStorage) + "');\n";
-		s += "haquery.client.HaqInternals.listener = '" + (HaqSystem.listener != null ? HaqSystem.listener.getUri() : "") + "';\n";
-		s += "haquery.client.HaqInternals.pageUuid = '" + page.pageUuid + "';\n";
-		s += page.ajaxResponse;
-		s += "haquery.client.Lib.run('" + page.fullTag + "');\n";
-
-        return s;
-    }
-	
 	function getStaticClientCode() : String
 	{
 		var s = "haquery.client.HaqInternals.templates = haquery.Std.hash({\n"
@@ -239,11 +217,11 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 					var t = get(tag);
 					return "'" + tag + "':"
 						 + "{" 
-							 + "config:" + array2json([ t.extend ].concat(t.imports))
+							 + "config:" + Json.stringify([ t.extend ].concat(t.imports))
 							 + ", "
 							 + "serverHandlers:haquery.Std.hash({" 
 							 + Lambda.map({ iterator:t.serverHandlers.keys }, function(elemID) {
-									return "'" + elemID + "':" + array2json(t.serverHandlers.get(elemID));
+									return "'" + elemID + "':" + Json.stringify(t.serverHandlers.get(elemID));
 								  }).join(",")
 							 + "})"
 						 + "}";
@@ -264,24 +242,5 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 			}
 		}
 		return text;
-	}
-	
-	function fillTagIDs(component:HaqComponent, destTagIDs:Hash<Array<String>>) : Hash<Array<String>>
-	{
-		if (component.visible)
-		{
-			if (!destTagIDs.exists(component.fullTag))
-			{
-				destTagIDs.set(component.fullTag, []);
-			}
-			destTagIDs.get(component.fullTag).push(component.fullID);
-			
-			for (child in component.components)
-			{
-				fillTagIDs(child, destTagIDs);
-			}
-		}
-		
-		return destTagIDs;
 	}
 }

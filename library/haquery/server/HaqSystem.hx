@@ -75,8 +75,10 @@ class HaqSystem
 					case "start":
 						if (args.length >= 3)
 						{
-							var p = startListener(args[2]);
-							NativeLib.println("Listener '" + args[2] + "' PID: " + p.getPid());
+							var name = args[2];
+							if (!Lib.config.listeners.exists(name)) throw "Unknow listener '" + name + "'.";
+							var p = Lib.config.listeners.get(name).start();
+							NativeLib.println("Listener '" + name + "' PID: " + p.getPid());
 						}
 					
 					case "stop":
@@ -128,11 +130,5 @@ class HaqSystem
 	function bold(s)
 	{
 		return Lib.isCli() ? s : "<b>" + s + "</b>";
-	}
-	
-	public static function startListener(name:String) : Process
-	{
-		if (!Lib.config.listeners.exists(name)) throw "Unknow listener '" + name + "'.";
-		return new Process("neko", [ "index.n", "haquery-listener", name, "run" ]);
 	}
 }

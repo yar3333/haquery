@@ -7,17 +7,9 @@ import haquery.server.HaqComponent;
 import haquery.server.HaqCookie;
 import haquery.server.FileSystem;
 import haquery.server.Lib;
+import haxe.Json;
 import haxe.Serializer;
-import haxe.Unserializer;
-import haxe.PosInfos;
-import haquery.server.HaqRouter;
 using haquery.StringTools;
-
-#if php
-import php.Web;
-#elseif neko
-import neko.Web;
-#end
 
 class HaqPage extends HaqComponent
 {
@@ -59,7 +51,7 @@ class HaqPage extends HaqComponent
      */
 	public var disableSystemHtmlInserts : Bool;
 	
-	public var ajaxResponse(default, null) : String;
+	var ajaxResponse(default, null) : String;
 	
 	public var statusCode = 200;
 	
@@ -137,12 +129,21 @@ class HaqPage extends HaqComponent
 			
 			if (!disableSystemHtmlInserts)
 			{
+				var tagIDs = HaqComponentTools.fillTagIDs(this, new Hash<Array<String>>());
+				
 				insertStyles(manager.getRegisteredStyles());
 				insertScripts([ 'haquery/client/jquery.js', HaqDefines.haqueryClientFilePath ].concat(manager.getRegisteredScripts()));
 				insertInitBlock(
 					  "<script>\n"
-					+ "    if(typeof haquery=='undefined') alert('" + HaqDefines.haqueryClientFilePath + " must be loaded!');\n"
-					+ "    " + manager.getDynamicClientCode(this).replace("\n", "\n    ") + "\n"
+					+ "if(typeof haquery=='undefined') alert('" + HaqDefines.haqueryClientFilePath + " must be loaded!');\n"
+					+ "haquery.client.HaqInternals.tagIDs = haquery.Std.hash({\n"
+					+ Lambda.map({ iterator:tagIDs.keys }, function(tag) return "'" + tag + "':" + Json.stringify(tagIDs.get(tag))).join(",\n")
+					+ "\n});\n"
+					+ "haquery.client.HaqInternals.sharedStorage = haquery.client.HaqInternals.unserialize('" + Serializer.run(manager.sharedStorage) + "');\n"
+					+ "haquery.client.HaqInternals.listener = '" + (HaqSystem.listener != null ? HaqSystem.listener.getUri() : "") + "';\n"
+					+ "haquery.client.HaqInternals.pageUuid = '" + pageUuid + "';\n"
+					+ "haquery.client.Lib.run('" + fullTag + "');\n"
+					+ ajaxResponse
 					+ "</script>"
 				);
 			}

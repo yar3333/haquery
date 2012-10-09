@@ -2,6 +2,8 @@ package haquery.server;
 
 import haxe.Serializer;
 import haxe.Unserializer;
+import neko.Sys;
+import sys.io.Process;
 import sys.net.WebSocket;
 import haquery.common.HaqMessage;
 
@@ -27,7 +29,7 @@ class HaqWebsocketListener
 	
 	public function makeRequest(request:HaqRequest) : HaqResponse
 	{
-		trace("requestServer to " + host + ":" + port);
+		trace("makeRequest to " + host + ":" + port);
 		
 		var ws : WebSocket;
 		try { ws = WebSocket.connect(host, port, "haquery", host); } 
@@ -35,7 +37,9 @@ class HaqWebsocketListener
 		{
 			if (autorun)
 			{
-				HaqSystem.startListener(name);
+				trace("Try to autostart...");
+				var p = start();
+				trace(p != null ? "SUCCESS PID = " + p.getPid() : "FAIL");
 				Sys.sleep(1);
 				ws = WebSocket.connect(host, port, "haquery", host);
 			}
@@ -46,9 +50,9 @@ class HaqWebsocketListener
 		}
 		trace("Send request object to server...");
 		ws.send(Serializer.run(HaqMessage.MakeRequest(request)));
-		trace("Wait response...");
+		trace("Read response...");
 		var r = ws.recv();
-		trace("Response received");
+		trace("Response received.");
 		return Unserializer.run(r);
 	}
 	
@@ -66,6 +70,11 @@ class HaqWebsocketListener
 		{
 			return null;
 		}
+	}
+	
+	public function start() : Process
+	{
+		return new Process("neko", [ "index.n", "haquery-listener", "run", name ]);
 	}
 	
 	public function stop()

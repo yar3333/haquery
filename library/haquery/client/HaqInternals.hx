@@ -1,6 +1,7 @@
 package haquery.client;
 
 import haquery.common.HaqSharedStorage;
+import haxe.Unserializer;
 
 @:keep @:expose class HaqInternals 
 {
@@ -68,4 +69,6 @@ import haquery.common.HaqSharedStorage;
 	{
 		getComponentIDs().set(fullID, fullTag);
 	}
+	
+	static function unserialize(s:String) : String return Unserializer.run(s)
 }

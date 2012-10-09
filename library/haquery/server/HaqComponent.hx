@@ -203,7 +203,7 @@ using haquery.StringTools;
         
         page.addAjaxResponse(
 			  "page." + (fullID != "" ? "findComponent('" + fullID + "')." : "") + method
-			+ "(" + Lambda.map(params != null ? params : [], function(p) return "haquery.client.Lib.unserialize('" + Serializer.run(p) + "')").join(",") + ');'
+			+ "(" + Lambda.map(params != null ? params : [], function(p) return "haquery.client.HaqInternals.unserialize('" + Serializer.run(p) + "')").join(",") + ');'
 		);
 	}
 	
