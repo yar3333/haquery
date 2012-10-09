@@ -60,11 +60,11 @@ class Build
 		return false;
     }
 	
-    public function postBuild() : Bool
+    public function postBuild(isJsModern:Bool, isDeadCodeElimination:Bool) : Bool
     {
         log.start("Do post-build step");
         
-		if (!buildJs())
+		if (!buildJs(isJsModern, isDeadCodeElimination))
 		{
 			return false;
 		}
@@ -143,7 +143,7 @@ class Build
 		return Lambda.map(files, function(s) return s.substr(srcPath.length, s.length - srcPath.length - ".hx".length).replace("/", "."));
 	}
 	
-	function buildJs() : Bool
+	function buildJs(isJsModern:Bool, isDeadCodeElimination:Bool) : Bool
     {
 		var clientPath = project.binPath + '/haquery/client';
 		
@@ -156,7 +156,9 @@ class Build
 		
 		hant.createDirectory(clientPath);
         
-        var params = project.getBuildParams("-js", clientPath + "/haquery.js", [ "noEmbedJS", "client" ], project.additionalCompilerOptions);
+        var params = project.getBuildParams("-js", clientPath + "/haquery.js", [ "noEmbedJS", "client" ]);
+		if (isJsModern) params.push("--js-modern");
+		if (isDeadCodeElimination) params.push("--dead-code-elimination");
 		var r = hant.run(hant.getHaxePath() + "haxe.exe", params);
 		Lib.print(r.stdOut);
 		Lib.print(r.stdErr);
@@ -216,7 +218,7 @@ class Build
 		
 		log.start("Generate shared classes from client");
 		hant.createDirectory(Path.directory(tempPath));
-		var params = project.getBuildParams("-js", tempPath, [ "noEmbedJS", "client", "haqueryPreBuild" ], project.additionalCompilerOptions);
+		var params = project.getBuildParams("-js", tempPath, [ "noEmbedJS", "client", "haqueryPreBuild" ]);
 		var r = hant.run(hant.getHaxePath() + "haxe.exe", params);
 		hant.deleteFile(tempPath);
 		hant.deleteFile(tempPath + ".map");

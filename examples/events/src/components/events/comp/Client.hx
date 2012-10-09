@@ -2,7 +2,7 @@ package components.events.comp;
 
 import haquery.client.HaqComponent;
 
-class Client extends HaqComponent
+@:keep class Client extends HaqComponent
 {
 	function innerSimpleButton_click(t, e)
 	{
