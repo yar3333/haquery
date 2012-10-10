@@ -1,5 +1,6 @@
 package haquery.server;
 
+import haquery.server.db.HaqDb;
 import haxe.htmlparser.HtmlNodeElement;
 import haxe.htmlparser.HtmlNodeText;
 import haquery.common.HaqDefines;

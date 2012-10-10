@@ -8,7 +8,9 @@ import sys.db.ResultSet;
 
 class HaqDb
 {
-    public var connection : HaqDbDriver = null;
+    static var pool = new Hash<HaqDbDriver>();
+	
+	public var connection : HaqDbDriver = null;
 	
     /**
      * Level of tracing SQL:
@@ -22,24 +24,31 @@ class HaqDb
 	
     public function new(connectionString:String, logLevel=0, ?profiler:HaqProfiler) : Void
     {
-		var re = new EReg('^([a-z]+)\\://([_a-zA-Z0-9]+)\\:(.+?)@([-_.a-zA-Z0-9]+)(?:[:](\\d+))?/([-_a-zA-Z0-9]+)$', '');
-		if (!re.match(connectionString))
-		{
-			throw new Exception("Connection string invalid format.");
-		}
+		connection = pool.get(connectionString);
 		
-        if (profiler != null) profiler.begin("openDatabase");
-            connection = Type.createInstance(
-                 Type.resolveClass('haquery.server.db.HaqDbDriver_' + re.matched(1))
-				,[ re.matched(4), re.matched(2), re.matched(3), re.matched(6), re.matched(5) != null && re.matched(5) != "" ? Std.parseInt(re.matched(5)) : 0 ]
-            );
-        if (profiler != null) profiler.end();
+		if (connection == null)
+		{
+			var re = new EReg('^([a-z]+)\\://([_a-zA-Z0-9]+)\\:(.+?)@([-_.a-zA-Z0-9]+)(?:[:](\\d+))?/([-_a-zA-Z0-9]+)$', '');
+			if (!re.match(connectionString))
+			{
+				throw new Exception("Connection string invalid format.");
+			}
+			
+			if (profiler != null) profiler.begin("openDatabase");
+				connection = Type.createInstance(
+					 Type.resolveClass('haquery.server.db.HaqDbDriver_' + re.matched(1))
+					,[ re.matched(4), re.matched(2), re.matched(3), re.matched(6), re.matched(5) != null && re.matched(5) != "" ? Std.parseInt(re.matched(5)) : 0 ]
+				);
+			if (profiler != null) profiler.end();
+			
+			pool.set(connectionString, connection);
+		}
 		
 		this.logLevel = logLevel;
 		this.profiler = profiler;
     }
 
-    public function query(sql:String, ?params:Dynamic) : ResultSet
+	public function query(sql:String, ?params:Dynamic) : ResultSet
     {
 		try
 		{
