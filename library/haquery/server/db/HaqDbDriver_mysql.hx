@@ -1,6 +1,5 @@
 package haquery.server.db;
 
-import Type;
 import sys.db.Connection;
 import sys.db.Mysql;
 import sys.db.ResultSet;
@@ -9,27 +8,68 @@ import haquery.server.db.HaqDbDriver;
 
 class HaqDbDriver_mysql implements HaqDbDriver
 {
+	static inline var renewTimeoutSeconds = 120;
+	
+	var host : String;
+	var user : String;
+	var pass : String;
 	var database : String;
+	var port : Int;
+	
 	var connection : Connection;
+	
+	var lastAccessTime : Float;
 	
 	public function new(host:String, user:String, pass:String, database:String, port:Int=0) : Void
     {
+		this.host = host;
+		this.user = user;
+		this.pass = pass;
 		this.database = database;
-		connection = Mysql.connect( { host:host, user:user, pass:pass, database:database, port:port != 0 ? port : 3306, socket:null } );
-		connection.request('set names utf8');
-        connection.request("set character_set_client='utf8'");
-        connection.request("set character_set_results='utf8'");
-        connection.request("set collation_connection='utf8_general_ci'");
+		this.port = port;
+		
+		renew();
     }
+	
+	function renew()
+	{
+		if (Date.now().getTime() - lastAccessTime > renewTimeoutSeconds * 1000)
+		{
+			if (connection != null)
+			{
+				try
+				{
+					connection.request("SELECT 0");
+				}
+				catch (_:Dynamic)
+				{
+					close();
+				}
+			}
+			
+			if (connection == null)
+			{
+				connection = Mysql.connect( { host:host, user:user, pass:pass, database:database, port:port != 0 ? port : 3306, socket:null } );
+				connection.request("set names utf8");
+				connection.request("set character_set_client='utf8'");
+				connection.request("set character_set_results='utf8'");
+				connection.request("set collation_connection='utf8_general_ci'");
+			}
+		}
+		
+		lastAccessTime = Date.now().getTime();
+	}
 
     public function query(sql:String) : ResultSet
     {
+		renew();
+		
 		#if php
 		var r = connection.request(sql);
-		var errno = untyped __call__('mysql_errno');
+		var errno = untyped __call__("mysql_errno");
 		if (errno != 0)
 		{
-			throw new HaqDbException(errno, untyped __call__('mysql_error'));
+			throw new HaqDbException(errno, untyped __call__("mysql_error"));
 		}
 		return r;
 		#else
@@ -47,13 +87,14 @@ class HaqDbDriver_mysql implements HaqDbDriver
 	
 	public function close() : Void
 	{
-		connection.close();
+		try { connection.close(); } catch (_:Dynamic) { }
+		connection = null;
 	}
 	
     public function getTables() : Array<String>
     {
         var r : Array<String> = [];
-        var rows = query('SHOW TABLES FROM `' + database + '`');
+        var rows = query("SHOW TABLES FROM `" + database + "`");
         for (row in rows)
         {
 			var fields = Reflect.fields(row);
@@ -72,10 +113,10 @@ class HaqDbDriver_mysql implements HaqDbDriver
 			var fields = Reflect.fields(row);
 			r.push({
                  name : row.Field
-                ,type : Reflect.field(row, 'Type')
-                ,isNull : Reflect.field(row, 'Null') == 'YES'
-                ,isKey : row.Key == 'PRI'
-                ,isAutoInc : row.Extra == 'auto_increment'
+                ,type : Reflect.field(row, "Type")
+                ,isNull : Reflect.field(row, "Null") == "YES"
+                ,isKey : row.Key == "PRI"
+                ,isAutoInc : row.Extra == "auto_increment"
 			});
         }
         return r;
@@ -88,7 +129,7 @@ class HaqDbDriver_mysql implements HaqDbDriver
             case ValueType.TClass(cls):
                 if (Std.is(v, String))
                 {
-                    return connection.quote(v);
+					return connection.quote(v);
                 }
                 else
                 if (Std.is(v, Date))
@@ -104,10 +145,10 @@ class HaqDbDriver_mysql implements HaqDbDriver
                 return Std.string(v);
             
             case ValueType.TNull:
-                return 'NULL';
+                return "NULL";
             
             case ValueType.TBool:
-                return cast(v, Bool) ? '1' : '0';
+                return cast(v, Bool) ? "1" : "0";
             
             default:
         }
@@ -117,7 +158,7 @@ class HaqDbDriver_mysql implements HaqDbDriver
 
     public function lastInsertId() : Int
     {
-        return connection.lastInsertId();
+		return connection.lastInsertId();
     }
 	
 	public function getForeignKeys(table:String) : Array<HaqDbTableForeignKey>
@@ -162,5 +203,4 @@ class HaqDbDriver_mysql implements HaqDbDriver
 		}
 		return r;
 	}
-
 }

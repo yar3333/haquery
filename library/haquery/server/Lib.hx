@@ -30,7 +30,6 @@ class Lib
 	public static var config : HaqConfig;
     public static var profiler : HaqProfiler;
 	public static var db : HaqDb;
-    
 	public static var manager : HaqTemplateManager;
     
     public static function run() : Void
@@ -65,6 +64,11 @@ class Lib
 								 ? listener.makeRequest(getRequest(route))
 								 : runPage(getRequest(route), route, bootstraps).response;
 					
+					if (db != null)
+					{
+						db.close();
+					}
+								 
 					if (response != null)
 					{
 						Web.setReturnCode(response.statusCode);
@@ -122,66 +126,99 @@ class Lib
 		};
 	}
 	
-	public static function runPage(request:HaqRequest, route:HaqRoute, bootstraps:Array<HaqBootstrap>) : { page:HaqPage, response:HaqResponse }
+	public static function runPage(request:HaqRequest, route:HaqRoute, bootstraps:Array<HaqBootstrap>) : { page:HaqPage, response:HaqResponse, config:HaqConfig, db:HaqDb }
 	{
 		profiler = new HaqProfiler(config.enableProfiling);
 		
-		profiler.begin("HAQUERY");
+		var page : HaqPage;
+		var response : HaqResponse;
 		
-			for (bootstrap in bootstraps)
-			{
-				bootstrap.init(request);
-			}
-		
-			if (config.databaseConnectionString != null && config.databaseConnectionString != "")
-			{
-				db = new HaqDb(config.databaseConnectionString, config.sqlLogLevel, profiler);
-			}
+		var r = pageContext(null, request.clientIP, Reflect.copy(config), null, function()
+		{
+			profiler.begin("HAQUERY");
 			
-			for (bootstrap in bootstraps)
-			{
-				bootstrap.start();
-			}
+				for (bootstrap in bootstraps)
+				{
+					bootstrap.init(request);
+				}
 			
-			if (manager == null)
-			{
-				profiler.begin('manager');
-					manager = new HaqTemplateManager();
+				if (config.databaseConnectionString != null && config.databaseConnectionString != "")
+				{
+					db = new HaqDb(config.databaseConnectionString, config.sqlLogLevel, profiler);
+				}
+				
+				for (bootstrap in bootstraps)
+				{
+					bootstrap.start();
+				}
+				
+				if (manager == null)
+				{
+					profiler.begin('manager');
+						manager = new HaqTemplateManager();
+					profiler.end();
+				}
+				
+				profiler.begin("page");
+					trace("HAQUERY START " + (isCli() ? "CLI" : "WEB") + " pageFullTag = " + route.fullTag +  ", HTTP_HOST = " + getHttpHost() + ", clientIP = " + getClientIP() + ", pageID = " + route.pageID);
+					
+					page = manager.createPage(route.fullTag, Std.hash(request));
+					
+					pageContext(page, page.clientIP, Lib.config, Lib.db, function()
+					{
+						page.forEachComponent("preInit", true);
+						page.forEachComponent("init", false);
+						
+						response = !request.isPostback
+								 ? page.generateResponseOnRender()
+								 : page.generateResponseOnPostback(request.params.get('HAQUERY_COMPONENT'), request.params.get('HAQUERY_METHOD'), Unserializer.run(request.params.get('HAQUERY_PARAMS')));
+					});
 				profiler.end();
-			}
+				
+				bootstraps.reverse();
+				for (i in 0...bootstraps.length)
+				{
+					bootstraps[bootstraps.length - i - 1].finish(page);
+				}
 			
-			profiler.begin("page");
-				trace("HAQUERY START " + (isCli() ? "CLI" : "WEB") + " pageFullTag = " + route.fullTag +  ", HTTP_HOST = " + getHttpHost() + ", clientIP = " + getClientIP() + ", pageID = " + route.pageID);
-				
-				var page = manager.createPage(route.fullTag, Std.hash(request));
-				var saveTrace = haxe.Log.trace;
-				haxe.Log.trace = function(v:Dynamic, ?pos:PosInfos) HaqTrace.page(page, v, pos);
-				
-				page.forEachComponent("preInit", true);
-				page.forEachComponent("init", false);
-				
-				var response = !request.isPostback
-					? page.generateResponseOnRender()
-					: page.generateResponseOnPostback(request.params.get('HAQUERY_COMPONENT'), request.params.get('HAQUERY_METHOD'), Unserializer.run(request.params.get('HAQUERY_PARAMS')));
-				
-				haxe.Log.trace = saveTrace;
 			profiler.end();
+			profiler.traceResults();	
+		});
 			
-			bootstraps.reverse();
-			for (bootstrap in bootstraps)
-			{
-				bootstrap.finish(page);
-			}
-			
-			if (db != null)
-			{
-				db.close();
-			}
+		return { page:page, response:response, config:r.config, db:r.db };
+	}
+	
+	public static function pageContext(page:HaqPage, clientIP:String, config:HaqConfig, db:HaqDb, f:Void->Void) : { config:HaqConfig, db:HaqDb }
+	{
+		var oldTrace = haxe.Log.trace;
+		haxe.Log.trace = function(v:Dynamic, ?pos:PosInfos) HaqTrace.page(page, clientIP, v, pos);
 		
-		profiler.end();
-		profiler.traceResults();	
+		var oldConfig = Lib.config;
+		Lib.config = config;
 		
-		return { page:page, response:response };
+		var oldDb = Lib.db;
+		Lib.db = db;
+		
+		var exception = null;
+		
+		try
+		{
+			f();
+		}
+		catch (e:Dynamic)
+		{
+			exception = e;
+		}
+		
+		var r = { config:Lib.config, db:Lib.db };
+		
+		Lib.db = oldDb;
+		Lib.config = oldConfig;
+		haxe.Log.trace = oldTrace;
+		
+		if (exception != null) Exception.rethrow(exception);
+		
+		return r;
 	}
 	
 	#if debug

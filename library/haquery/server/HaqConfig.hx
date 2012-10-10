@@ -46,17 +46,11 @@ class HaqConfig
      */
     public var customs : Hash<Dynamic>;
 	
-	/**
-	 * Change this field to your class instance, if you want to substitute components templates.
-	 */
-	public var templateSelector : HaqTemplateSelector;
-	
 	public var listeners : Hash<HaqWebsocketListener>;
 	
 	public function new(filePath:String)
 	{
 		customs = new Hash<Dynamic>();
-		templateSelector = new HaqTemplateSelector();
 		listeners = new Hash<HaqWebsocketListener>();
 		
 		load(filePath);

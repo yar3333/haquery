@@ -118,7 +118,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 	
 	public function createComponent(parent:HaqComponent, tag:String, id:String, attr:Hash<Dynamic>, parentNode:HtmlNodeElement, isCustomRender:Bool) : HaqComponent
 	{
-        var template = Lib.config.templateSelector.findTemplateToInstance(this, parent, tag);
+        var template = cast(parent != null ? parent.findTemplateToInstance(tag) : get(tag), HaqTemplate);
 		Lib.assert(template != null, "HAQUERY ERROR could't find component '" + tag + "' for parent '" + parent.fullTag + "'.");
 		return newComponent(template, parent, id, attr, parentNode, isCustomRender);
 	}
