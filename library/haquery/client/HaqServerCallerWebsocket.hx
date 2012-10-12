@@ -1,5 +1,6 @@
 package haquery.client;
 
+import haquery.common.HaqComponentTools;
 import haquery.common.HaqMessageListenerAnswer;
 import haquery.common.HaqMessageToListener;
 import haxe.Serializer;
@@ -34,6 +35,10 @@ class HaqServerCallerWebsocket extends HaqServerCallerBase
 			{
 				case HaqMessageListenerAnswer.CallSharedMethodAnswer(text):
 					processServerAnswer(text, callbacks.shift());
+				
+				case HaqMessageListenerAnswer.CallClientMethodFromAnother(componentFullID, method, params):
+					var component = Lib.page.findComponent(componentFullID);
+					component.callSharedClientMethod(method, params, true);
 			}
 		};
 		
@@ -43,7 +48,7 @@ class HaqServerCallerWebsocket extends HaqServerCallerBase
 		};
 	}
 	
-	public function callSharedMethod(componentFullID:String, method:String, params:Array<Dynamic>, callb:Dynamic->Void) : Void
+	public function callSharedServerMethod(componentFullID:String, method:String, params:Array<Dynamic>, callb:Dynamic->Void) : Void
 	{
 		callbacks.push(callb);
 		callQueue.push( { componentFullID:componentFullID, method:method, params:params } );

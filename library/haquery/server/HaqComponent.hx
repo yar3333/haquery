@@ -7,12 +7,12 @@ import haxe.htmlparser.HtmlDocument;
 import haxe.htmlparser.HtmlNodeElement;
 import haxe.htmlparser.HtmlNodeText;
 import haquery.server.Lib;
-import haquery.server.HaqComponentTools;
+import haquery.common.HaqComponentTools;
 import haxe.Serializer;
 
 using haquery.StringTools;
 
-@:autoBuild(haquery.macros.HaqComponent.build()) class HaqComponent extends haquery.base.HaqComponent
+@:autoBuild(haquery.macros.HaqComponent.build()) class HaqComponent extends haquery.base.HaqComponent, implements HaqCallSharedMethodInterface
 {
     /**
      * template.html as DOM tree.
@@ -197,7 +197,7 @@ using haquery.StringTools;
 	/**
 	 * Delayed call client method, marked as @shared.
 	 */
-	public function callSharedMethod(method:String, ?params:Array<Dynamic>) : Void
+	public function callSharedClientMethodDelayed(method:String, params:Array<Dynamic>) : Void
 	{
 		Lib.assert(page.isPostback, "HaqComponent.callSharedMethod() allowed on the postback only.");
         
@@ -206,26 +206,12 @@ using haquery.StringTools;
 			+ "(" + Lambda.map(params != null ? params : [], function(p) return "haquery.client.HaqInternals.unserialize('" + Serializer.run(p) + "')").join(",") + ');'
 		);
 	}
-	
-	public function callElemEventHandler(elemID:String, eventName:String) : Dynamic
-    {
-		var handler = elemID + '_' + eventName;
-		
-		try
-		{
-			return Reflect.callMethod(this, Reflect.field(this, handler), [ this, null ]);
-		}
-		catch (e:String)
-		{
-			if (e == "Invalid call")
-			{
-				throw new Exception("Invalid call: " + Type.getClassName(Type.getClass(this)) + "." + handler + "(t, e).", e);
-			}
-			Exception.rethrow(e);
-			return null;
-		}
-    }
     
+	public function callSharedServerMethod(method:String, params:Array<Dynamic>, callingFromAnother:Bool) : Dynamic
+	{
+		return HaqComponentTools.callMethod(this, method, params, callingFromAnother);
+	}
+	
 	/**
 	 * Tells HaQuery to load JS file from support component folder.
 	 * @param	url Url to js file (global or related to support component folder).

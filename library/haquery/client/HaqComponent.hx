@@ -3,11 +3,12 @@ package haquery.client;
 import haquery.client.Lib;
 import haquery.client.HaqCssGlobalizer;
 import haquery.client.HaqQuery;
+import haquery.common.HaqComponentTools;
 import js.JQuery;
 
 using haquery.StringTools;
 
-@:autoBuild(haquery.macros.HaqComponent.build()) class HaqComponent extends haquery.base.HaqComponent
+@:autoBuild(haquery.macros.HaqComponent.build()) class HaqComponent extends haquery.base.HaqComponent, implements HaqCallSharedMethodInterface
 {
 	var isDynamic : Bool;
 	
@@ -87,15 +88,23 @@ using haquery.StringTools;
 	/**
 	 * Call server method, marked as @shared.
 	 */
-	public function callSharedMethod(method:String, ?params:Array<Dynamic>, ?callb:Dynamic->Void) : Void
+	public function callSharedServerMethod(method:String, params:Array<Dynamic>, callb:Dynamic->Void) : Void
 	{
 		if (Lib.websocket != null)
 		{
-			Lib.websocket.callSharedMethod(fullID, method, params, callb);
+			Lib.websocket.callSharedServerMethod(fullID, method, params, callb);
 		}
 		else
 		{
 			Lib.ajax.callSharedMethod(fullID, method, params, callb);
 		}
+	}
+	
+	/**
+	 * Call client method, marked as @shared.
+	 */
+	public function callSharedClientMethod(method:String, params:Array<Dynamic>, callingFromAnother:Bool) : Dynamic
+	{
+		return HaqComponentTools.callMethod(this, method, params, callingFromAnother);
 	}
 }

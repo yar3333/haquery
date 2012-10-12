@@ -1,9 +1,11 @@
 package haquery.server;
 
+import haquery.common.HaqMessageListenerAnswer;
 import haquery.server.db.HaqDb;
 import haxe.htmlparser.HtmlNodeElement;
 import haxe.htmlparser.HtmlNodeText;
 import haquery.common.HaqDefines;
+import haquery.common.HaqComponentTools;
 import haquery.server.HaqComponent;
 import haquery.server.HaqCookie;
 import haquery.server.FileSystem;
@@ -74,6 +76,8 @@ class HaqPage extends HaqComponent
 	 */
 	public var pageSecret(default, null) : String;
 	
+	var pages : Hash<HaqConnectedPage>;
+	
 	public function new()
 	{
 		super();
@@ -106,7 +110,7 @@ class HaqPage extends HaqComponent
 		var component = findComponent(componentFullID);
 		if (component != null)
 		{
-			var result = HaqComponentTools.callMethod(component, method, params);
+			var result = component.callSharedServerMethod(method, params, false);
 			//trace("HAQUERY FINISH");
 			
 			var content = ""; 
@@ -299,10 +303,34 @@ class HaqPage extends HaqComponent
 	 * Use to security checks or something else.
 	 * You can return false to force disconnect.
 	 */
-	public function onConnect(connectedPages:Hash<HaqConnectedPage>) : Bool return true
+	public function onConnect(pages:Hash<HaqConnectedPage>) : Bool
+	{
+		this.pages = pages;
+		return true;
+	}
 	
 	/**
 	 * Overload to specify code on client to server websocket closing.
 	 */
-	public function onDisconnect() {}
+	public function onDisconnect() { }
+
+	/*
+	function callAnotherClientSharedMethod(pageKey:String, componentFullID:String, method:String, params:Array<Dynamic>)
+	{
+		var p = pages.get(pageKey);
+		p.ws.send(Serializer(HaqMessageListenerAnswer.CallClientMethodFromAnother(componentFullID, method, params)));
+	}
+	
+	function callAnotherServerSharedMethod(pageKey:String, componentFullID:String, method:String, params:Array<Dynamic>)
+	{
+		var p = pages.get(pageKey);
+		var component = p.page.findComponent(componentFullID);
+		
+		component.callSharedServerMethod(method, params, true
+		var result = HaqComponentTools.callMethod(component, method, params);
+
+		component
+		
+		p.ws.send(Serializer(HaqMessageListenerAnswer.CallClientMethodFromAnother(componentFullID, method, params)));
+	}*/
 }

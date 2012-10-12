@@ -9,6 +9,8 @@ import haquery.client.HaqInternals;
 	public static var ajax(default, null) : HaqServerCallerAjax;
 	public static var websocket(default, null) : HaqServerCallerWebsocket;
 	
+	public static var page(default, null) : HaqPage;
+	
 	static public function run(pageFullTag:String)
     {
 		haquery.macros.HaqBuild.preBuild();
@@ -21,7 +23,7 @@ import haquery.client.HaqInternals;
 		websocket = HaqInternals.listener != "" ? new HaqServerCallerWebsocket(HaqInternals.listener, HaqInternals.pageKey, HaqInternals.pageSecret) : null;
 		
 		var manager = new HaqTemplateManager();
-		var page = manager.createPage(pageFullTag);
+		page = manager.createPage(pageFullTag);
     }
 	
 	#if debug

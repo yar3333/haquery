@@ -27,7 +27,7 @@ class HaqSharedGenerator
 			{
 				var componentField = macro var component:HaqComponent;
 				var componentClassFields = [ 
-					  HaqTools.makeVar("component", ComplexType.TPath(HaqTools.makeTypePath([ "haquery", clas.name == "Server" ? "client" : "server" ], "HaqComponent", [])), null)
+					  HaqTools.makeVar("component", ComplexType.TPath(HaqTools.makeTypePath([ "haquery." + (clas.name == "Server" ? "client" : "server") ], "HaqCallSharedMethodInterface", [])), null)
 					, makeSharedClassConstructor(clas) 
 				].concat(getSharedMethods(clas));
 				
@@ -69,7 +69,14 @@ class HaqSharedGenerator
 							switch (fieldExpr.expr)
 							{
 								case ExprDef.EFunction(name, f):
-									r.push(makeSharedClientClassMethod(field.name, f.args, f.ret, componentClass.pos));
+									if (componentClass.name == "Server")
+									{
+										r.push(makeSharedClientClassMethod(field.name, f.args, f.ret, componentClass.pos));
+									}
+									else
+									{
+										r.push(makeSharedServerClassMethod(field.name, f.args, f.ret, componentClass.pos));
+									}
 								
 								default:
 									Context.error("Use @shared for methods only.", field.pos);
@@ -91,7 +98,14 @@ class HaqSharedGenerator
 					switch (field.type)
 					{
 						case Type.TFun(args, ret):
-							r.push(makeSharedClientClassMethod(field.name, HaqTools.funArgsToFunctionArgs(args), HaqTools.safeToComplex(ret), componentClass.pos));
+							if (componentClass.name == "Server")
+							{
+								r.push(makeSharedClientClassMethod(field.name, HaqTools.funArgsToFunctionArgs(args), HaqTools.safeToComplex(ret), componentClass.pos));
+							}
+							else
+							{
+								r.push(makeSharedServerClassMethod(field.name, HaqTools.funArgsToFunctionArgs(args), HaqTools.safeToComplex(ret), componentClass.pos));
+							}
 						
 						default:
 							Context.error("Use @shared for methods only.", field.pos);
@@ -111,20 +125,19 @@ class HaqSharedGenerator
 	static function makeSharedClassConstructor(clas:ClassType) : Field
 	{
 		var assignExpr = macro { this.component = component; };
-		return HaqTools.makeMethod("new", [ "component".toArg(("haquery." + (clas.name == "Server" ? "client" : "server") + ".HaqComponent").asComplexType()) ], ComplexType.TPath("Void".asTypePath()), assignExpr);
+		return HaqTools.makeMethod("new", [ "component".toArg(("haquery." + (clas.name == "Server" ? "client" : "server") + ".HaqCallSharedMethodInterface").asComplexType()) ], ComplexType.TPath("Void".asTypePath()), assignExpr);
 	}
 	
 	static function makeSharedClientClassMethod(name:String, args:Array<FunctionArg>, ret:Null<ComplexType>, pos:Position) : Field
 	{
 		var args2 : Array<FunctionArg> = Reflect.copy(args);
 		args2.push("callb".toArg(macro : $ret->Void, true));
-		
 		var callParams = [ 
 			  name.toExpr()
 			, Lambda.map(args, function(a) return Context.parse(a.name, pos)).toArray()
 			, !HaqTools.isVoid(ret) ? macro callb : macro function(_) callb()
 		];
-		var callExpr = ExprDef.EBlock( [ ExprDef.ECall(macro component.callSharedMethod, callParams).at(pos) ] ).at(pos);
+		var callExpr = ExprDef.EBlock( [ ExprDef.ECall(macro component.callSharedServerMethod, callParams).at(pos) ] ).at(pos);
 		return HaqTools.makeMethod(name, args2, macro : Void, callExpr);
 	}
 	
@@ -134,7 +147,7 @@ class HaqSharedGenerator
 			  name.toExpr()
 			, Lambda.map(args, function(a) return Context.parse(a.name, pos)).toArray()
 		];
-		var callExpr = ExprDef.EBlock([ ExprDef.ECall(macro component.callSharedMethod, callParams).at(pos) ]).at(pos);
+		var callExpr = ExprDef.EBlock([ ExprDef.ECall(macro component.callSharedClientMethodDelayed, callParams).at(pos) ]).at(pos);
 		return HaqTools.makeMethod(name, args, macro : Void, callExpr);
 	}
 	
