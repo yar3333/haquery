@@ -18,4 +18,11 @@ class Server extends HaqPage
 	{
 		q('#status').html("componentButton pressed on server");
 	}
+	
+	@shared function testSharedOnServer(a:Int, b:String) : String
+	{
+		trace("server testShared");
+		shared().testSharedOnClient(10, "a");
+		return "answer:" + a + "-" + b;
+	}
 }
