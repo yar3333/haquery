@@ -52,13 +52,27 @@ class HaqPage extends HaqComponent
      */
 	public var disableSystemHtmlInserts : Bool;
 	
+	/**
+	 * Js code to response.
+	 */
 	var ajaxResponse(default, null) : String;
 	
+	/**
+	 * Http status code to return.
+	 */
 	public var statusCode = 200;
 	
 	public var responseHeaders(default, null) : HaqResponseHeaders;
 	
-	public var pageUuid(default, null) : String;
+	/**
+	 * Page's unique id for server pages list.
+	 */
+	public var pageKey(default, null) : String;
+	
+	/**
+	 * Page's secret keyword for security when connectiong to server.
+	 */
+	public var pageSecret(default, null) : String;
 	
 	public function new()
 	{
@@ -142,7 +156,8 @@ class HaqPage extends HaqComponent
 					+ "\n});\n"
 					+ "haquery.client.HaqInternals.sharedStorage = haquery.client.HaqInternals.unserialize('" + Serializer.run(manager.sharedStorage) + "');\n"
 					+ "haquery.client.HaqInternals.listener = '" + (HaqSystem.listener != null ? HaqSystem.listener.getUri() : "") + "';\n"
-					+ "haquery.client.HaqInternals.pageUuid = '" + pageUuid + "';\n"
+					+ "haquery.client.HaqInternals.pageKey = '" + pageKey + "';\n"
+					+ "haquery.client.HaqInternals.pageSecret = '" + pageSecret + "';\n"
 					+ "haquery.client.Lib.run('" + fullTag + "');\n"
 					+ ajaxResponse
 					+ "</script>"
@@ -278,4 +293,16 @@ class HaqPage extends HaqComponent
 	{
 		ajaxResponse += jsCode + "\n";
 	}
+	
+	/**
+	 * Overload to specify code on client to server websocket connection.
+	 * Use to security checks or something else.
+	 * You can return false to force disconnect.
+	 */
+	public function onConnect(connectedPages:Hash<HaqConnectedPage>) : Bool return true
+	
+	/**
+	 * Overload to specify code on client to server websocket closing.
+	 */
+	public function onDisconnect() {}
 }

@@ -18,7 +18,7 @@ class HaqDbDriver_mysql implements HaqDbDriver
 	
 	var connection : Connection;
 	
-	var lastAccessTime : Float;
+	var lastAccessTime = 0.0;
 	
 	public function new(host:String, user:String, pass:String, database:String, port:Int=0) : Void
     {

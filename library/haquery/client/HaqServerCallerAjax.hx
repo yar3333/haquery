@@ -9,7 +9,14 @@ using haquery.StringTools;
 
 class HaqServerCallerAjax extends HaqServerCallerBase
 {
-	public function new() {}
+	var pageKey : String;
+	var pageSecret : String;
+	
+	public function new(pageKey:String, pageSecret:String)
+	{
+		this.pageKey = pageKey;
+		this.pageSecret = pageSecret;
+	}
 	
 	public function callSharedMethod(componentID:String, method:String, ?params:Array<Dynamic>, ?callbackFunc:Dynamic->Void) : Void
 	{
@@ -25,6 +32,8 @@ class HaqServerCallerAjax extends HaqServerCallerBase
     {
         var sendData : Dynamic = {
 			 HAQUERY_POSTBACK : 1
+			,HAQUERY_PAGE_KEY : pageKey
+			,HAQUERY_PAGE_SECRET : pageSecret
 			,HAQUERY_COMPONENT : componentID
 			,HAQUERY_METHOD : method
 			,HAQUERY_PARAMS : Serializer.run(params)
@@ -34,19 +43,19 @@ class HaqServerCallerAjax extends HaqServerCallerBase
         for (sendElem in sendedElements)
         {
             var nodeName = sendElem.nodeName.toUpperCase();
-            if (nodeName == 'INPUT' && sendElem.getAttribute('type').toUpperCase() == "CHECKBOX")
+            if (nodeName == "INPUT" && sendElem.getAttribute("type").toUpperCase() == "CHECKBOX")
             {
-                sendData[untyped sendElem.id] = Reflect.field(sendElem, 'checked') ? '1' : '0';
+                sendData[untyped sendElem.id] = Reflect.field(sendElem, "checked") ? "1" : "0";
             }
             else
-            if (nodeName == 'INPUT' && sendElem.getAttribute('type').toUpperCase() == "RADIO")
+            if (nodeName == "INPUT" && sendElem.getAttribute("type").toUpperCase() == "RADIO")
             {
-                if (Reflect.field(sendElem, 'checked'))
+                if (Reflect.field(sendElem, "checked"))
                 {
-                    var name = sendElem.getAttribute('name');
-                    if (name != null && name != '')
+                    var name = sendElem.getAttribute("name");
+                    if (name != null && name != "")
                     {
-                        sendData[untyped name] = sendElem.getAttribute('value');
+                        sendData[untyped name] = sendElem.getAttribute("value");
                     }
                 }
             }
@@ -65,7 +74,7 @@ class HaqServerCallerAjax extends HaqServerCallerBase
 		var elems = Lambda.filter(allElemsWithID, function(elem)
         {
             var elemTag = elem.nodeName.toUpperCase();
-            var elemType = elemTag=="INPUT" ? elem.getAttribute('type').toUpperCase() : '';
+            var elemType = elemTag=="INPUT" ? elem.getAttribute("type").toUpperCase() : "";
             return elemTag == "INPUT" && Lambda.has(["TEXT", "PASSWORD", "HIDDEN", "CHECKBOX", "RADIO"], elemType)
 				|| elemTag == "TEXTAREA"
 				|| elemTag == "SELECT";

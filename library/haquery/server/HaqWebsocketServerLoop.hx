@@ -1,24 +1,21 @@
 package haquery.server;
 
-#if php
-private typedef NativeLib = php.Lib;
-#elseif neko
-private typedef NativeLib = neko.Lib;
-#end
-
 import haquery.server.db.HaqDb;
 import haxe.PosInfos;
 import haxe.Serializer;
 import haxe.Unserializer;
 import haquery.common.HaqDefines;
-import haquery.common.HaqMessage;
+import haquery.common.HaqMessageToListener;
+import haquery.common.HaqMessageListenerAnswer;
 import neko.net.WebSocketServerLoop;
 import neko.vm.Gc;
 import sys.net.WebSocket;
 
-class ClientData extends WebSocketServerLoop.ClientData
+private typedef WaitedPage = { page:HaqPage, config:HaqConfig, db:HaqDb, created:Float }
+
+private class ClientData extends WebSocketServerLoop.ClientData
 {
-	public var pageUuid : String;
+	public var pageKey : String;
 }
 
 class HaqWebsocketServerLoop
@@ -28,8 +25,8 @@ class HaqWebsocketServerLoop
 	var name : String;
 	var compilationDate : Date;
 	
-	var waitedPages : Hash<{ page:HaqPage, config:HaqConfig, db:HaqDb, created:Float }>;
-	var activePages : Hash<{ page:HaqPage, config:HaqConfig, db:HaqDb, ws:WebSocket }>;
+	var waitedPages : Hash<WaitedPage>;
+	var connectedPages : Hash<HaqConnectedPage>;
 	
 	var server : WebSocketServerLoop<ClientData>;
 	
@@ -38,8 +35,8 @@ class HaqWebsocketServerLoop
 		this.name = name;
 		this.compilationDate = Lib.getCompilationDate();
 		
-		this.waitedPages = new Hash<{ page:HaqPage, config:HaqConfig, db:HaqDb, created:Float }>();
-		this.activePages = new Hash<{ page:HaqPage, config:HaqConfig, db:HaqDb, ws:WebSocket }>();
+		this.waitedPages = new Hash<WaitedPage>();
+		this.connectedPages = new Hash<HaqConnectedPage>();
 		
 		this.server = new WebSocketServerLoop<ClientData>(function(socket) return new ClientData(socket));
 		
@@ -47,9 +44,17 @@ class HaqWebsocketServerLoop
 		
 		this.server.processDisconnect = function(client:ClientData)
 		{
-			if (client.pageUuid != null)
+			if (client.pageKey != null)
 			{
-				activePages.remove(client.pageUuid);
+				var p = connectedPages.get(client.pageKey);
+				if (p != null)
+				{
+					if (p.page != null)
+					{
+						p.page.onDisconnect();
+					}
+					connectedPages.remove(client.pageKey);
+				}
 			}
 		};
 		
@@ -57,11 +62,11 @@ class HaqWebsocketServerLoop
 		{
 			var now = Date.now().getTime() / 1000;
 			
-			for (pageUuid in waitedPages.keys())
+			for (pageKey in waitedPages.keys())
 			{
-				if (now - waitedPages.get(pageUuid).created > removeWaitedPageInterval)
+				if (now - waitedPages.get(pageKey).created > removeWaitedPageInterval)
 				{
-					waitedPages.remove(pageUuid);
+					waitedPages.remove(pageKey);
 				}
 			}
 			
@@ -70,10 +75,10 @@ class HaqWebsocketServerLoop
 			
 			if (nowCompilationDate.getTime() != compilationDate.getTime())
 			{
-				NativeLib.print("AUTORESTART ");
+				trace("AUTORESTART");
 				server.stop();
 				var p = new sys.io.Process("neko", [ "index.n", "haquery-listener", "run", name ]);
-				NativeLib.println("PID = " + p.getPid());
+				trace("PID = " + p.getPid());
 				Sys.exit(0);
 			}
 		};
@@ -88,48 +93,95 @@ class HaqWebsocketServerLoop
 	function processIncomingMessage(client:ClientData, text:String)
 	{
 		var obj = Unserializer.run(text);
-		if (Std.is(obj, HaqMessage))
+		if (Std.is(obj, HaqMessageToListener))
 		{
-			switch (cast(obj, HaqMessage))
+			switch (cast(obj, HaqMessageToListener))
 			{
-				case HaqMessage.MakeRequest(request):
-					neko.Lib.println("INCOMING MakeRequest [" + request.pageUuid + "] URI = " + request.uri);
+				case HaqMessageToListener.MakeRequest(request):
+					trace("INCOMING MakeRequest [" + request.pageKey + "] URI = " + request.uri);
 					var route = new HaqRouter(HaqDefines.folders.pages).getRoute(request.params.get("route"));
 					var bootstraps = Lib.loadBootstraps(route.path);
 					var r = Lib.runPage(request, route, bootstraps);
-					waitedPages.set(r.page.pageUuid, { page:r.page, config:r.config, db:r.db, created:Date.now().getTime() / 1000 });
-					client.ws.send(Serializer.run(r.response));
+					waitedPages.set(r.page.pageKey, { page:r.page, config:r.config, db:r.db, created:Date.now().getTime() / 1000 });
+					client.ws.send(Serializer.run(HaqMessageListenerAnswer.MakeRequestAnswer(r.response)));
 				
-				case HaqMessage.ConnectToPage(pageUuid):
-					neko.Lib.println("INCOMING ConnectToPage [" + pageUuid + "]");
-					client.pageUuid = pageUuid;
-					var p = waitedPages.get(pageUuid);
-					waitedPages.remove(pageUuid);
-					activePages.set(pageUuid, { page:p.page, config:p.config, db:p.db, ws:client.ws });
+				case HaqMessageToListener.ConnectToPage(pageKey, pageSecret):
+					trace("INCOMING ConnectToPage [" + pageKey + "]");
+					client.pageKey = pageKey;
+					var p = waitedPages.get(pageKey);
+					waitedPages.remove(pageKey);
+					if (p != null && p.page.pageSecret == pageSecret && p.page.onConnect(connectedPages))
+					{
+						connectedPages.set(pageKey, { page:p.page, config:p.config, db:p.db, ws:client.ws } );
+					}
+					else
+					{
+						server.closeConnection(client.ws.socket);
+					}
 				
-				case HaqMessage.CallSharedMethod(componentFullID, method, params):
-					neko.Lib.println("INCOMING CallSharedMethod [" + client.pageUuid + "] method = " + componentFullID + "." + method);
-					var p = activePages.get(client.pageUuid);
+				case HaqMessageToListener.CallSharedMethod(componentFullID, method, params):
+					trace("INCOMING CallSharedMethod [" + client.pageKey + "] method = " + componentFullID + "." + method);
+					var p = connectedPages.get(client.pageKey);
 					Lib.pageContext(p.page, p.page.clientIP, p.config, p.db, function()
 					{
 						p.page.prepareNewPostback();
 						var response = p.page.generateResponseOnPostback(componentFullID, method, params);
-						client.ws.send(response.content);
+						client.ws.send(Serializer.run(HaqMessageListenerAnswer.CallSharedMethodAnswer(response.content)));
 					});
 				
-				case HaqMessage.Status:
-					var s = "pages active: " + Lambda.count(activePages) + "\n"
-						  + "pages waiting queue: " + Lambda.count(waitedPages) + "\n"
-						  + "memory heap: " + Math.round(Gc.stats().heap / 1024 / 1024) + " MB\n";
+				case HaqMessageToListener.Status:
+					var s = "connected pages: " + Lambda.count(connectedPages) + "\n"
+						  + "waited pages: " + Lambda.count(waitedPages) + "\n"
+						  + "memory heap: " + groupDigits(Math.round(Gc.stats().heap / 1024), " ") + " KB\n";
 					client.ws.send(s);
 				
-				case HaqMessage.Stop:
+				case HaqMessageToListener.Stop:
 					Sys.exit(0);
 			}
 		}
 		else
 		{
 			server.closeConnection(client.ws.socket);
+		}
+	}
+	
+	/**
+	* Groups the digits in the input number by using a thousands separator.<br/>
+	* E.g. the number 1024 is converted to the string '1.024'.
+	* @param thousandsSeparator a character to use as a thousands separator. The default value is ".".
+	*/
+	public static function groupDigits(x:Int, ?thousandsSeparator = '.'):String
+	{
+		var n : Float = x;
+		var c = 0;
+		while (n > 1)
+		{
+			n /= 10;
+			c++;
+		}
+		c = cast c / 3;
+		var source = Std.string(x);
+		if (c == 0)
+			return source;
+		else
+		{
+			var target = '';
+
+			var i = 0;
+			var j = source.length - 1;
+			while (j >= 0)
+			{
+				if (i == 3)
+				{
+					target = source.charAt(j--) + thousandsSeparator + target;
+					i = 0;
+					c--;
+				}
+				else
+					target = source.charAt(j--) + target;
+				i++;
+			}
+			return target;
 		}
 	}
 }

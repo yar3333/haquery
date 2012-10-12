@@ -2,11 +2,14 @@ package haquery.server;
 
 #if php
 private typedef NativeLib = php.Lib;
+private typedef NativeWeb = php.Web;
 #elseif neko
 private typedef NativeLib = neko.Lib;
+private typedef NativeWeb = neko.Web;
 #end
 
 import haquery.common.HaqDefines;
+import sys.io.File;
 import sys.io.Process;
 import sys.net.Host;
 import sys.net.Socket;
@@ -31,6 +34,12 @@ class HaqSystem
 			
 			case "haquery-status":
 				system.doStatusCommand();
+			
+			case "haquery-status-log":
+				system.doStatusLogCommand();
+			
+			case "haquery-status-listeners":
+				system.doStatusListenersCommand();
 			
 			default:
 				NativeLib.println("Unknow system command '" + command + "'.");
@@ -90,16 +99,6 @@ class HaqSystem
 							listener.stop();
 						}
 					
-					case "status":
-						if (args.length >= 3)
-						{
-							var name = args[2];
-							var listener = Lib.config.listeners.get(name);
-							if (listener == null) throw "Unknow listener '" + name + "'.";
-							var status = listener.status();
-							NativeLib.println(status != null ? status : "not run");
-						}
-					
 					default:
 						NativeLib.println("Unknow <listener_command>. Supported: 'run', 'start' and 'stop'.");
 				}
@@ -115,20 +114,80 @@ class HaqSystem
 		}
 	}
 	
-	function doStatusCommand()
+	function isAdmin() : Bool
 	{
-		var s = bold("[ Listeners ]") + "\n";
-		for (listener in Lib.config.listeners)
-		{
-			s += "* " + listener.name + "\n";
-			var status = listener.status();
-			s += status != null ? status : "not run";
-		}
-		NativeLib.println(s.replace("\n", "<br />"));
+		return Lib.config.secret != null 
+			&& Lib.config.secret != "" 
+			&& NativeWeb.getCookies().get("haquery_secret") == Lib.config.secret;
 	}
 	
-	function bold(s)
+	function doStatusCommand()
 	{
-		return Lib.isCli() ? s : "<b>" + s + "</b>";
+		var html = new HaqSystemHtml();
+		
+		if (isAdmin())
+		{
+			html.bold("HaQuery")
+				.js("url = '/haquery-status-log/';")
+				.js("updateTimeout = 1000;")
+				.content(" | ").link("Log", "javascript:void(0)", "url = '/haquery-status-log/'; updateTimeout = 1000;") 
+				.content(" | ").link("Listeners", "javascript:void(0)", "url = '/haquery-status-listeners/'; updateTimeout = 3000;") 
+				.content(" | <input type='button' value='Logout' onclick='setCookie(\"haquery_secret\", \"\", 0); window.location.reload(true);' /><br />\n")
+				.js("function update() { $('#content').load(url); setTimeout(update, updateTimeout); }")
+				.js("setTimeout(update, updateTimeout);")
+				.begin("div", "id='content' style='margin-top: 5px'").end();
+		}
+		else
+		{
+			html.begin("form", "id='form' method='post'")
+				.content("To access HaQuery status and control enter the secret:")
+				.content("<input type='text' id='secret' />")
+				.content('<input type="button" value="OK" onclick="setCookie(\'haquery_secret\', $(\'#secret\').val(), 1000); $(\'#form\')[0].submit();" />')
+				.end;
+		}
+		
+		NativeLib.println(html);
+	}
+	
+	function doStatusLogCommand()
+	{
+		var html = "";
+		if (isAdmin())
+		{
+			var logLines = File.getContent(HaqDefines.folders.temp + "/haquery.log").split("\n");
+			for (i in Std.max(0, logLines.length - 50)...logLines.length)
+			{
+				html += StringTools.htmlEscape(logLines[i]) + "<br />\n";
+			}
+		}
+		else
+		{
+			html += "Access denided, please reload a page.";
+		}
+		
+		NativeLib.println(html);
+	}
+	
+	function doStatusListenersCommand()
+	{
+		var html = "";
+		
+		if (isAdmin())
+		{
+			for (listener in Lib.config.listeners)
+			{
+				var status = listener.status();
+				html += "<fieldset style='display:inline-block'>\n"
+							+ "<legend>" + listener.name + "</legend>\n"
+							+ (status != null ? status.replace("\n", "<br />") : "not run")
+					  + "</fieldset>\n";
+			}
+		}
+		else
+		{
+			html += "Access denided, please reload a page.";
+		}
+	
+		NativeLib.println(html);
 	}
 }

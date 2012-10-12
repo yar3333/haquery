@@ -1,6 +1,7 @@
 package haquery.client;
 
-import haquery.common.HaqMessage;
+import haquery.common.HaqMessageListenerAnswer;
+import haquery.common.HaqMessageToListener;
 import haxe.Serializer;
 import haxe.Unserializer;
 import js.WebSocket;
@@ -12,7 +13,7 @@ class HaqServerCallerWebsocket extends HaqServerCallerBase
 	var isConnected = false;
 	var socket : WebSocket;
 
-	public function new(uri:String, pageUuid:String) 
+	public function new(uri:String, pageKey:String, pageSecret:String) 
 	{
 		callQueue = [];
 		callbacks = [];
@@ -22,13 +23,18 @@ class HaqServerCallerWebsocket extends HaqServerCallerBase
 		
 		socket.onopen = function() 
 		{
-			socket.send(Serializer.run(HaqMessage.ConnectToPage(pageUuid)));
+			socket.send(Serializer.run(HaqMessageToListener.ConnectToPage(pageKey, pageSecret)));
 			isConnected = true;
 		};
 		
 		socket.onmessage = function(e)
 		{
-			processServerAnswer(e.data, callbacks.shift());
+			var answer : HaqMessageListenerAnswer = Unserializer.run(e.data);
+			switch (answer)
+			{
+				case HaqMessageListenerAnswer.CallSharedMethodAnswer(text):
+					processServerAnswer(text, callbacks.shift());
+			}
 		};
 		
 		socket.onclose = function() 
@@ -47,7 +53,7 @@ class HaqServerCallerWebsocket extends HaqServerCallerBase
 			while (callQueue.length > 0)
 			{
 				var c = callQueue.shift();
-				socket.send(Serializer.run(HaqMessage.CallSharedMethod(componentFullID, method, params)));
+				socket.send(Serializer.run(HaqMessageToListener.CallSharedMethod(componentFullID, method, params)));
 			}
 		}
 	}
