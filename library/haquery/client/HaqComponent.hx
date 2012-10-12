@@ -87,15 +87,7 @@ using haquery.StringTools;
 	/**
 	 * Call server method, marked as @shared.
 	 */
-	public function callSharedMethodAjax(method:String, ?params:Array<Dynamic>, ?callb:Dynamic->Void) : Void
-	{
-		Lib.ajax.callSharedMethod(fullID, method, params, callb);
-	}
-	
-	/**
-	 * Call server method, marked as @shared("websocket").
-	 */
-	public function callSharedMethodWebsocket(method:String, ?params:Array<Dynamic>, ?callb:Dynamic->Void) : Void
+	public function callSharedMethod(method:String, ?params:Array<Dynamic>, ?callb:Dynamic->Void) : Void
 	{
 		if (Lib.websocket != null)
 		{
@@ -103,7 +95,7 @@ using haquery.StringTools;
 		}
 		else
 		{
-			callSharedMethodAjax(method, params, callb);
+			Lib.ajax.callSharedMethod(fullID, method, params, callb);
 		}
 	}
 }

@@ -430,7 +430,7 @@ class Lib
 	{
 		var chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 		var s = "";
-		for (i in 1...10)
+		for (i in 1...20)
 		{
 			s += chars.charAt(Std.random(chars.length));
 		}

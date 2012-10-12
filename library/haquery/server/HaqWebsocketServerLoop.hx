@@ -102,7 +102,10 @@ class HaqWebsocketServerLoop
 					var route = new HaqRouter(HaqDefines.folders.pages).getRoute(request.params.get("route"));
 					var bootstraps = Lib.loadBootstraps(route.path);
 					var r = Lib.runPage(request, route, bootstraps);
-					waitedPages.set(r.page.pageKey, { page:r.page, config:r.config, db:r.db, created:Date.now().getTime() / 1000 });
+					if (!request.isPostback)
+					{
+						waitedPages.set(r.page.pageKey, { page:r.page, config:r.config, db:r.db, created:Date.now().getTime() / 1000 } );
+					}
 					client.ws.send(Serializer.run(HaqMessageListenerAnswer.MakeRequestAnswer(r.response)));
 				
 				case HaqMessageToListener.ConnectToPage(pageKey, pageSecret):
