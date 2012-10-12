@@ -19,7 +19,7 @@ class Server extends HaqPage
 		q('#status').html("componentButton pressed on server");
 	}
 	
-	@shared("websocket") function testShared(a:Int, b:String) : String
+	@shared function testShared(a:Int, b:String) : String
 	{
 		trace("server testShared");
 		return "answer:" + a + "-" + b;
