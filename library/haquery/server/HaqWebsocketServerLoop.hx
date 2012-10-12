@@ -115,7 +115,7 @@ class HaqWebsocketServerLoop
 					waitedPages.remove(pageKey);
 					if (p != null && p.page.pageSecret == pageSecret && p.page.onConnect(connectedPages))
 					{
-						connectedPages.set(pageKey, { page:p.page, config:p.config, db:p.db, ws:client.ws } );
+						connectedPages.set(pageKey, new HaqConnectedPage(p.page, p.config, p.db, client.ws));
 					}
 					else
 					{

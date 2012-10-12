@@ -18,9 +18,14 @@ import haquery.client.HaqPage;
 	
 	function testCallShared_click(t, e)
 	{
-		shared().testShared(1, "abc", function(e)
+		shared().testSharedOnServer(1, "abc", function(e)
 		{
 			Lib.alert("callb = " + e);
 		});
+	}
+	
+	@shared function testSharedOnClient(a:Int, b:String) : Void
+	{
+		trace("client testShared");
 	}
 }

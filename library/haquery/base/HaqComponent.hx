@@ -166,4 +166,23 @@ using haquery.StringTools;
 		nextAnonimID++;
 		return "haqc_" + Std.string(nextAnonimID);
 	}
+	
+	public function callElemEventHandler(elemID:String, eventName:String) : Dynamic
+    {
+		var handler = elemID + '_' + eventName;
+		
+		try
+		{
+			return Reflect.callMethod(this, Reflect.field(this, handler), [ this, null ]);
+		}
+		catch (e:String)
+		{
+			if (e == "Invalid call")
+			{
+				throw new Exception("Invalid call: " + Type.getClassName(Type.getClass(this)) + "." + handler + "(t, e).", e);
+			}
+			Exception.rethrow(e);
+			return null;
+		}
+    }
 }
