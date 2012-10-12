@@ -15,4 +15,17 @@ class Client extends HaqPage
 		q('#status').html("componentButton pressed on client");
 		//return false; // false to disable server handler call
 	}
+	
+	function testCallShared_click(t, e)
+	{
+		shared().testSharedOnServer(1, "abc", function(e)
+		{
+			Lib.alert("callb = " + e);
+		});
+	}
+	
+	@shared function testSharedOnClient(a:Int, b:String) : Void
+	{
+		trace("client testShared");
+	}
 }
