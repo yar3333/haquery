@@ -1,4 +1,4 @@
-package components.events.comp;
+package components.shared.comp;
 
 import haquery.client.HaqComponent;
 
