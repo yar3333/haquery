@@ -2,7 +2,7 @@ package haquery.server;
 
 class HaqCli 
 {
-	public static function getUrl() : String
+	public static function getURI() : String
 	{
 		var args = Sys.args();
 		return args.length > 0 ? args[0] : "";

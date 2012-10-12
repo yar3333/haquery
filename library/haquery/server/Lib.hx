@@ -49,7 +49,7 @@ class Lib
 			
 			try
 			{
-				var route = new HaqRouter(HaqDefines.folders.pages).getRoute(!isCli() ? Web.getParams().get('route') : HaqCli.getUrl());
+				var route = new HaqRouter(HaqDefines.folders.pages).getRoute(!isCli() ? Web.getParams().get('route') : HaqCli.getURI());
 				
 				var bootstraps = loadBootstraps(route.path);
 				
@@ -112,9 +112,9 @@ class Lib
 		var params = !isCli() ? Web.getParams() : HaqCli.getParams();
 		return {
 			  pageFullTag: route.fullTag
-			, uri: Web.getURI()
+			, uri: !isCli() ? Web.getURI() : HaqCli.getURI()
 			, pageID: route.pageID
-			, isPostback: !isCli() && Web.getParams().get('HAQUERY_POSTBACK') != null
+			, isPostback: !isCli() && params.get('HAQUERY_POSTBACK') != null
 			, params: params
 			, cookie: new HaqCookie()
 			, requestHeaders: new HaqRequestHeaders()
@@ -122,7 +122,8 @@ class Lib
 			, clientIP: getClientIP()
 			, host: getHttpHost()
 			, queryString: getParamsString()
-			, pageUuid: Uuid.newUuid()
+			, pageKey: !isCli() && params.get('HAQUERY_PAGE_KEY') != null ? params.get('HAQUERY_PAGE_KEY') : Uuid.newUuid()
+			, pageSecret: !isCli() && params.get('HAQUERY_PAGE_SECRET') != null ? params.get('HAQUERY_PAGE_SECRET') : newPageSecret()
 		};
 	}
 	
@@ -423,6 +424,17 @@ class Lib
 		}
 		
 		return uploadsDir + "/" + s;
+	}
+	
+	static function newPageSecret()
+	{
+		var chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+		var s = "";
+		for (i in 1...10)
+		{
+			s += chars.charAt(Std.random(chars.length));
+		}
+		return s;
 	}
 	
     static function getParamsString()

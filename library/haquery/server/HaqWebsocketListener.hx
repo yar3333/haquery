@@ -5,7 +5,8 @@ import haxe.Unserializer;
 import neko.Sys;
 import sys.io.Process;
 import sys.net.WebSocket;
-import haquery.common.HaqMessage;
+import haquery.common.HaqMessageToListener;
+import haquery.common.HaqMessageListenerAnswer;
 
 class HaqWebsocketListener
 {
@@ -49,11 +50,24 @@ class HaqWebsocketListener
 			}
 		}
 		trace("Send request object to server...");
-		ws.send(Serializer.run(HaqMessage.MakeRequest(request)));
+		ws.send(Serializer.run(HaqMessageToListener.MakeRequest(request)));
 		trace("Read response...");
 		var r = ws.recv();
 		trace("Response received.");
-		return Unserializer.run(r);
+		
+		var answer = cast(Unserializer.run(r), HaqMessageListenerAnswer);
+		
+		switch (answer)
+		{
+			case HaqMessageListenerAnswer.MakeRequestAnswer(response):
+				return response;
+			
+			default:
+				throw "Unexpected listener answer: " + answer;
+				
+		}
+		
+		return null;
 	}
 	
 	public function status() : String
@@ -61,7 +75,7 @@ class HaqWebsocketListener
 		try
 		{
 			var ws = WebSocket.connect(host, port, "haquery", host);
-			ws.send(Serializer.run(HaqMessage.Status));
+			ws.send(Serializer.run(HaqMessageToListener.Status));
 			var r = ws.recv();
 			ws.socket.close();
 			return r;
@@ -82,7 +96,7 @@ class HaqWebsocketListener
 		try
 		{
 			var ws = WebSocket.connect(host, port, "haquery", host);
-			ws.send(Serializer.run(HaqMessage.Stop));
+			ws.send(Serializer.run(HaqMessageToListener.Stop));
 			ws.socket.close();
 		}
 		catch (e:Dynamic)

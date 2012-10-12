@@ -48,6 +48,8 @@ class HaqConfig
 	
 	public var listeners : Hash<HaqWebsocketListener>;
 	
+	public var secret : String;
+	
 	public function new(filePath:String)
 	{
 		customs = new Hash<Dynamic>();
@@ -88,6 +90,9 @@ class HaqConfig
 						
 						case "filterTracesByIP":
 							filterTracesByIP = value;
+						
+						case "secret":
+							secret = value;
 						
 						default:
 							throwBadConfigFileRecord(path, node);

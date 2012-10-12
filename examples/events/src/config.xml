@@ -1,4 +1,6 @@
 <config>
+	<param name="secret" value="abc" />
+	
 	<param  name="databaseConnectionString"   value="mysql://geography_db:ItyTehs@haqteam.com/geography-dev" />
 	<custom name="databaseConnectionStringVK" value="mysql://geography_db:ItyTehs@ex4.haqteam.com/geography-prod" />
 	<custom name="databaseConnectionStringOK" value="mysql://geography_db:ItyTehs@ex4.haqteam.com/geography-prod" />

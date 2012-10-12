@@ -6,13 +6,13 @@ import haquery.client.HaqCookie;
 @:keep class HaqPage extends HaqComponent
 {
     public var cookie(default, null) : HaqCookie;
-	public var pageUuid(default, null) : String;
+	public var pageKey(default, null) : String;
     
     public function new()
     {
 		super();
 		cookie = new HaqCookie();
-		pageUuid = HaqInternals.pageUuid;
+		pageKey = HaqInternals.pageKey;
     }
     
     public function redirect(url:String) : Void

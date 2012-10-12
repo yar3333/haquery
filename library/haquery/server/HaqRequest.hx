@@ -32,5 +32,7 @@ typedef HaqRequest =
 	
 	var queryString : String;
 	
-	var pageUuid : String;
+	var pageKey : String;
+	
+	var pageSecret : String;
 }

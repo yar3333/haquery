@@ -17,8 +17,8 @@ import haquery.client.HaqInternals;
 			? Firebug.trace 
 			: haquery.client.Lib.trace;
         
-		ajax = new HaqServerCallerAjax();
-		websocket = HaqInternals.listener != "" ? new HaqServerCallerWebsocket(HaqInternals.listener, HaqInternals.pageUuid) : null;
+		ajax = new HaqServerCallerAjax(HaqInternals.pageKey, HaqInternals.pageSecret);
+		websocket = HaqInternals.listener != "" ? new HaqServerCallerWebsocket(HaqInternals.listener, HaqInternals.pageKey, HaqInternals.pageSecret) : null;
 		
 		var manager = new HaqTemplateManager();
 		var page = manager.createPage(pageFullTag);
