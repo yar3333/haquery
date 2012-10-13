@@ -1,5 +1,6 @@
 package pages.index;
 
+import haquery.server.Lib;
 import haquery.server.HaqConnectedPage;
 import haquery.server.HaqPage;
 
@@ -31,12 +32,10 @@ class Server extends HaqPage
 	{
 		trace("serverMethodB");
 		
-		//var r = pages.get(anotherPageKey).callSharedServerMethod(fullID, "serverMethodC", [ pageKey ]);
-		
-		return "";
+		return new AnotherServerForServer(anotherPageKey, this).serverMethodC(pageKey);
 	}
 	
-	@shared function serverMethodC(pageKey:String) : String
+	@another function serverMethodC(pageKey:String) : String
 	{
 		trace("serverMethodC");
 		

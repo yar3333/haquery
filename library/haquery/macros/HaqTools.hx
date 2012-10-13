@@ -92,7 +92,7 @@ class HaqTools
 		};
 	}
 	
-	public static function makeVar(name:String, type:ComplexType, expr:Expr) : Field
+	public static function makeVar(name:String, type:ComplexType, ?expr:Expr) : Field
 	{
 		return {
 			  name : name

@@ -3,7 +3,7 @@ package haquery.common;
 enum HaqMessageListenerAnswer
 {
 	CallSharedMethodAnswer(text:String);
-	CallClientMethodFromAnother(componentFullID:String, method:String, params:Array<Dynamic>);
+	CallAnotherClientMethod(componentFullID:String, method:String, params:Array<Dynamic>);
 	
 	#if !client
 	

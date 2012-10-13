@@ -15,6 +15,9 @@ class HaqWebsocketListener
 	public var port(default, null) : Int;
 	public var autorun(default, null) : Bool;
 	
+	var server : HaqWebsocketServerLoop;
+	public var pages(getPages, null) : Hash<HaqConnectedPage>;
+	
 	public function new(name:String, host:String, port:Int, autorun:Bool) 
 	{
 		this.name = name;
@@ -106,7 +109,12 @@ class HaqWebsocketListener
 	
 	public function run()
 	{
-		var server = new HaqWebsocketServerLoop(name);
+		server = new HaqWebsocketServerLoop(name);
 		server.run(host, port);
+	}
+	
+	function getPages() : Hash<HaqConnectedPage>
+	{
+		return server != null ? server.pages : null;
 	}
 }

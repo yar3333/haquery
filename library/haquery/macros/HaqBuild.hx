@@ -23,7 +23,7 @@ class HaqBuild
 							{
 								if (HaqTools.isExtendsFrom(clas, "haquery.base.HaqComponent"))
 								{
-									HaqSharedGenerator.generate(clas);
+									HaqSharedAndAnotherGenerator.generate(clas);
 								}
 							}
 						default:

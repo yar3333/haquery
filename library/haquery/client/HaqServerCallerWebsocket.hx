@@ -36,7 +36,7 @@ class HaqServerCallerWebsocket extends HaqServerCallerBase
 				case HaqMessageListenerAnswer.CallSharedMethodAnswer(text):
 					processServerAnswer(text, callbacks.shift());
 				
-				case HaqMessageListenerAnswer.CallClientMethodFromAnother(componentFullID, method, params):
+				case HaqMessageListenerAnswer.CallAnotherClientMethod(componentFullID, method, params):
 					var component = Lib.page.findComponent(componentFullID);
 					component.callSharedClientMethod(method, params, true);
 			}
