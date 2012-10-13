@@ -1,5 +1,6 @@
 package pages.index;
 
+import haquery.server.HaqConnectedPage;
 import haquery.server.HaqPage;
 
 class Server extends HaqPage
@@ -19,10 +20,26 @@ class Server extends HaqPage
 		q('#status').html("componentButton pressed on server");
 	}
 	
-	@shared function testSharedOnServer(a:Int, b:String) : String
+	@shared function serverMethodA(a:Int, b:String) : String
 	{
-		trace("server testShared");
-		shared().testSharedOnClient(10, "a");
+		trace("serverMethodA");
+		client().clientMethodA(10, "a");
 		return "answer:" + a + "-" + b;
+	}
+	
+	@shared function serverMethodB(anotherPageKey:String) : String
+	{
+		trace("serverMethodB");
+		
+		//var r = pages.get(anotherPageKey).callSharedServerMethod(fullID, "serverMethodC", [ pageKey ]);
+		
+		return "";
+	}
+	
+	@shared function serverMethodC(pageKey:String) : String
+	{
+		trace("serverMethodC");
+		
+		return this.pageKey;
 	}
 }

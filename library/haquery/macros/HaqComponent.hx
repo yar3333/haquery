@@ -38,23 +38,6 @@ using tink.macro.tools.MacroTools;
 		var componentClass = Context.getLocalClass().get();
         var pos = Context.currentPos();
 		
-		/*
-		HaqTools.log("BUILD = " + componentClass.name);
-		var fileAndPos = Compiler.getDisplayPos();
-		if (fileAndPos != null)
-		{
-			HaqTools.log("FILE = " + fileAndPos.file);
-			if (new EReg("(?:^|[\\/])server[\\/]|(?:^|[\\/]Server[.]hx$)", "i").match(fileAndPos.file))
-			{
-				if (componentClass.name == "Client")
-				{
-					componentClass.exclude();
-					return [];
-				}
-			}
-		}
-		*/
-		
 		if (componentClass.name == "Server" || componentClass.name == "Client")
 		{
 			var fields = Context.getBuildFields();
@@ -69,7 +52,9 @@ using tink.macro.tools.MacroTools;
 		return null;
 	}
 	
-	@:macro public function shared(ethis:Expr)
+	#if macro
+	
+	static function shared(ethis:Expr) : Expr
 	{
 		var pos = Context.currentPos();
 		
@@ -81,7 +66,7 @@ using tink.macro.tools.MacroTools;
 					var clas = t.get();
 					if (clas.pack.length > 0 && (clas.pack[0] == "components" || clas.pack[0] == "pages") && (clas.name == "Server" || clas.name == "Client"))
 					{
-						return { expr:ExprDef.ENew(HaqTools.makeTypePath(clas.pack, "Shared" + clas.name, []), [ ethis ]), pos:pos };
+						return { expr:ExprDef.ENew(HaqTools.makeTypePath(clas.pack, "Shared" + (clas.name=="Server" ? "Client" : "Server"), []), [ ethis ]), pos:pos };
 					}
 				default:
 			}
@@ -94,8 +79,6 @@ using tink.macro.tools.MacroTools;
 			return ExprDef.EUntyped(ExprDef.EObjectDecl([]).at(pos)).at(pos);
 		}
 	}
-	
-	#if macro
 	
 	static function setComponentClassEventHandlersArgTypes(componentClass:ClassType, fields:Array<Field>)
 	{

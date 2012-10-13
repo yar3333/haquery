@@ -5,6 +5,11 @@ import haquery.client.HaqPage;
 
 class Client extends HaqPage
 {
+	function init()
+	{
+		template().pageKey.html(pageKey);
+	}
+	
 	function simpleButton_click(t, e)
 	{
 		q('#status').html("simpleButton pressed on client");
@@ -16,16 +21,24 @@ class Client extends HaqPage
 		//return false; // false to disable server handler call
 	}
 	
-	function testCallShared_click(t, e)
+	function callSharedServerMethodA_click(t, e)
 	{
-		shared().testSharedOnServer(1, "abc", function(e)
+		server().serverMethodA(1, "abc", function(e)
 		{
-			Lib.alert("callb = " + e);
+			Lib.alert("callback after methodA calling = " + e);
 		});
 	}
 	
-	@shared function testSharedOnClient(a:Int, b:String) : Void
+	function callSharedServerMethodB_click(t, e)
 	{
-		trace("client testShared");
+		server().serverMethodB(template().anotherPageKey.val(), function(e)
+		{
+			Lib.alert("callback after methodB calling = " + e);
+		});
+	}
+	
+	@shared function clientMethodA(a:Int, b:String) : Void
+	{
+		Lib.alert("Method clientMethodA called from server, a = " + a + ", b = " + b + ".");
 	}
 }
