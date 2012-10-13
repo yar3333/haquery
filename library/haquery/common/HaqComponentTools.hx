@@ -12,14 +12,14 @@ import haquery.client.HaqComponent;
 
 class HaqComponentTools 
 {
-	public static function callMethod(component:HaqComponent, method:String, params:Dynamic, callingFromAnother:Bool) : Dynamic
+	public static function callMethod(component:HaqComponent, method:String, params:Dynamic, ?metaMark:String) : Dynamic
 	{
 		var result : Dynamic = null;
 		
-		var r = callElemEventHandler(component, method, callingFromAnother);
+		var r = callElemEventHandler(component, method);
 		if (!r.success)
 		{
-			r = callSharedMethod(component, method, params, callingFromAnother);
+			r = callMetaMarkedMethod(metaMark, component, method, params);
 		}
 		if (r.success)
 		{
@@ -33,7 +33,7 @@ class HaqComponentTools
         return result;
 	}
 	
-	static function callElemEventHandler(component:HaqComponent, method:String, callingFromAnother:Bool) : { success:Bool, result:Dynamic }
+	static function callElemEventHandler(component:HaqComponent, method:String) : { success:Bool, result:Dynamic }
 	{
 		var n = method.lastIndexOf("_");
 		if (n >= 0)
@@ -47,9 +47,9 @@ class HaqComponentTools
 		return { success:false, result:null };
 	}
 	
-	static function callSharedMethod(component:HaqComponent, method:String, params:Array<Dynamic>, callingFromAnother:Bool) : { success:Bool, result:Dynamic }
+	static function callMetaMarkedMethod(metaMark:String, component:HaqComponent, method:String, params:Array<Dynamic>) : { success:Bool, result:Dynamic }
 	{
-		if (isMethodShared(Type.getClass(component), method, callingFromAnother))
+		if (isMethodMetaMarked(metaMark, Type.getClass(component), method))
 		{
 			var f = Reflect.field(component, method);
 			return { success:true, result:Reflect.callMethod(component, f, params != null ? params : []) };
@@ -57,17 +57,13 @@ class HaqComponentTools
 		return { success:false, result:null };
 	}
 	
-	static function isMethodShared(cls:Class<HaqComponent>, method:String, callingFromAnother:Bool) : Bool
+	static function isMethodMetaMarked(metaMark:String, clas:Class<HaqComponent>, method:String) : Bool
 	{
-		if (cls != null)
+		if (clas != null)
 		{
-			var meta = haxe.rtti.Meta.getFields(cls);
+			var meta = haxe.rtti.Meta.getFields(clas);
 			var m = Reflect.field(meta, method);
-			if (Reflect.hasField(m, "shared"))
-			{
-				return !callingFromAnother || Lambda.has(cast(Reflect.field(m, "shared"), Array<Dynamic>), "another");
-			}
-			return isMethodShared(cast Type.getSuperClass(cls), method, callingFromAnother);
+			return Reflect.hasField(m, metaMark) ? true : isMethodMetaMarked(metaMark, cast Type.getSuperClass(clas), method);
 		}
 		return false;
 	}

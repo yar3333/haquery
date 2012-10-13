@@ -76,8 +76,6 @@ class HaqPage extends HaqComponent
 	 */
 	public var pageSecret(default, null) : String;
 	
-	var pages : Hash<HaqConnectedPage>;
-	
 	public function new()
 	{
 		super();
@@ -110,7 +108,7 @@ class HaqPage extends HaqComponent
 		var component = findComponent(componentFullID);
 		if (component != null)
 		{
-			var result = component.callSharedServerMethod(method, params, false);
+			var result = component.callSharedServerMethod(method, params);
 			//trace("HAQUERY FINISH");
 			
 			var content = ""; 
@@ -303,22 +301,18 @@ class HaqPage extends HaqComponent
 	 * Use to security checks or something else.
 	 * You can return false to force disconnect.
 	 */
-	public function onConnect(pages:Hash<HaqConnectedPage>) : Bool
-	{
-		this.pages = pages;
-		return true;
-	}
+	public function onConnect() : Bool return true
 	
 	/**
 	 * Overload to specify code on client to server websocket closing.
 	 */
-	public function onDisconnect() { }
+	public function onDisconnect() {}
 
 	/*
 	function callAnotherClientSharedMethod(pageKey:String, componentFullID:String, method:String, params:Array<Dynamic>)
 	{
 		var p = pages.get(pageKey);
-		p.ws.send(Serializer(HaqMessageListenerAnswer.CallClientMethodFromAnother(componentFullID, method, params)));
+		p.ws.send(Serializer(HaqMessageListenerAnswer.CallAnotherClientMethod(componentFullID, method, params)));
 	}
 	
 	function callAnotherServerSharedMethod(pageKey:String, componentFullID:String, method:String, params:Array<Dynamic>)
@@ -331,6 +325,6 @@ class HaqPage extends HaqComponent
 
 		component
 		
-		p.ws.send(Serializer(HaqMessageListenerAnswer.CallClientMethodFromAnother(componentFullID, method, params)));
+		p.ws.send(Serializer(HaqMessageListenerAnswer.CallAnotherClientMethod(componentFullID, method, params)));
 	}*/
 }

@@ -26,7 +26,7 @@ class HaqWebsocketServerLoop
 	var compilationDate : Date;
 	
 	var waitedPages : Hash<WaitedPage>;
-	var connectedPages : Hash<HaqConnectedPage>;
+	public var pages(default, null) : Hash<HaqConnectedPage>;
 	
 	var server : WebSocketServerLoop<ClientData>;
 	
@@ -36,7 +36,7 @@ class HaqWebsocketServerLoop
 		this.compilationDate = Lib.getCompilationDate();
 		
 		this.waitedPages = new Hash<WaitedPage>();
-		this.connectedPages = new Hash<HaqConnectedPage>();
+		this.pages = new Hash<HaqConnectedPage>();
 		
 		this.server = new WebSocketServerLoop<ClientData>(function(socket) return new ClientData(socket));
 		
@@ -46,14 +46,14 @@ class HaqWebsocketServerLoop
 		{
 			if (client.pageKey != null)
 			{
-				var p = connectedPages.get(client.pageKey);
+				var p = pages.get(client.pageKey);
 				if (p != null)
 				{
 					if (p.page != null)
 					{
 						p.page.onDisconnect();
 					}
-					connectedPages.remove(client.pageKey);
+					pages.remove(client.pageKey);
 				}
 			}
 		};
@@ -113,9 +113,9 @@ class HaqWebsocketServerLoop
 					client.pageKey = pageKey;
 					var p = waitedPages.get(pageKey);
 					waitedPages.remove(pageKey);
-					if (p != null && p.page.pageSecret == pageSecret && p.page.onConnect(connectedPages))
+					if (p != null && p.page.pageSecret == pageSecret && p.page.onConnect())
 					{
-						connectedPages.set(pageKey, new HaqConnectedPage(p.page, p.config, p.db, client.ws));
+						pages.set(pageKey, new HaqConnectedPage(p.page, p.config, p.db, client.ws));
 					}
 					else
 					{
@@ -124,7 +124,7 @@ class HaqWebsocketServerLoop
 				
 				case HaqMessageToListener.CallSharedMethod(componentFullID, method, params):
 					trace("INCOMING CallSharedMethod [" + client.pageKey + "] method = " + componentFullID + "." + method);
-					var p = connectedPages.get(client.pageKey);
+					var p = pages.get(client.pageKey);
 					Lib.pageContext(p.page, p.page.clientIP, p.config, p.db, function()
 					{
 						p.page.prepareNewPostback();
@@ -133,7 +133,7 @@ class HaqWebsocketServerLoop
 					});
 				
 				case HaqMessageToListener.Status:
-					var s = "connected pages: " + Lambda.count(connectedPages) + "\n"
+					var s = "connected pages: " + Lambda.count(pages) + "\n"
 						  + "waited pages: " + Lambda.count(waitedPages) + "\n"
 						  + "memory heap: " + groupDigits(Math.round(Gc.stats().heap / 1024), " ") + " KB\n";
 					client.ws.send(s);

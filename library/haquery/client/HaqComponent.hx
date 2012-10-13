@@ -110,7 +110,7 @@ using haquery.StringTools;
 	 */
 	public function callSharedClientMethod(method:String, params:Array<Dynamic>, callingFromAnother:Bool) : Dynamic
 	{
-		return HaqComponentTools.callMethod(this, method, params, callingFromAnother);
+		return HaqComponentTools.callMethod(this, method, params, "shared");
 	}
 
 #end

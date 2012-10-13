@@ -21,19 +21,19 @@ class HaqConnectedPage
 		this.ws = ws;
 	}
 	
-	public function callSharedServerMethod(componentFullID:String, method:String, params:Array<Dynamic>) : Dynamic
+	public function callServerMethod(componentFullID:String, method:String, params:Array<Dynamic>) : Dynamic
 	{
 		var r : Dynamic;
 		Lib.pageContext(page, page.clientIP, config, db, function()
 		{
 			var component = page.findComponent(componentFullID);
-			r = component.callSharedServerMethod(method, params, true);
+			r = component.callAnotherServerMethod(method, params);
 		});
 		return r;
 	}
 	
-	public function callSharedClientMethod(componentFullID:String, method:String, params:Array<Dynamic>) : Void
+	public function callClientMethod(componentFullID:String, method:String, params:Array<Dynamic>) : Void
 	{
-		ws.send(Serializer.run(HaqMessageListenerAnswer.CallClientMethodFromAnother(componentFullID, method, params)));
+		ws.send(Serializer.run(HaqMessageListenerAnswer.CallAnotherClientMethod(componentFullID, method, params)));
 	}
 }

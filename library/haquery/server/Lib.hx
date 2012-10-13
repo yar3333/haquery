@@ -31,6 +31,7 @@ class Lib
     public static var profiler : HaqProfiler;
 	public static var db : HaqDb;
 	public static var manager : HaqTemplateManager;
+	public static var pages(getPages, null) : Hash<HaqConnectedPage>;
     
     public static function run() : Void
     {
@@ -455,4 +456,9 @@ class Lib
 	}
 	
 	static function getCwd() { return Web.getCwd().replace("\\", "/").rtrim("/"); }
+	
+	static function getPages()
+	{
+		return HaqSystem.listener != null ? HaqSystem.listener.pages : null;
+	}
 }
