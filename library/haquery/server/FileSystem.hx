@@ -41,7 +41,7 @@ class FileSystem
 				path = path.substr(0, path.length - 1);
 			}
 			
-			var dirs : Array<String> = path.split('/');
+			var dirs = path.split('/');
 			for (i in 0...dirs.length)
 			{
 				var dir = dirs.slice(0, i + 1).join('/');
@@ -59,7 +59,7 @@ class FileSystem
 	/**
 		Delete a given file.
 	*/
-	public static inline function deleteFile(path:String) : Void
+	public static function deleteFile(path:String) : Void
 	{
 		if (path != null && path != "" && exists(path))
 		{

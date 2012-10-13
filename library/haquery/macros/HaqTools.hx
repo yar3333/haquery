@@ -117,6 +117,11 @@ class HaqTools
 		};
 	}
 	
+	public static function makeConstructor(args:Array<FunctionArg>, expr:Expr) : Field
+	{
+		return HaqTools.makeMethod("new", args, "Void".asComplexType(), expr);
+	}
+	
 	public static function safeToComplex(type:Type) : ComplexType
 	{
 		switch (type)
@@ -157,26 +162,6 @@ class HaqTools
 			, meta : field.meta.get()
 		};
 	}
-	
-	public static function createDirectory(path:String)
-    {
-        if (!FileSystem.exists(path))
-		{
-			path = path.replace('\\', '/');
-			var dirs : Array<String> = path.split('/');
-			for (i in 0...dirs.length)
-			{
-				var dir = dirs.slice(0, i + 1).join('/');
-				if (!dir.endsWith(':'))
-				{
-					if (!FileSystem.exists(dir))
-					{
-						FileSystem.createDirectory(dir);
-					}
-				}
-			}
-		}
-    }
 	
 	public static function isVoid(t:Null<ComplexType>) : Bool
 	{
