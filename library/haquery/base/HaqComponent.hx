@@ -1,7 +1,10 @@
 package haquery.base;
 
+#if !macro
+
 import haquery.common.HaqDefines;
 import haquery.common.HaqEvent;
+using haquery.StringTools;
 
 #if !client
 import haquery.server.Lib;
@@ -14,11 +17,13 @@ import haquery.client.HaqTemplateManager;
 private typedef Component = haquery.client.HaqComponent;
 private typedef Page = haquery.client.HaqPage;
 #end
-
-using haquery.StringTools;
+	
+#end
 
 @:keep class HaqComponent extends haquery.macros.HaqComponent
 {
+#if !macro
+
     public var manager(default,null) : HaqTemplateManager;
 	
 	public var page(default,null) : Page;
@@ -185,4 +190,6 @@ using haquery.StringTools;
 			return null;
 		}
     }
+
+#end
 }

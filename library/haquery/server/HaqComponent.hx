@@ -1,5 +1,7 @@
 package haquery.server;
 
+#if !macro
+
 import haquery.Exception;
 import haquery.Std;
 import haquery.server.HaqCssGlobalizer;
@@ -9,11 +11,14 @@ import haxe.htmlparser.HtmlNodeText;
 import haquery.server.Lib;
 import haquery.common.HaqComponentTools;
 import haxe.Serializer;
-
 using haquery.StringTools;
 
-@:autoBuild(haquery.macros.HaqComponent.build()) class HaqComponent extends haquery.base.HaqComponent, implements HaqCallSharedMethodInterface
+#end
+
+@:autoBuild(haquery.macros.HaqComponent.build()) class HaqComponent extends haquery.base.HaqComponent
 {
+#if !macro
+
     /**
      * template.html as DOM tree.
      */
@@ -202,7 +207,7 @@ using haquery.StringTools;
 		Lib.assert(page.isPostback, "HaqComponent.callSharedMethod() allowed on the postback only.");
         
         page.addAjaxResponse(
-			  "page." + (fullID != "" ? "findComponent('" + fullID + "')." : "") + method
+			  "haquery.client.Lib.page." + (fullID != "" ? "findComponent('" + fullID + "')." : "") + method
 			+ "(" + Lambda.map(params != null ? params : [], function(p) return "haquery.client.HaqInternals.unserialize('" + Serializer.run(p) + "')").join(",") + ');'
 		);
 	}
@@ -276,5 +281,12 @@ using haquery.StringTools;
 		}
 		
 		return template;
+	}
+
+#end
+	
+	@:macro public function client(ethis:haxe.macro.Expr)
+	{
+		return haquery.macros.HaqComponent.shared(ethis);
 	}
 }

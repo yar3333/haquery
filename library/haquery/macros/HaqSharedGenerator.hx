@@ -21,13 +21,13 @@ class HaqSharedGenerator
 		if (clas.pack.length > 0 && (clas.pack[0] == "components" || clas.pack[0] == "pages") && (clas.name == "Server" || clas.name == "Client"))
 		{
 			var componentClassFile = Context.resolvePath(StringTools.replace(clas.module, ".", "/") + ".hx");
-			var sharedClassName = "Shared" + (clas.name == "Server" ? "Client" : "Server");
+			var sharedClassName = "Shared" + clas.name;
 			var sharedClassFile = "trm/" + clas.pack.join("/") + "/" + sharedClassName + ".hx";
 			if (!FileSystem.exists(sharedClassFile) || FileSystem.stat(componentClassFile).mtime.getTime() > FileSystem.stat(sharedClassFile).mtime.getTime())
 			{
 				var componentField = macro var component:HaqComponent;
 				var componentClassFields = [ 
-					  HaqTools.makeVar("component", ComplexType.TPath(HaqTools.makeTypePath([ "haquery." + (clas.name == "Server" ? "client" : "server") ], "HaqCallSharedMethodInterface", [])), null)
+					  HaqTools.makeVar("component", ComplexType.TPath(HaqTools.makeTypePath([ "haquery." + (clas.name == "Server" ? "client" : "server") ], "HaqComponent", [])), null)
 					, makeSharedClassConstructor(clas) 
 				].concat(getSharedMethods(clas));
 				
@@ -125,7 +125,7 @@ class HaqSharedGenerator
 	static function makeSharedClassConstructor(clas:ClassType) : Field
 	{
 		var assignExpr = macro { this.component = component; };
-		return HaqTools.makeMethod("new", [ "component".toArg(("haquery." + (clas.name == "Server" ? "client" : "server") + ".HaqCallSharedMethodInterface").asComplexType()) ], ComplexType.TPath("Void".asTypePath()), assignExpr);
+		return HaqTools.makeMethod("new", [ "component".toArg(("haquery." + (clas.name == "Server" ? "client" : "server") + ".HaqComponent").asComplexType()) ], ComplexType.TPath("Void".asTypePath()), assignExpr);
 	}
 	
 	static function makeSharedClientClassMethod(name:String, args:Array<FunctionArg>, ret:Null<ComplexType>, pos:Position) : Field

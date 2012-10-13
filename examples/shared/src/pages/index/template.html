@@ -34,9 +34,17 @@
             </tr>
         </table>
 		
-		<br />
-		<br />
+		<br /><br />
 		
-		<input type="button" id="testCallShared" value="testCallShared" />
+		pageKey = <span id="pageKey"></span>
+		
+		<br /><br />
+		
+		<input type="button" id="callSharedServerMethodA" value="call shared server method A, which call client method A" />
+		
+		<br /><br />
+		
+		anotherPageKey = <input type="text" id="anotherPageKey" /><br />
+		<input type="button" id="callSharedServerMethodB" value="call shared server method B, which call server method C for another page" /><br />
     </body>
 </html>

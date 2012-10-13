@@ -1,15 +1,20 @@
 package haquery.client;
 
+#if !macro
+
 import haquery.client.Lib;
 import haquery.client.HaqCssGlobalizer;
 import haquery.client.HaqQuery;
 import haquery.common.HaqComponentTools;
 import js.JQuery;
-
 using haquery.StringTools;
 
-@:autoBuild(haquery.macros.HaqComponent.build()) class HaqComponent extends haquery.base.HaqComponent, implements HaqCallSharedMethodInterface
+#end
+
+@:autoBuild(haquery.macros.HaqComponent.build()) class HaqComponent extends haquery.base.HaqComponent
 {
+#if !macro
+
 	var isDynamic : Bool;
 	
 	public function construct(manager:HaqTemplateManager, fullTag:String, parent:HaqComponent, id:String, isDynamic:Bool, dynamicParams:Dynamic) : Void
@@ -106,5 +111,12 @@ using haquery.StringTools;
 	public function callSharedClientMethod(method:String, params:Array<Dynamic>, callingFromAnother:Bool) : Dynamic
 	{
 		return HaqComponentTools.callMethod(this, method, params, callingFromAnother);
+	}
+
+#end
+	
+	@:macro public function server(ethis:haxe.macro.Expr)
+	{
+		return haquery.macros.HaqComponent.shared(ethis);
 	}
 }
