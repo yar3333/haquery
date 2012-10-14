@@ -33,12 +33,15 @@ class HaqServerCallerWebsocket extends HaqServerCallerBase
 			var answer : HaqMessageListenerAnswer = Unserializer.run(e.data);
 			switch (answer)
 			{
-				case HaqMessageListenerAnswer.CallSharedMethodAnswer(text):
+				case HaqMessageListenerAnswer.CallSharedServerMethodAnswer(text):
 					processServerAnswer(text, callbacks.shift());
 				
 				case HaqMessageListenerAnswer.CallAnotherClientMethod(componentFullID, method, params):
 					var component = Lib.page.findComponent(componentFullID);
 					component.callSharedClientMethod(method, params, true);
+				
+				case HaqMessageListenerAnswer.ProcessUncalledServerMethodAnswer(text):
+					processServerAnswer(text);
 			}
 		};
 		
@@ -58,9 +61,23 @@ class HaqServerCallerWebsocket extends HaqServerCallerBase
 			while (callQueue.length > 0)
 			{
 				var c = callQueue.shift();
-				socket.send(Serializer.run(HaqMessageToListener.CallSharedMethod(componentFullID, method, params)));
+				socket.send(Serializer.run(HaqMessageToListener.CallSharedServerMethod(componentFullID, method, params)));
 			}
 		}
 	}
 	
+	public function callAnotherServerMethod(pageKey:String, componentFullID:String, method:String, params:Array<Dynamic>, callb:Dynamic->Void) : Void
+	{
+		callbacks.push(callb);
+		callQueue.push( { componentFullID:componentFullID, method:method, params:params } );
+		
+		if (isConnected)
+		{
+			while (callQueue.length > 0)
+			{
+				var c = callQueue.shift();
+				socket.send(Serializer.run(HaqMessageToListener.CallSharedServerMethod(componentFullID, method, params)));
+			}
+		}
+	}
 }

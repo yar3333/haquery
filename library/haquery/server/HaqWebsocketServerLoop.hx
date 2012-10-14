@@ -1,5 +1,6 @@
 package haquery.server;
 
+import haquery.Exception;
 import haquery.server.db.HaqDb;
 import haxe.PosInfos;
 import haxe.Serializer;
@@ -16,6 +17,11 @@ private typedef WaitedPage = { page:HaqPage, config:HaqConfig, db:HaqDb, created
 private class ClientData extends WebSocketServerLoop.ClientData
 {
 	public var pageKey : String;
+	
+	public function answer(a:HaqMessageListenerAnswer)
+	{
+		ws.send(Serializer.run(a));
+	}
 }
 
 class HaqWebsocketServerLoop
@@ -106,7 +112,7 @@ class HaqWebsocketServerLoop
 					{
 						waitedPages.set(r.page.pageKey, { page:r.page, config:r.config, db:r.db, created:Date.now().getTime() / 1000 } );
 					}
-					client.ws.send(Serializer.run(HaqMessageListenerAnswer.MakeRequestAnswer(r.response)));
+					client.answer(HaqMessageListenerAnswer.MakeRequestAnswer(r.response));
 				
 				case HaqMessageToListener.ConnectToPage(pageKey, pageSecret):
 					trace("INCOMING ConnectToPage [" + pageKey + "]");
@@ -122,15 +128,22 @@ class HaqWebsocketServerLoop
 						server.closeConnection(client.ws.socket);
 					}
 				
-				case HaqMessageToListener.CallSharedMethod(componentFullID, method, params):
-					trace("INCOMING CallSharedMethod [" + client.pageKey + "] method = " + componentFullID + "." + method);
+				case HaqMessageToListener.CallSharedServerMethod(componentFullID, method, params):
+					trace("INCOMING CallSharedServerMethod [" + client.pageKey + "] method = " + componentFullID + "." + method);
 					var p = pages.get(client.pageKey);
-					Lib.pageContext(p.page, p.page.clientIP, p.config, p.db, function()
-					{
-						p.page.prepareNewPostback();
-						var response = p.page.generateResponseOnPostback(componentFullID, method, params);
-						client.ws.send(Serializer.run(HaqMessageListenerAnswer.CallSharedMethodAnswer(response.content)));
-					});
+					var content = p.callSharedServerMethod(componentFullID, method, params);
+					client.answer(HaqMessageListenerAnswer.CallSharedServerMethodAnswer(content));
+				
+				case HaqMessageToListener.CallAnotherClientMethod(pageKey, componentFullID, method, params):
+					trace("INCOMING CallAnotherClientMethod [" + client.pageKey + "] pageKey = " + pageKey + ", method = " + componentFullID + "." + method);
+					var p = pages.get(pageKey);
+					p.callAnotherClientMethod(componentFullID, method, params);
+				
+				case HaqMessageToListener.CallAnotherServerMethod(pageKey, componentFullID, method, params):
+					trace("INCOMING CallAnotherServerMethod [" + client.pageKey + "] pageKey = " + pageKey + ", method = " + componentFullID + "." + method);
+					var p = pages.get(pageKey);
+					var content = p.callAnotherServerMethod(componentFullID, method, params);
+					client.answer(HaqMessageListenerAnswer.ProcessUncalledServerMethodAnswer(content));
 				
 				case HaqMessageToListener.Status:
 					var s = "connected pages: " + Lambda.count(pages) + "\n"

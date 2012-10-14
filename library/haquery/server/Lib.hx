@@ -173,7 +173,12 @@ class Lib
 						
 						response = !request.isPostback
 								 ? page.generateResponseOnRender()
-								 : page.generateResponseOnPostback(request.params.get('HAQUERY_COMPONENT'), request.params.get('HAQUERY_METHOD'), Unserializer.run(request.params.get('HAQUERY_PARAMS')));
+								 : page.generateResponseOnPostback(
+										  request.params.get('HAQUERY_COMPONENT')
+										, request.params.get('HAQUERY_METHOD')
+										, Unserializer.run(request.params.get('HAQUERY_PARAMS'))
+										, false
+								   );
 					});
 				profiler.end();
 				
