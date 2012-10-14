@@ -2,10 +2,10 @@ package haquery.common;
 
 enum HaqMessageListenerAnswer
 {
-	CallSharedServerMethodAnswer(text:String);
+	CallSharedServerMethodAnswer(ajaxResponse:String, result:Dynamic);
 	CallAnotherClientMethod(componentFullID:String, method:String, params:Array<Dynamic>);
-	
-	ProcessUncalledServerMethodAnswer(text:String);
+	CallAnotherServerMethodAnswer(result:Dynamic);
+	ProcessUncalledServerMethodAnswer(ajaxResponse:String);
 	
 	#if !client
 	

@@ -18,7 +18,7 @@ private class ClientData extends WebSocketServerLoop.ClientData
 {
 	public var pageKey : String;
 	
-	public function answer(a:HaqMessageListenerAnswer)
+	public function send(a:HaqMessageListenerAnswer)
 	{
 		ws.send(Serializer.run(a));
 	}
@@ -112,7 +112,7 @@ class HaqWebsocketServerLoop
 					{
 						waitedPages.set(r.page.pageKey, { page:r.page, config:r.config, db:r.db, created:Date.now().getTime() / 1000 } );
 					}
-					client.answer(HaqMessageListenerAnswer.MakeRequestAnswer(r.response));
+					client.send(HaqMessageListenerAnswer.MakeRequestAnswer(r.response));
 				
 				case HaqMessageToListener.ConnectToPage(pageKey, pageSecret):
 					trace("INCOMING ConnectToPage [" + pageKey + "]");
@@ -131,8 +131,8 @@ class HaqWebsocketServerLoop
 				case HaqMessageToListener.CallSharedServerMethod(componentFullID, method, params):
 					trace("INCOMING CallSharedServerMethod [" + client.pageKey + "] method = " + componentFullID + "." + method);
 					var p = pages.get(client.pageKey);
-					var content = p.callSharedServerMethod(componentFullID, method, params);
-					client.answer(HaqMessageListenerAnswer.CallSharedServerMethodAnswer(content));
+					var response = p.callSharedServerMethod(componentFullID, method, params);
+					client.send(HaqMessageListenerAnswer.CallSharedServerMethodAnswer(response.ajaxResponse, response.result));
 				
 				case HaqMessageToListener.CallAnotherClientMethod(pageKey, componentFullID, method, params):
 					trace("INCOMING CallAnotherClientMethod [" + client.pageKey + "] pageKey = " + pageKey + ", method = " + componentFullID + "." + method);
@@ -142,13 +142,13 @@ class HaqWebsocketServerLoop
 				case HaqMessageToListener.CallAnotherServerMethod(pageKey, componentFullID, method, params):
 					trace("INCOMING CallAnotherServerMethod [" + client.pageKey + "] pageKey = " + pageKey + ", method = " + componentFullID + "." + method);
 					var p = pages.get(pageKey);
-					var content = p.callAnotherServerMethod(componentFullID, method, params);
-					client.answer(HaqMessageListenerAnswer.ProcessUncalledServerMethodAnswer(content));
+					var result = p.callAnotherServerMethod(componentFullID, method, params);
+					client.send(HaqMessageListenerAnswer.CallAnotherServerMethodAnswer(result));
 				
 				case HaqMessageToListener.Status:
 					var s = "connected pages: " + Lambda.count(pages) + "\n"
 						  + "waited pages: " + Lambda.count(waitedPages) + "\n"
-						  + "memory heap: " + groupDigits(Math.round(Gc.stats().heap / 1024), " ") + " KB\n";
+						  + "memory heap: " + IntTools.groupDigits(Math.round(Gc.stats().heap / 1024), " ") + " KB\n";
 					client.ws.send(s);
 				
 				case HaqMessageToListener.Stop:
@@ -158,46 +158,6 @@ class HaqWebsocketServerLoop
 		else
 		{
 			server.closeConnection(client.ws.socket);
-		}
-	}
-	
-	/**
-	* Groups the digits in the input number by using a thousands separator.<br/>
-	* E.g. the number 1024 is converted to the string '1.024'.
-	* @param thousandsSeparator a character to use as a thousands separator. The default value is ".".
-	*/
-	public static function groupDigits(x:Int, ?thousandsSeparator = '.'):String
-	{
-		var n : Float = x;
-		var c = 0;
-		while (n > 1)
-		{
-			n /= 10;
-			c++;
-		}
-		c = cast c / 3;
-		var source = Std.string(x);
-		if (c == 0)
-			return source;
-		else
-		{
-			var target = '';
-
-			var i = 0;
-			var j = source.length - 1;
-			while (j >= 0)
-			{
-				if (i == 3)
-				{
-					target = source.charAt(j--) + thousandsSeparator + target;
-					i = 0;
-					c--;
-				}
-				else
-					target = source.charAt(j--) + target;
-				i++;
-			}
-			return target;
 		}
 	}
 }
