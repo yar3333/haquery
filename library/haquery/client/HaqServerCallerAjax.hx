@@ -1,13 +1,15 @@
 package haquery.client;
 
+import haquery.common.HaqMessageListenerAnswer;
 import haxe.Serializer;
+import haxe.Unserializer;
 import js.Dom;
 import js.JQuery;
 import haquery.client.Lib;
 import haquery.common.HaqDefines;
 using haquery.StringTools;
 
-class HaqServerCallerAjax extends HaqServerCallerBase
+class HaqServerCallerAjax
 {
 	var pageKey : String;
 	var pageSecret : String;
@@ -18,12 +20,24 @@ class HaqServerCallerAjax extends HaqServerCallerBase
 		this.pageSecret = pageSecret;
 	}
 	
-	public function callSharedMethod(componentID:String, method:String, ?params:Array<Dynamic>, ?callbackFunc:Dynamic->Void) : Void
+	public function callSharedMethod(componentID:String, method:String, ?params:Array<Dynamic>, ?callb:Dynamic->Void) : Void
 	{
 		var sendData = getDataObjectForSendToServer(componentID, method, params);
 		JQuery.postAjax(Lib.window.location.href, sendData, function(data:String) : Void
 		{ 
-			processServerAnswer(data, callbackFunc);
+			var message : HaqMessageListenerAnswer = Unserializer.run(data);
+			switch (message)
+			{
+				case HaqMessageListenerAnswer.CallSharedServerMethodAnswer(ajaxResponse, result):
+					Lib.eval(ajaxResponse);
+					if (callb != null)
+					{
+						callb(result);
+					}
+				
+				default:
+					throw "Unexpected server answer (" + message + ").";
+			}
 		});
 	}
 	

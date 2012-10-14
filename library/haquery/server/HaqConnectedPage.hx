@@ -21,46 +21,49 @@ class HaqConnectedPage
 		this.ws = ws;
 	}
 	
-	public function callSharedServerMethod(componentFullID:String, method:String, params:Array<Dynamic>) : String
+	public function callSharedServerMethod(componentFullID:String, method:String, params:Array<Dynamic>) : HaqResponse
 	{
-		var content = "";
+		var r : Dynamic = null;
 		Lib.pageContext(page, page.clientIP, config, db, function()
 		{
 			try
 			{
-				page.prepareNewPostback();
-				content = page.generateResponseOnPostback(componentFullID, method, params, false).content;
+				r = page.generateResponseOnPostback(componentFullID, method, params, false);
 			}
 			catch (e:Dynamic)
 			{
 				Exception.trace(e);
-				content = e;
 			}
 		});
-		return content;
+		return r;
 	}
 	
 	public function callAnotherServerMethod(componentFullID:String, method:String, params:Array<Dynamic>) : Dynamic
 	{
-		var content = "";
+		var r = null;
 		Lib.pageContext(page, page.clientIP, config, db, function()
 		{
 			try
 			{
-				page.prepareNewPostback();
-				content = page.generateResponseOnPostback(componentFullID, method, params, true).content;
+				var response = page.generateResponseOnPostback(componentFullID, method, params, true);
+				send(HaqMessageListenerAnswer.ProcessUncalledServerMethodAnswer(response.ajaxResponse));
+				r = response.result;
 			}
 			catch (e:Dynamic)
 			{
 				Exception.trace(e);
-				content = e;
 			}
 		});
-		return content;
+		return r;
 	}
 	
 	public function callAnotherClientMethod(componentFullID:String, method:String, params:Array<Dynamic>) : Void
 	{
-		ws.send(Serializer.run(HaqMessageListenerAnswer.CallAnotherClientMethod(componentFullID, method, params)));
+		send(HaqMessageListenerAnswer.CallAnotherClientMethod(componentFullID, method, params));
+	}
+	
+	public function send(a:HaqMessageListenerAnswer)
+	{
+		ws.send(Serializer.run(a));
 	}
 }

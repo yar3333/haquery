@@ -7,7 +7,7 @@ import haxe.Serializer;
 import haxe.Unserializer;
 import js.WebSocket;
 
-class HaqServerCallerWebsocket extends HaqServerCallerBase
+class HaqServerCallerWebsocket
 {
 	var callQueue : Array<{ componentFullID:String, method:String, params:Array<Dynamic> }>;
 	var callbacks : Array<Dynamic->Void>;
@@ -33,15 +33,27 @@ class HaqServerCallerWebsocket extends HaqServerCallerBase
 			var answer : HaqMessageListenerAnswer = Unserializer.run(e.data);
 			switch (answer)
 			{
-				case HaqMessageListenerAnswer.CallSharedServerMethodAnswer(text):
-					processServerAnswer(text, callbacks.shift());
+				case HaqMessageListenerAnswer.CallSharedServerMethodAnswer(ajaxResponse, result):
+					var callb = callbacks.shift();
+					Lib.eval(ajaxResponse);
+					if (callb != null)
+					{
+						callb(result);
+					}
 				
 				case HaqMessageListenerAnswer.CallAnotherClientMethod(componentFullID, method, params):
 					var component = Lib.page.findComponent(componentFullID);
 					component.callSharedClientMethod(method, params, true);
 				
-				case HaqMessageListenerAnswer.ProcessUncalledServerMethodAnswer(text):
-					processServerAnswer(text);
+				case HaqMessageListenerAnswer.ProcessUncalledServerMethodAnswer(ajaxAnswer):
+					Lib.eval(ajaxAnswer);
+				
+				case HaqMessageListenerAnswer.CallAnotherServerMethodAnswer(result):
+					var callb = callbacks.shift();
+					if (callb != null)
+					{
+						callb(result);
+					}
 			}
 		};
 		
@@ -76,7 +88,7 @@ class HaqServerCallerWebsocket extends HaqServerCallerBase
 			while (callQueue.length > 0)
 			{
 				var c = callQueue.shift();
-				socket.send(Serializer.run(HaqMessageToListener.CallSharedServerMethod(componentFullID, method, params)));
+				socket.send(Serializer.run(HaqMessageToListener.CallAnotherServerMethod(pageKey, componentFullID, method, params)));
 			}
 		}
 	}

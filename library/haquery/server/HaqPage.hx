@@ -85,44 +85,40 @@ class HaqPage extends HaqComponent
 	
 	public function generateResponseOnRender() : HaqResponse
 	{
-		var content = render();
-		
 		return {
-			  responseHeaders : responseHeaders
-			, statusCode : statusCode
-			, cookie : cookie.response
-			, content : content
+			responseHeaders:responseHeaders, 
+			statusCode:statusCode, 
+			cookie:cookie.response, 
+			content:render(), 
+			ajaxResponse:null, 
+			result:null
 		};
 	}
 
-	public function prepareNewPostback() : Void
-	{
-		isPostback = true;
-		responseHeaders = new HaqResponseHeaders();
-		cookie.response.reset();
-		ajaxResponse = "";
-	}
-	
 	public function generateResponseOnPostback(componentFullID:String, method:String, params:Array<Dynamic>, isAnother:Bool) : HaqResponse
 	{
 		var component = findComponent(componentFullID);
 		if (component != null)
 		{
-			var result = !isAnother ? component.callSharedServerMethod(method, params) : component.callAnotherServerMethod(method, params);
-			//trace("HAQUERY FINISH");
+			isPostback = true;
+			responseHeaders = new HaqResponseHeaders();
+			cookie.response.reset();
+			ajaxResponse = "";
 			
-			var content = ""; 
+			var result = !isAnother ? component.callSharedServerMethod(method, params) : component.callAnotherServerMethod(method, params);
+			
 			if (statusCode != 301 && statusCode != 307)
 			{
 				responseHeaders.set("Content-Type", "text/plain; charset=utf-8");
-				content = "HAQUERY_OK" + Serializer.run(result) + "\n" + ajaxResponse;
 			}
 			
 			return {
-				  responseHeaders : responseHeaders
-				, statusCode : statusCode
-				, cookie : cookie.response
-				, content : content
+				responseHeaders:responseHeaders, 
+				statusCode:statusCode, 
+				cookie:cookie.response, 
+				content:null, 
+				ajaxResponse:ajaxResponse, 
+				result:result
 			};
 		}
 		else
