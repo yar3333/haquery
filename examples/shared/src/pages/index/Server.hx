@@ -32,7 +32,9 @@ class Server extends HaqPage
 	{
 		trace("serverMethodB");
 		
-		return new AnotherServerForServer(anotherPageKey, this).serverMethodC(pageKey);
+		return "";
+		//return new AnotherServerForServer(anotherPageKey, this).serverMethodC(pageKey);
+		// server(anotherPageKey).serverMethodC(pageKey);
 	}
 	
 	@another function serverMethodC(pageKey:String) : String

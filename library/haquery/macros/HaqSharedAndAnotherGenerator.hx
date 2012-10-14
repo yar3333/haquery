@@ -123,7 +123,7 @@ class HaqSharedAndAnotherGenerator
 					function(name:String, args:Array<FunctionArg>, ret:Null<ComplexType>, pos:Position) : Field
 					{
 						var callParams = [ macro this.component.fullID, name.toExpr(), Lambda.map(args, function(a) return Context.parse(a.name, pos)).toArray() ];
-						var callExpr = ExprDef.ECall(macro haquery.server.Lib.pages.get(this.pageKey).callServerMethod, callParams).at(pos);
+						var callExpr = ExprDef.ECall(macro haquery.server.Lib.pages.get(this.pageKey).callAnotherServerMethod, callParams).at(pos);
 						return HaqTools.makeMethod(name, args, ret, macro { return $callExpr; } );
 					}
 				)
@@ -133,14 +133,95 @@ class HaqSharedAndAnotherGenerator
 
 	static function generateAnotherServerForClient(componentClass:ClassType)
 	{
+		generateModuleIfNeed("AnotherServerForClient", componentClass, function(_)
+		{
+			return [ 
+				  HaqTools.makeVar("pageKey", "String".asComplexType())
+				, HaqTools.makeVar("component", "haquery.client.HaqComponent".asComplexType())
+				, HaqTools.makeConstructor(
+					[ 
+						  "pageKey".toArg("String".asComplexType())
+						, "component".toArg("haquery.client.HaqComponent".asComplexType()) 
+					],
+					macro 
+					{
+						this.pageKey = pageKey;
+						this.component = component;
+					}
+				  )
+			].concat(
+				mapMetaMarkedMethodsToFields("another", componentClass,
+					function(name:String, args:Array<FunctionArg>, ret:Null<ComplexType>, pos:Position) : Field
+					{
+						var callParams = [ macro this.pageKey, macro this.component.fullID, name.toExpr(), Lambda.map(args, function(a) return Context.parse(a.name, pos)).toArray() ];
+						var callExpr = ExprDef.ECall(macro haquery.client.Lib.websocket.callAnotherClientMethod, callParams).at(pos);
+						return HaqTools.makeMethod(name, args, ret, macro { return $callExpr; } );
+					}
+				)
+			);
+		});
 	}
 	
 	static function generateAnotherClientForServer(componentClass:ClassType)
 	{
+		generateModuleIfNeed("AnotherClientForServer", componentClass, function(_)
+		{
+			return [ 
+				  HaqTools.makeVar("pageKey", "String".asComplexType())
+				, HaqTools.makeVar("component", "haquery.server.HaqComponent".asComplexType())
+				, HaqTools.makeConstructor(
+					[ 
+						  "pageKey".toArg("String".asComplexType())
+						, "component".toArg("haquery.server.HaqComponent".asComplexType()) 
+					],
+					macro 
+					{
+						this.pageKey = pageKey;
+						this.component = component;
+					}
+				  )
+			].concat(
+				mapMetaMarkedMethodsToFields("another", componentClass,
+					function(name:String, args:Array<FunctionArg>, ret:Null<ComplexType>, pos:Position) : Field
+					{
+						var callParams = [ macro this.component.fullID, name.toExpr(), Lambda.map(args, function(a) return Context.parse(a.name, pos)).toArray() ];
+						var callExpr = ExprDef.ECall(macro haquery.server.Lib.pages.get(this.pageKey).callAnotherClientMethod, callParams).at(pos);
+						return HaqTools.makeMethod(name, args, ret, macro { return $callExpr; } );
+					}
+				)
+			);
+		});
 	}
 	
 	static function generateAnotherClientForClient(componentClass:ClassType)
 	{
+		generateModuleIfNeed("AnotherClientForClient", componentClass, function(_)
+		{
+			return [ 
+				  HaqTools.makeVar("pageKey", "String".asComplexType())
+				, HaqTools.makeVar("component", "haquery.client.HaqComponent".asComplexType())
+				, HaqTools.makeConstructor(
+					[ 
+						  "pageKey".toArg("String".asComplexType())
+						, "component".toArg("haquery.client.HaqComponent".asComplexType()) 
+					],
+					macro 
+					{
+						this.pageKey = pageKey;
+						this.component = component;
+					}
+				  )
+			].concat(
+				mapMetaMarkedMethodsToFields("another", componentClass,
+					function(name:String, args:Array<FunctionArg>, ret:Null<ComplexType>, pos:Position) : Field
+					{
+						var callParams = [ macro this.pageKey, macro this.component.fullID, name.toExpr(), Lambda.map(args, function(a) return Context.parse(a.name, pos)).toArray() ];
+						var callExpr = ExprDef.ECall(macro haquery.client.Lib.websocket.callAnotherClientMethod, callParams).at(pos);
+						return HaqTools.makeMethod(name, args, ret, macro { return $callExpr; } );
+					}
+				)
+			);
+		});
 	}
 	
 	static function generateModuleIfNeed(generateClassName:String, componentClass:ClassType, generateFunc:ClassType->Array<Field>)

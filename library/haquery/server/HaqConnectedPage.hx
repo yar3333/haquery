@@ -21,18 +21,45 @@ class HaqConnectedPage
 		this.ws = ws;
 	}
 	
-	public function callServerMethod(componentFullID:String, method:String, params:Array<Dynamic>) : Dynamic
+	public function callSharedServerMethod(componentFullID:String, method:String, params:Array<Dynamic>) : String
 	{
-		var r : Dynamic;
+		var content = "";
 		Lib.pageContext(page, page.clientIP, config, db, function()
 		{
-			var component = page.findComponent(componentFullID);
-			r = component.callAnotherServerMethod(method, params);
+			try
+			{
+				page.prepareNewPostback();
+				content = page.generateResponseOnPostback(componentFullID, method, params, false).content;
+			}
+			catch (e:Dynamic)
+			{
+				Exception.trace(e);
+				content = e;
+			}
 		});
-		return r;
+		return content;
 	}
 	
-	public function callClientMethod(componentFullID:String, method:String, params:Array<Dynamic>) : Void
+	public function callAnotherServerMethod(componentFullID:String, method:String, params:Array<Dynamic>) : Dynamic
+	{
+		var content = "";
+		Lib.pageContext(page, page.clientIP, config, db, function()
+		{
+			try
+			{
+				page.prepareNewPostback();
+				content = page.generateResponseOnPostback(componentFullID, method, params, true).content;
+			}
+			catch (e:Dynamic)
+			{
+				Exception.trace(e);
+				content = e;
+			}
+		});
+		return content;
+	}
+	
+	public function callAnotherClientMethod(componentFullID:String, method:String, params:Array<Dynamic>) : Void
 	{
 		ws.send(Serializer.run(HaqMessageListenerAnswer.CallAnotherClientMethod(componentFullID, method, params)));
 	}

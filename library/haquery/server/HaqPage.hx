@@ -103,12 +103,12 @@ class HaqPage extends HaqComponent
 		ajaxResponse = "";
 	}
 	
-	public function generateResponseOnPostback(componentFullID:String, method:String, params:Array<Dynamic>) : HaqResponse
+	public function generateResponseOnPostback(componentFullID:String, method:String, params:Array<Dynamic>, isAnother:Bool) : HaqResponse
 	{
 		var component = findComponent(componentFullID);
 		if (component != null)
 		{
-			var result = component.callSharedServerMethod(method, params);
+			var result = !isAnother ? component.callSharedServerMethod(method, params) : component.callAnotherServerMethod(method, params);
 			//trace("HAQUERY FINISH");
 			
 			var content = ""; 
