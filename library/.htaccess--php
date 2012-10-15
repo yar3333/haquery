@@ -3,6 +3,7 @@ RewriteEngine on
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^.*[^/]$ /$0/ [L,R=301]
 
+RewriteCond index.php -f
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^.*$ index.php?route=$0 [L,QSA]
 
