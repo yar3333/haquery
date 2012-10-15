@@ -135,7 +135,7 @@ class HaqSystem
 				.content(" | <input type='button' value='Logout' onclick='setCookie(\"haquery_secret\", \"\", 0); window.location.reload(true);' /><br />\n")
 				.js("function update() { $('#content').load(url); setTimeout(update, updateTimeout); }")
 				.js("setTimeout(update, updateTimeout);")
-				.begin("div", "id='content' style='margin-top: 5px'").end();
+				.begin("pre", "id='content' style='margin-top:5px'").end();
 		}
 		else
 		{
@@ -157,7 +157,7 @@ class HaqSystem
 			var logLines = File.getContent(HaqDefines.folders.temp + "/haquery.log").split("\n");
 			for (i in Std.max(0, logLines.length - 50)...logLines.length)
 			{
-				html += StringTools.htmlEscape(logLines[i]) + "<br />\n";
+				html += StringTools.htmlEscape(logLines[i]) + "\n";
 			}
 		}
 		else
