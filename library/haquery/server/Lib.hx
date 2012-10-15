@@ -12,6 +12,7 @@ typedef Web = php.Web;
 typedef Web = neko.Web;
 #end
 
+import haquery.common.HaqMessageListenerAnswer;
 import haquery.Exception;
 import haxe.io.Bytes;
 import haxe.io.Path;
@@ -61,9 +62,10 @@ class Lib
 				else
 				{
 					var listener = getListenerToDispatchRequest();
+					var request = getRequest(route);
 					var response = listener != null
-								 ? listener.makeRequest(getRequest(route))
-								 : runPage(getRequest(route), route, bootstraps).response;
+								 ? listener.makeRequest(request)
+								 : runPage(request, route, bootstraps).response;
 					
 					if (db != null)
 					{
@@ -75,7 +77,11 @@ class Lib
 						Web.setReturnCode(response.statusCode);
 						response.responseHeaders.send();
 						response.cookie.send();
-						NativeLib.print(response.content);
+						NativeLib.print(
+							!request.isPostback 
+								? response.content 
+								: Serializer.run(HaqMessageListenerAnswer.CallSharedServerMethodAnswer(response.ajaxResponse, response.result))
+						);
 					}
 				}
 			}
