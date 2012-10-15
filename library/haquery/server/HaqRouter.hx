@@ -45,6 +45,11 @@ class HaqRouter
 			throw new HaqRouterException(403);
 		}
 		
+		if (url.indexOf(".") >= 0)
+		{
+			throw new HaqRouterException(404);
+		}
+		
 		var path = pagesFolderPath + "/" + (url != "" ? url : "index");
 		
 		if (isPageExist(path + "/index"))
