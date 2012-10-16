@@ -290,8 +290,13 @@ using haquery.StringTools;
 
 #end
 	
-	@:macro public function client(ethis:haxe.macro.Expr)
+	@:macro public function client(ethis:haxe.macro.Expr, ?pageKey:haxe.macro.Expr.ExprOf<String>)
 	{
-		return haquery.macros.HaqComponent.shared(ethis);
+		return haquery.macros.HaqTools.isNull(pageKey) ? haquery.macros.HaqComponent.shared(ethis) : haquery.macros.HaqComponent.anotherClient(ethis, pageKey);
+	}
+	
+	@:macro public function server(ethis:haxe.macro.Expr, pageKey:haxe.macro.Expr.ExprOf<String>)
+	{
+		return haquery.macros.HaqComponent.anotherServer(ethis, pageKey);
 	}
 }

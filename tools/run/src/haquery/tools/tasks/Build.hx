@@ -41,12 +41,15 @@ class Build
 			var manager = new HaqTemplateManager(project.allClassPaths, log);
 			genTrm(manager);
 			genImports(manager, project.srcPath);
-			if (genShared(project))
+			if (genSharedClient(project))
 			{
-				saveLastMods(manager);
-				try { saveLibFolder(); } catch (e:Dynamic) { }
-				log.finishOk();
-				return true;
+				if (genSharedServer(project))
+				{
+					saveLastMods(manager);
+					try { saveLibFolder(); } catch (e:Dynamic) { }
+					log.finishOk();
+					return true;
+				}
 			}
 		}
 		catch (e:HaqTemplateNotFoundException)
@@ -212,7 +215,7 @@ class Build
         log.finishOk();
     }
 	
-	function genShared(project:FlashDevelopProject) : Bool
+	function genSharedClient(project:FlashDevelopProject) : Bool
 	{
         var tempPath = "trm/temp-haquery-gen-shared.js";
 		
@@ -222,6 +225,23 @@ class Build
 		var r = hant.run(hant.getHaxePath() + "haxe.exe", params);
 		hant.deleteFile(tempPath);
 		hant.deleteFile(tempPath + ".map");
+		Lib.print(r.stdOut);
+		Lib.print(r.stdErr);
+		if (r.exitCode != 0) return false;
+        log.finishOk();
+		
+		return true;
+	}
+	
+	function genSharedServer(project:FlashDevelopProject) : Bool
+	{
+        var tempPath = "trm/temp-haquery-gen-shared.n";
+		
+		log.start("Generate shared classes from server");
+		hant.createDirectory(Path.directory(tempPath));
+		var params = project.getBuildParams("-" + project.platform.toLowerCase(), tempPath, [ "haqueryPreBuild" ]);
+		var r = hant.run(hant.getHaxePath() + "haxe.exe", params);
+		hant.deleteFile(tempPath);
 		Lib.print(r.stdOut);
 		Lib.print(r.stdErr);
 		if (r.exitCode != 0) return false;

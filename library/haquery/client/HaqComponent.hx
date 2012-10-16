@@ -6,6 +6,7 @@ import haquery.client.Lib;
 import haquery.client.HaqCssGlobalizer;
 import haquery.client.HaqQuery;
 import haquery.common.HaqComponentTools;
+import haquery.Exception;
 import js.JQuery;
 using haquery.StringTools;
 
@@ -93,30 +94,35 @@ using haquery.StringTools;
 	/**
 	 * Call server method, marked as @shared.
 	 */
-	public function callSharedServerMethod(method:String, params:Array<Dynamic>, callb:Dynamic->Void) : Void
+	public function callSharedServerMethod(method:String, params:Array<Dynamic>, success:Dynamic->Void, fail:Exception->Void) : Void
 	{
 		if (Lib.websocket != null)
 		{
-			Lib.websocket.callSharedServerMethod(fullID, method, params, callb);
+			Lib.websocket.callSharedServerMethod(fullID, method, params, success, fail);
 		}
 		else
 		{
-			Lib.ajax.callSharedMethod(fullID, method, params, callb);
+			Lib.ajax.callSharedMethod(fullID, method, params, success);
 		}
 	}
 	
 	/**
-	 * Call client method, marked as @shared.
+	 * Call client method, marked with meta.
 	 */
 	public function callSharedClientMethod(method:String, params:Array<Dynamic>, callingFromAnother:Bool) : Dynamic
 	{
-		return HaqComponentTools.callMethod(this, method, params, "shared");
+		return HaqComponentTools.callMethod(this, method, params, !callingFromAnother ? "shared" : "another");
 	}
 
 #end
 	
-	@:macro public function server(ethis:haxe.macro.Expr)
+	@:macro public function server(ethis:haxe.macro.Expr, ?pageKey:haxe.macro.Expr.ExprOf<String>)
 	{
-		return haquery.macros.HaqComponent.shared(ethis);
+		return haquery.macros.HaqTools.isNull(pageKey) ? haquery.macros.HaqComponent.shared(ethis) : haquery.macros.HaqComponent.anotherServer(ethis, pageKey);
+	}
+	
+	@:macro public function client(ethis:haxe.macro.Expr, pageKey:haxe.macro.Expr.ExprOf<String>)
+	{
+		return haquery.macros.HaqComponent.anotherClient(ethis, pageKey);
 	}
 }

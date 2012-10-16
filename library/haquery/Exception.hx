@@ -51,16 +51,18 @@ class Exception
 	
 	public static function rethrow(exception:Dynamic) : Void
 	{
-		if (Std.is(exception, Exception))
-		{
-			throw exception;
-		}
-		else
+		throw wrap(exception);
+	}
+	
+	public static function wrap(exception:Dynamic) : Exception
+	{
+		if (!Std.is(exception, Exception))
 		{
 			var r = new Exception(Std.string(exception));
 			r.stackTrace = haxe.Stack.exceptionStack();
-			throw r;
+			return r;
 		}
+		return exception;
 	}
 	
 	public static function trace(e:Dynamic) : Void

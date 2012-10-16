@@ -18,7 +18,7 @@ class HaqSharedAndAnotherGenerator
 	
 	public static function generate(clas:ClassType)
 	{
-		if (clas.pack.length > 0 && (clas.pack[0] == "components" || clas.pack[0] == "pages") && (clas.name == "Server" || clas.name == "Client"))
+		if (HaqTools.isExtendsFrom(clas, "haquery.base.HaqComponent"))
 		{
 			if (clas.name == "Server")
 			{
@@ -27,6 +27,7 @@ class HaqSharedAndAnotherGenerator
 				generateAnotherServerForClient(clas);
 			}
 			else
+			if (clas.name == "Client")
 			{
 				generateSharedClient(clas);
 				generateAnotherClientForServer(clas);
@@ -40,10 +41,10 @@ class HaqSharedAndAnotherGenerator
 		generateModuleIfNeed("SharedServer", componentClass, function(_)
 		{
 			return [ 
-				  HaqTools.makeVar("component", "haquery.client.HaqComponent".asComplexType())
+				  HaqTools.makeVar("component", macro : haquery.client.HaqComponent)
 				, HaqTools.makeConstructor(
 					[
-						"component".toArg("haquery.client.HaqComponent".asComplexType()) 
+						"component".toArg(macro : haquery.client.HaqComponent)
 					],
 					macro
 					{
@@ -55,11 +56,13 @@ class HaqSharedAndAnotherGenerator
 					function(name:String, args:Array<FunctionArg>, ret:Null<ComplexType>, pos:Position) : Field
 					{
 						var args2 : Array<FunctionArg> = Reflect.copy(args);
-						args2.push("callb".toArg(macro : $ret->Void, true));
+						args2.push("success".toArg(macro : $ret->Void, true));
+						args2.push("fail".toArg(macro : haquery.Exception->Void, true));
 						var callParams = [ 
 							  name.toExpr()
 							, Lambda.map(args, function(a) return Context.parse(a.name, pos)).toArray()
-							, !HaqTools.isVoid(ret) ? macro callb : macro function(_) callb()
+							, !HaqTools.isVoid(ret) ? macro success : macro function(_) success()
+							, macro fail
 						];
 						var callExpr = ExprDef.EBlock( [ ExprDef.ECall(macro component.callSharedServerMethod, callParams).at(pos) ] ).at(pos);
 						return HaqTools.makeMethod(name, args2, macro : Void, callExpr);
@@ -74,12 +77,12 @@ class HaqSharedAndAnotherGenerator
 		generateModuleIfNeed("SharedClient", componentClass, function(_)
 		{
 			return [ 
-				  HaqTools.makeVar("component", "haquery.server.HaqComponent".asComplexType())
+				  HaqTools.makeVar("component", macro : haquery.server.HaqComponent)
 				, HaqTools.makeConstructor(
-					[ 
-						"component".toArg("haquery.server.HaqComponent".asComplexType()) 
+					[
+						"component".toArg(macro : haquery.server.HaqComponent)
 					],
-					macro 
+					macro
 					{
 						this.component = component;
 					}
@@ -105,12 +108,12 @@ class HaqSharedAndAnotherGenerator
 		generateModuleIfNeed("AnotherServerForServer", componentClass, function(_)
 		{
 			return [ 
-				  HaqTools.makeVar("pageKey", "String".asComplexType())
-				, HaqTools.makeVar("component", "haquery.server.HaqComponent".asComplexType())
+				  HaqTools.makeVar("pageKey", macro : String)
+				, HaqTools.makeVar("component", macro : haquery.server.HaqComponent)
 				, HaqTools.makeConstructor(
 					[ 
-						  "pageKey".toArg("String".asComplexType())
-						, "component".toArg("haquery.server.HaqComponent".asComplexType()) 
+						  "pageKey".toArg(macro : String)
+						, "component".toArg(macro : haquery.server.HaqComponent) 
 					],
 					macro 
 					{
@@ -136,12 +139,12 @@ class HaqSharedAndAnotherGenerator
 		generateModuleIfNeed("AnotherServerForClient", componentClass, function(_)
 		{
 			return [ 
-				  HaqTools.makeVar("pageKey", "String".asComplexType())
-				, HaqTools.makeVar("component", "haquery.client.HaqComponent".asComplexType())
+				  HaqTools.makeVar("pageKey", macro : String)
+				, HaqTools.makeVar("component", macro : haquery.client.HaqComponent)
 				, HaqTools.makeConstructor(
 					[ 
-						  "pageKey".toArg("String".asComplexType())
-						, "component".toArg("haquery.client.HaqComponent".asComplexType()) 
+						  "pageKey".toArg(macro : String)
+						, "component".toArg(macro : haquery.client.HaqComponent) 
 					],
 					macro 
 					{
@@ -153,9 +156,19 @@ class HaqSharedAndAnotherGenerator
 				mapMetaMarkedMethodsToFields("another", componentClass,
 					function(name:String, args:Array<FunctionArg>, ret:Null<ComplexType>, pos:Position) : Field
 					{
-						var callParams = [ macro this.pageKey, macro this.component.fullID, name.toExpr(), Lambda.map(args, function(a) return Context.parse(a.name, pos)).toArray() ];
-						var callExpr = ExprDef.ECall(macro haquery.client.Lib.websocket.callAnotherClientMethod, callParams).at(pos);
-						return HaqTools.makeMethod(name, args, ret, macro { return $callExpr; } );
+						var args2 : Array<FunctionArg> = Reflect.copy(args);
+						args2.push("success".toArg(macro : $ret->Void, true));
+						args2.push("fail".toArg(macro : haquery.Exception->Void, true));
+						var callParams = [
+							  macro this.pageKey
+							, macro this.component.fullID
+							, name.toExpr()
+							, Lambda.map(args, function(a) return Context.parse(a.name, pos)).toArray()
+							, !HaqTools.isVoid(ret) ? macro success : macro function(_) success()
+							, macro fail
+						];
+						var callExpr = ExprDef.ECall(macro haquery.client.Lib.websocket.callAnotherServerMethod, callParams).at(pos);
+						return HaqTools.makeMethod(name, args2, macro : Void, macro { $callExpr; } );
 					}
 				)
 			);
@@ -167,12 +180,12 @@ class HaqSharedAndAnotherGenerator
 		generateModuleIfNeed("AnotherClientForServer", componentClass, function(_)
 		{
 			return [ 
-				  HaqTools.makeVar("pageKey", "String".asComplexType())
-				, HaqTools.makeVar("component", "haquery.server.HaqComponent".asComplexType())
+				  HaqTools.makeVar("pageKey", macro : String)
+				, HaqTools.makeVar("component", macro : haquery.server.HaqComponent)
 				, HaqTools.makeConstructor(
 					[ 
-						  "pageKey".toArg("String".asComplexType())
-						, "component".toArg("haquery.server.HaqComponent".asComplexType()) 
+						  "pageKey".toArg(macro : String)
+						, "component".toArg(macro : haquery.server.HaqComponent)
 					],
 					macro 
 					{
@@ -198,12 +211,12 @@ class HaqSharedAndAnotherGenerator
 		generateModuleIfNeed("AnotherClientForClient", componentClass, function(_)
 		{
 			return [ 
-				  HaqTools.makeVar("pageKey", "String".asComplexType())
-				, HaqTools.makeVar("component", "haquery.client.HaqComponent".asComplexType())
+				  HaqTools.makeVar("pageKey", macro : String)
+				, HaqTools.makeVar("component", macro : haquery.client.HaqComponent)
 				, HaqTools.makeConstructor(
 					[ 
-						  "pageKey".toArg("String".asComplexType())
-						, "component".toArg("haquery.client.HaqComponent".asComplexType()) 
+						  "pageKey".toArg(macro : String)
+						, "component".toArg(macro : haquery.client.HaqComponent)
 					],
 					macro 
 					{
@@ -215,9 +228,19 @@ class HaqSharedAndAnotherGenerator
 				mapMetaMarkedMethodsToFields("another", componentClass,
 					function(name:String, args:Array<FunctionArg>, ret:Null<ComplexType>, pos:Position) : Field
 					{
-						var callParams = [ macro this.pageKey, macro this.component.fullID, name.toExpr(), Lambda.map(args, function(a) return Context.parse(a.name, pos)).toArray() ];
+						var args2 : Array<FunctionArg> = Reflect.copy(args);
+						args2.push("success".toArg(macro : Void->Void, true));
+						args2.push("fail".toArg(macro : haquery.Exception->Void, true));
+						var callParams = [ 
+							  macro this.pageKey
+							, macro this.component.fullID
+							, name.toExpr()
+							, Lambda.map(args, function(a) return Context.parse(a.name, pos)).toArray() 
+							, macro success
+							, macro fail
+						];
 						var callExpr = ExprDef.ECall(macro haquery.client.Lib.websocket.callAnotherClientMethod, callParams).at(pos);
-						return HaqTools.makeMethod(name, args, ret, macro { return $callExpr; } );
+						return HaqTools.makeMethod(name, args2, ret, macro { $callExpr; } );
 					}
 				)
 			);

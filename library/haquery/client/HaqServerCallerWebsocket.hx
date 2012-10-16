@@ -3,29 +3,57 @@ package haquery.client;
 import haquery.common.HaqComponentTools;
 import haquery.common.HaqMessageListenerAnswer;
 import haquery.common.HaqMessageToListener;
+import haquery.Exception;
 import haxe.Serializer;
 import haxe.Unserializer;
 import js.WebSocket;
 
 class HaqServerCallerWebsocket
 {
-	var callQueue : Array<{ componentFullID:String, method:String, params:Array<Dynamic> }>;
-	var callbacks : Array<Dynamic->Void>;
+	var sendQueue : Array<HaqMessageToListener>;
+	var recvQueue : Array<{ success:Dynamic->Void, fail:Exception->Void }>;
 	var isConnected = false;
 	var socket : WebSocket;
 
+	function send(message:HaqMessageToListener)
+	{
+		socket.send(Serializer.run(message));
+	}
+	
+	function processSendQueue()
+	{
+		if (isConnected)
+		{
+			while (sendQueue.length > 0)
+			{
+				send(sendQueue.shift());
+			}
+		}
+	}
+	
+	function processRecvQueue(result:CallbackResult)
+	{
+		var callb = recvQueue.shift();
+		switch (result)
+		{
+			case CallbackResult.Success(ret): if (callb.success != null) callb.success(ret);
+			case CallbackResult.Fail(error): if (callb.fail != null) callb.fail(error);
+		}
+	}
+	
 	public function new(uri:String, pageKey:String, pageSecret:String) 
 	{
-		callQueue = [];
-		callbacks = [];
+		sendQueue = [];
+		recvQueue = [];
 		
 		WebSocket.WEB_SOCKET_SWF_LOCATION = "/haquery/client/websocket.swf";
 		socket = new WebSocket(uri);
 		
 		socket.onopen = function() 
 		{
-			socket.send(Serializer.run(HaqMessageToListener.ConnectToPage(pageKey, pageSecret)));
+			send(HaqMessageToListener.ConnectToPage(pageKey, pageSecret));
 			isConnected = true;
+			processSendQueue();
 		};
 		
 		socket.onmessage = function(e)
@@ -34,26 +62,38 @@ class HaqServerCallerWebsocket
 			switch (answer)
 			{
 				case HaqMessageListenerAnswer.CallSharedServerMethodAnswer(ajaxResponse, result):
-					var callb = callbacks.shift();
 					Lib.eval(ajaxResponse);
-					if (callb != null)
-					{
-						callb(result);
-					}
+					processRecvQueue(result);
 				
 				case HaqMessageListenerAnswer.CallAnotherClientMethod(componentFullID, method, params):
 					var component = Lib.page.findComponent(componentFullID);
-					component.callSharedClientMethod(method, params, true);
+					if (component != null)
+					{
+						try
+						{
+							component.callSharedClientMethod(method, params, true);
+						}
+						catch (e:Dynamic)
+						{
+							trace(e);
+						}
+					}
 				
 				case HaqMessageListenerAnswer.ProcessUncalledServerMethodAnswer(ajaxAnswer):
-					Lib.eval(ajaxAnswer);
-				
-				case HaqMessageListenerAnswer.CallAnotherServerMethodAnswer(result):
-					var callb = callbacks.shift();
-					if (callb != null)
+					try
 					{
-						callb(result);
+						Lib.eval(ajaxAnswer);
 					}
+					catch (e:Dynamic)
+					{
+						trace(e);
+					}
+					
+				case HaqMessageListenerAnswer.CallAnotherServerMethodAnswer(result):
+					processRecvQueue(result);
+					
+				case HaqMessageListenerAnswer.CallAnotherClientMethodAnswer(result):
+					processRecvQueue(result);
 			}
 		};
 		
@@ -63,33 +103,24 @@ class HaqServerCallerWebsocket
 		};
 	}
 	
-	public function callSharedServerMethod(componentFullID:String, method:String, params:Array<Dynamic>, callb:Dynamic->Void) : Void
+	public function callSharedServerMethod(componentFullID:String, method:String, params:Array<Dynamic>, success:Dynamic->Void, fail:Exception->Void) : Void
 	{
-		callbacks.push(callb);
-		callQueue.push( { componentFullID:componentFullID, method:method, params:params } );
-		
-		if (isConnected)
-		{
-			while (callQueue.length > 0)
-			{
-				var c = callQueue.shift();
-				socket.send(Serializer.run(HaqMessageToListener.CallSharedServerMethod(componentFullID, method, params)));
-			}
-		}
+		recvQueue.push({ success:success, fail:fail });
+		sendQueue.push(HaqMessageToListener.CallSharedServerMethod(componentFullID, method, params));
+		processSendQueue();
 	}
 	
-	public function callAnotherServerMethod(pageKey:String, componentFullID:String, method:String, params:Array<Dynamic>, callb:Dynamic->Void) : Void
+	public function callAnotherServerMethod(pageKey:String, componentFullID:String, method:String, params:Array<Dynamic>, success:Dynamic->Void, fail:Exception->Void) : Void
 	{
-		callbacks.push(callb);
-		callQueue.push( { componentFullID:componentFullID, method:method, params:params } );
-		
-		if (isConnected)
-		{
-			while (callQueue.length > 0)
-			{
-				var c = callQueue.shift();
-				socket.send(Serializer.run(HaqMessageToListener.CallAnotherServerMethod(pageKey, componentFullID, method, params)));
-			}
-		}
+		recvQueue.push({ success:success, fail:fail });
+		sendQueue.push(HaqMessageToListener.CallAnotherServerMethod(pageKey, componentFullID, method, params));
+		processSendQueue();
+	}
+	
+	public function callAnotherClientMethod(pageKey:String, componentFullID:String, method:String, params:Array<Dynamic>, success:Void->Void, fail:Exception->Void) : Void
+	{
+		recvQueue.push({ success:function(_) success(), fail:fail });
+		sendQueue.push(HaqMessageToListener.CallAnotherClientMethod(pageKey, componentFullID, method, params));
+		processSendQueue();
 	}
 }

@@ -9,8 +9,6 @@ class HaqSystemHtml
 	<head>
 		<title>Status - HaQuery</title>
 		<style>
-			* { font-family: monospace }
-		    
 {rawStyle}
 		</style>
 		<script src="/haquery/client/jquery.js"></script>

@@ -37,8 +37,36 @@ class Client extends HaqPage
 		});
 	}
 	
+	function callSharedServerMethodD_click(t, e)
+	{
+		server().serverMethodD(template().anotherPageKey.val(), function(e)
+		{
+			Lib.alert("callback after server method D calling = " + e);
+		});
+	}
+	
+	function callAnotherServerMethodE_click(t, e)
+	{
+		server(template().anotherPageKey.val()).serverMethodE(this.pageKey);
+	}
+	
+	function callAnotherClientMethodF_click(t, e)
+	{
+		client(template().anotherPageKey.val()).clientMethodE(this.pageKey);
+	}
+	
 	@shared function clientMethodA(a:Int, b:String) : Void
 	{
 		Lib.alert("Method clientMethodA called from server, a = " + a + ", b = " + b + ".");
+	}
+	
+	@another function clientMethodD(a:Int, b:String) : Void
+	{
+		Lib.alert("Method clientMethodD called from another server, a = " + a + ", b = " + b + ".");
+	}
+	
+	@another function clientMethodE(fromPageKey:String) : Void
+	{
+		Lib.alert("Method clientMethodE called from another client [" + fromPageKey + "].");
 	}
 }

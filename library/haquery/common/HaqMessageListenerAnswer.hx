@@ -1,10 +1,20 @@
 package haquery.common;
 
+import haquery.Exception;
+
+enum CallbackResult
+{
+	Success(ret:Dynamic);
+	Fail(error:Exception);
+}
+
 enum HaqMessageListenerAnswer
 {
-	CallSharedServerMethodAnswer(ajaxResponse:String, result:Dynamic);
 	CallAnotherClientMethod(componentFullID:String, method:String, params:Array<Dynamic>);
-	CallAnotherServerMethodAnswer(result:Dynamic);
+	
+	CallAnotherClientMethodAnswer(result:CallbackResult);
+	CallSharedServerMethodAnswer(ajaxResponse:String, result:CallbackResult);
+	CallAnotherServerMethodAnswer(result:CallbackResult);
 	ProcessUncalledServerMethodAnswer(ajaxResponse:String);
 	
 	#if !client
