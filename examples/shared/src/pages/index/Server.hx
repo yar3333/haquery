@@ -34,11 +34,10 @@ class Server extends HaqPage
 		return server(anotherPageKey).serverMethodC(pageKey);
 	}
 	
-	@another function serverMethodC(pageKey:String) : String
+	@another function serverMethodC(fromPageKey:String) : String
 	{
 		trace("serverMethodC");
-		
-		return this.pageKey;
+		return pageKey;
 	}
 	
 	@shared function serverMethodD(anotherPageKey:String) : String
@@ -48,9 +47,9 @@ class Server extends HaqPage
 		return "from serverMethodD";
 	}
 	
-	@another function serverMethodE(pageKey:String) : String
+	@another function serverMethodE(fromPageKey:String) : String
 	{
-		trace("serverMethodE [" + this.pageKey + "] from [" + pageKey + "]");
-		return this.pageKey;
+		trace("serverMethodE [" + pageKey + "] from [" + fromPageKey + "]");
+		return "hello from " + pageKey;
 	}
 }

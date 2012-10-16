@@ -83,6 +83,7 @@ class HaqWebsocketServerLoop
 			{
 				trace("AUTORESTART");
 				server.stop();
+				Sys.sleep(5);
 				var p = new sys.io.Process("neko", [ "index.n", "haquery-listener", "run", name ]);
 				trace("PID = " + p.getPid());
 				Sys.exit(0);
@@ -132,7 +133,7 @@ class HaqWebsocketServerLoop
 					trace("INCOMING CallSharedServerMethod [" + client.pageKey + "] method = " + componentFullID + "." + method);
 					var p = pages.get(client.pageKey);
 					var response = p.callSharedServerMethod(componentFullID, method, params);
-					client.send(HaqMessageListenerAnswer.CallSharedServerMethodAnswer(response.ajaxResponse, response.result));
+					client.send(HaqMessageListenerAnswer.CallSharedServerMethodAnswer(response.ajaxResponse, CallbackResult.Success(response.result)));
 				
 				case HaqMessageToListener.CallAnotherClientMethod(pageKey, componentFullID, method, params):
 					trace("INCOMING CallAnotherClientMethod [" + client.pageKey + "] pageKey = " + pageKey + ", method = " + componentFullID + "." + method);
@@ -154,7 +155,7 @@ class HaqWebsocketServerLoop
 					try
 					{
 						var result = p.callAnotherServerMethod(componentFullID, method, params);
-						client.send(HaqMessageListenerAnswer.CallAnotherServerMethodAnswer(result));
+						client.send(HaqMessageListenerAnswer.CallAnotherServerMethodAnswer(CallbackResult.Success(result)));
 					}
 					catch (e:Dynamic)
 					{
@@ -169,6 +170,7 @@ class HaqWebsocketServerLoop
 					client.ws.send(s);
 				
 				case HaqMessageToListener.Stop:
+					trace("HAQUERY LISTENER stop");
 					Sys.exit(0);
 			}
 		}
