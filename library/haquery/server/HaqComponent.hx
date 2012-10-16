@@ -15,7 +15,7 @@ using haquery.StringTools;
 
 #end
 
-@:autoBuild(haquery.macros.HaqComponent.build()) class HaqComponent extends haquery.base.HaqComponent
+@:autoBuild(haquery.macros.HaqComponentTools.build()) class HaqComponent extends haquery.base.HaqComponent
 {
 #if !macro
 
@@ -290,13 +290,18 @@ using haquery.StringTools;
 
 #end
 	
+	@:macro public function template(ethis:haxe.macro.Expr)
+	{
+		return haquery.macros.HaqComponentTools.template(ethis);
+	}
+	
 	@:macro public function client(ethis:haxe.macro.Expr, ?pageKey:haxe.macro.Expr.ExprOf<String>)
 	{
-		return haquery.macros.HaqTools.isNull(pageKey) ? haquery.macros.HaqComponent.shared(ethis) : haquery.macros.HaqComponent.anotherClient(ethis, pageKey);
+		return haquery.macros.HaqTools.isNull(pageKey) ? haquery.macros.HaqComponentTools.shared(ethis) : haquery.macros.HaqComponentTools.anotherClient(ethis, pageKey);
 	}
 	
 	@:macro public function server(ethis:haxe.macro.Expr, pageKey:haxe.macro.Expr.ExprOf<String>)
 	{
-		return haquery.macros.HaqComponent.anotherServer(ethis, pageKey);
+		return haquery.macros.HaqComponentTools.anotherServer(ethis, pageKey);
 	}
 }
