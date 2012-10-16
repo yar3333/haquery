@@ -64,14 +64,81 @@ using tink.macro.tools.MacroTools;
 			{
 				case Type.TInst(t, params):
 					var clas = t.get();
-					if (clas.pack.length > 0 && (clas.pack[0] == "components" || clas.pack[0] == "pages") && (clas.name == "Server" || clas.name == "Client"))
+					if (HaqTools.isExtendsFrom(clas, "haquery.client.HaqComponent"))
 					{
-						return { expr:ExprDef.ENew(HaqTools.makeTypePath(clas.pack, "Shared" + (clas.name=="Server" ? "Client" : "Server"), []), [ ethis ]), pos:pos };
+						return { expr:ExprDef.ENew(HaqTools.makeTypePath(clas.pack, "SharedServer"), [ ethis ]), pos:pos };
+					}
+					else
+					if (HaqTools.isExtendsFrom(clas, "haquery.server.HaqComponent"))
+					{
+						return { expr:ExprDef.ENew(HaqTools.makeTypePath(clas.pack, "SharedClient"), [ ethis ]), pos:pos };
 					}
 				default:
 			}
 			
 			Context.error("Shared class is not found.", pos);
+			return null;
+		}
+		else
+		{
+			return ExprDef.EUntyped(ExprDef.EObjectDecl([]).at(pos)).at(pos);
+		}
+	}
+	
+	static function anotherServer(ethis:Expr, pageKey:ExprOf<String>) : Expr
+	{
+		var pos = Context.currentPos();
+		
+		if (!Context.defined("haqueryPreBuild"))
+		{
+			switch (Context.typeof(ethis))
+			{
+				case Type.TInst(t, params):
+					var clas = t.get();
+					if (HaqTools.isExtendsFrom(clas, "haquery.client.HaqComponent"))
+					{
+						return { expr:ExprDef.ENew(HaqTools.makeTypePath(clas.pack, "AnotherServerForClient"), [ pageKey, ethis ]), pos:pos };
+					}
+					else
+					if (HaqTools.isExtendsFrom(clas, "haquery.server.HaqComponent"))
+					{
+						return { expr:ExprDef.ENew(HaqTools.makeTypePath(clas.pack, "AnotherServerForServer"), [ pageKey, ethis ]), pos:pos };
+					}
+				default:
+			}
+			
+			Context.error("Another class is not found.", pos);
+			return null;
+		}
+		else
+		{
+			return ExprDef.EUntyped(ExprDef.EObjectDecl([]).at(pos)).at(pos);
+		}
+	}
+	
+	static function anotherClient(ethis:Expr, pageKey:ExprOf<Int>) : Expr
+	{
+		var pos = Context.currentPos();
+		
+		if (!Context.defined("haqueryPreBuild"))
+		{
+			switch (Context.typeof(ethis))
+			{
+				case Type.TInst(t, params):
+					var clas = t.get();
+					if (HaqTools.isExtendsFrom(clas, "haquery.client.HaqComponent"))
+					{
+						return { expr:ExprDef.ENew(HaqTools.makeTypePath(clas.pack, "AnotherClientForClient"), [ pageKey, ethis ]), pos:pos };
+					}
+					else
+					if (HaqTools.isExtendsFrom(clas, "haquery.server.HaqComponent"))
+					{
+						return { expr:ExprDef.ENew(HaqTools.makeTypePath(clas.pack, "AnotherClientForServer"), [ pageKey, ethis ]), pos:pos };
+					}
+				default:
+			}
+			
+			Context.error("Another class is not found.", pos);
 			return null;
 		}
 		else

@@ -137,13 +137,30 @@ class HaqWebsocketServerLoop
 				case HaqMessageToListener.CallAnotherClientMethod(pageKey, componentFullID, method, params):
 					trace("INCOMING CallAnotherClientMethod [" + client.pageKey + "] pageKey = " + pageKey + ", method = " + componentFullID + "." + method);
 					var p = pages.get(pageKey);
-					p.callAnotherClientMethod(componentFullID, method, params);
+					try
+					{
+						p.callAnotherClientMethod(componentFullID, method, params);
+						client.send(HaqMessageListenerAnswer.CallAnotherClientMethodAnswer(CallbackResult.Success(null)));
+					}
+					catch (e:Dynamic)
+					{
+						Exception.trace(e);
+						client.send(HaqMessageListenerAnswer.CallAnotherClientMethodAnswer(CallbackResult.Fail(Exception.wrap(e))));
+					}
 				
 				case HaqMessageToListener.CallAnotherServerMethod(pageKey, componentFullID, method, params):
 					trace("INCOMING CallAnotherServerMethod [" + client.pageKey + "] pageKey = " + pageKey + ", method = " + componentFullID + "." + method);
 					var p = pages.get(pageKey);
-					var result = p.callAnotherServerMethod(componentFullID, method, params);
-					client.send(HaqMessageListenerAnswer.CallAnotherServerMethodAnswer(result));
+					try
+					{
+						var result = p.callAnotherServerMethod(componentFullID, method, params);
+						client.send(HaqMessageListenerAnswer.CallAnotherServerMethodAnswer(result));
+					}
+					catch (e:Dynamic)
+					{
+						Exception.trace(e);
+						client.send(HaqMessageListenerAnswer.CallAnotherServerMethodAnswer(CallbackResult.Fail(Exception.wrap(e))));
+					}
 				
 				case HaqMessageToListener.Status:
 					var s = "connected pages: " + Lambda.count(pages) + "\n"

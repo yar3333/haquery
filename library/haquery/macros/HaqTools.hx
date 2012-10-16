@@ -82,12 +82,12 @@ class HaqTools
 		return r;
 	}
 	
-	public static function makeTypePath(pack:Array<String>, name:String, params:Array<TypeParam>) : TypePath
+	public static function makeTypePath(pack:Array<String>, name:String, ?params:Array<TypeParam>) : TypePath
 	{
 		return {
 			  pack : pack
 			, name : name
-			, params : params
+			, params : params != null ? params : []
 			, sub : null
 		};
 	}
@@ -171,6 +171,25 @@ class HaqTools
 			{
 				case ComplexType.TPath(p):
 					return p.pack.length == 0 && p.name == "Void";
+				default:
+			}
+		}
+		return false;
+	}
+	
+	public static function isNull(t:Expr) : Bool
+	{
+		if (t != null)
+		{
+			switch (t.expr)
+			{
+				case ExprDef.EConst(c):
+					switch (c)
+					{
+						case Constant.CIdent(s):
+							return s == "null";
+						default:
+					}
 				default:
 			}
 		}

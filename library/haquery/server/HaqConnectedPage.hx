@@ -59,6 +59,7 @@ class HaqConnectedPage
 	
 	public function callAnotherClientMethod(componentFullID:String, method:String, params:Array<Dynamic>) : Void
 	{
+		trace("send to [ " + page.pageKey + " ] CallAnotherClientMethod(" + componentFullID + ", " + method + ")");
 		send(HaqMessageListenerAnswer.CallAnotherClientMethod(componentFullID, method, params));
 	}
 	

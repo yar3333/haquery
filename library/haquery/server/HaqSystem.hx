@@ -177,10 +177,10 @@ class HaqSystem
 			for (listener in Lib.config.listeners)
 			{
 				var status = listener.status();
-				html += "<fieldset style='display:inline-block'>\n"
-							+ "<legend>" + listener.name + "</legend>\n"
-							+ (status != null ? status.replace("\n", "<br />") : "not run")
-					  + "</fieldset>\n";
+				html += "<fieldset style='display:inline-block'>"
+							+ "<legend>" + listener.name + "</legend>"
+							+ (status != null ? status : "not run")
+					  + "</fieldset>";
 			}
 		}
 		else
