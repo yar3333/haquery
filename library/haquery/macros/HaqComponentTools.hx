@@ -1,39 +1,16 @@
 package haquery.macros;
 
-#if macro
 import haxe.macro.Context;
 import sys.FileSystem;
 import sys.io.File;
-#end
-
 import haxe.macro.Compiler;
 import haxe.macro.Expr;
 import haxe.macro.Type;
-
 using tink.macro.tools.MacroTools;
 
-@:keep class HaqComponent
+class HaqComponentTools 
 {
-	@:macro public function template(ethis:Expr)
-	{
-		var pos = Context.currentPos();
-		
-		switch (Context.typeof(ethis))
-		{
-			case Type.TInst(t, params):
-				var clas = t.get();
-				if (clas.pack.length > 0 && (clas.pack[0] == "components" || clas.pack[0] == "pages") && (clas.name == "Server" || clas.name == "Client"))
-				{
-					var typePath = { sub:null, params:[], pack:clas.pack, name:"Template" + clas.name };
-					return { expr:ExprDef.ENew(typePath, [ ethis ]), pos:pos };
-				}
-			default:
-		}
-		
-		return Context.makeExpr(null, pos);
-	}
-	
-	@:macro public static function build() : Array<Field>
+	public static function build() : Array<Field>
 	{
 		var componentClass = Context.getLocalClass().get();
         var pos = Context.currentPos();
@@ -52,9 +29,26 @@ using tink.macro.tools.MacroTools;
 		return null;
 	}
 	
-	#if macro
+	public static function template(ethis:Expr)
+	{
+		var pos = Context.currentPos();
+		
+		switch (Context.typeof(ethis))
+		{
+			case Type.TInst(t, params):
+				var clas = t.get();
+				if (HaqTools.isExtendsFrom(clas, "haquery.base.HaqComponent"))
+				{
+					var typePath = { sub:null, params:[], pack:clas.pack, name:"Template" + clas.name };
+					return { expr:ExprDef.ENew(typePath, [ ethis ]), pos:pos };
+				}
+			default:
+		}
+		
+		return Context.makeExpr(null, pos);
+	}
 	
-	@:noAutocomplete static function shared(ethis:Expr) : Expr
+	public static function shared(ethis:Expr) : Expr
 	{
 		var pos = Context.currentPos();
 		
@@ -85,7 +79,7 @@ using tink.macro.tools.MacroTools;
 		}
 	}
 	
-	@:noAutocomplete static function anotherServer(ethis:Expr, pageKey:ExprOf<String>) : Expr
+	public static function anotherServer(ethis:Expr, pageKey:ExprOf<String>) : Expr
 	{
 		var pos = Context.currentPos();
 		
@@ -116,7 +110,7 @@ using tink.macro.tools.MacroTools;
 		}
 	}
 	
-	@:noAutocomplete static function anotherClient(ethis:Expr, pageKey:ExprOf<Int>) : Expr
+	public static function anotherClient(ethis:Expr, pageKey:ExprOf<Int>) : Expr
 	{
 		var pos = Context.currentPos();
 		
@@ -333,6 +327,4 @@ using tink.macro.tools.MacroTools;
 		}
 		return null;
 	}
-	
-	#end
 }

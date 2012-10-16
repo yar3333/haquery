@@ -5,7 +5,6 @@ package haquery.base;
 import haquery.common.HaqDefines;
 import haquery.common.HaqEvent;
 using haquery.StringTools;
-
 #if !client
 import haquery.server.Lib;
 import haquery.server.HaqTemplateManager;
@@ -17,10 +16,10 @@ import haquery.client.HaqTemplateManager;
 private typedef Component = haquery.client.HaqComponent;
 private typedef Page = haquery.client.HaqPage;
 #end
-	
+
 #end
 
-@:keep class HaqComponent extends haquery.macros.HaqComponent
+@:keep class HaqComponent
 {
 #if !macro
 
