@@ -41,13 +41,16 @@ class Client extends HaqPage
 	{
 		server().serverMethodD(template().anotherPageKey.val(), function(e)
 		{
-			Lib.alert("callback after server method D calling = " + e);
+			Lib.alert("callback after shared server method D calling = " + e);
 		});
 	}
 	
 	function callAnotherServerMethodE_click(t, e)
 	{
-		server(template().anotherPageKey.val()).serverMethodE(this.pageKey);
+		server(template().anotherPageKey.val()).serverMethodE(this.pageKey, function(e)
+		{
+			Lib.alert("callback after another server method E calling = " + e);
+		});
 	}
 	
 	function callAnotherClientMethodF_click(t, e)

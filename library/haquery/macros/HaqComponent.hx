@@ -54,7 +54,7 @@ using tink.macro.tools.MacroTools;
 	
 	#if macro
 	
-	static function shared(ethis:Expr) : Expr
+	@:noAutocomplete static function shared(ethis:Expr) : Expr
 	{
 		var pos = Context.currentPos();
 		
@@ -85,7 +85,7 @@ using tink.macro.tools.MacroTools;
 		}
 	}
 	
-	static function anotherServer(ethis:Expr, pageKey:ExprOf<String>) : Expr
+	@:noAutocomplete static function anotherServer(ethis:Expr, pageKey:ExprOf<String>) : Expr
 	{
 		var pos = Context.currentPos();
 		
@@ -116,7 +116,7 @@ using tink.macro.tools.MacroTools;
 		}
 	}
 	
-	static function anotherClient(ethis:Expr, pageKey:ExprOf<Int>) : Expr
+	@:noAutocomplete static function anotherClient(ethis:Expr, pageKey:ExprOf<Int>) : Expr
 	{
 		var pos = Context.currentPos();
 		
