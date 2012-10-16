@@ -128,14 +128,15 @@ class HaqSystem
 		if (isAdmin())
 		{
 			html.bold("HaQuery")
-				.js("url = '/haquery-status-log/';")
-				.js("updateTimeout = 1000;")
-				.content(" | ").link("Log", "javascript:void(0)", "url = '/haquery-status-log/'; updateTimeout = 1000;") 
-				.content(" | ").link("Listeners", "javascript:void(0)", "url = '/haquery-status-listeners/'; updateTimeout = 3000;") 
 				.content(" | <input type='button' value='Logout' onclick='setCookie(\"haquery_secret\", \"\", 0); window.location.reload(true);' /><br />\n")
-				.js("function update() { $('#content').load(url); setTimeout(update, updateTimeout); }")
-				.js("setTimeout(update, updateTimeout);")
-				.begin("pre", "id='content' style='margin-top:5px'").end();
+				.js("updateLogTimeout = 1000;")
+				.js("updateListenersTimeout = 5000;")
+				.js("function updateLog() { $('#log').load('/haquery-status-log/', function() { setTimeout(updateLog, updateLogTimeout); });  }")
+				.js("function updateListeners() { $('#listeners').load('/haquery-status-listeners/', function() { setTimeout(updateListeners, updateListenersTimeout); });  }")
+				.js("setTimeout(updateLog, updateLogTimeout);")
+				.js("setTimeout(updateListeners, updateListenersTimeout);")
+				.begin("pre", "id='listeners' style='margin-top:5px; position:absolute; right:0; background: #eee'").end()
+				.begin("pre", "id='log' style='margin-top:5px'").end();
 		}
 		else
 		{
