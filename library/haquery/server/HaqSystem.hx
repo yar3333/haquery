@@ -89,6 +89,14 @@ class HaqSystem
 							var p = Lib.config.listeners.get(name).start();
 							NativeLib.println("Listener '" + name + "' PID: " + p.getPid());
 						}
+						else
+						{
+							for (listener in Lib.config.listeners)
+							{
+								var p = listener.start();
+								NativeLib.println("Listener '" + listener.name + "' PID: " + p.getPid());
+							}
+						}
 					
 					case "stop":
 						if (args.length >= 3)
@@ -118,7 +126,7 @@ class HaqSystem
 	{
 		return Lib.config.secret != null 
 			&& Lib.config.secret != "" 
-			&& NativeWeb.getCookies().get("haquery_secret") == Lib.config.secret;
+			&& NativeWeb.getCookies().get("haquery_secret") == Lib.config.secret.urlEncode();
 	}
 	
 	function doStatusCommand()
