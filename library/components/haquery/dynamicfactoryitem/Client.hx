@@ -42,7 +42,6 @@ class Client extends components.haquery.factoryitem.Client
 		var doc = Tools.applyHtmlParams(html, Std.hash(params));
 		childComponents = prepareDoc(manager, parent.parent.fullTag, parent.prefixID + id + HaqDefines.DELIMITER, doc);
 		parentElem.append(doc.innerHTML);
-		HaqElemEventManager.elemsWasChanged();
 		
 		super.construct(manager, fullTag, parent, id, isDynamic, dynamicParams);
 	}
