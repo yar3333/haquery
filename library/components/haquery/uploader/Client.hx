@@ -65,7 +65,10 @@ class Client extends Base
         enabled = false;
 
         var frame : IFrame = cast q("#frame")[0];
-        q(frame).unbind("load").load(function(e:JqEvent) 
+        
+		// TODO: file uploading
+		/*
+		q(frame).unbind("load").load(function(e:JqEvent) 
 		{
             var text = frame.contentWindow.document.body.firstChild.innerHTML;
             HaqElemEventManager.callServerHandlersCallbackFunction(text, function(e:{ errorCode:Int })
@@ -91,6 +94,7 @@ class Client extends Base
                 new JQuery("#HAQUERY_DATA-" + key).remove();
             }
         }
+		*/
         
         return true;
     }
