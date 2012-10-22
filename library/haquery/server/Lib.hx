@@ -212,15 +212,13 @@ class Lib
 		var oldDb = Lib.db;
 		Lib.db = db;
 		
-		var exception = null;
-		
 		try
 		{
 			f();
 		}
 		catch (e:Dynamic)
 		{
-			exception = e;
+			Exception.trace(e);
 		}
 		
 		var r = { config:Lib.config, db:Lib.db };
@@ -228,8 +226,6 @@ class Lib
 		Lib.db = oldDb;
 		Lib.config = oldConfig;
 		haxe.Log.trace = oldTrace;
-		
-		if (exception != null) Exception.rethrow(exception);
 		
 		return r;
 	}

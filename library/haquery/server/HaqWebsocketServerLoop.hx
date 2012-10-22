@@ -59,14 +59,7 @@ class HaqWebsocketServerLoop
 					{
 						Lib.pageContext(p.page, p.page.clientIP, p.config, p.db, function()
 						{
-							try
-							{
-								p.page.onDisconnect();
-							}
-							catch (e:Dynamic)
-							{
-								Exception.trace(e);
-							}
+							p.page.onDisconnect();
 						});
 					}
 					pages.remove(client.pageKey);
@@ -136,14 +129,7 @@ class HaqWebsocketServerLoop
 						var r = false;
 						Lib.pageContext(p.page, p.page.clientIP, p.config, p.db, function()
 						{
-							try
-							{
-								r = p.page.onConnect();
-							}
-							catch (e:Dynamic)
-							{
-								Exception.trace(e);
-							}
+							r = p.page.onConnect();
 						});
 						if (r)
 						{
