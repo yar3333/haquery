@@ -57,7 +57,17 @@ class HaqWebsocketServerLoop
 				{
 					if (p.page != null)
 					{
-						p.page.onDisconnect();
+						Lib.pageContext(p.page, p.page.clientIP, p.config, p.db, function()
+						{
+							try
+							{
+								p.page.onDisconnect();
+							}
+							catch (e:Dynamic)
+							{
+								Exception.trace(e);
+							}
+						});
 					}
 					pages.remove(client.pageKey);
 				}
