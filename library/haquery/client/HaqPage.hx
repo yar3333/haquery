@@ -41,4 +41,15 @@ import haquery.client.HaqCookie;
 	{
         js.Lib.window.location.reload(true);
 	}
+	
+	/**
+	 * Overload to specify code on client to server websocket connection.
+	 * You can return false to force to ignore calling queue.
+	 */
+	public function onConnect() return true
+	
+	/**
+	 * Overload to specify code on client to server websocket closing.
+	 */
+	public function onDisconnect() {}
 }

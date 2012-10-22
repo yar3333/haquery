@@ -55,7 +55,10 @@ class HaqServerCallerWebsocket
 		{
 			send(HaqMessageToListener.ConnectToPage(pageKey, pageSecret));
 			isConnected = true;
-			processSendQueue();
+			if (Lib.page.onConnect())
+			{
+				processSendQueue();					
+			}
 		};
 		
 		socket.onmessage = function(e)
@@ -102,6 +105,7 @@ class HaqServerCallerWebsocket
 		socket.onclose = function() 
 		{
 			isConnected = false;
+			Lib.page.onDisconnect();
 		};
 	}
 	
