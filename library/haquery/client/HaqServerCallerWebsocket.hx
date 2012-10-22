@@ -12,8 +12,8 @@ class HaqServerCallerWebsocket
 {
 	var sendQueue : Array<HaqMessageToListener>;
 	var recvQueue : Array<{ success:Dynamic->Void, fail:Exception->Void }>;
-	var isConnected = false;
 	var socket : WebSocket;
+	public var isConnected(default, null) : Bool;
 
 	function send(message:HaqMessageToListener)
 	{
@@ -45,6 +45,8 @@ class HaqServerCallerWebsocket
 	{
 		sendQueue = [];
 		recvQueue = [];
+		
+		isConnected = false;
 		
 		WebSocket.WEB_SOCKET_SWF_LOCATION = "/haquery/client/websocket.swf";
 		socket = new WebSocket(uri);
