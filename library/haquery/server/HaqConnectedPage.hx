@@ -26,14 +26,7 @@ class HaqConnectedPage
 		var r : Dynamic = null;
 		Lib.pageContext(page, page.clientIP, config, db, function()
 		{
-			try
-			{
-				r = page.generateResponseOnPostback(componentFullID, method, params, false);
-			}
-			catch (e:Dynamic)
-			{
-				Exception.trace(e);
-			}
+			r = page.generateResponseOnPostback(componentFullID, method, params, false);
 		});
 		return r;
 	}
@@ -43,16 +36,9 @@ class HaqConnectedPage
 		var r = null;
 		Lib.pageContext(page, page.clientIP, config, db, function()
 		{
-			try
-			{
-				var response = page.generateResponseOnPostback(componentFullID, method, params, true);
-				send(HaqMessageListenerAnswer.ProcessUncalledServerMethodAnswer(response.ajaxResponse));
-				r = response.result;
-			}
-			catch (e:Dynamic)
-			{
-				Exception.trace(e);
-			}
+			var response = page.generateResponseOnPostback(componentFullID, method, params, true);
+			send(HaqMessageListenerAnswer.ProcessUncalledServerMethodAnswer(response.ajaxResponse));
+			r = response.result;
 		});
 		return r;
 	}
