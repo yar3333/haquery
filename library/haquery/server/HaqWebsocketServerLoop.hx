@@ -121,7 +121,7 @@ class HaqWebsocketServerLoop
 					var p = waitedPages.get(pageKey);
 					waitedPages.remove(pageKey);
 					
-					if (p != null && p.page.pageSecret == pageSecret && p.page.onConnect())
+					if (p != null && p.page.pageSecret == pageSecret)
 					{
 						var r = false;
 						Lib.pageContext(p.page, p.page.clientIP, p.config, p.db, function()
