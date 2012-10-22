@@ -126,7 +126,7 @@ class HaqSharedAndAnotherGenerator
 					function(name:String, args:Array<FunctionArg>, ret:Null<ComplexType>, pos:Position) : Field
 					{
 						var callParams = [ macro this.component.fullID, name.toExpr(), Lambda.map(args, function(a) return Context.parse(a.name, pos)).toArray() ];
-						var callExpr = ExprDef.ECall(macro haquery.server.Lib.pages.get(this.pageKey).callAnotherServerMethod, callParams).at(pos);
+						var callExpr = ExprDef.ECall(macro haquery.server.HaqSystem.listener.pages.get(this.pageKey).callAnotherServerMethod, callParams).at(pos);
 						return HaqTools.makeMethod(name, args, ret, macro { return $callExpr; } );
 					}
 				)
@@ -198,7 +198,7 @@ class HaqSharedAndAnotherGenerator
 					function(name:String, args:Array<FunctionArg>, ret:Null<ComplexType>, pos:Position) : Field
 					{
 						var callParams = [ macro this.component.fullID, name.toExpr(), Lambda.map(args, function(a) return Context.parse(a.name, pos)).toArray() ];
-						var callExpr = ExprDef.ECall(macro haquery.server.Lib.pages.get(this.pageKey).callAnotherClientMethod, callParams).at(pos);
+						var callExpr = ExprDef.ECall(macro haquery.server.HaqSystem.listener.pages.get(this.pageKey).callAnotherClientMethod, callParams).at(pos);
 						return HaqTools.makeMethod(name, args, ret, macro { return $callExpr; } );
 					}
 				)
