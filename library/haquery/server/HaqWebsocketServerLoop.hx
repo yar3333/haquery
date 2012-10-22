@@ -120,9 +120,25 @@ class HaqWebsocketServerLoop
 					client.pageKey = pageKey;
 					var p = waitedPages.get(pageKey);
 					waitedPages.remove(pageKey);
+					
 					if (p != null && p.page.pageSecret == pageSecret && p.page.onConnect())
 					{
-						pages.set(pageKey, new HaqConnectedPage(p.page, p.config, p.db, client.ws));
+						var r = false;
+						Lib.pageContext(p.page, p.page.clientIP, p.config, p.db, function()
+						{
+							try
+							{
+								r = p.page.onConnect();
+							}
+							catch (e:Dynamic)
+							{
+								Exception.trace(e);
+							}
+						});
+						if (r)
+						{
+							pages.set(pageKey, new HaqConnectedPage(p.page, p.config, p.db, client.ws));
+						}
 					}
 					else
 					{
