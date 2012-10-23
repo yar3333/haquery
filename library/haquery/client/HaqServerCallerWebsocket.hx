@@ -13,7 +13,7 @@ class HaqServerCallerWebsocket
 	var sendQueue : Array<HaqMessageToListener>;
 	var recvQueue : Array<{ success:Dynamic->Void, fail:Exception->Void }>;
 	var socket : WebSocket;
-	public var isConnected(default, null) : Bool;
+	var isConnected = false;
 
 	function send(message:HaqMessageToListener)
 	{
@@ -46,8 +46,6 @@ class HaqServerCallerWebsocket
 		sendQueue = [];
 		recvQueue = [];
 		
-		isConnected = false;
-		
 		WebSocket.WEB_SOCKET_SWF_LOCATION = "/haquery/client/websocket.swf";
 		socket = new WebSocket(uri);
 		
@@ -76,7 +74,7 @@ class HaqServerCallerWebsocket
 					{
 						try
 						{
-							component.callSharedClientMethod(method, params, true);
+							component.callClientMethod(method, params, "another");
 						}
 						catch (e:Dynamic)
 						{

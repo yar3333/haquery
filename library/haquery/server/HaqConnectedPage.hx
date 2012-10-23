@@ -21,12 +21,22 @@ class HaqConnectedPage
 		this.ws = ws;
 	}
 	
+	public function callServerMethod(componentFullID:String, method:String, params:Array<Dynamic>) : HaqResponse
+	{
+		var r : Dynamic = null;
+		Lib.pageContext(page, page.clientIP, config, db, function()
+		{
+			r = page.generateResponseOnPostback(componentFullID, method, params);
+		});
+		return r;
+	}
+	
 	public function callSharedServerMethod(componentFullID:String, method:String, params:Array<Dynamic>) : HaqResponse
 	{
 		var r : Dynamic = null;
 		Lib.pageContext(page, page.clientIP, config, db, function()
 		{
-			r = page.generateResponseOnPostback(componentFullID, method, params, false);
+			r = page.generateResponseOnPostback(componentFullID, method, params, "shared");
 		});
 		return r;
 	}
@@ -36,7 +46,7 @@ class HaqConnectedPage
 		var r = null;
 		Lib.pageContext(page, page.clientIP, config, db, function()
 		{
-			var response = page.generateResponseOnPostback(componentFullID, method, params, true);
+			var response = page.generateResponseOnPostback(componentFullID, method, params, "another");
 			send(HaqMessageListenerAnswer.ProcessUncalledServerMethodAnswer(response.ajaxResponse));
 			r = response.result;
 		});

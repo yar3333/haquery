@@ -212,14 +212,9 @@ using haquery.StringTools;
 		);
 	}
     
-	public function callSharedServerMethod(method:String, params:Array<Dynamic>) : Dynamic
+	public function callServerMethod(method:String, params:Array<Dynamic>, ?meta:String) : Dynamic
 	{
-		return HaqComponentTools.callMethod(this, method, params, "shared");
-	}
-	
-	public function callAnotherServerMethod(method:String, params:Array<Dynamic>) : Dynamic
-	{
-		return HaqComponentTools.callMethod(this, method, params, "another");
+		return HaqComponentTools.callMethod(this, method, params, meta);
 	}
 	
 	/**
