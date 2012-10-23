@@ -1,21 +1,17 @@
 package haquery.macros;
 
 #if macro
-import haxe.macro.Context;
+
 import haquery.server.FileSystem;
 import sys.io.File;
 import haxe.io.Path;
-#end
-
+import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.Type;
-
 using tink.macro.tools.MacroTools;
 
 class HaqSharedAndAnotherGenerator
 {
-	#if macro
-	
 	public static function generate(clas:ClassType)
 	{
 		if (HaqTools.isExtendsFrom(clas, "haquery.base.HaqComponent"))
@@ -316,6 +312,6 @@ class HaqSharedAndAnotherGenerator
 		
 		return r;	
 	}
-	
-	#end
 }
+
+#end
