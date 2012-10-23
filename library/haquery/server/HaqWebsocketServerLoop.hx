@@ -126,14 +126,16 @@ class HaqWebsocketServerLoop
 					
 					if (p != null && p.page.pageSecret == pageSecret)
 					{
-						var r = false;
-						Lib.pageContext(p.page, p.page.clientIP, p.config, p.db, function()
+						var p = new HaqConnectedPage(p.page, p.config, p.db, client.ws);
+						var response = p.callServerMethod("", "onConnect", []);
+						client.send(HaqMessageListenerAnswer.ProcessUncalledServerMethodAnswer(response.ajaxResponse));
+						if (response.result != false)
 						{
-							r = p.page.onConnect();
-						});
-						if (r)
+							pages.set(pageKey, p);
+						}
+						else
 						{
-							pages.set(pageKey, new HaqConnectedPage(p.page, p.config, p.db, client.ws));
+							server.closeConnection(client.ws.socket);
 						}
 					}
 					else
@@ -189,6 +191,15 @@ class HaqWebsocketServerLoop
 		else
 		{
 			server.closeConnection(client.ws.socket);
+		}
+	}
+	
+	public function disconnectPage(pageKey:String)
+	{
+		var p = pages.get(pageKey);
+		if (p != null)
+		{
+			server.closeConnection(p.ws.socket);
 		}
 	}
 }

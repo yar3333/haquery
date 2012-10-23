@@ -95,7 +95,7 @@ class HaqPage extends HaqComponent
 		};
 	}
 
-	public function generateResponseOnPostback(componentFullID:String, method:String, params:Array<Dynamic>, isAnother:Bool) : HaqResponse
+	public function generateResponseOnPostback(componentFullID:String, method:String, params:Array<Dynamic>, ?meta:String) : HaqResponse
 	{
 		var component = findComponent(componentFullID);
 		if (component != null)
@@ -105,7 +105,7 @@ class HaqPage extends HaqComponent
 			cookie.response.reset();
 			ajaxResponse = "";
 			
-			var result = !isAnother ? component.callSharedServerMethod(method, params) : component.callAnotherServerMethod(method, params);
+			var result = component.callServerMethod(method, params, meta);
 			
 			if (statusCode != 301 && statusCode != 307)
 			{
@@ -303,24 +303,4 @@ class HaqPage extends HaqComponent
 	 * Overload to specify code on client to server websocket closing.
 	 */
 	public function onDisconnect() {}
-
-	/*
-	function callAnotherClientSharedMethod(pageKey:String, componentFullID:String, method:String, params:Array<Dynamic>)
-	{
-		var p = pages.get(pageKey);
-		p.ws.send(Serializer(HaqMessageListenerAnswer.CallAnotherClientMethod(componentFullID, method, params)));
-	}
-	
-	function callAnotherServerSharedMethod(pageKey:String, componentFullID:String, method:String, params:Array<Dynamic>)
-	{
-		var p = pages.get(pageKey);
-		var component = p.page.findComponent(componentFullID);
-		
-		component.callSharedServerMethod(method, params, true
-		var result = HaqComponentTools.callMethod(component, method, params);
-
-		component
-		
-		p.ws.send(Serializer(HaqMessageListenerAnswer.CallAnotherClientMethod(componentFullID, method, params)));
-	}*/
 }

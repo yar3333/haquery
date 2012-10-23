@@ -109,9 +109,9 @@ using haquery.StringTools;
 	/**
 	 * Call client method, marked with meta.
 	 */
-	public function callSharedClientMethod(method:String, params:Array<Dynamic>, callingFromAnother:Bool) : Dynamic
+	public function callClientMethod(method:String, params:Array<Dynamic>, ?meta:String) : Dynamic
 	{
-		return HaqComponentTools.callMethod(this, method, params, !callingFromAnother ? "shared" : "another");
+		return HaqComponentTools.callMethod(this, method, params, meta);
 	}
 
 #end

@@ -117,4 +117,12 @@ class HaqWebsocketListener
 	{
 		return server != null ? server.pages : null;
 	}
+	
+	public function disconnectPage(pageKey:String)
+	{
+		if (server != null)
+		{
+			server.disconnectPage(pageKey);
+		}
+	}
 }

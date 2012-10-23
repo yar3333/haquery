@@ -59,13 +59,11 @@ class HaqComponentTools
 	
 	static function isMethodMetaMarked(metaMark:String, clas:Class<HaqComponent>, method:String) : Bool
 	{
-		if (clas != null)
-		{
-			var meta = haxe.rtti.Meta.getFields(clas);
-			var m = Reflect.field(meta, method);
-			return Reflect.hasField(m, metaMark) ? true : isMethodMetaMarked(metaMark, cast Type.getSuperClass(clas), method);
-		}
-		return false;
+		if (clas == null) return false;
+		if (metaMark == null || metaMark == "") return true;
+		var meta = haxe.rtti.Meta.getFields(clas);
+		var m = Reflect.field(meta, method);
+		return Reflect.hasField(m, metaMark) ? true : isMethodMetaMarked(metaMark, cast Type.getSuperClass(clas), method);
 	}
 	
 	

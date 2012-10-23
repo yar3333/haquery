@@ -182,7 +182,7 @@ class Lib
 										  request.params.get('HAQUERY_COMPONENT')
 										, request.params.get('HAQUERY_METHOD')
 										, Unserializer.run(request.params.get('HAQUERY_PARAMS'))
-										, false
+										, "shared"
 								   );
 					});
 				profiler.end();
