@@ -6,7 +6,7 @@ import sys.io.File;
 import haxe.macro.Compiler;
 import haxe.macro.Expr;
 import haxe.macro.Type;
-using tink.macro.tools.MacroTools;
+using haquery.macros.internal.macro.tools.MacroTools;
 
 class HaqComponentTools 
 {
