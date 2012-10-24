@@ -9,6 +9,7 @@ private typedef NativeWeb = neko.Web;
 #end
 
 import haquery.common.HaqDefines;
+import haxe.Serializer;
 import sys.io.File;
 import sys.io.Process;
 import sys.net.Host;
@@ -40,6 +41,9 @@ class HaqSystem
 			
 			case "haquery-status-listeners":
 				system.doStatusListenersCommand();
+			
+			case "haquery-upload":
+				system.doUploadCommand();
 			
 			default:
 				NativeLib.println("Unknow system command '" + command + "'.");
@@ -198,5 +202,21 @@ class HaqSystem
 		}
 	
 		NativeLib.println(html);
+	}
+	
+	function doUploadCommand()
+	{
+		if (!Lib.isCli())
+		{
+			var uploadsDir = NativeWeb.getCwd().rtrim("/") + "/" + HaqDefines.folders.temp + "/uploads";
+			FileSystem.createDirectory(uploadsDir);
+			NativeWeb.setHeader("Content-Type", "text/plain; charset=utf-8");
+			var files = Lib.uploads.upload();
+			NativeLib.println(Serializer.run(files));
+		}
+		else
+		{
+			NativeLib.println("This command allowed from the web request only.");
+		}
 	}
 }

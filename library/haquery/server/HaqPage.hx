@@ -34,8 +34,6 @@ class HaqPage extends HaqComponent
 	
 	public var requestHeaders(default, null) : HaqRequestHeaders;
 	
-	public var uploadedFiles(default, null) : Hash<HaqUploadedFile>;
-	
 	public var clientIP(default, null) : String;
 	
 	public var uri(default, null) : String;

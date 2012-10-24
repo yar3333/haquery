@@ -1,23 +1,15 @@
 <haq:placeholder id="styles">
 	<style>
-		.~form .~file
+		.~form
 		{
 			position: absolute;
-			
-			margin: 0; 
-			padding:0; 
-			
-			opacity: 0;
-			filter:alpha(opacity: 0);
-			-moz-opacity: 0;
-			
-			width: 99px;
-			height: 20px;
-			
-			border: 0;
+			visibility: hidden;
+			overflow: hidden;
+			width: 0;
+			height: 0;
 		}
 		
-		.~form, .~form *
+		.~container
 		{
 			cursor: pointer;
 		}
@@ -25,12 +17,9 @@
 </haq:placeholder>
 
 <haq:placeholder id="html">
-	<input type="hidden" id="filter" />
 	<iframe id="frame" src="about:blank" style="display:none"></iframe>
-	<form id="form" method="post" enctype="multipart/form-data" class="~form" style="display:block">
-		<input type="file" id="file" size="1" class="~file" />
-		<div id="container" class="~container">
-			<haq:placeholder id="content"><innercontent /></haq:placeholder>
-		</div>
-	</form>
+	<form id="form" action="/haquery-upload/" method="post" enctype="multipart/form-data" class="~form"><input type="file" id="file" class="~file" /></form>
+	<div id="container" class="~container">
+		<haq:placeholder id="content"><innercontent /></haq:placeholder>
+	</div>
 </haq:placeholder>
