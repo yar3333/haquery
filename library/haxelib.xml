@@ -1,4 +1,4 @@
-<project name='HaQuery' url='http://haquery.com/haquery' license='LGPL'>
+<project name='HaQuery' url='http://haquery.com/haquery/' license='LGPL'>
     <user name='yar3333' />
     <tag v='js' />
     <tag v='php' />
@@ -6,7 +6,7 @@
     <tag v='haquery' />
     <tag v='web' />
     <description>Web framework with php/neko and js target.</description>
-    <version name='4.0'>Neko as a target server platform. Creating components on the client. Major improvements in config files parsing, bootstraps processing, events and database using. Added haXe 2.10 support.</version>
+    <version name='5.0'>Server daemon mode and interaction through websocket. Avoid many global static's. Avoid FirePHP dependency.</version>
     <depends name="HtmlParser" />
-    <depends name="FirePHP" />
+    <depends name="WebSocket" />
 </project>
