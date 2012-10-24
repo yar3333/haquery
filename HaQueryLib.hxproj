@@ -29,10 +29,6 @@
   <!-- haxelib libraries -->
   <haxelib>
     <library name="HtmlParser" />
-    <library name="FirePHP" />
-    <library name="memcached" />
-    <library name="tink_core" />
-    <library name="tink_macros" />
     <library name="WebSocket" />
   </haxelib>
   <!-- Class files to compile (other referenced classes will automatically be included) -->
