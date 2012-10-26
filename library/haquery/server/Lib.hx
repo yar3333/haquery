@@ -21,7 +21,6 @@ import haxe.PosInfos;
 import haquery.common.HaqDefines;
 import haquery.server.db.HaqDb;
 import haquery.server.HaqRouter;
-import sys.io.File;
 using haquery.StringTools;
 
 class Lib
@@ -333,9 +332,4 @@ class Lib
 	}
 	
 	static function getCwd() { return Web.getCwd().replace("\\", "/").rtrim("/"); }
-	
-	public static function getUploadedFile(fileID:String)
-	{
-		
-	}
 }
