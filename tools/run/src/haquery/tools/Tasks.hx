@@ -16,14 +16,14 @@ class Tasks
 		this.exeDir = exeDir.replace('\\', '/');
     }
     
-	public function preBuild()
+	public function preBuild(noGenCode:Bool, isJsModern:Bool, isDeadCodeElimination:Bool)
 	{
-		return new Build(exeDir).preBuild();
+		return new Build(exeDir).preBuild(noGenCode, isJsModern, isDeadCodeElimination);
 	}
 	
-	public function postBuild(isJsModern:Bool, isDeadCodeElimination:Bool) : Bool
+	public function postBuild() : Bool
 	{
-		return new Build(exeDir).postBuild(isJsModern, isDeadCodeElimination);
+		return new Build(exeDir).postBuild();
 	}
 	
 	public function install()
@@ -45,5 +45,10 @@ class Tasks
 	public function genTrm()
 	{
 		new Build(exeDir).genTrm();
+	}
+	
+	public function genCode()
+	{
+		return new Build(exeDir).genCode();
 	}
 }

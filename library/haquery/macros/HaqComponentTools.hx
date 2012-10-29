@@ -52,7 +52,7 @@ class HaqComponentTools
 	{
 		var pos = Context.currentPos();
 		
-		if (!Context.defined("haqueryPreBuild"))
+		if (!Context.defined("haqueryGenCode"))
 		{
 			switch (Context.typeof(ethis))
 			{
@@ -83,7 +83,7 @@ class HaqComponentTools
 	{
 		var pos = Context.currentPos();
 		
-		if (!Context.defined("haqueryPreBuild"))
+		if (!Context.defined("haqueryGenCode"))
 		{
 			switch (Context.typeof(ethis))
 			{
@@ -114,7 +114,7 @@ class HaqComponentTools
 	{
 		var pos = Context.currentPos();
 		
-		if (!Context.defined("haqueryPreBuild"))
+		if (!Context.defined("haqueryGenCode"))
 		{
 			switch (Context.typeof(ethis))
 			{

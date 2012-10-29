@@ -52,10 +52,13 @@ class Main
 					}
 				
 				case 'pre-build': 
-					exitCode = tasks.preBuild() ? 0 : 1;
+					exitCode = tasks.preBuild(Lambda.has(args, "--no-gen-code"), Lambda.has(args, "--js-modern"), Lambda.has(args, "--dead-code-elimination")) ? 0 : 1;
 				
 				case 'post-build': 
-					exitCode = tasks.postBuild(Lambda.has(args, "--js-modern"), Lambda.has(args, "--dead-code-elimination")) ? 0 : 1;
+					exitCode = tasks.postBuild() ? 0 : 1;
+				
+				case 'gen-code': 
+					exitCode = tasks.genCode() ? 0 : 1;
 					
 				case 'install':
 					tasks.install();
@@ -69,14 +72,16 @@ class Main
 		{
 			Lib.println("HaQuery building support and deploying tool.");
 			Lib.println("Usage: haxelib run HaQuery <command>");
-			Lib.println("\twhere <command> may be:");
-			Lib.println("\t\tpre-build                      Do pre-build step.");
-			Lib.println("\t\tpost-build                     Do post-build step.");
-			Lib.println("\t\t\t[--js-modern]");
-			Lib.println("\t\t\t[--dead-code-elimination]");
-			Lib.println("\t\tinstall                        Install FlashDevelop templates.");
-			Lib.println("\t\tgen-orm                        Generate object-related classes (managers and models).");
-			Lib.println("\t\t\t[databaseConnectionString]");
+			Lib.println("    where <command> may be:");
+			Lib.println("        install                        Install FlashDevelop templates.");
+			Lib.println("        pre-build                      Do pre-build step.");
+			Lib.println("            [--no-gen-code]            Do not generate shared and another classes.");
+			Lib.println("            [--js-modern]              Generate js code in modern style.");
+			Lib.println("            [--dead-code-elimination]  For a while is not supported.");
+			Lib.println("        post-build                     Do post-build step.");
+			Lib.println("        gen-orm                        Generate object-related classes (managers and models).");
+			Lib.println("            [databaseConnectionString] Like 'mysql://user:pass@host/dbname'.");
+			Lib.println("        gen-code                       Generate shared and another classes.");
 			exitCode = 1;
 		}
         

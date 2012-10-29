@@ -32,7 +32,7 @@ class Build
 		project = new FlashDevelopProject('.', this.exeDir);
 	}
 	
-	public function preBuild()
+	public function preBuild(noGenCode:Bool, isJsModern:Bool, isDeadCodeElimination:Bool)
     {
         log.start("Do pre-build step");
         
@@ -41,12 +41,12 @@ class Build
 			var manager = new HaqTemplateManager(project.allClassPaths, log);
 			genTrm(manager);
 			genImports(manager, project.srcPath);
-			if (genSharedClient(project))
+			if (noGenCode || genCode())
 			{
-				if (genSharedServer(project))
+				try { saveLibFolder(); } catch (e:Dynamic) { }
+				if (buildJs(isJsModern, isDeadCodeElimination))
 				{
-					saveLastMods(manager);
-					try { saveLibFolder(); } catch (e:Dynamic) { }
+					saveTemplatesLastMods(manager);
 					log.finishOk();
 					return true;
 				}
@@ -60,17 +60,14 @@ class Build
 		{
 			log.finishFail("ERROR: recursive extend detected [ " + e.toString() + " ].");
 		}
+		
+		
 		return false;
     }
 	
-    public function postBuild(isJsModern:Bool, isDeadCodeElimination:Bool) : Bool
+    public function postBuild() : Bool
     {
         log.start("Do post-build step");
-        
-		if (!buildJs(isJsModern, isDeadCodeElimination))
-		{
-			return false;
-		}
         
         var excludes = new Excludes(project.libPaths);
 		for (path in project.libPaths)
@@ -191,7 +188,7 @@ class Build
 		return r.exitCode == 0;
     }
 	
-	function saveLastMods(manager:HaqTemplateManager)
+	function saveTemplatesLastMods(manager:HaqTemplateManager)
 	{
 		var serverPath = project.binPath + '/haquery/server';
 		hant.createDirectory(serverPath);
@@ -215,13 +212,13 @@ class Build
         log.finishOk();
     }
 	
-	function genSharedClient(project:FlashDevelopProject) : Bool
+	function genCodeFromClient(project:FlashDevelopProject) : Bool
 	{
-        var tempPath = "trm/temp-haquery-gen-shared.js";
+        var tempPath = "trm/temp-haquery-gen-code.js";
 		
-		log.start("Generate shared classes from client");
+		log.start("Generate code from client");
 		hant.createDirectory(Path.directory(tempPath));
-		var params = project.getBuildParams("-js", tempPath, [ "noEmbedJS", "client", "haqueryPreBuild" ]);
+		var params = project.getBuildParams("-js", tempPath, [ "noEmbedJS", "client", "haqueryGenCode" ]);
 		var r = hant.run(hant.getHaxePath() + "haxe.exe", params);
 		hant.deleteFile(tempPath);
 		hant.deleteFile(tempPath + ".map");
@@ -233,13 +230,13 @@ class Build
 		return true;
 	}
 	
-	function genSharedServer(project:FlashDevelopProject) : Bool
+	function genCodeFromServer(project:FlashDevelopProject) : Bool
 	{
-        var tempPath = "trm/temp-haquery-gen-shared.n";
+        var tempPath = "trm/temp-haquery-gen-code.n";
 		
-		log.start("Generate shared classes from server");
+		log.start("Generate code from server");
 		hant.createDirectory(Path.directory(tempPath));
-		var params = project.getBuildParams("-" + project.platform.toLowerCase(), tempPath, [ "haqueryPreBuild" ]);
+		var params = project.getBuildParams("-" + project.platform.toLowerCase(), tempPath, [ "haqueryGenCode" ]);
 		var r = hant.run(hant.getHaxePath() + "haxe.exe", params);
 		hant.deleteFile(tempPath);
 		Lib.print(r.stdOut);
@@ -270,5 +267,10 @@ class Build
 			hant.deleteDirectory(project.binPath + "/lib.old");
 			log.finishOk();
 		}
+	}
+	
+	public function genCode()
+	{
+		return genCodeFromClient(project) && genCodeFromServer(project);
 	}
 }
