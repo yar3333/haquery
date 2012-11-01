@@ -95,10 +95,10 @@ class Build
     
 	function genImports(manager:HaqTemplateManager, srcPath:String)
     {
-        log.start("Generate imports to 'trm/Imports.hx'");
+        log.start("Generate imports to 'gen/Imports.hx'");
         
-        hant.createDirectory("trm");
-		var fo = File.write("trm/Imports.hx", false);
+        hant.createDirectory("gen");
+		var fo = File.write("gen/Imports.hx", false);
         
         var serverClassNames = new Hash<Int>();
         var clientClassNames = new Hash<Int>();
@@ -214,7 +214,7 @@ class Build
 	
 	function genCodeFromClient(project:FlashDevelopProject) : Bool
 	{
-        var tempPath = "trm/temp-haquery-gen-code.js";
+        var tempPath = "gen/temp-haquery-gen-code.js";
 		
 		log.start("Generate code from client");
 		hant.createDirectory(Path.directory(tempPath));
@@ -232,7 +232,7 @@ class Build
 	
 	function genCodeFromServer(project:FlashDevelopProject) : Bool
 	{
-        var tempPath = "trm/temp-haquery-gen-code.n";
+        var tempPath = "gen/temp-haquery-gen-code.n";
 		
 		log.start("Generate code from server");
 		hant.createDirectory(Path.directory(tempPath));

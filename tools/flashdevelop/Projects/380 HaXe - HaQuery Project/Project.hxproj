@@ -15,7 +15,7 @@
   </output>
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
-    <class path="trm" />
+    <class path="gen" />
     <class path="src" />
   </classpaths>
   <!-- Build options -->
@@ -38,7 +38,7 @@
   <!-- Paths to exclude from the Project Explorer tree -->
   <hiddenPaths>
     <hidden path="bin" />
-    <hidden path="trm" />
+    <hidden path=gen />
   </hiddenPaths>
   <!-- Executed before build -->
   <preBuildCommand>haxelib run HaQuery pre-build</preBuildCommand>

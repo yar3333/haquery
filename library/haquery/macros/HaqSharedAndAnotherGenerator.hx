@@ -246,7 +246,7 @@ class HaqSharedAndAnotherGenerator
 	static function generateModuleIfNeed(generateClassName:String, componentClass:ClassType, generateFunc:ClassType->Array<Field>)
 	{
 		var componentModulePath = Context.resolvePath(StringTools.replace(componentClass.module, ".", "/") + ".hx");
-		var dstModulePath = "trm/" + componentClass.pack.join("/") + "/" + generateClassName + ".hx";
+		var dstModulePath = "gen/" + componentClass.pack.join("/") + "/" + generateClassName + ".hx";
 		if (!FileSystem.exists(dstModulePath) || FileSystem.stat(componentModulePath).mtime.getTime() > FileSystem.stat(dstModulePath).mtime.getTime())
 		{
 			var renderedClassFields = haquery.macros.internal.macro.tools.Printer.printFields("", generateFunc(componentClass));
