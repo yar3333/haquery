@@ -38,7 +38,7 @@
   <!-- Paths to exclude from the Project Explorer tree -->
   <hiddenPaths>
     <hidden path="bin" />
-    <hidden path="trm" />
+    <hidden path=gen />
     <hidden path="library.zip" />
     <hidden path="library\copyfolder.exe" />
     <hidden path="library\copyfolder.exe.config" />

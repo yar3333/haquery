@@ -1,6 +1,6 @@
 syntax: glob
 bin
-trm
+gen
 Imports.hx
 library.zip
 library/restorefiletime.exe.config
