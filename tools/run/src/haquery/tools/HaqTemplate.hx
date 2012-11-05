@@ -12,14 +12,14 @@ class HaqTemplate extends haquery.base.HaqTemplate
 	public var hasLocalServerClass(default, null) : Bool;
 	public var hasLocalClientClass(default, null) : Bool;
 		
-	public var trmServerFilePath(default, null) : String;
-	public var trmClientFilePath(default, null) : String;
+	public var genTemplateServerFilePath(default, null) : String;
+	public var genTemplateClientFilePath(default, null) : String;
 	
-	public var stubeServerFilePath(default, null) : String;
-	public var stubeClientFilePath(default, null) : String;
+	public var genBaseServerFilePath(default, null) : String;
+	public var genBaseClientFilePath(default, null) : String;
 	
-	public var baseServerFilePath(default, null) : String;
-	public var baseClientFilePath(default, null) : String;
+	public var baseServerClass : String;
+	public var baseClientClass : String;
 	
 	public var lastMod(default, null) : Date;
 	public var requires(default, null) : Array<String>;
@@ -41,14 +41,12 @@ class HaqTemplate extends haquery.base.HaqTemplate
 		
 		var genFolder = parser.getGenFolder();
 		
-		trmServerFilePath = genFolder + "TemplateServer.hx";
-		trmClientFilePath = genFolder + "TemplateClient.hx";
-		
-		stubeServerFilePath = genFolder + "Server.hx";
-		stubeClientFilePath = genFolder + "Client.hx";
-		
-		baseServerFilePath = genFolder + "BaseServer.hx";
-		baseClientFilePath = genFolder + "BaseClient.hx";
+		genTemplateServerFilePath = genFolder + "TemplateServer.hx";
+		genTemplateClientFilePath = genFolder + "TemplateClient.hx";
+		genBaseServerFilePath = genFolder + "BaseServer.hx";
+		genBaseClientFilePath = genFolder + "BaseClient.hx";
+		baseServerClass = parser.getBaseServerClass();
+		baseClientClass = parser.getBaseClientClass();
 		
 		lastMod = parser.getLastMod();
 		requires = parser.getRequires();

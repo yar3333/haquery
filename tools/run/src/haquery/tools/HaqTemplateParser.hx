@@ -88,13 +88,10 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 		var i = classPaths.length - 1;
 		while (i >= 0)
 		{
-			if (classPaths[i] != "gen/")
+			var fullPath = classPaths[i] + path;
+			if (FileSystem.exists(fullPath))
 			{
-				var fullPath = classPaths[i] + path;
-				if (FileSystem.exists(fullPath))
-				{
-					return fullPath;
-				}
+				return fullPath;
 			}
 			i--;
 		}
@@ -203,5 +200,17 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 	public function getRequires() : Array<String>
 	{
 		return cast(config, HaqTemplateConfig).requires;
+	}
+	
+	public function getBaseServerClass() : String
+	{
+		var parentParser : HaqTemplateParser = cast getParentParser();
+		return parentParser != null ? parentParser.getServerClassName() : "haquery.server.HaqComponent";
+	}	
+	
+	public function getBaseClientClass() : String
+	{
+		var parentParser : HaqTemplateParser = cast getParentParser();
+		return parentParser != null ? parentParser.getClientClassName() : "haquery.client.HaqComponent";
 	}
 }
