@@ -88,10 +88,13 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 		var i = classPaths.length - 1;
 		while (i >= 0)
 		{
-			var fullPath = classPaths[i] + path;
-			if (FileSystem.exists(fullPath))
+			if (classPaths[i] != "gen/")
 			{
-				return fullPath;
+				var fullPath = classPaths[i] + path;
+				if (FileSystem.exists(fullPath))
+				{
+					return fullPath;
+				}
 			}
 			i--;
 		}
@@ -147,14 +150,9 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 		return getLocalClassName("Client") != null;
 	}
 	
-	public function getTrmServerFilePath() : String
+	public function getGenFolder() : String
 	{
-		return "gen/" + fullTag.replace('.', '/') + "/TemplateServer.hx";
-	}
-	
-	public function getTrmClientFilePath() : String
-	{
-		return "gen/" + fullTag.replace('.', '/') + "/TemplateClient.hx";
+		return "gen/" + fullTag.replace('.', '/') + "/";
 	}
 	
 	public function getLastMod() : Date

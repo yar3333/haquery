@@ -15,6 +15,12 @@ class HaqTemplate extends haquery.base.HaqTemplate
 	public var trmServerFilePath(default, null) : String;
 	public var trmClientFilePath(default, null) : String;
 	
+	public var stubeServerFilePath(default, null) : String;
+	public var stubeClientFilePath(default, null) : String;
+	
+	public var baseServerFilePath(default, null) : String;
+	public var baseClientFilePath(default, null) : String;
+	
 	public var lastMod(default, null) : Date;
 	public var requires(default, null) : Array<String>;
 	public var extend(default, null) : String;
@@ -33,8 +39,16 @@ class HaqTemplate extends haquery.base.HaqTemplate
 		hasLocalServerClass = parser.hasLocalServerClass();
 		hasLocalClientClass = parser.hasLocalClientClass();
 		
-		trmServerFilePath = parser.getTrmServerFilePath();
-		trmClientFilePath = parser.getTrmClientFilePath();
+		var genFolder = parser.getGenFolder();
+		
+		trmServerFilePath = genFolder + "TemplateServer.hx";
+		trmClientFilePath = genFolder + "TemplateClient.hx";
+		
+		stubeServerFilePath = genFolder + "Server.hx";
+		stubeClientFilePath = genFolder + "Client.hx";
+		
+		baseServerFilePath = genFolder + "BaseServer.hx";
+		baseClientFilePath = genFolder + "BaseClient.hx";
 		
 		lastMod = parser.getLastMod();
 		requires = parser.getRequires();
