@@ -2,13 +2,10 @@ package components.haquery.radioboxes;
 
 import haquery.Exception;
 import haquery.common.HaqDefines;
-import haquery.server.Lib;
-import haquery.server.HaqComponent;
 import haxe.htmlparser.HtmlNodeElement;
-
 using haquery.StringTools;
 
-class Server extends HaqComponent
+class Server extends BaseServer
 {
     public var value(getValue, setValue) : String;
     

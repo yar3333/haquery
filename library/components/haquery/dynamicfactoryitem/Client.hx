@@ -22,7 +22,7 @@ private typedef ComponentData =
 	var chilren : Array<ComponentData>;
 }
 
-class Client extends components.haquery.factoryitem.Client
+class Client extends BaseClient
 {
 	var componentAnonimIDs : Hash<Int>;
 	var childComponents : Array<ComponentData>;

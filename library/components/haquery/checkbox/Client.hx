@@ -1,10 +1,9 @@
 package components.haquery.checkbox;
 
-import haquery.client.HaqComponent;
 import haquery.common.HaqEvent;
 import js.JQuery;
 
-class Client extends HaqComponent
+class Client extends BaseClient
 {
     var event_change : HaqEvent<JqEvent>;
 	

@@ -2,9 +2,8 @@ package components.haquery.context;
 
 import js.JQuery;
 import haquery.common.HaqEvent;
-import haquery.client.HaqComponent;
 
-class Client extends HaqComponent
+class Client extends BaseClient
 {
     var event_show : HaqEvent<{ elem : JQuery }>;
     

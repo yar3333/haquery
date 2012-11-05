@@ -1,12 +1,6 @@
 package components.haquery.uploader;
 
-#if !client
-typedef Component = haquery.server.HaqComponent;
-#else
-typedef Component = haquery.client.HaqComponent;
-#end
-
-class Base extends Component
+class Base extends #if !client BaseServer #else BaseClient #end
 {
     public var enabled(enabled_getter, enabled_setter) : Bool;
     

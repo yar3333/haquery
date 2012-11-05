@@ -1,12 +1,10 @@
 package components.haquery.urlmenu;
 
-import haquery.server.HaqComponent;
 import haquery.server.HaqQuery;
 import haquery.server.Lib;
-
 using haquery.StringTools;
 
-class Server extends HaqComponent
+class Server extends BaseServer
 {
     public var base : String;
     public var cssClass : String;

@@ -1,12 +1,6 @@
 package components.haquery.button;
 
-#if !client
-import haquery.server.HaqComponent;
-#else
-import haquery.client.HaqComponent;
-#end
-
-class Base extends HaqComponent
+class Base extends #if !client BaseServer #else BaseClient #end
 {
     public var enabled(enabled_getter, enabled_setter) : Bool;
     

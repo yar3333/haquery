@@ -9,7 +9,7 @@ typedef ItemDataBoundEventArgs = {
 	var obj:Dynamic;
 }
 
-class Server extends components.haquery.factory.Server
+class Server extends BaseServer
 {
 	public var event_itemDataBound : HaqEvent<ItemDataBoundEventArgs>;
 	

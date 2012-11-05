@@ -1,11 +1,10 @@
 package components.haquery.tabs;
 
-import haquery.server.HaqComponent;
 import haquery.server.HaqQuery;
 import haquery.server.Lib;
 import haxe.htmlparser.HtmlParser;
 
-class Server extends HaqComponent
+class Server extends BaseServer
 {
     public var active = 0;
     

@@ -2,7 +2,7 @@ package components.haquery.alternative;
 
 import haquery.server.HaqComponent;
 
-class Server extends HaqComponent
+class Server extends BaseServer
 {
     public var active = 0;
     
