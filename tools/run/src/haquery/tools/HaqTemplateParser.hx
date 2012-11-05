@@ -128,13 +128,17 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 	public function getServerClassName()
 	{
 		var r = getGlobalClassName("Server");
-		return r != null && r != "" ? r : "haquery.server.HaqComponent";
+		return r != null && r != "" 
+			? r 
+			: (fullTag.startsWith("pages.") ? "haquery.server.HaqPage" : "haquery.server.HaqComponent");
 	}
 	
 	public function getClientClassName()
 	{
 		var r = getGlobalClassName("Client");
-		return r != null && r != ""  ? r : "haquery.client.HaqComponent";
+		return r != null && r != ""  
+			? r 
+			: (fullTag.startsWith("pages.") ? "haquery.client.HaqPage" : "haquery.client.HaqComponent");
 	}
 	
 	public function hasLocalServerClass() : Bool
