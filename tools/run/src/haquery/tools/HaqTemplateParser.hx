@@ -205,12 +205,16 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 	public function getBaseServerClass() : String
 	{
 		var parentParser : HaqTemplateParser = cast getParentParser();
-		return parentParser != null ? parentParser.getServerClassName() : "haquery.server.HaqComponent";
+		return parentParser != null 
+			? parentParser.getServerClassName() 
+			: (fullTag.startsWith("pages.") ? "haquery.server.HaqPage" : "haquery.server.HaqComponent");
 	}	
 	
 	public function getBaseClientClass() : String
 	{
 		var parentParser : HaqTemplateParser = cast getParentParser();
-		return parentParser != null ? parentParser.getClientClassName() : "haquery.client.HaqComponent";
+		return parentParser != null 
+			? parentParser.getClientClassName() 
+			: (fullTag.startsWith("pages.") ? "haquery.client.HaqPage" : "haquery.client.HaqComponent");
 	}
 }
