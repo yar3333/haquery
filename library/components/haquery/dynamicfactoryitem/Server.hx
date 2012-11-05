@@ -1,5 +1,5 @@
 package components.haquery.dynamicfactoryitem;
 
-class Server extends components.haquery.factoryitem.Server
+class Server extends BaseServer
 {
 }

@@ -1,10 +1,6 @@
 package components.haquery.ckeditor;
 
-import haquery.server.Lib;
-import haquery.server.HaqComponent;
-import haquery.common.HaqEvent;
-
-class Server extends HaqComponent
+class Server extends BaseServer
 {
     public var text(getText, setText) : String;
     

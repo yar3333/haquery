@@ -1,11 +1,9 @@
 package components.haquery.ckeditor;
 
-import haquery.client.HaqComponent;
 import haquery.common.HaqEvent;
-import haquery.client.Lib;
 import haxe.Timer;
 
-class Client extends HaqComponent
+class Client extends BaseClient
 {
     var editor : CKEditor;
 

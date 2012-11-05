@@ -1,5 +1,5 @@
 package components.haquery.list;
 
-class Client extends components.haquery.factory.Client
+class Client extends BaseClient
 {
 }

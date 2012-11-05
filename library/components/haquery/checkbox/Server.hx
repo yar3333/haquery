@@ -1,10 +1,8 @@
 package components.haquery.checkbox;
 
-import haquery.server.HaqComponent;
-import haquery.server.Lib;
 import haquery.Std;
 
-class Server extends HaqComponent
+class Server extends BaseServer
 {
     public var checked(getChecked, setChecked) : Bool;
 	public var text : String;

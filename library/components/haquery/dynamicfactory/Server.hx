@@ -3,10 +3,9 @@ package components.haquery.dynamicfactory;
 import haxe.htmlparser.HtmlNodeElement;
 import haxe.Serializer;
 import haquery.Exception;
-
 using haquery.StringTools;
 
-class Server extends components.haquery.factory.Server
+class Server extends BaseServer
 {
     function preRender()
     {

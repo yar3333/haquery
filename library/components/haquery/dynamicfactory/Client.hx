@@ -6,7 +6,7 @@ import haxe.htmlparser.HtmlNodeElement;
 import haxe.Unserializer; 
 import js.JQuery;
 
-class Client extends components.haquery.factory.Client
+class Client extends BaseClient
 {
 	var html : String;
 	

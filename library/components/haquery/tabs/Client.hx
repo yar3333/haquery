@@ -2,10 +2,9 @@ package components.haquery.tabs;
 
 import haquery.client.HaqQuery;
 import haquery.common.HaqEvent;
-import haquery.client.HaqComponent;
 import js.JQuery;
 
-class Client extends HaqComponent
+class Client extends BaseClient
 {
     public var active(getActive, setActive) : Int;
 

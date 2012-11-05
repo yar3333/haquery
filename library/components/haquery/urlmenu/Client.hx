@@ -1,7 +1,5 @@
 package components.haquery.urlmenu;
 
-import haquery.client.HaqComponent;
-
-class Client extends HaqComponent
+class Client extends BaseClient
 {
 }

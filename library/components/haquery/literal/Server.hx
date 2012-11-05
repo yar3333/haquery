@@ -1,8 +1,6 @@
 package components.haquery.literal;
 
-import haquery.server.HaqComponent;
-
-class Server extends HaqComponent
+class Server extends BaseServer
 {
     public var text : String;
 	

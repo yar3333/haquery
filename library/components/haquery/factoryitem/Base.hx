@@ -1,14 +1,12 @@
 package components.haquery.factoryitem;
 
 #if !client
-import haquery.server.HaqComponent;
 import haquery.common.HaqEvent;
 #else
-import haquery.client.HaqComponent;
 import haquery.common.HaqEvent;
 #end
 
-class Base extends HaqComponent
+class Base extends #if !client BaseServer #else BaseClient #end
 {
 	override function connectEventHandlers(event:HaqEvent<Dynamic>) : Void
 	{
