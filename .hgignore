@@ -21,3 +21,8 @@ library/copyfolder.pdb
 library/copyfolder.exe.config
 tools/copyfolder/restorefiletime.suo
 tools/copyfolder/copyfolder.suo
+library/*.ilk
+tools/run/library/src/neko/Debug
+tools/run/library/src/neko/*.suo
+tools/run/library/src/neko/*.ncb
+tools/run/library/src/neko/*.user
