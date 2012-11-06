@@ -8,11 +8,6 @@
     </global>
     
     <local>
-        <regexp pattern=".+[.](?:zip|n|exe|txt|exe[.]config|pdb)" />
+        <regexp pattern=".+[.](?:zip|n|exe|txt|exe[.]config|pdb|ilk)" />
     </local>
-	
-	<library name="hxJson2">
-        <regexp pattern="LICENSE" />
-        <regexp pattern="README" />
-    </library>
 </excludes>
