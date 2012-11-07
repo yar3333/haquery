@@ -155,7 +155,7 @@ class Build
 		
 		hant.createDirectory(clientPath);
         
-        var params = project.getBuildParams("-js", clientPath + "/haquery.js", [ "noEmbedJS", "client" ]);
+        var params = project.getBuildParams("js", clientPath + "/haquery.js", [ "noEmbedJS", "client" ]);
 		if (isJsModern) params.push("--js-modern");
 		if (isDeadCodeElimination) params.push("--dead-code-elimination");
 		var r = hant.run(hant.getHaxePath() + "haxe.exe", params);
@@ -217,7 +217,7 @@ class Build
 		
 		log.start("Generate code from client");
 		hant.createDirectory(Path.directory(tempPath));
-		var params = project.getBuildParams("-js", tempPath, [ "noEmbedJS", "client", "haqueryGenCode" ]);
+		var params = project.getBuildParams("js", tempPath, [ "noEmbedJS", "client", "haqueryGenCode" ]);
 		var r = hant.run(hant.getHaxePath() + "haxe.exe", params);
 		hant.deleteFile(tempPath);
 		hant.deleteFile(tempPath + ".map");
@@ -235,7 +235,7 @@ class Build
 		
 		log.start("Generate code from server");
 		hant.createDirectory(Path.directory(tempPath));
-		var params = project.getBuildParams("-" + project.platform.toLowerCase(), tempPath, [ "haqueryGenCode" ]);
+		var params = project.getBuildParams(project.platform.toLowerCase(), tempPath, [ "haqueryGenCode" ]);
 		var r = hant.run(hant.getHaxePath() + "haxe.exe", params);
 		hant.deleteFile(tempPath);
 		Lib.print(r.stdOut);

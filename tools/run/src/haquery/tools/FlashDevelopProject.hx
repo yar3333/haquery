@@ -228,7 +228,7 @@ class FlashDevelopProject
 		return null;
 	}
 	
-	public function getBuildParams(platformPrefix:String, destPath:String, defines:Array<String>) : Array<String>
+	public function getBuildParams(platform:String, destPath:String, defines:Array<String>) : Array<String>
 	{
         var params = new Array<String>();
         
@@ -242,10 +242,11 @@ class FlashDevelopProject
 			params.push("-lib"); params.push(name);
 		}
 		
-		params = params.concat([ 
-			  platformPrefix, destPath
-			, "-main", "Main"
-		]);
+		params.push("-" + platform);
+		params.push(destPath);
+		
+		params.push("-main");
+		params.push("Main");
 		
 		if (isDebug)
 		{
