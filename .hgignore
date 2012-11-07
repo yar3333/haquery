@@ -1,26 +1,7 @@
 syntax: glob
 bin
 gen
-Imports.hx
 library.zip
-library/restorefiletime.exe.config
-library/restorefiletime.pdb
-library/run.pdb
-tools/restorefiletime/obj
-tools/restorefiletime/restorefiletime.suo
-tools/run.net/run_exe/obj
-tools/run.net/run_exe/run_exe.csproj.user
-tools/run.net/run_exe/run_exe.suo
-tools/runwaiter/obj
-library/runwaiter.exe.config
-library/runwaiter.pdb
-tools/runwaiter/restorefiletime.suo
-tools/runwaiter/runwaiter.suo
-tools/copyfolder/obj
-library/copyfolder.pdb
-library/copyfolder.exe.config
-tools/copyfolder/restorefiletime.suo
-tools/copyfolder/copyfolder.suo
 library/*.ilk
 tools/run/library/src/neko/Debug
 tools/run/library/src/neko/*.suo
