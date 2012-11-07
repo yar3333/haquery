@@ -13,7 +13,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 	
 	var log : Log;
 	
-	public var unusedTemplates(default,null) : Array<String>;
+	public var fullTags(default, null) : Hash<Int>;
 	
 	public function new(classPaths:Array<String>, log:Log)
 	{
@@ -23,7 +23,16 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		this.log = log;
 		
 		fillTemplates(HaqDefines.folders.pages);
-		unusedTemplates = detectUnusedTemplates();
+		
+		// exclude unused components
+		fullTags = getUsedComponents();
+		for (fullTag in templates.keys())
+		{
+			if (!fullTags.exists(fullTag))
+			{
+				templates.remove(fullTag);
+			}
+		}
 	}
 	
 	override function newTemplate(fullTag:String) : HaqTemplate
@@ -84,52 +93,43 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		}
 	}
 	
-	function detectUnusedTemplates() : Array<String>
+	function getUsedComponents() : Hash<Int>
 	{
-		var usedFullTags = new Hash<Int>();
+		var userComponents = new Hash<Int>();
 		for (fullTag in templates.keys())
 		{
 			if (fullTag.startsWith(HaqDefines.folders.pages + "."))
 			{
-				detectUnusedTemplates_addToUsed(get(fullTag), usedFullTags);
+				getUsedComponents_addToUsed(get(fullTag), userComponents);
 			}
 		}
-		
-		var r = [];
-		for (fullTag in templates.keys())
-		{
-			if (!usedFullTags.exists(fullTag))
-			{
-				r.push(fullTag);
-			}
-		}
-		return r;
+		return userComponents;
 	}
 	
-	function detectUnusedTemplates_addToUsed(template:HaqTemplate, usedFullTags:Hash<Int>)
+	function getUsedComponents_addToUsed(template:HaqTemplate, userComponents:Hash<Int>)
 	{
-		if (template != null && !usedFullTags.exists(template.fullTag))
+		if (template != null && !userComponents.exists(template.fullTag))
 		{
-			usedFullTags.set(template.fullTag, 1);
+			userComponents.set(template.fullTag, 1);
 			
 			if (template.extend != null && template.extend != "")
 			{
-				detectUnusedTemplates_addToUsed(get(template.extend), usedFullTags);
+				getUsedComponents_addToUsed(get(template.extend), userComponents);
 			}
 			
 			for (require in template.requires)
 			{
-				detectUnusedTemplates_addToUsed(get(require), usedFullTags);
+				getUsedComponents_addToUsed(get(require), userComponents);
 			}
 			
-			for (tag in detectUnusedTemplates_getDocTags(template.doc))
+			for (tag in getUsedComponents_getDocTags(template.doc))
 			{
-				detectUnusedTemplates_addToUsed(findTemplate(template.fullTag, tag), usedFullTags);
+				getUsedComponents_addToUsed(findTemplate(template.fullTag, tag), userComponents);
 			}
 		}
 	}
 	
-	function detectUnusedTemplates_getDocTags(doc:HtmlNodeElement) : Array<String>
+	function getUsedComponents_getDocTags(doc:HtmlNodeElement) : Array<String>
 	{
 		var r = [];
 		for (node in doc.children)
@@ -138,7 +138,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 			{
 				r.push(tagDocToPackage(node.name.substr("haq:".length)));
 			}
-			r = r.concat(detectUnusedTemplates_getDocTags(node));
+			r = r.concat(getUsedComponents_getDocTags(node));
 		}
 		return r;
 	}

@@ -1,14 +1,13 @@
 package haquery.tools.tasks;
 
+import haquery.tools.Publisher;
 import neko.Lib;
 import sys.io.File;
 import haxe.io.Path;
 import haquery.common.HaqDefines;
 import haquery.server.FileSystem;
-import haquery.tools.Excludes;
 import haquery.tools.HaqTemplateManager;
 import haquery.tools.JSMin;
-import haquery.tools.PackageTree;
 import haquery.tools.FlashDevelopProject;
 import haquery.tools.trm.TrmGenerator;
 import haquery.base.HaqTemplateParser.HaqTemplateNotFoundException;
@@ -43,7 +42,7 @@ class Build
 			genImports(manager, project.srcPath);
 			if (noGenCode || genCode())
 			{
-				try { saveLibFolder(); } catch (e:Dynamic) { }
+				try { saveLibFolderFileTimes(); } catch (e:Dynamic) { }
 				if (buildJs(isJsModern, isDeadCodeElimination))
 				{
 					saveTemplatesLastMods(manager);
@@ -68,25 +67,21 @@ class Build
     public function postBuild() : Bool
     {
         log.start("Do post-build step");
-        
-        var excludes = new Excludes(project.libPaths);
-		for (path in project.libPaths)
-		{
-			if (FileSystem.exists(path + "excludes.xml"))
-			{
-				excludes.appendFromFile(path + "excludes.xml");
-			}
-		}
-		
-		var manager = new HaqTemplateManager(project.allClassPaths, log);
-		var reUnusedTemplate = new PackageTree(manager.unusedTemplates).toString();
-		for (path in project.allClassPaths)
-		{
-			var reExclude = "(?:" + excludes.getRegExp(path) + ")|(?:" + (path + reUnusedTemplate).replace(".", "[.]") + ")";
-			hant.copyFolderContent(path, project.binPath, project.platform, "^(?:" + reExclude + ")$");
-		}
-		
-		loadLibFolder();
+			
+			log.start("Prepare");
+				var manager = new HaqTemplateManager(project.allClassPaths, log);
+				var publisher = new Publisher(exeDir, project.platform);
+				for (path in project.allClassPaths)
+				{
+					publisher.prepare(path, manager.fullTags);
+				}
+			log.finishOk();
+			
+			log.start("Publish");
+				publisher.publish(project.binPath);
+			log.finishOk();
+			
+			loadLibFolderFileTimes();
         
         log.finishOk();
 		
@@ -104,11 +99,8 @@ class Build
         var clientClassNames = new Hash<Int>();
 		for (fullTag in manager.getLastMods().keys())
 		{
-			if (!Lambda.has(manager.unusedTemplates, fullTag))
-			{
-				serverClassNames.set(manager.get(fullTag).serverClassName, 1);
-				clientClassNames.set(manager.get(fullTag).clientClassName, 1);
-			}
+			serverClassNames.set(manager.get(fullTag).serverClassName, 1);
+			clientClassNames.set(manager.get(fullTag).clientClassName, 1);
 		}
 		
 		var arrServerClassNames = Lambda.array({ iterator:serverClassNames.keys });
@@ -197,8 +189,8 @@ class Build
 		File.saveContent(
 			 serverPath + "/templates.dat"
 			,Lambda.map(
-				 Lambda.filter({ iterator:lastMods.keys }, function(fullTag) return !Lambda.has(manager.unusedTemplates, fullTag))
-				,function(fullTag) return fullTag + "\t" + Math.round(lastMods.get(fullTag).getTime() / 10000.0)
+				  { iterator:lastMods.keys }
+				, function(fullTag) return fullTag + "\t" + Math.round(lastMods.get(fullTag).getTime() / 10000.0)
 			 ).join("\n")
 		);
 	}
@@ -247,22 +239,22 @@ class Build
 		return true;
 	}
 	
-	function saveLibFolder()
+	function saveLibFolderFileTimes()
 	{
 		if (FileSystem.exists(project.binPath + "/lib"))
 		{
 			log.start("Save file times of the " + project.binPath + "/lib folder");
-			loadLibFolder();
+			loadLibFolderFileTimes();
 			hant.rename(project.binPath + "/lib", project.binPath + "/lib.old");
 			log.finishOk();
 		}
 	}
 
-	function loadLibFolder()
+	function loadLibFolderFileTimes()
 	{
 		if (FileSystem.exists(project.binPath + "/lib.old"))
 		{
-			log.start("Load file times to " + project.binPath + "/lib");
+			log.start("Load lib folder file times");
 			hant.restoreFileTime(project.binPath + "/lib.old", project.binPath + "/lib");
 			hant.deleteDirectory(project.binPath + "/lib.old");
 			log.finishOk();

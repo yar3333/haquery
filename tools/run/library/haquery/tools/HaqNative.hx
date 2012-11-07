@@ -1,12 +1,20 @@
 package haquery.tools;
 
+import haxe.io.Path;
 import neko.Lib;
 
 class HaqNative
 {
-	public static function copyFilePreservingAttributes(src:String, dst:String) : Void
+	static var copy_file_preserving_attributes : Dynamic->Dynamic->Dynamic;
+	
+	public static function copyFilePreservingAttributes(exeDir:String, src:String, dst:String) : Void
 	{
-		var r : Int = Lib.nekoToHaxe(copy_file_preserving_attributes(Lib.haxeToNeko(src), Lib.haxeToNeko(dst)));
+		if (copy_file_preserving_attributes == null)
+		{
+			copy_file_preserving_attributes = Lib.load(exeDir + "haqnative-" + Sys.systemName().toLowerCase(), "copy_file_preserving_attributes", 2);
+		}
+		
+		var r : Int = Lib.nekoToHaxe(copy_file_preserving_attributes(Lib.haxeToNeko(path2native(src)), Lib.haxeToNeko(path2native(dst))));
 		
 		if (r != 0)
 		{
@@ -31,10 +39,13 @@ class HaqNative
 			}
 			else
 			{
-				throw "Error code " + r + ".";
+				throw "Error code is " + r + ".";
 			}
 		}
 	}
-
-	private static var copy_file_preserving_attributes = Lib.loadLazy("haqnative","copy_file_preserving_attributes", 2);
+	
+	static function path2native(s:String) : String
+	{
+		return Sys.systemName() != "Windows" ? s : StringTools.replace(s, "/", "\\");
+	}
 }
