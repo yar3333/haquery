@@ -73,32 +73,18 @@ class Hant
 		}
     }
     
-    public function copyFolderContent(fromFolder:String, toFolder:String, platform:String="", excludeRegExp:String="")
+    /*public function copyFolderContent(fromFolder:String, toFolder:String, platform:String, fullTags:Hash<Int>)
     {
 		fromFolder = fromFolder.replace('\\', '/').rtrim('/');
         toFolder = toFolder.replace('\\', '/').rtrim('/');
 		
 		log.start("Copy directory '" + fromFolder + "' => '" + toFolder + "'");
         
-		run(exeDir + "copyfolder.exe", [ fromFolder.replace("/", "\\"), toFolder.replace("/", "\\"), platform, excludeRegExp ]);
+		CopyTools.copySrcToBin(exeDir, fromFolder, toFolder, platform, fullTags);
 		
 		log.finishOk();
-    }
-    
-    /*public function copyFile(src:String, dst:String)
-    {
-        log.start("Copy file '" + src + "' => '" + dst + "'");
-        try
-        {
-            File.copy(src, dst);
-            log.finishOk();
-        }
-        catch (message:String)
-        {
-            log.finishFail(message);
-        }
     }*/
-    
+	
     public function rename(path:String, newpath:String)
     {
         log.start("Rename '" + path + "' => '" + newpath + "'");

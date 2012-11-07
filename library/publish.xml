@@ -1,0 +1,4 @@
+<publish>
+	<file src=".htaccess--neko" dest=".htaccess" platform="neko" />
+	<file src=".htaccess--php" dest=".htaccess" platform="php" />
+</publish>
