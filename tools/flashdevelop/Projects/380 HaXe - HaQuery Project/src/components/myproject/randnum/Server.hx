@@ -1,8 +1,6 @@
 package components.myproject.randnum;
 
-import haquery.server.HaqComponent;
-
-class Server extends HaqComponent
+class Server extends BaseServer
 {
 	function preRender()
 	{

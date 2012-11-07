@@ -1,12 +1,9 @@
 package $(Package);
 
 import haquery.server.Lib;
-import haquery.server.HaqComponent;
 
-class $(FileName) extends HaqComponent
+class Server extends BaseServer
 {
-    //var template : TemplateServer;
-    
 	function init()
     {
         if (!Lib.isPostback)
