@@ -40,7 +40,7 @@ class Build
 			var manager = new HaqTemplateManager(project.allClassPaths, log);
 			genTrm(manager);
 			genImports(manager, project.srcPath);
-			if (noGenCode || genCode())
+			if (noGenCode || (genCodeFromClient(project) && genCodeFromServer(project)))
 			{
 				try { saveLibFolderFileTimes(); } catch (e:Dynamic) { }
 				if (buildJs(isJsModern, isDeadCodeElimination))
@@ -59,7 +59,6 @@ class Build
 		{
 			log.finishFail("ERROR: recursive extend detected [ " + e.toString() + " ].");
 		}
-		
 		
 		return false;
     }
@@ -268,8 +267,36 @@ class Build
 		}
 	}
 	
-	public function genCode()
+	public function genCode() : Bool
 	{
-		return genCodeFromClient(project) && genCodeFromServer(project);
+        log.start("Generate shared and another methods");
+		
+		try
+		{
+			var manager = new HaqTemplateManager(project.allClassPaths, log);
+			genTrm(manager);
+			genImports(manager, project.srcPath);
+			var r = genCodeFromClient(project) && genCodeFromServer(project);
+			if (r)
+			{
+				log.finishOk();
+			}
+			else
+			{
+				try { log.finishFail("ERROR: compilation."); }
+				catch (e:Dynamic) {}
+			}
+			return r;
+		}
+		catch (e:HaqTemplateNotFoundException)
+		{
+			log.finishFail("ERROR: component not found [ " + e.toString() + " ].");
+			return false;
+		}
+		catch (e:HaqTemplateRecursiveExtendException)
+		{
+			log.finishFail("ERROR: recursive extend detected [ " + e.toString() + " ].");
+			return false;
+		}
 	}
 }
