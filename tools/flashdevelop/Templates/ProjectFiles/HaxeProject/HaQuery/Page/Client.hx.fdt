@@ -1,12 +1,9 @@
 package $(Package);
 
 import haquery.client.Lib;
-import haquery.client.HaqPage;
 
-class $(FileName) extends HaqPage
+class Client extends BaseClient
 {
-    //var template : TemplateClient;
-    
     function init()
     {
         $(EntryPoint)
