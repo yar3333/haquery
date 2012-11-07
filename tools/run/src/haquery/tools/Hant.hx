@@ -19,29 +19,32 @@ class Hant
 		this.exeDir = exeDir;
     }
     
-    public function findFiles(path:String, ?isIncludeFile:String->Bool, ?isCheckDir:String->Bool) : Array<String>
+    public function findFiles(path:String, ?onFile:String->Void, ?onDir:String->Bool) : Void
     {
-        var r = new Array<String>();
-        
-        for (file in FileSystem.readDirectory(path))
-        {
-			if (FileSystem.isDirectory(path + '/' + file))
+		if (FileSystem.exists(path))
+		{
+			if (FileSystem.isDirectory(path))
 			{
-				if (isCheckDir == null || isCheckDir(path + '/' + file))
+				for (file in FileSystem.readDirectory(path))
 				{
-					r = r.concat(findFiles(path + '/' + file, isIncludeFile, isCheckDir));
+					if (FileSystem.isDirectory(path + '/' + file))
+					{
+						if (onDir == null || onDir(path + '/' + file))
+						{
+							findFiles(path + '/' + file, onFile, onDir);
+						}
+					}
+					else
+					{
+						if (onFile != null) onFile(path + '/' + file);
+					}
 				}
 			}
 			else
 			{
-				if (isIncludeFile == null || isIncludeFile(path + '/' + file))
-				{
-					r.push(path + '/' + file);
-				}
+				if (onFile != null) onFile(path);
 			}
-        }
-        
-        return r;
+		}
     }
     
     public function createDirectory(path:String)
@@ -73,19 +76,22 @@ class Hant
 		}
     }
     
-    /*public function copyFolderContent(fromFolder:String, toFolder:String, platform:String, fullTags:Hash<Int>)
+    public function copyFolderContent(src:String, dest:String)
     {
-		fromFolder = fromFolder.replace('\\', '/').rtrim('/');
-        toFolder = toFolder.replace('\\', '/').rtrim('/');
+		src = src.replace('\\', '/').rtrim('/');
+        dest = dest.replace('\\', '/').rtrim('/');
 		
-		log.start("Copy directory '" + fromFolder + "' => '" + toFolder + "'");
+		log.start("Copy directory '" + src + "' => '" + dest + "'");
         
-		CopyTools.copySrcToBin(exeDir, fromFolder, toFolder, platform, fullTags);
+		findFiles(src, function(path)
+		{
+			HaqNative.copyFilePreservingAttributes(exeDir, path, dest + path.substr(src.length));
+		});
 		
 		log.finishOk();
-    }*/
-	
-    public function rename(path:String, newpath:String)
+    }
+    
+	public function rename(path:String, newpath:String)
     {
         log.start("Rename '" + path + "' => '" + newpath + "'");
         try
@@ -244,9 +250,19 @@ class Hant
         return content;
     }*/
 	
-	public function restoreFileTime(fromPath:String, toPath:String)
+	public function restoreFileTimes(src:String, dest:String, ?filter:EReg)
 	{
-		run(exeDir + "restorefiletime.exe", [ fromPath.replace('/', '\\'), toPath.replace('/', '\\') ]);
+		findFiles(src, function(srcFile)
+		{
+			if (filter == null || filter.match(srcFile))
+			{
+				var destFile = dest + srcFile.substr(src.length);
+				if (File.getContent(srcFile) == File.getContent(destFile))
+				{
+					rename(srcFile, destFile);
+				}
+			}
+		});
 	}
 	
 	public function getHaxePath()

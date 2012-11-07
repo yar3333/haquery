@@ -88,7 +88,7 @@ class Build
 		return true;
     }
     
-	function genImports(manager:HaqTemplateManager, srcPath:String)
+	function genImports(manager:HaqTemplateManager, src:String)
     {
         log.start("Generate imports to 'gen/Imports.hx'");
         
@@ -110,7 +110,7 @@ class Build
 		arrClientClassNames.sort(strcmp);
 		
 		fo.writeString("#if !client\n\n");
-		fo.writeString(Lambda.map(findBootstrapClassNames(HaqDefines.folders.pages, srcPath), function(s) return "import " + s + ";").join('\n'));
+		fo.writeString(Lambda.map(findBootstrapClassNames(src, HaqDefines.folders.pages), function(s) return "import " + s + ";").join('\n'));
 		fo.writeString("\n");
 		fo.writeString("\n");
 		fo.writeString(Lambda.map(arrServerClassNames, function(s) return "import " + s + ";").join('\n'));
@@ -129,10 +129,17 @@ class Build
 		return a < b ? -1 : 1;
     }
 	
-	function findBootstrapClassNames(path:String, srcPath:String) : List<String>
+	function findBootstrapClassNames(basePath:String, relPath:String) : Array<String>
 	{
-		var files = hant.findFiles(srcPath + path, function(s) return s.endsWith("/Bootstrap.hx"));
-		return Lambda.map(files, function(s) return s.substr(srcPath.length, s.length - srcPath.length - ".hx".length).replace("/", "."));
+		var r = [];
+		hant.findFiles(basePath + relPath, function(path)
+		{
+			if (path.endsWith("/Bootstrap.hx"))
+			{
+				r.push(path.substr(basePath.length, path.length - basePath.length - ".hx".length).replace("/", "."));
+			}
+		});
+		return r;
 	}
 	
 	function buildJs(isJsModern:Bool, isDeadCodeElimination:Bool) : Bool
@@ -158,7 +165,7 @@ class Build
 		if (FileSystem.exists(clientPath + "/haquery.js")
 		 && FileSystem.exists(clientPath + "/haquery.js.old"))
 		{
-			hant.restoreFileTime(clientPath + "/haquery.js.old", clientPath + "/haquery.js");
+			hant.restoreFileTimes(clientPath + "/haquery.js.old", clientPath + "/haquery.js");
 			hant.deleteFile(clientPath + "/haquery.js.old");
 		}
 		
@@ -255,7 +262,7 @@ class Build
 		if (FileSystem.exists(project.binPath + "/lib.old"))
 		{
 			log.start("Load lib folder file times");
-			hant.restoreFileTime(project.binPath + "/lib.old", project.binPath + "/lib");
+			hant.restoreFileTimes(project.binPath + "/lib.old", project.binPath + "/lib", ~/[.](?:php|js)/i);
 			hant.deleteDirectory(project.binPath + "/lib.old");
 			log.finishOk();
 		}
