@@ -34,7 +34,7 @@ class Main
 			{
 				case 'gen-orm': 
 					var project = new FlashDevelopProject("", exeDir);
-					var databaseConnectionString = args.length > 1 ? args[1] : new HaqConfig(project.srcPath + "config.xml").databaseConnectionString;
+					var databaseConnectionString = args.length > 0 ? args[0] : new HaqConfig(project.srcPath + "config.xml").databaseConnectionString;
 					if (databaseConnectionString != null && databaseConnectionString != "")
 					{
 						tasks.genOrm(databaseConnectionString, project);
