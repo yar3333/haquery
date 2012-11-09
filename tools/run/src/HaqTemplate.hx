@@ -1,4 +1,4 @@
-package haquery.tools;
+package ;
 
 import haxe.htmlparser.HtmlDocument;
 

@@ -1,4 +1,4 @@
-package haquery.tools;
+package ;
 
 import haquery.base.HaqTemplateParser.HaqTemplateNotFoundException;
 import haquery.base.HaqTemplateParser.HaqTemplateNotFoundCriticalException;

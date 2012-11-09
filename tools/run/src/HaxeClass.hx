@@ -1,4 +1,4 @@
-package haquery.tools;
+package ;
 
 using haquery.StringTools;
 

@@ -1,4 +1,4 @@
-package haquery.tools;
+package ;
 
 class HaqTemplateConfig extends haquery.server.HaqTemplateConfig
 {

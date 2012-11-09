@@ -1,29 +1,26 @@
-package haquery.tools.tasks;
+package ;
 
 import neko.Lib;
 import neko.zip.Reader;
-import haquery.server.FileSystem;
 import haxe.io.Path;
 import sys.io.File;
-
-import haquery.tools.Log;
-import haquery.tools.Hant;
-
+import sys.FileSystem;
+import hant.Log;
+import hant.Hant;
+import hant.PathTools;
 using haquery.StringTools;
 
 class Setup 
 {
-	var exeDir : String;
-	
 	var log : Log;
     var hant : Hant;
+	var exeDir : String;
     
-	public function new(exeDir:String)
+	public function new(log:Log, hant:Hant, exeDir:String)
 	{
-		this.exeDir = exeDir.replace('\\', '/').rtrim('/') + '/';
-        
-		log = new Log(2);
-        hant = new Hant(log, this.exeDir);
+		this.log = log;
+		this.hant = hant;
+		this.exeDir = PathTools.path2normal(exeDir) + "/";
 	}
 	
 	public function install()
@@ -62,7 +59,7 @@ class Setup
 			}
 			catch (e:String)
 			{
-				log.print(e);
+				log.trace(e);
 			}
 		}
     }
