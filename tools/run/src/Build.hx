@@ -1,34 +1,32 @@
-package haquery.tools.tasks;
+package ;
 
-import haquery.tools.Publisher;
+import hant.Log;
+import hant.Hant;
+import hant.PathTools;
+import hant.Process;
 import neko.Lib;
 import sys.io.File;
 import haxe.io.Path;
 import haquery.common.HaqDefines;
 import haquery.server.FileSystem;
-import haquery.tools.HaqTemplateManager;
-import haquery.tools.JSMin;
-import haquery.tools.FlashDevelopProject;
-import haquery.tools.trm.TrmGenerator;
 import haquery.base.HaqTemplateParser.HaqTemplateNotFoundException;
 import haquery.base.HaqTemplateParser.HaqTemplateRecursiveExtendException;
 using haquery.StringTools;
 
 class Build 
 {
-	var exeDir : String;
-    
 	var log : Log;
     var hant : Hant;
+	var exeDir : String;
+    
 	var project : FlashDevelopProject;
 
-	public function new(exeDir:String) 
+	public function new(log:Log, hant:Hant, exeDir:String) 
 	{
-		this.exeDir = exeDir.replace('\\', '/').rtrim('/') + '/';
-        
-		log = new Log(2);
-        hant = new Hant(log, this.exeDir);
-		project = new FlashDevelopProject('.', this.exeDir);
+		this.log = log;
+		this.hant = hant;
+		this.exeDir = PathTools.path2normal(exeDir) + "/";
+		project = new FlashDevelopProject("");
 	}
 	
 	public function preBuild(noGenCode:Bool, isJsModern:Bool, isDeadCodeElimination:Bool)
@@ -69,7 +67,7 @@ class Build
 			
 			log.start("Prepare");
 				var manager = new HaqTemplateManager(project.allClassPaths, log);
-				var publisher = new Publisher(exeDir, project.platform);
+				var publisher = new Publisher(log, hant, project.platform);
 				for (path in project.allClassPaths)
 				{
 					publisher.prepare(path, manager.fullTags);
@@ -157,7 +155,7 @@ class Build
         var params = project.getBuildParams("js", clientPath + "/haquery.js", [ "noEmbedJS", "client" ]);
 		if (isJsModern) params.push("--js-modern");
 		if (isDeadCodeElimination) params.push("--dead-code-elimination");
-		var r = hant.run(hant.getHaxePath() + "haxe.exe", params);
+		var r = Process.run(hant.getHaxePath() + "haxe.exe", params);
 		Lib.print(r.stdOut);
 		Lib.print(r.stdErr);
         
@@ -217,7 +215,7 @@ class Build
 		log.start("Generate code from client");
 		hant.createDirectory(Path.directory(tempPath));
 		var params = project.getBuildParams("js", tempPath, [ "noEmbedJS", "client", "haqueryGenCode" ]);
-		var r = hant.run(hant.getHaxePath() + "haxe.exe", params);
+		var r = Process.run(hant.getHaxePath() + "haxe.exe", params);
 		hant.deleteFile(tempPath);
 		hant.deleteFile(tempPath + ".map");
 		Lib.print(r.stdOut);
@@ -235,7 +233,7 @@ class Build
 		log.start("Generate code from server");
 		hant.createDirectory(Path.directory(tempPath));
 		var params = project.getBuildParams(project.platform.toLowerCase(), tempPath, [ "haqueryGenCode" ]);
-		var r = hant.run(hant.getHaxePath() + "haxe.exe", params);
+		var r = Process.run(hant.getHaxePath() + "haxe.exe", params);
 		hant.deleteFile(tempPath);
 		Lib.print(r.stdOut);
 		Lib.print(r.stdErr);

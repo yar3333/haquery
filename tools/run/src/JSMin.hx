@@ -50,8 +50,6 @@ Update:
 		jsmin.newSize
 */
 
-package haquery.tools;
-
 class JSMin 
 {
 	private static var _EOF:String = null;

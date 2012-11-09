@@ -1,8 +1,10 @@
-package haquery.tools;
+package ;
 
+import hant.PathTools;
+import hant.Process;
 import haquery.server.FileSystem;
-import haquery.Std;
 import sys.io.File;
+import haquery.Std;
 using haquery.StringTools;
 
 class FlashDevelopProject 
@@ -16,7 +18,7 @@ class FlashDevelopProject
 	public var platform(default, null) : String;
 	public var additionalCompilerOptions(default, null) : Array<String>;
 	
-	public function new(dir:String, exeDir:String) 
+	public function new(dir:String) 
 	{
 		var projectFilePath = findProjectFile(dir);
 		if (projectFilePath == null)
@@ -28,7 +30,7 @@ class FlashDevelopProject
 		
 		binPath = getBinPath(xml);
 		classPaths = getClassPaths(xml);
-		libPaths = getLibPaths(xml, exeDir);
+		libPaths = getLibPaths(xml);
 		allClassPaths = Lambda.array(libPaths).concat(classPaths);
 		isDebug = getIsDebug(xml);
 		srcPath = getSrcPath(xml);
@@ -96,7 +98,7 @@ class FlashDevelopProject
 		return r;
     }
 	
-    function getLibPaths(xml:Xml, exeDir:String) : Hash<String>
+    function getLibPaths(xml:Xml) : Hash<String>
     {
         var r = new Hash<String>();
 		var fast = new haxe.xml.Fast(xml.firstElement());
@@ -114,9 +116,7 @@ class FlashDevelopProject
 			}
 		}
 		
-		var hant = new Hant(new Log(0), exeDir);
-		var haxelib = Sys.environment().get("HAXEPATH").replace("\\", "/").rtrim("/") + "/haxelib.exe";
-		var lines = hant.run(haxelib, [ "path" ].concat(libs)).stdOut.split("\n");
+		var lines = Process.run(PathTools.path2normal(Sys.environment().get("HAXEPATH")) + "/haxelib.exe", [ "path" ].concat(libs)).stdOut.split("\n");
 		for (i in 0...lines.length)
 		{
 			if (lines[i].startsWith("-D "))

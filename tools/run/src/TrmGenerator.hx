@@ -1,14 +1,11 @@
-package haquery.tools.trm;
+package ;
 
-import haquery.tools.Hant;
-import haquery.tools.HaqTemplate;
-import haquery.tools.HaqTemplateManager;
-import haquery.tools.HaxeClass;
+import hant.Hant;
 import haxe.io.Path;
 import haxe.htmlparser.HtmlNodeElement;
 import sys.FileSystem;
 import sys.io.File;
-
+import HaxeClass;
 using haquery.StringTools;
 
 enum HaxeClassField

@@ -1,9 +1,9 @@
-package haquery.tools;
+package ;
 
+import hant.Log;
 import haquery.base.HaqTemplateParser.HaqTemplateNotFoundException;
 import haquery.common.HaqDefines;
 import haquery.server.FileSystem;
-import haquery.tools.HaqTemplate;
 import haxe.htmlparser.HtmlNodeElement;
 using haquery.StringTools;
 
@@ -66,7 +66,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		
 		if (!pathWasFound)
 		{
-			log.print("WARNING: imported components package '" + pack + "' not found.");
+			log.trace("WARNING: imported components package '" + pack + "' not found.");
 		}
 	}
 	

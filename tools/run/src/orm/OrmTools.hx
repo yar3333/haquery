@@ -1,8 +1,6 @@
-package haquery.tools.orm;
+package orm;
 
-import haquery.tools.orm.HaxeClass;
 import haquery.server.db.HaqDbDriver;
-
 using haquery.StringTools;
 
 class OrmTools 
@@ -38,7 +36,7 @@ class OrmTools
 		return 'String';
 	}
 	
-	public static function createVar(haxeName:String, haxeType:String, haxeDefVal:String = null) : HaxeVar
+	public static function createVar(haxeName:String, haxeType:String, haxeDefVal:String = null) : OrmHaxeVar
 	{
 		return {
 			 haxeName : haxeName
@@ -52,7 +50,7 @@ class OrmTools
 		};
 	}
 	
-	static function field2var(f:HaqDbTableFieldData) : HaxeVar
+	static function field2var(f:HaqDbTableFieldData) : OrmHaxeVar
 	{ 
 		return {
 			 haxeName : f.name
@@ -67,7 +65,7 @@ class OrmTools
 		};
 	}
 	
-	public static function fields2vars(fields:Iterable<HaqDbTableFieldData>) : List<HaxeVar>
+	public static function fields2vars(fields:Iterable<HaqDbTableFieldData>) : List<OrmHaxeVar>
 	{
 		return Lambda.map(fields, OrmTools.field2var);
 	}
