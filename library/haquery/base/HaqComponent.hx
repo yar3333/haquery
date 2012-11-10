@@ -61,7 +61,7 @@ private typedef Page = haquery.client.HaqPage;
 		components = new Hash<Component>();
 		nextAnonimID = 0;
 		
-		var templateClass = haquery.base.HaqComponentTools.getTemplateClass(Type.getClass(this));
+		var templateClass = haquery.common.HaqComponentTools.getTemplateClass(Type.getClass(this));
 		if (templateClass != null)
 		{
 			Reflect.setField(this, "_template", Type.createInstance(templateClass, [ this ]));
