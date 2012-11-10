@@ -1,6 +1,7 @@
 package ;
 
 import hant.Log;
+import haquery.base.HaqComponentTools;
 import haquery.base.HaqTemplateParser.HaqTemplateNotFoundException;
 import haquery.common.HaqDefines;
 import haquery.server.FileSystem;
@@ -136,7 +137,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		{
 			if (node.name.startsWith("haq:"))
 			{
-				r.push(tagDocToPackage(node.name.substr("haq:".length)));
+				r.push(HaqComponentTools.tag2pack(node.name.substr("haq:".length)));
 			}
 			r = r.concat(getUsedComponents_getDocTags(node));
 		}

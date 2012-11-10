@@ -1,5 +1,7 @@
 package haquery.base;
 
+import haquery.common.HaqDefines;
+
 class HaqComponentTools 
 {
 	public static function getTemplateClass(componentClass:Class<Dynamic>) : Class<Dynamic>
@@ -27,5 +29,12 @@ class HaqComponentTools
 		}
 		
 		return null;
+	}
+	
+	public static function tag2pack(tag:String) : String
+	{
+		var n = tag.indexOf("-");
+		if (n < 0) return tag;
+		return HaqDefines.folders.components + "." + StringTools.replace(tag, "-", ".");
 	}
 }

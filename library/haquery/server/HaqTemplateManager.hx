@@ -1,5 +1,6 @@
 package haquery.server;
 
+import haquery.base.HaqComponentTools;
 import haquery.common.HaqDefines;
 import haquery.Exception;
 import haquery.server.FileSystem;
@@ -198,8 +199,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
             
             if (node.name.startsWith('haq:'))
             {
-				var tag = tagDocToPackage(node.name.substr('haq:'.length));
-				r.push(createComponent(parent, tag, node.getAttribute('id'), node.getAttributesAssoc(), node, isCustomRender));
+				r.push(createComponent(parent, HaqComponentTools.tag2pack(node.name.substr('haq:'.length)), node.getAttribute('id'), node.getAttributesAssoc(), node, isCustomRender));
             }
 			else
 			{
