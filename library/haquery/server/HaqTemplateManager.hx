@@ -1,6 +1,6 @@
 package haquery.server;
 
-import haquery.base.HaqComponentTools;
+import haquery.common.HaqComponentTools;
 import haquery.common.HaqDefines;
 import haquery.Exception;
 import haquery.server.FileSystem;
