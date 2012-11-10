@@ -2,12 +2,13 @@ package haquery.common;
 
 class HaqDefines 
 {
-	public static inline var VERSION = 3.0;
+	public static inline var VERSION = 5.0;
 	
 	public static var folders = {
-		 pages : 'pages'
-		,support : 'support'
-		,temp : 'temp'
+		  pages : 'pages'
+		, components : 'components'
+		, support : 'support'
+		, temp : 'temp'
 	};
 	
 	/**

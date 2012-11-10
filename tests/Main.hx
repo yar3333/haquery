@@ -1,5 +1,11 @@
 import Imports;
 
+#if php
+import php.Lib;
+#elseif neko
+import neko.Lib;
+#end
+
 class Main
 {
     static function main()
@@ -11,9 +17,9 @@ class Main
 		r.add(new models.HaqQueryTest());
 		r.add(new models.HaqTemplatesTest());
 		
-		php.Lib.println("<pre>");
+		Lib.println("<pre>");
 		r.run();
-		php.Lib.println("</pre>");
+		Lib.println("</pre>");
 		
 		#end
 	}

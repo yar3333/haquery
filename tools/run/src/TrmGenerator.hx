@@ -1,6 +1,7 @@
 package ;
 
 import hant.Hant;
+import haquery.base.HaqComponentTools;
 import haxe.io.Path;
 import haxe.htmlparser.HtmlNodeElement;
 import sys.FileSystem;
@@ -156,7 +157,7 @@ class TrmGenerator
 					var body = "return component.q('#" + componentID + "');";
 					if (child.name.startsWith("haq:"))
 					{
-						var tag = manager.tagDocToPackage(child.name.substr("haq:".length));
+						var tag = HaqComponentTools.tag2pack(child.name.substr("haq:".length));
 						var template = manager.findTemplate(fullTag, tag);
 						if (template == null)
 						{
@@ -195,7 +196,7 @@ class TrmGenerator
 	{
 		if (nodeName.startsWith("haq:"))
 		{
-			var tag = manager.tagDocToPackage(nodeName.substr("haq:".length));
+			var tag = HaqComponentTools.tag2pack(nodeName.substr("haq:".length));
 			var template = manager.findTemplate(fullTag, tag);
 			
 			while (template != null)

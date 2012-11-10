@@ -15,6 +15,7 @@
   </output>
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
+    <class path="gen" />
     <class path="library" />
     <class path="tests" />
   </classpaths>

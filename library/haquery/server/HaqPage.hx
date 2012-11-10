@@ -126,7 +126,7 @@ class HaqPage extends HaqComponent
 		}
 	}
 	
-	override function render() : String 
+	override public function render() : String 
 	{
         Lib.profiler.begin("preRender");
 		forEachComponent('preRender');

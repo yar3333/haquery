@@ -112,7 +112,7 @@ using haquery.StringTools;
 		}
 	}
 
-    function render() : String
+    public function render() : String
     {
 		if (!visible)
 		{
