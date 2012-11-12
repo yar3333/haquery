@@ -200,7 +200,7 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser<HaqTemplateConfig
 				i++;
 			}
 			
-			setDocComponentParents(doc);
+			setDocComponentsParent(doc);
 			
 			return { doc:doc, css:css };
 		}
@@ -227,7 +227,7 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser<HaqTemplateConfig
 		return text;
 	}
 	
-	function setDocComponentParents(doc:HtmlNodeElement)
+	function setDocComponentsParent(doc:HtmlNodeElement)
 	{
 		for (node in doc.children)
 		{
