@@ -1,5 +1,7 @@
 package haquery.server;
 
+import haxe.Serializer;
+import haxe.Unserializer;
 import sys.io.File;
 import haquery.Exception;
 import haxe.htmlparser.HtmlDocument;
@@ -113,67 +115,44 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser<HaqTemplateConfig
 		return config.extend;
 	}
 	
-	
-	function expandSupportUrls(doc:HtmlNodeElement)
+	public function getImports() : Array<String>
 	{
-		for (node in doc.children)
-		{
-			var attrs = node.getAttributesAssoc();
-			for (name in attrs.keys())
-			{
-				if (reSupportUrl.match(name))
-				{
-					var value = reSupportUrl.customReplace(attrs.get(name), function(re)
-					{
-						var f = getSupportFilePath(re.matched(1));
-						return f != null ? '/' + f : re.matched(0);
-					});
-					node.setAttribute(name, value);
-				}
-			}
-		}
+		return config.imports;
 	}
 	
 	public function getDocAndCss() : { doc:HtmlDocument, css:String }
 	{
-        var text = getDocText();
+		var doc = new HtmlDocument();
+		var css = "";
 		
+		var parsers = [ this ];
+		var p = this;
+		while ((p = p.getParentParser()) != null)
+		{
+			parsers.push(p);
+		}
 		
-		var reSupportFileUrl = new EReg("~/([-_/\\.a-zA-Z0-9]*)", "");
-        text = reSupportFileUrl.customReplace(text, function(re)
-        {
-            var f = getSupportFilePath(re.matched(1));
-            return f != null ? '/' + f : re.matched(0);
-        });
-
-		var doc = new HtmlDocument(text);
-        
+		while (parsers.length > 0)
+		{
+			var p = parsers.pop();
+			var raw = p.getRawDocAndCss();
+			for (node in raw.doc.nodes)
+			{
+				doc.addChild(Unserializer.run(Serializer.run(node)));
+			}
+			css += raw.css;
+		}
+		
+		resolveSupportUrls(doc);
 		resolvePlaceHolders(doc);
 		
 		var cssGlobalizer = new HaqCssGlobalizer(fullTag);
-        
-		var css = '';
-		var i = 0; 
-		while (i < doc.children.length)
-		{
-			var node : HtmlNodeElement = doc.children[i];
-			if (node.name == 'style' && !node.hasAttribute('id'))
-			{
-				Lib.assert(node.getAttribute('type') != "text/less", "Less compiler is no more supported.");
-				
-				css += cssGlobalizer.styles(node.innerHTML);
-				
-				node.remove();
-				i--;
-			}
-			i++;
-		}
 		
 		cssGlobalizer.doc(doc);
+		css = cssGlobalizer.styles(css);
 		
 		return { doc:doc, css:css };
 	}
-	
 	
 	function getRawDocAndCss() : { doc:HtmlDocument, css:String }
 	{
@@ -191,16 +170,12 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser<HaqTemplateConfig
 				if (node.name == "style" && !node.hasAttribute("id"))
 				{
 					Lib.assert(node.getAttribute("type") != "text/less", "Less compiler is no more supported.");
-					
 					css += node.innerHTML;
-					
 					node.remove();
 					i--;
 				}
 				i++;
 			}
-			
-			setDocComponentsParent(doc);
 			
 			return { doc:doc, css:css };
 		}
@@ -208,41 +183,31 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser<HaqTemplateConfig
 		return null;
 	}
 	
-	function getDocText() : String
-	{
-		var text = "";
-		
-		var parentParser = getParentParser();
-		if (parentParser != null)
-		{
-			text += parentParser.getDocText();
-		}
-		
-		var path = getFullPath(fullTag.replace(".", "/") + "/template.html");
-		if (path != null)
-		{
-			text += File.getContent(path);
-		}
-		
-		return text;
-	}
-	
-	function setDocComponentsParent(doc:HtmlNodeElement)
+	function resolveSupportUrls(doc:HtmlNodeElement)
 	{
 		for (node in doc.children)
 		{
-			if (node.name.startsWith("haq:"))
+			var attrs = node.getAttributesAssoc();
+			for (name in attrs.keys())
 			{
-				node.setAttribute("__parent", fullTag);
+				if (reSupportUrl.match(name))
+				{
+					var value = reSupportUrl.customReplace(attrs.get(name), function(re)
+					{
+						var f = getSupportFilePath(re.matched(1));
+						return f != null ? "/" + f : re.matched(0);
+					});
+					node.setAttribute(name, value);
+				}
 			}
 		}
 	}
 	
 	function resolvePlaceHolders(doc:HtmlDocument)
 	{
-        var placeholders = doc.find('haq:placeholder');
+        var placeholders = doc.find("haq:placeholder");
         
-		var contents = doc.find('>haq:content');
+		var contents = doc.find(">haq:content");
 		contents.reverse();
 		
         for (ph in placeholders)
@@ -250,7 +215,7 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser<HaqTemplateConfig
             var content : HtmlNodeElement = null;
             for (c in contents) 
             {
-                if (c.getAttribute('id') == ph.getAttribute('id'))
+                if (c.getAttribute("id") == ph.getAttribute("id"))
                 {
                     content = c;
                     break;

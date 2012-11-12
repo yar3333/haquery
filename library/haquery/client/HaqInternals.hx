@@ -9,7 +9,7 @@ import haxe.Unserializer;
 	 * Setted by the server.
 	 * 
 	 * fullTag => { 
-	 * 					  config: [ extend, import_0, import_1, ... ]
+	 * 					  extend: <extend>
 	 * 					, serverHandlers: { 
 	 * 											  elemID_0 => [ event_00, event_01, ... ]
 	 * 											, elemID_1 => [ event_10, event_11, ... ]
@@ -17,7 +17,7 @@ import haxe.Unserializer;
 	 * 									  }
 	 * 			  }
 	 */
-	public static var templates(default, null) : Hash<{ config:Array<String>, serverHandlers:Hash<Array<String>> }>;
+	public static var templates(default, null) : Hash<{ extend:String, serverHandlers:Hash<Array<String>> }>;
 	
 	/**
 	 * Setted by the server.
@@ -59,8 +59,8 @@ import haxe.Unserializer;
     
 	public static function getTemplateConfig(fullTag:String) : HaqTemplateConfig
 	{
-		var component = templates.get(fullTag);
-		return new HaqTemplateConfig(component.config[0], component.config.slice(1));
+		var template = templates.get(fullTag);
+		return new HaqTemplateConfig(template.extend);
 	}
 	
 	public static function addComponent(fullTag:String, fullID:String)

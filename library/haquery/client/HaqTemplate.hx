@@ -13,7 +13,7 @@ class HaqTemplate extends haquery.base.HaqTemplate
 	{
 		var parser = new HaqTemplateParser(fullTag);
 		
-		super(fullTag, parser.getImports());
+		super(fullTag);
 		
 		clientClassName = parser.getClassName();
 		serverHandlers = parser.getServerHandlers();

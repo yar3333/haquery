@@ -4,12 +4,14 @@ import haxe.htmlparser.HtmlDocument;
 
 class HaqTemplateConfig extends haquery.base.HaqTemplateConfig
 {
-	public var maps(default, null) : Hash<String>;
+	public var imports(default, null) : Array<String>;
+	public var maps(default, null) : Hash<Array<String>>;
 	
 	public function new(base:HaqTemplateConfig, xml:HtmlDocument)
 	{
-		super(base != null ? base.extend : null, []);
-		maps = base != null ? base.maps : new Hash<String>();
+		super(base != null ? base.extend : null);
+		imports = [];
+		maps = base != null ? base.maps : new Hash<Array<String>>();
 		
 		if (xml != null)
 		{
@@ -34,9 +36,18 @@ class HaqTemplateConfig extends haquery.base.HaqTemplateConfig
 			var mapComponentNodes = xml.find(">config>maps>component");
 			for (mapComponentNode in mapComponentNodes)
 			{
-				if (mapComponentNode.hasAttribute("from") && mapComponentNode.hasAttribute("to"))
+				if (mapComponentNode.hasAttribute("tag") && mapComponentNode.hasAttribute("package"))
 				{
-					maps.set(mapComponentNode.getAttribute("from"), mapComponentNode.getAttribute("to"));
+					var tag = mapComponentNode.getAttribute("tag");
+					var pack = mapComponentNode.getAttribute("package");
+					if (!maps.exists(tag))
+					{
+						maps.set(tag, [ pack ]);
+					}
+					else
+					{
+						maps.get(tag).push(pack);
+					}
 				}
 			}
 		}

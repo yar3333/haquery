@@ -24,12 +24,14 @@ class HaqTemplate extends haquery.base.HaqTemplate
 	public var lastMod(default, null) : Date;
 	public var requires(default, null) : Array<String>;
 	public var extend(default, null) : String;
+	public var imports(default, null) : Array<String>;
+	public var maps(default, null) : Hash<Array<String>>;
 	
 	public function new(classPaths:Array<String>, fullTag:String) 
 	{
 		var parser = new HaqTemplateParser(classPaths, fullTag, []);
 		
-		super(fullTag, parser.getImports());
+		super(fullTag);
 		
 		doc = parser.getDocAndCss().doc;
 		
@@ -51,5 +53,7 @@ class HaqTemplate extends haquery.base.HaqTemplate
 		lastMod = parser.getLastMod();
 		requires = parser.getRequires();
 		extend = parser.getExtend();
+		imports = parser.getImports();
+		maps = parser.getMaps();
 	}
 }

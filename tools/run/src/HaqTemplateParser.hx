@@ -7,6 +7,7 @@ import haquery.common.HaqDefines;
 import haquery.server.FileSystem;
 import haquery.server.HaqConfig;
 import haxe.htmlparser.HtmlDocument;
+import haxe.htmlparser.HtmlNodeElement;
 using StringTools;
 
 class HaqTemplateParser extends haquery.server.HaqTemplateParser
@@ -199,4 +200,24 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 			? parentParser.getClientClassName() 
 			: (fullTag.startsWith("pages.") ? "haquery.client.HaqPage" : "haquery.client.HaqComponent");
 	}
+	
+	override private function getRawDocAndCss() : { doc:HtmlDocument, css:String } 
+	{
+		var r = super.getRawDocAndCss();
+		setDocComponentsParent(r.doc);
+		return r;
+	}
+	
+	function setDocComponentsParent(doc:HtmlNodeElement)
+	{
+		for (node in doc.children)
+		{
+			if (node.name.startsWith("haq:"))
+			{
+				node.setAttribute("__parent", fullTag);
+			}
+		}
+	}
+	
+	public function getMaps() return config.maps
 }

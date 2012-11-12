@@ -20,6 +20,11 @@ class HaqTemplateManager<Template:HaqTemplate>
 		sharedStorage = new HaqSharedStorage();
 	}
 	
+	public function findTemplate(parentFullTag:String, tag:String) : Template
+	{
+		return get(tag);
+	}
+	
 	public function get(fullTag:String) : Template
 	{
 		#if !client
@@ -45,43 +50,4 @@ class HaqTemplateManager<Template:HaqTemplate>
 		return null; 
 	}
 	#end
-	
-	public function findTemplate(parentFullTag:String, tag:String) : Template
-	{
-		if (tag.indexOf(".") >= 0)
-		{
-			return get(tag);
-		}
-		
-		var template : Template = null;
-		
-		if (!parentFullTag.startsWith(HaqDefines.folders.pages + "."))
-		{
-			template = get(getPackageByFullTag(parentFullTag) + '.' + tag);
-		}
-		
-		if (template == null)
-		{
-			for (importPackage in get(parentFullTag).imports)
-			{
-				template = get(importPackage + '.' + tag);
-				if (template != null)
-				{
-					break;
-				}
-			}
-		}
-		
-		return template;
-	}
-	
-	function getPackageByFullTag(fullTag:String)
-	{
-		var n = fullTag.lastIndexOf('.');
-		if (n >= 0)
-		{
-			return fullTag.substr(0, n);
-		}
-		return '';
-	}
 }
