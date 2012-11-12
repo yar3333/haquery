@@ -34,6 +34,11 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 				templates.remove(fullTag);
 			}
 		}
+		
+		for (template in templates)
+		{
+			checkMaps(template.doc, template.maps);
+		}
 	}
 	
 	override function newTemplate(fullTag:String) : HaqTemplate
@@ -179,5 +184,13 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 			r.set(fullTag, templates.get(fullTag).lastMod);
 		}
 		return r;
+	}
+	
+	function checkMaps(doc:HtmlNodeElement, maps:Hash<Array<String>>)
+	{
+		for (node in doc.children)
+		{
+			//if (node.
+		}
 	}
 }

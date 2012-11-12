@@ -28,10 +28,15 @@ class HaqCssGlobalizer extends haquery.base.HaqCssGlobalizer
 		return r;
 	}
 	
-	public function doc(baseNode:HtmlNodeElement) : HtmlNodeElement
+	public function doc(baseNode:HtmlNodeElement) : Void
 	{
 		for (node in baseNode.children)
 		{
+			if (node.hasAttribute("class"))
+			{
+				node.setAttribute("class", className(node.getAttribute("class")));
+			}
+			
 			if (node.name.startsWith("haq:"))
 			{
 				if (node.hasAttribute("cssClass"))
@@ -39,17 +44,8 @@ class HaqCssGlobalizer extends haquery.base.HaqCssGlobalizer
 					node.setAttribute("cssClass", className(node.getAttribute("cssClass")));
 				}
 			}
-			else
-			{
-				if (node.hasAttribute("class"))
-				{
-					node.setAttribute("class", className(node.getAttribute("class")));
-				}
-			}
 			
 			doc(node);
 		}
-		
-		return baseNode;
 	}
 }

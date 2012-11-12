@@ -217,7 +217,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 					var t = get(tag);
 					return "'" + tag + "':"
 						 + "{" 
-							 + "config:" + Json.stringify([ t.extend ].concat(t.imports))
+							 + "entend:'" + t.extend + "'"
 							 + ", "
 							 + "serverHandlers:haquery.Std.hash({" 
 							 + Lambda.map({ iterator:t.serverHandlers.keys }, function(elemID) {
@@ -243,4 +243,43 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		}
 		return text;
 	}
+	
+	override public function findTemplate(parentFullTag:String, tag:String) : HaqTemplate
+	{
+		if (tag.indexOf(".") >= 0)
+		{
+			return get(tag);
+		}
+		
+		var template : HaqTemplate = null;
+		
+		if (!parentFullTag.startsWith(HaqDefines.folders.pages + "."))
+		{
+			template = get(getPackageByFullTag(parentFullTag) + '.' + tag);
+		}
+		
+		if (template == null)
+		{
+			for (importPackage in get(parentFullTag).imports)
+			{
+				template = get(importPackage + '.' + tag);
+				if (template != null)
+				{
+					break;
+				}
+			}
+		}
+		
+		return template;
+	}
+	
+	function getPackageByFullTag(fullTag:String)
+	{
+		var n = fullTag.lastIndexOf('.');
+		if (n >= 0)
+		{
+			return fullTag.substr(0, n);
+		}
+		return '';
+	}	
 }

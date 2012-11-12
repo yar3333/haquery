@@ -93,9 +93,4 @@ class HaqTemplateParser<TemplateConfig:HaqTemplateConfig>
 		throw new Exception("This method must be overriden.");
 		return null;
 	}
-	
-	public function getImports() : Array<String>
-	{
-		return config.imports;
-	}
 }

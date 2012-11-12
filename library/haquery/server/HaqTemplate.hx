@@ -9,6 +9,7 @@ class HaqTemplate extends haquery.base.HaqTemplate
 	var parser : HaqTemplateParser;
 	
 	public var extend(default, null) : String;
+	public var imports(default, null) : Array<String>;
 	
 	var serializedDoc(default, null) : String;
 	
@@ -25,9 +26,10 @@ class HaqTemplate extends haquery.base.HaqTemplate
 		
 		parser = new HaqTemplateParser(fullTag, []);
 		
-		super(fullTag, parser.getImports());
+		super(fullTag);
 		
 		extend = parser.getExtend();
+		imports = parser.getImports();
 		
 		var docAndCss = parser.getDocAndCss();
 		serializedDoc = serializeDoc(docAndCss.doc);
