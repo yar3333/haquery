@@ -100,7 +100,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 	
 	public function createPage(pageFullTag:String, attr:Hash<Dynamic>) : HaqPage
 	{
-        var template : HaqTemplate = get(pageFullTag);
+        var template = get(pageFullTag);
 		Lib.assert(template != null, "HAQUERY ERROR could't find page '" + pageFullTag + "'.");
 		var component = newComponent(template, null, '', attr, null, false);
 		
@@ -119,7 +119,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 	
 	public function createComponent(parent:HaqComponent, tag:String, id:String, attr:Hash<Dynamic>, parentNode:HtmlNodeElement, isCustomRender:Bool) : HaqComponent
 	{
-        var template = cast(parent != null ? parent.findTemplateToInstance(tag) : get(tag), HaqTemplate);
+        var template = cast(findTemplate(parent.fullTag, tag), HaqTemplate);
 		Lib.assert(template != null, "HAQUERY ERROR could't find component '" + tag + "' for parent '" + parent.fullTag + "'.");
 		return newComponent(template, parent, id, attr, parentNode, isCustomRender);
 	}

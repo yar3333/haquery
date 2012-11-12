@@ -1,3 +1,10 @@
 package haquery.client;
 
-typedef HaqTemplateConfig = haquery.base.HaqTemplateConfig;
+class HaqTemplateConfig extends haquery.base.HaqTemplateConfig
+{
+	public function new(extend:String, imports:Array<String>)
+	{
+		this.extend = extend;
+		this.imports = imports;
+	}
+}

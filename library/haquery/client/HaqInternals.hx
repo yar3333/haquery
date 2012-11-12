@@ -60,10 +60,7 @@ import haxe.Unserializer;
 	public static function getTemplateConfig(fullTag:String) : HaqTemplateConfig
 	{
 		var component = templates.get(fullTag);
-		var r = new HaqTemplateConfig();
-		r.extend = component.config[0];
-		r.imports = component.config.slice(1);
-		return r;
+		return new HaqTemplateConfig(component.config[0], component.config.slice(1));
 	}
 	
 	public static function addComponent(fullTag:String, fullID:String)

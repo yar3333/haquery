@@ -5,9 +5,8 @@ import haquery.base.HaqTemplateParser.HaqTemplateNotFoundCriticalException;
 import haquery.base.HaqTemplateParser.HaqTemplateRecursiveExtendException;
 import haquery.common.HaqDefines;
 import haquery.server.FileSystem;
+import haquery.server.HaqConfig;
 import haxe.htmlparser.HtmlDocument;
-import sys.io.File;
-
 using StringTools;
 
 class HaqTemplateParser extends haquery.server.HaqTemplateParser
@@ -52,30 +51,9 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 		}
 	}
 	
-	override function loadChildConfigDataToParent(parent:haquery.server.HaqTemplateConfig, child:haquery.server.HaqTemplateConfig) : Void
+	override function newConfig(base:haquery.server.HaqTemplateConfig, xml:HtmlDocument) : haquery.server.HaqTemplateConfig
 	{
-		super.loadChildConfigDataToParent(parent, child);
-		
-		cast(parent, HaqTemplateConfig).requires = cast(parent, HaqTemplateConfig).requires.concat(cast(child, HaqTemplateConfig).requires);
-	}
-	
-	override function parseConfig(xml:HtmlDocument) : haquery.server.HaqTemplateConfig
-	{
-		var b = super.parseConfig(xml);
-		
-		var r = new HaqTemplateConfig();
-		r.extend = b.extend;
-		r.imports = b.imports;
-		
-		if (xml != null)
-		{
-			for (node in xml.find(">config>requires>component"))
-			{
-				r.requires.push(node.getAttribute("package"));
-			}
-		}
-		
-		return r;
+		return new HaqTemplateConfig(cast base, xml);
 	}
 	
 	override function getFullPath(path:String) : String
