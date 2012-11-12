@@ -1,7 +1,7 @@
 package ;
 
 import hant.Log;
-import haquery.base.HaqComponentTools;
+import haquery.common.HaqComponentTools;
 import haquery.base.HaqTemplateParser.HaqTemplateNotFoundException;
 import haquery.common.HaqDefines;
 import haquery.server.FileSystem;

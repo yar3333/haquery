@@ -1,7 +1,7 @@
 package ;
 
 import hant.Hant;
-import haquery.base.HaqComponentTools;
+import haquery.common.HaqComponentTools;
 import haxe.io.Path;
 import haxe.htmlparser.HtmlNodeElement;
 import sys.FileSystem;

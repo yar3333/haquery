@@ -264,24 +264,6 @@ using haquery.StringTools;
 		}
 		return relpath;
 	}
-	
-	public function findTemplateToInstance(tag:String) : HaqTemplate
-	{
-		var template = manager.findTemplate(fullTag, tag);
-		
-		if (template == null)
-		{
-			var par = parent;
-			while (par != null)
-			{
-				template = manager.findTemplate(par.fullTag, tag);
-				if (template != null) break;
-				par = par.parent;
-			}
-		}
-		
-		return template;
-	}
 
 #end
 	

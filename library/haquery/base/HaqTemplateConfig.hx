@@ -2,12 +2,6 @@ package haquery.base;
 
 class HaqTemplateConfig
 {
-	public var extend : String;
-	public var imports : Array<String>;
-	
-	public function new()
-	{
-		extend = null;
-		imports = [];
-	}
+	public var extend(default, null) : String;
+	public var imports(default, null) : Array<String>;
 }
