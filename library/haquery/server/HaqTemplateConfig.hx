@@ -8,7 +8,7 @@ class HaqTemplateConfig extends haquery.base.HaqTemplateConfig
 	
 	public function new(base:HaqTemplateConfig, xml:HtmlDocument)
 	{
-		extend = base != null ? base.extend : null;
+		super(base != null ? base.extend : null, []);
 		maps = base != null ? base.maps : new Hash<String>();
 		
 		if (xml != null)
