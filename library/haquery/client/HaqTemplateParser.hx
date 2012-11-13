@@ -1,8 +1,6 @@
 package haquery.client;
 
-import haquery.base.HaqTemplateParser.HaqTemplateNotFoundException;
-
-using haquery.StringTools;
+import haquery.common.HaqTemplateExceptions;
 
 class HaqTemplateParser extends haquery.base.HaqTemplateParser<HaqTemplateConfig>
 {

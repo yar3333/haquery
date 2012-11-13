@@ -7,25 +7,8 @@ private typedef TemplateParser = haquery.client.HaqTemplateParser;
 #end
 
 import haquery.common.HaqDefines;
-import haquery.Exception;
+import haquery.common.HaqTemplateExceptions;
 using haquery.StringTools;
-
-class HaqTemplateException extends Exception
-{
-	override function toString() return message
-}
-
-class HaqTemplateNotFoundException extends HaqTemplateException
-{
-}
-
-class HaqTemplateNotFoundCriticalException extends HaqTemplateException
-{
-}
-
-class HaqTemplateRecursiveExtendException extends HaqTemplateException
-{
-}
 
 class HaqTemplateParser<TemplateConfig:HaqTemplateConfig>
 {
@@ -55,11 +38,6 @@ class HaqTemplateParser<TemplateConfig:HaqTemplateConfig>
 		return null;
 	}
 	
-	function isPage() : Bool
-	{
-		return fullTag.startsWith(HaqDefines.folders.pages);
-	}
-	
 	function getShortClassName() : String
 	{
 		throw new Exception("This method must be overriden.");
@@ -82,9 +60,9 @@ class HaqTemplateParser<TemplateConfig:HaqTemplateConfig>
 		}
 		
 		#if !client
-		return isPage() ? "haquery.server.HaqPage" : "haquery.server.HaqComponent";
+		return fullTag.startsWith(HaqDefines.folders.pages + ".") ? "haquery.server.HaqPage" : "haquery.server.HaqComponent";
 		#elseif js
-		return isPage() ? "haquery.client.HaqPage" : "haquery.client.HaqComponent";
+		return fullTag.startsWith(HaqDefines.folders.pages + ".") ? "haquery.client.HaqPage" : "haquery.client.HaqComponent";
 		#end
 	}
 	

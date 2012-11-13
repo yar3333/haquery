@@ -1,18 +1,16 @@
 package haquery.server;
 
-import haxe.Serializer;
-import haxe.Unserializer;
 import sys.io.File;
 import haquery.Exception;
 import haxe.htmlparser.HtmlDocument;
 import haxe.htmlparser.HtmlNodeElement;
 import haquery.common.HaqDefines;
+import haquery.common.HaqTemplateExceptions;
 import haquery.server.HaqCssGlobalizer;
 import haquery.server.HaqComponent;
 import haquery.server.FileSystem;
-import haquery.base.HaqTemplateParser.HaqTemplateNotFoundException;
-import haquery.base.HaqTemplateParser.HaqTemplateNotFoundCriticalException;
-import haquery.base.HaqTemplateParser.HaqTemplateRecursiveExtendException;
+import haquery.server.HaqTemplateConfig;
+import haquery.server.HaqTemplateParser;
 using haquery.StringTools;
 
 class HaqTemplateParser extends haquery.base.HaqTemplateParser<HaqTemplateConfig>
@@ -27,7 +25,7 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser<HaqTemplateConfig
 		
 		if (Lambda.has(childFullTags, fullTag))
 		{
-			throw new HaqTemplateRecursiveExtendException(childFullTags.join(" - ") + " - " + fullTag);
+			throw new HaqTemplateRecursiveExtendsException(childFullTags.join(" - ") + " - " + fullTag);
 		}
 		
 		this.childFullTags = childFullTags;
@@ -61,18 +59,12 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser<HaqTemplateConfig
 		return "Server";
 	}
 	
-	
-	function newConfig(base:HaqTemplateConfig, xml:HtmlDocument) : HaqTemplateConfig
-	{
-		return new HaqTemplateConfig(base, xml);
-	}
-	
 	override function getConfig() : HaqTemplateConfig
 	{
 		var pathParts = fullTag.split(".");
 		pathParts.unshift("");
 		
-		var r = newConfig(null, null);
+		var r = new HaqTemplateConfig(null, null);
 		
 		var basePath = ".";
 		for (pathPart in pathParts)
@@ -81,7 +73,15 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser<HaqTemplateConfig
 			var configPath = getFullPath(basePath + "config.xml");
 			if (configPath != null)
 			{
-				r = newConfig(r, new HtmlDocument(File.getContent(configPath)));
+				try
+				{
+					r = new HaqTemplateConfig(r, new HtmlDocument(File.getContent(configPath)));
+				}
+
+				catch (e:HaqTemplateConfigParseException)
+				{
+					throw new HaqTemplateConfigParseException(e.message + " Check '" + configPath + "'.");
+				}
 			}
 		}
 		
@@ -115,7 +115,7 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser<HaqTemplateConfig
 		return config.extend;
 	}
 	
-	public function getImports() : Array<String>
+	public function getImports()
 	{
 		return config.imports;
 	}
@@ -138,7 +138,7 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser<HaqTemplateConfig
 			var raw = p.getRawDocAndCss();
 			for (node in raw.doc.nodes)
 			{
-				doc.addChild(Unserializer.run(Serializer.run(node)));
+				doc.addChild(node);
 			}
 			css += raw.css;
 		}
@@ -160,6 +160,7 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser<HaqTemplateConfig
 		if (path != null)
 		{
 			var text = File.getContent(path);
+			trace("readed text from " + path);
 			var doc = new HtmlDocument(text);
 			
 			var css = '';
@@ -177,10 +178,13 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser<HaqTemplateConfig
 				i++;
 			}
 			
+			trace("doc.nodes.length = " + doc.nodes.length);
+			
 			return { doc:doc, css:css };
 		}
 		
-		return null;
+		trace("File '" + (fullTag.replace(".", "/") + "/template.html") + "' is not found.");
+		return { doc:new HtmlDocument(), css:"" };
 	}
 	
 	function resolveSupportUrls(doc:HtmlNodeElement)

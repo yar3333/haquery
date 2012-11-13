@@ -9,7 +9,7 @@ class HaqTemplate extends haquery.base.HaqTemplate
 	var parser : HaqTemplateParser;
 	
 	public var extend(default, null) : String;
-	public var imports(default, null) : Array<String>;
+	public var imports(default, null) : Array<{ component:String, asTag:String }>;
 	
 	var serializedDoc(default, null) : String;
 	
@@ -32,16 +32,11 @@ class HaqTemplate extends haquery.base.HaqTemplate
 		imports = parser.getImports();
 		
 		var docAndCss = parser.getDocAndCss();
-		serializedDoc = serializeDoc(docAndCss.doc);
+		serializedDoc = Serializer.run(docAndCss.doc);
 		css = docAndCss.css;
 		
 		serverClassName = parser.getClassName();
 		serverHandlers = parser.getServerHandlers(serverClassName);
-	}
-	
-	function serializeDoc(doc:HtmlDocument) : String
-	{
-		return Serializer.run(doc);
 	}
 	
 	public function getDocCopy() : HtmlDocument

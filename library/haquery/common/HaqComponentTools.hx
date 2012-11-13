@@ -39,11 +39,16 @@ class HaqComponentTools
 		return null;
 	}
 	
-	public static function tag2pack(tag:String) : String
+	public static function htmlTagToFullTag(htmlTag:String) : String
 	{
-		var n = tag.indexOf("-");
-		if (n < 0) return tag;
-		return HaqDefines.folders.components + "." + StringTools.replace(tag, "-", ".");
+		var n = htmlTag.indexOf("-");
+		if (n < 0) return htmlTag;
+		return HaqDefines.folders.components + "." + StringTools.replace(htmlTag, "-", ".");
+	}
+	
+	public static function fullTagToHtmlTag(fullTag:String) : String
+	{
+		return StringTools.replace(fullTag.substr(HaqDefines.folders.components.length + 1), ".", "-");
 	}
 	
 	public static function callMethod(component:HaqComponent, method:String, params:Dynamic, ?metaMark:String) : Dynamic

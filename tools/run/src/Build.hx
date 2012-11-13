@@ -9,8 +9,6 @@ import sys.io.File;
 import haxe.io.Path;
 import haquery.common.HaqDefines;
 import haquery.server.FileSystem;
-import haquery.base.HaqTemplateParser.HaqTemplateNotFoundException;
-import haquery.base.HaqTemplateParser.HaqTemplateRecursiveExtendException;
 using haquery.StringTools;
 
 class Build 
@@ -49,13 +47,10 @@ class Build
 				}
 			}
 		}
-		catch (e:HaqTemplateNotFoundException)
+		catch (e:haquery.Exception)
 		{
-			log.finishFail("ERROR: component not found [ " + e.toString() + " ].");
-		}
-		catch (e:HaqTemplateRecursiveExtendException)
-		{
-			log.finishFail("ERROR: recursive extend detected [ " + e.toString() + " ].");
+			log.finishFail();
+			throw e;
 		}
 		
 		return false;
@@ -177,8 +172,7 @@ class Build
 		}
 		else
 		{
-			try { log.finishFail("Post-build interrupted because client compile errors."); }
-			catch (e:Dynamic) {}
+			log.finishFail();
 		}
 		
 		return r.exitCode == 0;
@@ -281,20 +275,14 @@ class Build
 			}
 			else
 			{
-				try { log.finishFail("ERROR: compilation."); }
-				catch (e:Dynamic) {}
+				log.finishFail();
 			}
 			return r;
 		}
-		catch (e:HaqTemplateNotFoundException)
+		catch (e:Dynamic)
 		{
-			log.finishFail("ERROR: component not found [ " + e.toString() + " ].");
-			return false;
-		}
-		catch (e:HaqTemplateRecursiveExtendException)
-		{
-			log.finishFail("ERROR: recursive extend detected [ " + e.toString() + " ].");
-			return false;
+			log.finishFail();
+			throw e;
 		}
 	}
 }
