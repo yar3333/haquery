@@ -22,10 +22,10 @@ class HaqTemplate extends haquery.base.HaqTemplate
 	public var baseClientClass : String;
 	
 	public var lastMod(default, null) : Date;
-	public var requires(default, null) : Array<String>;
+	
 	public var extend(default, null) : String;
-	public var imports(default, null) : Array<String>;
-	public var maps(default, null) : Hash<Array<String>>;
+	public var imports(default, null) : Array<{ component:String, asTag:String }>;
+	public var requires(default, null) : Array<String>;
 	
 	public function new(classPaths:Array<String>, fullTag:String) 
 	{
@@ -51,9 +51,9 @@ class HaqTemplate extends haquery.base.HaqTemplate
 		baseClientClass = parser.getBaseClientClass();
 		
 		lastMod = parser.getLastMod();
-		requires = parser.getRequires();
+		
 		extend = parser.getExtend();
 		imports = parser.getImports();
-		maps = parser.getMaps();
+		requires = parser.getRequires();
 	}
 }

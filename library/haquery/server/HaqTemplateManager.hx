@@ -199,7 +199,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
             
             if (node.name.startsWith('haq:'))
             {
-				r.push(createComponent(parent, HaqComponentTools.tag2pack(node.name.substr('haq:'.length)), node.getAttribute('id'), node.getAttributesAssoc(), node, isCustomRender));
+				r.push(createComponent(parent, HaqComponentTools.htmlTagToFullTag(node.name.substr('haq:'.length)), node.getAttribute('id'), node.getAttributesAssoc(), node, isCustomRender));
             }
 			else
 			{

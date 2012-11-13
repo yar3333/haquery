@@ -1,53 +1,72 @@
 package haquery.server;
 
 import haxe.htmlparser.HtmlDocument;
+import haquery.common.HaqTemplateExceptions;
 
 class HaqTemplateConfig extends haquery.base.HaqTemplateConfig
 {
-	public var imports(default, null) : Array<String>;
-	public var maps(default, null) : Hash<Array<String>>;
+	public var imports(default, null) : Array<{ component:String, asTag:String }>;
+	public var requires(default, null) : Array<String>;
 	
 	public function new(base:HaqTemplateConfig, xml:HtmlDocument)
 	{
 		super(base != null ? base.extend : null);
 		imports = [];
-		maps = base != null ? base.maps : new Hash<Array<String>>();
+		requires = base != null ? base.requires : [];
 		
 		if (xml != null)
 		{
-			var extendNodes = xml.find(">config>extend>component");
+			var extendNodes = xml.find(">config>extends");
 			if (extendNodes.length > 0)
 			{
-				if (extendNodes[0].hasAttribute("package"))
+				if (extendNodes.length > 1)
 				{
-					extend = extendNodes[0].getAttribute("package");
+					throw new HaqTemplateConfigParseException("Several 'extends' tags is not possible.");
 				}
-			}
-			
-			var importComponentNodes = xml.find(">config>imports>components");
-			for (importComponentNode in importComponentNodes)
-			{
-				if (importComponentNode.hasAttribute("package"))
+				
+				if (extendNodes[0].hasAttribute("component"))
 				{
-					imports.push(importComponentNode.getAttribute("package"));
-				}
-			}
-			
-			var mapComponentNodes = xml.find(">config>maps>component");
-			for (mapComponentNode in mapComponentNodes)
-			{
-				if (mapComponentNode.hasAttribute("tag") && mapComponentNode.hasAttribute("package"))
-				{
-					var tag = mapComponentNode.getAttribute("tag");
-					var pack = mapComponentNode.getAttribute("package");
-					if (!maps.exists(tag))
+					extend = extendNodes[0].getAttribute("component");
+					if (extend != "" && !(~/^(?:[_a-z][_a-z0-9]*[.])+(?:[_a-z][_a-z0-9]*)$/i.match(extend)))
 					{
-						maps.set(tag, [ pack ]);
+						throw new HaqTemplateConfigParseException("Invalid value of 'component' attribute for 'extends' tag.");
+					}
+				}
+				else
+				{
+					throw new HaqTemplateConfigParseException("Tag 'extends' must have 'component' attribute.");
+				}
+			}
+			
+			var importNodes = xml.find(">config>import");
+			for (importNode in importNodes)
+			{
+				if (importNode.hasAttribute("component"))
+				{
+					var componentPack = importNode.getAttribute("component");
+					
+					if ((~/^(?:[_a-z][_a-z0-9]*[.])+[*]$/i.match(componentPack)))
+					{
+						imports.push({ component:HaqTemplateTools.getPack(componentPack), asTag:null });
+					}
+					else
+					if (~/^(?:[_a-z][_a-z0-9]*[.])+[_a-z][_a-z0-9]*$/i.match(componentPack))
+					{
+						if (Std.bool(importNode.getAttribute("required")))
+						{
+							requires.push(componentPack);
+						}
+						var asTag = importNode.hasAttribute("as") ? importNode.getAttribute("as") : HaqTemplateTools.getTag(componentPack);
+						imports.push({ component:HaqTemplateTools.getPack(componentPack), asTag:asTag });
 					}
 					else
 					{
-						maps.get(tag).unshift(pack);
+						throw new HaqTemplateConfigParseException("Invalid value of 'component' attribute for 'import' tag.");
 					}
+				}
+				else
+				{
+					throw new HaqTemplateConfigParseException("Tag 'import' must have 'component' attribute.");
 				}
 			}
 		}

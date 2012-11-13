@@ -2,12 +2,14 @@ package ;
 
 import hant.PathTools;
 import hant.Hant;
+import haquery.Exception;
 import neko.Lib;
 import neko.Sys;
 import hant.Log;
 import haquery.server.HaqConfig;
 import haquery.server.db.HaqDb;
 import orm.OrmGenerator;
+import haquery.common.HaqTemplateExceptions;
 using StringTools;
 
 class Main 
@@ -32,48 +34,67 @@ class Main
         if (args.length > 0)
 		{
 			var command = args.shift();
-			switch (command)
+			
+			try
 			{
-				case 'gen-orm': 
-					var project = new FlashDevelopProject("");
-					var databaseConnectionString = args.length > 0 ? args[0] : new HaqConfig(project.srcPath + "config.xml").databaseConnectionString;
-					if (databaseConnectionString != null && databaseConnectionString != "")
-					{
-						log.start("Generate object related mapping classes");
-							new OrmGenerator(log, project).generate(new HaqDb(databaseConnectionString));
-						log.finishOk();
-					}
-					else
-					{
-						fail(
-							  "databaseConnectionString not found.\n"
-							+ "You may specify it in the 'src/config.xml' file:\n"
-							+ "\t<config>\n"
-							+ "\t\t<param name=\"databaseConnectionString\" value=\"mysql://USER:PASSWORD@HOST/DATABASE\" />\n"
-							+ "\t</config>\n"
-							+ "or in the command line:\n"
-							+ "\thaxelib run HaQuery gen-orm mysql://USER:PASSWORD@HOST/DATABASE"
-						);
-					}
-				
-				case 'pre-build': 
-					if (!(new Build(log, hant, exeDir).preBuild(
-						  Lambda.has(args, "--no-gen-code")
-						, Lambda.has(args, "--js-modern")
-						, Lambda.has(args, "--dead-code-elimination")
-					))) fail();
-				
-				case 'post-build': 
-					if (!(new Build(log, hant, exeDir).postBuild())) fail();
-				
-				case 'gen-code': 
-					if (!(new Build(log, hant, exeDir).genCode())) fail();
+				switch (command)
+				{
+					case 'gen-orm': 
+						var project = new FlashDevelopProject("");
+						var databaseConnectionString = args.length > 0 ? args[0] : new HaqConfig(project.srcPath + "config.xml").databaseConnectionString;
+						if (databaseConnectionString != null && databaseConnectionString != "")
+						{
+							log.start("Generate object related mapping classes");
+								new OrmGenerator(log, project).generate(new HaqDb(databaseConnectionString));
+							log.finishOk();
+						}
+						else
+						{
+							fail(
+								  "databaseConnectionString not found.\n"
+								+ "You may specify it in the 'src/config.xml' file:\n"
+								+ "\t<config>\n"
+								+ "\t\t<param name=\"databaseConnectionString\" value=\"mysql://USER:PASSWORD@HOST/DATABASE\" />\n"
+								+ "\t</config>\n"
+								+ "or in the command line:\n"
+								+ "\thaxelib run HaQuery gen-orm mysql://USER:PASSWORD@HOST/DATABASE"
+							);
+						}
 					
-				case 'install':
-					new Setup(log, hant, exeDir).install();
-				
-				default:
-					fail("command '" + command + "' is not supported.");
+					case 'pre-build': 
+						if (!(new Build(log, hant, exeDir).preBuild(
+							  Lambda.has(args, "--no-gen-code")
+							, Lambda.has(args, "--js-modern")
+							, Lambda.has(args, "--dead-code-elimination")
+						))) fail();
+					
+					case 'post-build': 
+						if (!(new Build(log, hant, exeDir).postBuild())) fail();
+					
+					case 'gen-code': 
+						if (!(new Build(log, hant, exeDir).genCode())) fail();
+						
+					case 'install':
+						new Setup(log, hant, exeDir).install();
+					
+					default:
+						fail("command '" + command + "' is not supported.");
+				}
+			}
+			catch (e:HaqTemplateNotFoundException)
+			{
+				log.trace("ERROR: component not found [ " + e.toString() + " ].");
+				fail();
+			}
+			catch (e:HaqTemplateRecursiveExtendsException)
+			{
+				log.trace("ERROR: recursive extend detected [ " + e.toString() + " ].");
+				fail();
+			}
+			catch (e:Exception)
+			{
+				log.trace(e.message);
+				fail();
 			}
         }
 		else

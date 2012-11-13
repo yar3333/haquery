@@ -157,7 +157,8 @@ class TrmGenerator
 					var body = "return component.q('#" + componentID + "');";
 					if (child.name.startsWith("haq:"))
 					{
-						var tag = HaqComponentTools.tag2pack(child.name.substr("haq:".length));
+						var tag = HaqComponentTools.htmlTagToFullTag(child.name.substr("haq:".length));
+						trace("getTemplateVars tag = " + tag);
 						var template = manager.get(tag);
 						type = isServer ? template.serverClassName : template.clientClassName;
 						body = "return cast component.components.get('" + componentID + "');";
@@ -192,7 +193,7 @@ class TrmGenerator
 	{
 		if (nodeName.startsWith("haq:"))
 		{
-			var tag = HaqComponentTools.tag2pack(nodeName.substr("haq:".length));
+			var tag = HaqComponentTools.htmlTagToFullTag(nodeName.substr("haq:".length));
 			var template = manager.get(tag);
 			while (template != null)
 			{

@@ -1,9 +1,7 @@
 package ;
 
-import haquery.base.HaqTemplateParser.HaqTemplateNotFoundException;
-import haquery.base.HaqTemplateParser.HaqTemplateNotFoundCriticalException;
-import haquery.base.HaqTemplateParser.HaqTemplateRecursiveExtendException;
 import haquery.common.HaqDefines;
+import haquery.common.HaqTemplateExceptions;
 import haquery.server.FileSystem;
 import haquery.server.HaqConfig;
 import haxe.htmlparser.HtmlDocument;
@@ -50,11 +48,6 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 		{
 			throw new HaqTemplateNotFoundCriticalException(e.toString());
 		}
-	}
-	
-	override function newConfig(base:haquery.server.HaqTemplateConfig, xml:HtmlDocument) : haquery.server.HaqTemplateConfig
-	{
-		return new HaqTemplateConfig(cast base, xml);
 	}
 	
 	override function getFullPath(path:String) : String
@@ -182,7 +175,7 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 	
 	public function getRequires() : Array<String>
 	{
-		return cast(config, HaqTemplateConfig).requires;
+		return config.requires;
 	}
 	
 	public function getBaseServerClass() : String
@@ -216,8 +209,7 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 			{
 				node.setAttribute("__parent", fullTag);
 			}
+			setDocComponentsParent(node);
 		}
 	}
-	
-	public function getMaps() return config.maps
 }
