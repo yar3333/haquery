@@ -46,7 +46,7 @@ class HaqTemplateConfig extends haquery.base.HaqTemplateConfig
 					}
 					else
 					{
-						maps.get(tag).push(pack);
+						maps.get(tag).unshift(pack);
 					}
 				}
 			}

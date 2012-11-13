@@ -158,11 +158,7 @@ class TrmGenerator
 					if (child.name.startsWith("haq:"))
 					{
 						var tag = HaqComponentTools.tag2pack(child.name.substr("haq:".length));
-						var template = manager.findTemplate(fullTag, tag);
-						if (template == null)
-						{
-							throw "Template not found: '" + tag + "' from '" + fullTag + "'.";
-						}
+						var template = manager.get(tag);
 						type = isServer ? template.serverClassName : template.clientClassName;
 						body = "return cast component.components.get('" + componentID + "');";
 					}
@@ -197,8 +193,7 @@ class TrmGenerator
 		if (nodeName.startsWith("haq:"))
 		{
 			var tag = HaqComponentTools.tag2pack(nodeName.substr("haq:".length));
-			var template = manager.findTemplate(fullTag, tag);
-			
+			var template = manager.get(tag);
 			while (template != null)
 			{
 				if (template.fullTag == "components.haquery.factory")

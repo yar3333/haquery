@@ -20,11 +20,6 @@ class HaqTemplateManager<Template:HaqTemplate>
 		sharedStorage = new HaqSharedStorage();
 	}
 	
-	public function findTemplate(parentFullTag:String, tag:String) : Template
-	{
-		return get(tag);
-	}
-	
 	public function get(fullTag:String) : Template
 	{
 		#if !client
