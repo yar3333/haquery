@@ -25,7 +25,7 @@ class HaqTemplatesTest extends TestCase
 		var page = manager.createPage("pages.test0", null);
 		assertTrue(page != null);
 		
-		var template = manager.findTemplate(page.fullTag, "text");
+		var template = manager.get("test0.text");
 		assertTrue(template != null);
 
 		assertEquals("text component template file", template.getDocCopy().innerHTML);

@@ -119,7 +119,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 	
 	public function createComponent(parent:HaqComponent, tag:String, id:String, attr:Hash<Dynamic>, parentNode:HtmlNodeElement, isCustomRender:Bool) : HaqComponent
 	{
-        var template = cast(findTemplate(parent.fullTag, tag), HaqTemplate);
+        var template = get(tag);
 		Lib.assert(template != null, "HAQUERY ERROR could't find component '" + tag + "' for parent '" + parent.fullTag + "'.");
 		return newComponent(template, parent, id, attr, parentNode, isCustomRender);
 	}
@@ -243,43 +243,4 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		}
 		return text;
 	}
-	
-	override public function findTemplate(parentFullTag:String, tag:String) : HaqTemplate
-	{
-		if (tag.indexOf(".") >= 0)
-		{
-			return get(tag);
-		}
-		
-		var template : HaqTemplate = null;
-		
-		if (!parentFullTag.startsWith(HaqDefines.folders.pages + "."))
-		{
-			template = get(getPackageByFullTag(parentFullTag) + '.' + tag);
-		}
-		
-		if (template == null)
-		{
-			for (importPackage in get(parentFullTag).imports)
-			{
-				template = get(importPackage + '.' + tag);
-				if (template != null)
-				{
-					break;
-				}
-			}
-		}
-		
-		return template;
-	}
-	
-	function getPackageByFullTag(fullTag:String)
-	{
-		var n = fullTag.lastIndexOf('.');
-		if (n >= 0)
-		{
-			return fullTag.substr(0, n);
-		}
-		return '';
-	}	
 }

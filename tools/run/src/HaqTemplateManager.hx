@@ -25,6 +25,11 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		
 		fillTemplates(HaqDefines.folders.pages);
 		
+		for (template in templates)
+		{
+			resolveComponentTags(template.doc, template.maps);
+		}
+		
 		// exclude unused components
 		fullTags = getUsedComponents();
 		for (fullTag in templates.keys())
@@ -33,11 +38,6 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 			{
 				templates.remove(fullTag);
 			}
-		}
-		
-		for (template in templates)
-		{
-			checkMaps(template.doc, template.maps);
 		}
 	}
 	
@@ -130,7 +130,7 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 			
 			for (tag in getUsedComponents_getDocTags(template.doc))
 			{
-				getUsedComponents_addToUsed(findTemplate(template.fullTag, tag), userComponents);
+				getUsedComponents_addToUsed(get(tag), userComponents);
 			}
 		}
 	}
@@ -186,11 +186,69 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		return r;
 	}
 	
-	function checkMaps(doc:HtmlNodeElement, maps:Hash<Array<String>>)
+	function resolveComponentTags(doc:HtmlNodeElement, maps:Hash<Array<String>>)
 	{
 		for (node in doc.children)
 		{
-			//if (node.
+			if (node.name.startsWith("haq:"))
+			{
+				var template : HaqTemplate;
+				if (maps.exists(node.name))
+				{
+					template = get(maps.get(node.name)[0]);
+					if (template == null)
+					{
+						throw "Component '" + maps.get(node.name)[0] + "' from map is not found.";
+					}
+				}
+				else
+				{
+					template = resolveComponentTag(node.getAttribute("__parent"), node.name);
+					if (template == null)
+					{
+						throw "Component '" + node.name + "' from '" + node.getAttribute("__parent") + "' is not found.";
+					}
+				}
+				node.removeAttribute("__parent");
+				node.name = template.fullTag.replace(".", "-");
+			}
+			
+			resolveComponentTags(node, maps);
 		}
 	}
+	
+	function resolveComponentTag(parentFullTag:String, tag:String) : HaqTemplate
+	{
+		if (tag.indexOf(".") >= 0)
+		{
+			return get(tag);
+		}
+		
+		var template : HaqTemplate = null;
+		
+		if (!parentFullTag.startsWith(HaqDefines.folders.pages + "."))
+		{
+			template = get(getPackageByFullTag(parentFullTag) + '.' + tag);
+		}
+		
+		if (template == null)
+		{
+			for (importPackage in get(parentFullTag).imports)
+			{
+				template = get(importPackage + '.' + tag);
+				if (template != null)
+				{
+					break;
+				}
+			}
+		}
+		
+		return template;
+	}
+	
+	function getPackageByFullTag(fullTag:String)
+	{
+		var n = fullTag.lastIndexOf(".");
+		return n >= 0 ? fullTag.substr(0, n) : "";
+	}	
 }
