@@ -1,5 +1,3 @@
 <config>
-	<extend>
-        <component package="components.haquery.factory" />
-	</extend>
+	<extends component="components.haquery.factory" />
 </config>
