@@ -115,11 +115,6 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser<HaqTemplateConfig
 		return config.extend;
 	}
 	
-	public function getImports()
-	{
-		return config.imports;
-	}
-	
 	public function getDocAndCss() : { doc:HtmlDocument, css:String }
 	{
 		var doc = new HtmlDocument();
@@ -160,7 +155,6 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser<HaqTemplateConfig
 		if (path != null)
 		{
 			var text = File.getContent(path);
-			trace("readed text from " + path);
 			var doc = new HtmlDocument(text);
 			
 			var css = '';
@@ -178,12 +172,11 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser<HaqTemplateConfig
 				i++;
 			}
 			
-			trace("doc.nodes.length = " + doc.nodes.length);
-			
 			return { doc:doc, css:css };
 		}
 		
-		trace("File '" + (fullTag.replace(".", "/") + "/template.html") + "' is not found.");
+		print("WARNING: File '" + (fullTag.replace(".", "/") + "/template.html") + "' not found.");
+		
 		return { doc:new HtmlDocument(), css:"" };
 	}
 	
@@ -274,4 +267,6 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser<HaqTemplateConfig
 		}
 		return serverHandlers;
 	}
+	
+	function print(s:String) {}
 }

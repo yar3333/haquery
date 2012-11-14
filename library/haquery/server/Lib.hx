@@ -285,7 +285,7 @@ class Lib
 			return FileSystem.stat(path).mtime;
 		}
 		
-		throw "File '" + Path.withoutDirectory(path) + "' is not found.";
+		throw "File '" + Path.withoutDirectory(path) + "' not found.";
 	}
 	
 	static function getClientIP() : String

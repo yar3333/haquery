@@ -1,5 +1,6 @@
 package ;
 
+import hant.Log;
 import haquery.common.HaqDefines;
 import haquery.common.HaqTemplateExceptions;
 import haquery.server.FileSystem;
@@ -12,10 +13,12 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 {
 	static inline var MIN_DATE = new Date(2000, 0, 0, 0, 0, 0);
 	
+	var log : Log;
 	var classPaths : Array<String>;
 	
-	public function new(classPaths:Array<String>, fullTag:String, childFullTags:Array<String>)
+	public function new(log:Log, classPaths:Array<String>, fullTag:String, childFullTags:Array<String>)
 	{
+		this.log = log;
 		this.classPaths = classPaths;
 		super(fullTag, childFullTags);
 	}
@@ -42,7 +45,7 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 		if (config.extend == null || config.extend == "") return null; 
 		try 
 		{
-			return new HaqTemplateParser(classPaths, config.extend, childFullTags.concat([fullTag]));
+			return new HaqTemplateParser(log, classPaths, config.extend, childFullTags.concat([fullTag]));
 		}
 		catch (e:HaqTemplateNotFoundException)
 		{
@@ -194,7 +197,7 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 			: (fullTag.startsWith("pages.") ? "haquery.client.HaqPage" : "haquery.client.HaqComponent");
 	}
 	
-	override private function getRawDocAndCss() : { doc:HtmlDocument, css:String } 
+	override function getRawDocAndCss() : { doc:HtmlDocument, css:String } 
 	{
 		var r = super.getRawDocAndCss();
 		setDocComponentsParent(r.doc);
@@ -211,5 +214,15 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 			}
 			setDocComponentsParent(node);
 		}
+	}
+	
+	public function getImports()
+	{
+		return config.imports;
+	}
+	
+	override function print(s:String)
+	{
+		log.trace(s);
 	}
 }

@@ -3,11 +3,7 @@ package haquery.client;
 class HaqTemplate extends haquery.base.HaqTemplate
 { 
 	public var clientClassName(default, null) : String;
-	
-	/**
-	 * elemID => handlers
-	 */
-	public var serverHandlers(default, null) : Hash<Array<String>>;
+	public var serverHandlers(default, null) : Array<String>;
 	
 	public function new(fullTag:String)
 	{

@@ -33,7 +33,7 @@ class Build
         
 		try
 		{
-			var manager = new HaqTemplateManager(project.allClassPaths, log);
+			var manager = new HaqTemplateManager(log, project.allClassPaths);
 			genTrm(manager);
 			genImports(manager, project.srcPath);
 			if (noGenCode || (genCodeFromClient(project) && genCodeFromServer(project)))
@@ -60,9 +60,18 @@ class Build
     {
         log.start("Do post-build step");
 			
+			var manager = new HaqTemplateManager(log, project.allClassPaths);
+			var publisher = new Publisher(log, hant, project.platform);
+			
+			log.start("Generate config classes");
+				manager.generateConfigClasses();
+			log.finishOk();
+			
+			log.start("Generate CSS file");
+				manager.generateComponentsCssFile(project.binPath);
+			log.finishOk();
+			
 			log.start("Prepare");
-				var manager = new HaqTemplateManager(project.allClassPaths, log);
-				var publisher = new Publisher(log, hant, project.platform);
 				for (path in project.allClassPaths)
 				{
 					publisher.prepare(path, manager.fullTags);
@@ -197,7 +206,7 @@ class Build
     {
         log.start("Generate template related mapping classes");
         
-        TrmGenerator.run(manager!=null ? manager : new HaqTemplateManager(project.allClassPaths, log), hant);
+        TrmGenerator.run(manager != null ? manager : new HaqTemplateManager(log, project.allClassPaths), hant);
         
         log.finishOk();
     }
@@ -265,7 +274,7 @@ class Build
 		
 		try
 		{
-			var manager = new HaqTemplateManager(project.allClassPaths, log);
+			var manager = new HaqTemplateManager(log, project.allClassPaths);
 			genTrm(manager);
 			genImports(manager, project.srcPath);
 			var r = genCodeFromClient(project) && genCodeFromServer(project);

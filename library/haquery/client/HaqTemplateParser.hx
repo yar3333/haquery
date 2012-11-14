@@ -11,7 +11,7 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser<HaqTemplateConfig
 	
 	override function isTemplateExist(fullTag:String) : Bool
 	{
-		return HaqInternals.templates.exists(fullTag);
+		return HaqInternals.isTemplateExist(fullTag);
 	}
 	
 	override function getParentParser() : HaqTemplateParser
@@ -38,7 +38,7 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser<HaqTemplateConfig
 		return HaqInternals.getTemplateConfig(fullTag);
 	}
 	
-	public function getServerHandlers() : Hash<Array<String>>
+	public function getServerHandlers() : Array<String>
 	{
 		return HaqInternals.getServerHandlers(fullTag);
 	}

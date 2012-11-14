@@ -21,11 +21,7 @@ class HaqElemEventManager
                 if (!needHandler)
                 {
                     var serverHandlers = manager.get(componentWithHandlers.fullTag).serverHandlers;
-                    if (serverHandlers != null && serverHandlers.get(elemID) != null 
-                     && Lambda.has(serverHandlers.get(elemID), eventName)
-                    ) {
-                        needHandler = true;
-                    }
+                    needHandler = serverHandlers != null && Lambda.has(serverHandlers, elemID + "_" + eventName);
                 }
                 if (needHandler)
                 {
@@ -75,18 +71,15 @@ class HaqElemEventManager
 		return true;
 	}
 	
-	static function callServerElemEventHandlers(fullElemID:String, event:String, serverHandlers:Hash<Array<String>>) : Bool
+	static function callServerElemEventHandlers(fullElemID:String, event:String, serverHandlers:Array<String>) : Bool
 	{
 		var n = fullElemID.lastIndexOf(HaqDefines.DELIMITER);
 		var elemID = n > 0 ? fullElemID.substr(n + 1) : fullElemID;
         
-		if (serverHandlers != null && serverHandlers.get(elemID) != null)
+		if (serverHandlers != null && Lambda.has(serverHandlers, elemID + "_" + event))
 		{
-			if (Lambda.has(serverHandlers.get(elemID), event))
-			{
-				var componentID = n > 0 ? fullElemID.substr(0, n) : "";
-				Lib.ajax.callSharedMethod(componentID, elemID + "_" + event);
-			}
+			var componentID = n > 0 ? fullElemID.substr(0, n) : "";
+			Lib.ajax.callSharedMethod(componentID, elemID + "_" + event);
 		}
 		
         return true;

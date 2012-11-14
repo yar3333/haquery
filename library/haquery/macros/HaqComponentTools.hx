@@ -8,6 +8,8 @@ import haxe.macro.Expr;
 import haxe.macro.Type;
 using haquery.macros.internal.macro.tools.MacroTools;
 
+private typedef EventHandler = { name:String, pos:Position, args:Array<FunctionArg> };
+
 class HaqComponentTools 
 {
 	public static function build() : Array<Field>
@@ -18,7 +20,15 @@ class HaqComponentTools
 		if (componentClass.name == "Server" || componentClass.name == "Client")
 		{
 			var fields = Context.getBuildFields();
-			setComponentClassEventHandlersArgTypes(componentClass, fields);
+			var handlers = getComponentClassHandlers(fields);
+			
+			setComponentClassEventHandlersArgTypes(componentClass, handlers);
+			
+			if (!Context.defined("display") && componentClass.name == "Server")
+			{
+				bindServerEventHandlersToConfigClientClass(componentClass, handlers);
+			}
+			
 			return fields;
 		}
 		else
@@ -70,7 +80,7 @@ class HaqComponentTools
 				default:
 			}
 			
-			Context.error("Shared class is not found.", pos);
+			Context.error("Shared class not found.", pos);
 			return null;
 		}
 		else
@@ -101,7 +111,7 @@ class HaqComponentTools
 				default:
 			}
 			
-			Context.error("Another class is not found.", pos);
+			Context.error("Another class not found.", pos);
 			return null;
 		}
 		else
@@ -132,7 +142,7 @@ class HaqComponentTools
 				default:
 			}
 			
-			Context.error("Another class is not found.", pos);
+			Context.error("Another class not found.", pos);
 			return null;
 		}
 		else
@@ -141,9 +151,8 @@ class HaqComponentTools
 		}
 	}
 	
-	static function setComponentClassEventHandlersArgTypes(componentClass:ClassType, fields:Array<Field>)
+	static function setComponentClassEventHandlersArgTypes(componentClass:ClassType, handlers:Array<EventHandler>)
 	{
-		var handlers = getComponentClassHandlers(fields);
 		if (handlers != null && handlers.length > 0)
 		{
 			var templateClass = getTemplateClass(componentClass);
@@ -183,7 +192,7 @@ class HaqComponentTools
 					}
 					else
 					{
-						Context.error("Field '" + templateFieldName + "' is not found in template.", handler.pos);
+						Context.error("Field '" + templateFieldName + "' not found in template.", handler.pos);
 					}
 				}
 			}
@@ -194,7 +203,7 @@ class HaqComponentTools
 		}
 	}
 	
-	static function getComponentClassHandlers(fields:Array<Field>) : Array<{ name:String, pos:Position, args:Array<FunctionArg> }>
+	static function getComponentClassHandlers(fields:Array<Field>) : Array<EventHandler>
 	{
 		var handlers : Array<{ name:String, pos:Position, args:Array<FunctionArg> }> = [];
 		
@@ -326,5 +335,26 @@ class HaqComponentTools
 			}
 		}
 		return null;
+	}
+	
+	static function bindServerEventHandlersToConfigClientClass(componentClass:ClassType, handlers:Array<EventHandler>)
+	{
+		var serverEvents = [ 'click', 'change' ];   // server events
+		
+		if (handlers == null) handlers = [];
+		
+		handlers = Lambda.array(Lambda.filter(handlers, function(h)
+		{
+			var event = h.name.substr(h.name.indexOf("_") + 1);
+			return Lambda.has(serverEvents, event);
+		}));
+		
+		var path = "gen/" + componentClass.pack.join("/") + "/ConfigClient.hx";
+		var text = File.getContent(path);
+		text = StringTools.replace(text
+			, "// SERVER_HANDLERS"
+			, "public static var serverHandlers = '" + Lambda.map(handlers, function(h) return "'" + h.name + "'").join(", ") + "';"
+		);
+		File.saveContent(path, text);
 	}
 }

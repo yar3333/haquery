@@ -5,23 +5,6 @@ import haxe.Unserializer;
 
 @:keep @:expose class HaqInternals 
 {
-	/**
-	 * Setted by the server.
-	 * 
-	 * fullTag => { 
-	 * 					  extend: <extend>
-	 * 					, serverHandlers: { 
-	 * 											  elemID_0 => [ event_00, event_01, ... ]
-	 * 											, elemID_1 => [ event_10, event_11, ... ]
-	 * 											, ...
-	 * 									  }
-	 * 			  }
-	 */
-	public static var templates(default, null) : Hash<{ extend:String, serverHandlers:Hash<Array<String>> }>;
-	
-	/**
-	 * Setted by the server.
-	 */
 	static var tagIDs : Hash<Array<String>>;
 
 	static var componentIDs_cached : Hash<String>;
@@ -52,20 +35,27 @@ import haxe.Unserializer;
 		return componentIDs_cached;
 	}
 	
-	public static function getServerHandlers(fullTag:String) : Hash<Array<String>>
+	public static function getServerHandlers(fullTag:String) : Array<String>
 	{
-		return templates.get(fullTag).serverHandlers;
+		var clas = Type.getClass(fullTag + ".ConfigClient");
+		return Reflect.field(clas, "serverHandlers");
 	}
     
 	public static function getTemplateConfig(fullTag:String) : HaqTemplateConfig
 	{
-		var template = templates.get(fullTag);
-		return new HaqTemplateConfig(template.extend);
+		var clas = Type.getClass(fullTag + ".ConfigClient");
+		return new HaqTemplateConfig(Reflect.field(clas, "extend"));
 	}
 	
 	public static function addComponent(fullTag:String, fullID:String)
 	{
 		getComponentIDs().set(fullID, fullTag);
+	}
+	
+	public static function isTemplateExist(fullTag:String)
+	{
+		var clas = Type.getClass(fullTag + ".ConfigClient");
+		return clas != null;
 	}
 	
 	static function unserialize(s:String) : String return Unserializer.run(s)
