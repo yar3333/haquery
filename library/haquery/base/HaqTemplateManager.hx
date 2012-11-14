@@ -1,13 +1,12 @@
 package haquery.base;
 
-import haquery.common.HaqDefines;
 import haquery.common.HaqSharedStorage;
-
-using haquery.StringTools;
 
 class HaqTemplateManager<Template:HaqTemplate>
 {
+	#if !client
 	var templates(default, null) : Hash<Template>;
+	#end
 	
 	/**
 	 * Vars to be (was) sended to the client.
@@ -16,13 +15,15 @@ class HaqTemplateManager<Template:HaqTemplate>
 	
 	public function new()
 	{
+		#if !client
 		templates = new Hash<Template>();
+		#end
 		sharedStorage = new HaqSharedStorage();
 	}
 	
+	#if !client
 	public function get(fullTag:String) : Template
 	{
-		#if !client
 		if (templates.exists(fullTag))
 		{
 			var r = templates.get(fullTag);
@@ -34,10 +35,8 @@ class HaqTemplateManager<Template:HaqTemplate>
 			return r;
 		}
 		return null;
-		#else
-		return templates.get(fullTag);
-		#end
 	}
+	#end
 	
 	#if !client
 	function newTemplate(fullTag:String) : Template

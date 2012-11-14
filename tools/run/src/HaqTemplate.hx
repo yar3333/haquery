@@ -1,10 +1,13 @@
 package ;
 
+import hant.Log;
 import haxe.htmlparser.HtmlDocument;
+import haxe.Serializer;
 
 class HaqTemplate extends haquery.base.HaqTemplate
 {
 	public var doc(default, null) : HtmlDocument; 
+	public var css(default, null) : String; 
 	
 	public var serverClassName(default, null) : String;
 	public var clientClassName(default, null) : String;
@@ -27,13 +30,15 @@ class HaqTemplate extends haquery.base.HaqTemplate
 	public var imports(default, null) : Array<{ component:String, asTag:String }>;
 	public var requires(default, null) : Array<String>;
 	
-	public function new(classPaths:Array<String>, fullTag:String) 
+	public function new(log:Log, classPaths:Array<String>, fullTag:String) 
 	{
-		var parser = new HaqTemplateParser(classPaths, fullTag, []);
-		
 		super(fullTag);
+
+		var parser = new HaqTemplateParser(log, classPaths, fullTag, []);
 		
-		doc = parser.getDocAndCss().doc;
+		var docAndCss = parser.getDocAndCss();
+		doc = docAndCss.doc;
+		css = docAndCss.css;
 		
 		serverClassName = parser.getServerClassName();
 		clientClassName = parser.getClientClassName();

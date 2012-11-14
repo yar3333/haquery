@@ -158,7 +158,6 @@ class TrmGenerator
 					if (child.name.startsWith("haq:"))
 					{
 						var tag = HaqComponentTools.htmlTagToFullTag(child.name.substr("haq:".length));
-						trace("getTemplateVars tag = " + tag);
 						var template = manager.get(tag);
 						type = isServer ? template.serverClassName : template.clientClassName;
 						body = "return cast component.components.get('" + componentID + "');";

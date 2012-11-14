@@ -9,18 +9,17 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 	public function new()
 	{
 		super();
-		
-		for (fullTag in HaqInternals.templates.keys())
-		{
-			templates.set(fullTag, new HaqTemplate(fullTag));
-		}
-		
 		sharedStorage = HaqInternals.sharedStorage;
+	}
+	
+	public function get(fullTag:String) : HaqTemplate
+	{
+		return new HaqTemplate(fullTag);
 	}
 	
 	public function createPage(pageFullTag:String) : HaqPage
     {
-		var component = newComponent(get(pageFullTag), null, '', null);
+		var component = newComponent(get(pageFullTag), null, "", null);
 		
 		var page = cast(component, HaqPage);
 		

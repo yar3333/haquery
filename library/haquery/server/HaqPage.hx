@@ -143,10 +143,10 @@ class HaqPage extends HaqComponent
 				var tagIDs = HaqComponentTools.fillTagIDs(this, new Hash<Array<String>>());
 				
 				insertStyles(manager.getRegisteredStyles());
-				insertScripts([ 'haquery/client/jquery.js', HaqDefines.haqueryClientFilePath ].concat(manager.getRegisteredScripts()));
+				insertScripts(manager.getRegisteredScripts());
 				insertInitBlock(
 					  "<script>\n"
-					+ "if(typeof haquery=='undefined') alert('" + HaqDefines.haqueryClientFilePath + " must be loaded!');\n"
+					+ "if(typeof haquery=='undefined') alert('haquery.js must be loaded!');\n"
 					+ "haquery.client.HaqInternals.tagIDs = haquery.Std.hash({\n"
 					+ Lambda.map({ iterator:tagIDs.keys }, function(tag) return "'" + tag + "':" + Json.stringify(tagIDs.get(tag))).join(",\n")
 					+ "\n});\n"

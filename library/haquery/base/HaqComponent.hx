@@ -19,7 +19,7 @@ private typedef Page = haquery.client.HaqPage;
 
 #end
 
-@:keep class HaqComponent
+@:keepSub class HaqComponent
 {
 #if !macro
 
