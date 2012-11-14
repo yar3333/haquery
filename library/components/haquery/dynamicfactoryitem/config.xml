@@ -1,5 +1,3 @@
 <config>
-    <extend>
-        <component package="components.haquery.factoryitem" />
-    </extend>
+    <extends component="components.haquery.factoryitem" />
 </config>

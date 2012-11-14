@@ -1,5 +1,3 @@
 <config>
-	<requires>
-		<component package="components.haquery.factoryitem" />
-	</requires>
+	<import component="components.haquery.factoryitem" required="true" />
 </config>
