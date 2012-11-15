@@ -109,7 +109,7 @@ class HaqWebsocketServerLoop
 			{
 				case HaqMessageToListener.MakeRequest(request):
 					trace("INCOMING MakeRequest [" + request.pageKey + "] URI = " + request.uri);
-					var route = new HaqRouter(HaqDefines.folders.pages).getRoute(request.params.get("route"));
+					var route = new HaqRouter(HaqDefines.folders.pages, Lib.manager).getRoute(request.params.get("route"));
 					var bootstraps = Lib.loadBootstraps(route.path);
 					var r = Lib.runPage(request, route, bootstraps);
 					if (!request.isPostback)

@@ -2,6 +2,7 @@ package haquery.server;
 
 import haquery.Exception;
 import haquery.server.FileSystem;
+import haquery.common.HaqTemplateExceptions;
 using haquery.StringTools;
 
 class HaqRouterException extends Exception
@@ -25,10 +26,12 @@ typedef HaqRoute =
 class HaqRouter
 {
 	var pagesFolderPath : String;
+	var manager : HaqTemplateManager;
 	
-	public function new(pagesFolderPath:String)
+	public function new(pagesFolderPath:String, manager:HaqTemplateManager)
 	{
 		this.pagesFolderPath = pagesFolderPath;
+		this.manager = manager;
 	}
 	
 	public function getRoute(url:String) : HaqRoute
@@ -81,7 +84,14 @@ class HaqRouter
 	
     function isPageExist(path:String) : Bool
 	{
-		path = path.trim('/') + '/';
-		return FileSystem.exists(path + 'template.html') || Type.resolveClass(path.replace("/", ".") + "Server") != null;
+		try
+		{
+			var template = manager.get(path.replace("/", "."));
+			return template != null;
+		}
+		catch (e:HaqTemplateNotFoundException)
+		{
+			return false;
+		}
 	}
 }

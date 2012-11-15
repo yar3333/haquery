@@ -49,7 +49,12 @@ class Lib
 			
 			try
 			{
-				var route = new HaqRouter(HaqDefines.folders.pages).getRoute(!isCli() ? Web.getParams().get('route') : HaqCli.getURI());
+				if (manager == null)
+				{
+					manager = new HaqTemplateManager();
+				}
+				
+				var route = new HaqRouter(HaqDefines.folders.pages, manager).getRoute(!isCli() ? Web.getParams().get("route") : HaqCli.getURI());
 				
 				var bootstraps = loadBootstraps(route.path);
 				
@@ -155,13 +160,6 @@ class Lib
 				for (bootstrap in bootstraps)
 				{
 					bootstrap.start();
-				}
-				
-				if (manager == null)
-				{
-					profiler.begin('manager');
-						manager = new HaqTemplateManager();
-					profiler.end();
 				}
 				
 				profiler.begin("page");
