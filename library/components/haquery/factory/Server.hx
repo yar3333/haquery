@@ -29,7 +29,7 @@ class Server extends Base
         Lib.assert(!page.isPostback, "Component creating on the postback is not supported.");
 		
 		var n = length;
-		var r = manager.createComponent(this, "factoryitem", Std.string(n), Std.hash(params), getItemInnerNode(), true);
+		var r = manager.createComponent(this, "components.haquery.factoryitem", Std.string(n), Std.hash(params), getItemInnerNode(), true);
 		q('#length').val(n + 1);
 		return r;
 	}

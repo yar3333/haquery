@@ -3,13 +3,18 @@ package haquery.client;
 import haquery.client.HaqComponent;
 import haquery.client.HaqTemplate;
 import haquery.common.HaqDefines;
+import haquery.common.HaqSharedStorage;
 
-class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
+class HaqTemplateManager
 {
+	/**
+	 * Vars sended from the server.
+	 */
+	public var sharedStorage(default, null) : HaqSharedStorage;
+	
 	public function new()
 	{
-		super();
-		sharedStorage = HaqInternals.sharedStorage;
+		this.sharedStorage = HaqInternals.sharedStorage;
 	}
 	
 	public function get(fullTag:String) : HaqTemplate

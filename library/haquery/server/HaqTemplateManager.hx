@@ -2,6 +2,7 @@ package haquery.server;
 
 import haquery.common.HaqComponentTools;
 import haquery.common.HaqDefines;
+import haquery.common.HaqSharedStorage;
 import haquery.Exception;
 import haquery.server.FileSystem;
 import haquery.server.HaqComponent;
@@ -15,58 +16,29 @@ import haxe.Serializer;
 import haxe.Unserializer;
 using haquery.StringTools;
 
-class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
+class HaqTemplateManager
 {
 	static inline var MIN_DATE = new Date(2000, 0, 0, 0, 0, 0);
 	
-	var lastMods : Hash<Date>;
+	/**
+	 * Vars to be sended to the client.
+	 */
+	public var sharedStorage(default, null) : HaqSharedStorage;
 	
 	var registeredScripts : Array<String>;
 	var registeredStyles : Array<String>;
 	
 	public function new()
 	{
-		super();
-		
-		lastMods = new Hash<Date>();
+		sharedStorage = new HaqSharedStorage();
 		
 		registeredScripts = [ "haquery/client/jquery.js", "haquery/client/haquery.js" ];
 		registeredStyles = [ "haquery/client/haquery.css" ];
-		
-		for (fullTagAndLastMod in File.getContent("haquery/server/templates.dat").split("\n"))
-		{
-			var ft_lm = fullTagAndLastMod.split("\t");
-			
-			var fullTag = ft_lm[0];
-			var lastMod = Date.fromTime(Std.parseInt(ft_lm[1]) * 10000.0);
-			
-			templates.set(fullTag, null);
-			lastMods.set(fullTag, lastMod);
-		}
 	}
 	
-	override function newTemplate(fullTag:String) : HaqTemplate
+	public function get(fullTag:String) : HaqTemplate
 	{
-		var templateCachePath = HaqDefines.folders.temp + "/templates/" + fullTag + ".dat";
-		
-		if (!FileSystem.exists(templateCachePath) || lastMods.get(fullTag).getTime() > FileSystem.stat(templateCachePath).mtime.getTime())
-		{
-			FileSystem.createDirectory(Path.directory(templateCachePath));
-			var template = new HaqTemplate(fullTag); 
-			File.saveContent(templateCachePath, Serializer.run(template));
-			return template;
-		}
-		else
-		{
-			Lib.profiler.begin("newTemplate");
-			if (Lib.config.isTraceComponent)
-			{
-				trace("Unserialize template '" + fullTag + "'");
-			}
-			var template = Unserializer.run(File.getContent(templateCachePath));
-			Lib.profiler.end();
-			return template;
-		}
+		return new HaqTemplate(fullTag);
 	}
 	
 	public function createPage(pageFullTag:String, attr:Hash<Dynamic>) : HaqPage
@@ -98,7 +70,8 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 	function newComponent(template:HaqTemplate, parent:HaqComponent, id:String, attr:Hash<Dynamic>, parentNode:HtmlNodeElement, isCustomRender:Bool) : HaqComponent
 	{
         Lib.profiler.begin('newComponent');
-            var r : HaqComponent = Type.createInstance(Type.resolveClass(template.serverClassName), []);
+            trace("template.serverClassName = " + template.serverClassName);
+			var r : HaqComponent = Type.createInstance(Type.resolveClass(template.serverClassName), []);
 			r.construct(this, template.fullTag, parent, id, template.getDocCopy(), attr, parentNode, isCustomRender);
         Lib.profiler.end();
 		return r;
@@ -180,24 +153,4 @@ class HaqTemplateManager extends haquery.base.HaqTemplateManager<HaqTemplate>
 		
 		return r;
     }
-	
-	function getStaticClientCode() : String
-	{
-		var s = "haquery.client.HaqInternals.templates = haquery.Std.hash({\n"
-		      + Lambda.map({ iterator:templates.keys }, function(tag) {
-					var t = get(tag);
-					return "'" + tag + "':"
-						 + "{" 
-							 + "entend:'" + t.extend + "'"
-							 + ", "
-							 + "serverHandlers:haquery.Std.hash({" 
-							 + Lambda.map({ iterator:t.serverHandlers.keys }, function(elemID) {
-									return "'" + elemID + "':" + Json.stringify(t.serverHandlers.get(elemID));
-								  }).join(",")
-							 + "})"
-						 + "}";
-				}).join(",\n")
-			  + "\n});\n";
-		return s;
-	}
 }
