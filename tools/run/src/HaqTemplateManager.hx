@@ -168,28 +168,6 @@ class HaqTemplateManager
 		return null;
 	}
 	
-	/*public function getStaticTemplateDataForJs() : String
-	{
-		var r = "\nhaquery.client.HaqInternals.templates = haquery.HashTools.hashify({\n";
-		r += Lambda.map({ iterator:templates.keys }, function(fullTag) {
-			var template = get(fullTag);
-			var importsParam = "[" + Lambda.map(template.imports, function(s) return "'" + s + "'").join(",") + "]";
-			return "'" + fullTag + "' : new haquery.client.HaqTemplate('" + fullTag + "')";
-		}).join(",\n");
-		r += "\n});\n";
-		return r;
-	}*/
-	
-	public function getLastMods() : Hash<Date>
-	{
-		var r = new Hash<Date>();
-		for (fullTag in templates.keys())
-		{
-			r.set(fullTag, templates.get(fullTag).lastMod);
-		}
-		return r;
-	}
-	
 	function resolveComponentTags(parent:HaqTemplate, doc:HtmlNodeElement)
 	{
 		for (node in doc.children)

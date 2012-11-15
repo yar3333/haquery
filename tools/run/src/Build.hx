@@ -71,7 +71,7 @@ class Build
 			
 			var publisher = new Publisher(log, hant, project.platform);
 			
-			log.start("Publish");
+			log.start("Publish to " + project.binPath);
 				for (path in project.allClassPaths)
 				{
 					publisher.prepare(path, manager.fullTags);
@@ -285,10 +285,6 @@ class Build
 				+ "\tpublic static var serverClassName = '" + template.serverClassName + "';\n"
 				+ "\tpublic static var serializedDoc = '" + Serializer.run(template.doc) + "';\n"
 				+ "}\n"
-				
-				+ "\n/*\n"
-				+ template.doc.innerHTML
-				+ "*/\n"
 			);
 			
 			File.saveContent(dir + "/ConfigClient.hx"

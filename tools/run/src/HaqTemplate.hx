@@ -24,8 +24,6 @@ class HaqTemplate extends haquery.base.HaqTemplate
 	public var baseServerClass : String;
 	public var baseClientClass : String;
 	
-	public var lastMod(default, null) : Date;
-	
 	public var extend(default, null) : String;
 	public var imports(default, null) : Array<{ component:String, asTag:String }>;
 	public var requires(default, null) : Array<String>;
@@ -54,8 +52,6 @@ class HaqTemplate extends haquery.base.HaqTemplate
 		genBaseClientFilePath = genFolder + "BaseClient.hx";
 		baseServerClass = parser.getBaseServerClass();
 		baseClientClass = parser.getBaseClientClass();
-		
-		lastMod = parser.getLastMod();
 		
 		extend = parser.getExtend();
 		imports = parser.getImports();
