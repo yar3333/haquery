@@ -29,7 +29,6 @@ class HaqTemplatesTest extends TestCase
 		assertTrue(template != null);
 
 		assertEquals("text component template file", template.getDocCopy().innerHTML);
-		assertEquals("", template.css);
 		assertEquals("components/set0/text/support/suptest.txt", template.getSupportFilePath("suptest.txt"));
 	}
 	

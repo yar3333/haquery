@@ -3,46 +3,44 @@ package ;
 import hant.Log;
 import haquery.common.HaqDefines;
 import haquery.common.HaqTemplateExceptions;
+import haquery.Exception;
 import haquery.server.FileSystem;
-import haquery.server.HaqConfig;
 import haxe.htmlparser.HtmlDocument;
 import haxe.htmlparser.HtmlNodeElement;
+import haquery.server.HaqCssGlobalizer;
+import sys.io.File;
 using StringTools;
 
-class HaqTemplateParser extends haquery.server.HaqTemplateParser
+class HaqTemplateParser extends haquery.base.HaqTemplateParser
 {
-	static inline var MIN_DATE = new Date(2000, 0, 0, 0, 0, 0);
+	static var MIN_DATE = new Date(2000, 0, 0, 0, 0, 0);
+	static var reSupportUrl = new EReg("~/([-_/\\.a-zA-Z0-9]*)\\b", "g");
 	
 	var log : Log;
 	var classPaths : Array<String>;
+	var childFullTags : Array<String>;
+	
+	var config : HaqTemplateConfig;
 	
 	public function new(log:Log, classPaths:Array<String>, fullTag:String, childFullTags:Array<String>)
 	{
+		if (Lambda.has(childFullTags, fullTag))
+		{
+			throw new HaqTemplateRecursiveExtendsException(childFullTags.join(" - ") + " - " + fullTag);
+		}
+		
+		super(fullTag);
+		
 		this.log = log;
 		this.classPaths = classPaths;
-		super(fullTag, childFullTags);
+		this.childFullTags = childFullTags;
+		
+		config = getConfig();
 	}
 	
-	override function isTemplateExist(fullTag:String) : Bool
+	function getParentParser() : HaqTemplateParser
 	{
-		var localPath = fullTag.replace(".", "/");
-		var path = getFullPath(localPath);
-		if (path != null && FileSystem.isDirectory(path))
-		{
-			if (
-				getFullPath(localPath + '/template.html') != null
-			 || getFullPath(localPath + '/Client.hx') != null
-			 || getFullPath(localPath + '/Server.hx') != null
-			) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	override function getParentParser() : haquery.server.HaqTemplateParser
-	{
-		if (config.extend == null || config.extend == "") return null; 
+		if (config.extend == "") return null; 
 		try 
 		{
 			return new HaqTemplateParser(log, classPaths, config.extend, childFullTags.concat([fullTag]));
@@ -53,7 +51,7 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 		}
 	}
 	
-	override function getFullPath(path:String) : String
+	function getFullPath(path:String, noSrcPrefix=false) : String
 	{
 		if (path.startsWith("./"))
 		{
@@ -66,7 +64,7 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 			var fullPath = classPaths[i] + path;
 			if (FileSystem.exists(fullPath))
 			{
-				return fullPath;
+				return !noSrcPrefix ? fullPath : fullPath.substr(classPaths[i].length);
 			}
 			i--;
 		}
@@ -94,7 +92,7 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 		var parentParser = getParentParser();
 		if (parentParser != null)
 		{
-			return cast(parentParser, HaqTemplateParser).getGlobalClassName(shortClassName);
+			return parentParser.getGlobalClassName(shortClassName);
 		}
 		
 		return null;
@@ -131,6 +129,40 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 		return "gen/" + fullTag.replace('.', '/') + "/";
 	}
 	
+	function getConfig() : HaqTemplateConfig
+	{
+		var pathParts = fullTag.split(".");
+		pathParts.unshift("");
+		
+		var r = new HaqTemplateConfig(null, null);
+		
+		var basePath = ".";
+		for (pathPart in pathParts)
+		{
+			basePath += pathPart + "/";
+			var configPath = getFullPath(basePath + "config.xml");
+			if (configPath != null)
+			{
+				try
+				{
+					r = new HaqTemplateConfig(r, new HtmlDocument(File.getContent(configPath)));
+				}
+
+				catch (e:HaqTemplateConfigParseException)
+				{
+					throw new HaqTemplateConfigParseException(e.message + " Check '" + configPath + "'.");
+				}
+			}
+		}
+		
+		if (r.extend == fullTag)
+		{
+			r.noExtend();
+		}
+		
+		return r;
+	}
+	
 	public function getLastMod() : Date
 	{
 		var r = MIN_DATE;
@@ -151,7 +183,7 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 		var parentParser = getParentParser();
 		if (parentParser != null)
 		{
-			r = maxDate(r, cast(parentParser, HaqTemplateParser).getLastMod());
+			r = maxDate(r, parentParser.getLastMod());
 			r = maxDate(r, getConfigLastMod(parentParser.fullTag.replace(".", "/")));
 		}
 		
@@ -183,7 +215,7 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 	
 	public function getBaseServerClass() : String
 	{
-		var parentParser : HaqTemplateParser = cast getParentParser();
+		var parentParser = getParentParser();
 		return parentParser != null 
 			? parentParser.getServerClassName() 
 			: (fullTag.startsWith("pages.") ? "haquery.server.HaqPage" : "haquery.server.HaqComponent");
@@ -191,17 +223,10 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 	
 	public function getBaseClientClass() : String
 	{
-		var parentParser : HaqTemplateParser = cast getParentParser();
+		var parentParser = getParentParser();
 		return parentParser != null 
 			? parentParser.getClientClassName() 
 			: (fullTag.startsWith("pages.") ? "haquery.client.HaqPage" : "haquery.client.HaqComponent");
-	}
-	
-	override function getRawDocAndCss() : { doc:HtmlDocument, css:String } 
-	{
-		var r = super.getRawDocAndCss();
-		setDocComponentsParent(r.doc);
-		return r;
 	}
 	
 	function setDocComponentsParent(doc:HtmlNodeElement)
@@ -221,8 +246,151 @@ class HaqTemplateParser extends haquery.server.HaqTemplateParser
 		return config.imports;
 	}
 	
-	override function print(s:String)
+	public function getDocAndCss() : { doc:HtmlDocument, css:String }
 	{
-		log.trace(s);
+		var parsers : Array<HaqTemplateParser> = [ this ];
+		var p = this;
+		while ((p = p.getParentParser()) != null)
+		{
+			parsers.push(p);
+		}
+		
+		var doc = new HtmlDocument();
+		while (parsers.length > 0)
+		{
+			var p = parsers.pop();
+			var rawDoc = p.getRawDoc();
+			for (node in rawDoc.nodes)
+			{
+				doc.addChild(node);
+			}
+		}
+		
+		resolveSupportUrls(doc);
+		resolvePlaceHolders(doc);
+		
+		var css = "";
+		var i = 0; 
+		while (i < doc.children.length)
+		{
+			var node = doc.children[i];
+			if (node.name == "style" && !node.hasAttribute("id"))
+			{
+				if (node.getAttribute("type") == "text/less")
+				{
+					throw new Exception("Less compiler is no more supported.");
+				}
+				css += node.innerHTML;
+				node.remove();
+				i--;
+			}
+			i++;
+		}
+		
+		var cssGlobalizer = new HaqCssGlobalizer(fullTag);
+		
+		cssGlobalizer.doc(doc);
+		css = cssGlobalizer.styles(css);
+		
+		return { doc:doc, css:css };
+	}
+	
+	function getRawDoc() : HtmlDocument
+	{
+		var path = getFullPath(fullTag.replace(".", "/") + "/template.html");
+		var text = path != null ? File.getContent(path) : "";
+		var doc = new HtmlDocument(text);
+		setDocComponentsParent(doc);
+		return doc;
+	}
+	
+	function resolveSupportUrls(doc:HtmlNodeElement)
+	{
+		for (node in doc.children)
+		{
+			var attrs = node.getAttributesAssoc();
+			for (name in attrs.keys())
+			{
+				var value = attrs.get(name);
+				if (reSupportUrl.match(value))
+				{
+					value = reSupportUrl.customReplace(value, function(re)
+					{
+						var f = getSupportFilePath(re.matched(1));
+						return f != null ? "/" + f : re.matched(0);
+					});
+					node.setAttribute(name, value);
+				}
+			}
+			
+			if (node.name == "style")
+			{
+				node.setInnerText(reSupportUrl.customReplace(node.innerHTML, function(re)
+				{
+					var f = getSupportFilePath(re.matched(1));
+					return f != null ? "/" + f : re.matched(0);
+				}));
+			}
+			else
+			{
+				resolveSupportUrls(node);
+			}
+		}
+	}
+	
+	function resolvePlaceHolders(doc:HtmlDocument)
+	{
+        var placeholders = doc.find("haq:placeholder");
+        
+		var contents = doc.find(">haq:content");
+		contents.reverse();
+		
+        for (ph in placeholders)
+        {
+            var content : HtmlNodeElement = null;
+            for (c in contents) 
+            {
+                if (c.getAttribute("id") == ph.getAttribute("id"))
+                {
+                    content = c;
+                    break;
+                }
+            }
+            if (content != null)
+			{
+				ph.parent.replaceChildWithInner(ph, content);
+			}
+            else
+			{
+				ph.parent.replaceChildWithInner(ph, ph);
+			}
+        }
+		
+		for (c in doc.find('>haq:content'))
+		{
+			c.remove();
+		}
+	}
+	
+	public function getSupportFilePath(fileName:String) : String
+	{
+		var path = getFullPath(fullTag.replace('.', '/') + '/' + HaqDefines.folders.support + '/' + fileName, true);
+		if (path != null)
+		{
+			return path;
+		}
+		
+		var parentParser = getParentParser();
+		if (parentParser != null)
+		{
+			return parentParser.getSupportFilePath(fileName);
+		}
+		
+		return null;
+	}
+	
+	public function getExtend() : String
+	{
+		return config.extend;
 	}
 }

@@ -1,6 +1,7 @@
 package haquery.client;
 
 import haquery.common.HaqSharedStorage;
+import haquery.common.HaqTemplateExceptions;
 import haxe.Unserializer;
 
 @:keep @:expose class HaqInternals 
@@ -35,27 +36,9 @@ import haxe.Unserializer;
 		return componentIDs_cached;
 	}
 	
-	public static function getServerHandlers(fullTag:String) : Array<String>
-	{
-		var clas = Type.getClass(fullTag + ".ConfigClient");
-		return Reflect.field(clas, "serverHandlers");
-	}
-    
-	public static function getTemplateConfig(fullTag:String) : HaqTemplateConfig
-	{
-		var clas = Type.getClass(fullTag + ".ConfigClient");
-		return new HaqTemplateConfig(Reflect.field(clas, "extend"));
-	}
-	
 	public static function addComponent(fullTag:String, fullID:String)
 	{
 		getComponentIDs().set(fullID, fullTag);
-	}
-	
-	public static function isTemplateExist(fullTag:String)
-	{
-		var clas = Type.getClass(fullTag + ".ConfigClient");
-		return clas != null;
 	}
 	
 	static function unserialize(s:String) : String return Unserializer.run(s)

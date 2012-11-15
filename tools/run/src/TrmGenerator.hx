@@ -200,7 +200,7 @@ class TrmGenerator
 				{
 					return true;
 				}
-				template = template.extend != null && template.extend != "" ? manager.get(template.extend) : null;
+				template = template.extend != "" ? manager.get(template.extend) : null;
 			}
 		}
 		return false;

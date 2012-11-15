@@ -3,18 +3,14 @@ package haquery.server;
 import haxe.Serializer;
 import haxe.Unserializer;
 import haxe.htmlparser.HtmlDocument;
+import haquery.common.HaqDefines;
+using haquery.StringTools;
 
 class HaqTemplate extends haquery.base.HaqTemplate
 {
-	var parser : HaqTemplateParser;
-	
 	public var extend(default, null) : String;
-	
-	var serializedDoc(default, null) : String;
-	
-	public var css(default, null) : String;
 	public var serverClassName(default, null) : String;
-	public var serverHandlers(default, null) : Hash<Array<String>>;
+	public var serializedDoc(default, null) : String;
 	
 	public function new(fullTag:String) 
 	{
@@ -23,30 +19,29 @@ class HaqTemplate extends haquery.base.HaqTemplate
 			trace("Parse '" + fullTag + "' component");
 		}
 		
-		parser = new HaqTemplateParser(fullTag, []);
-		
 		super(fullTag);
 		
-		extend = parser.getExtend();
+		var config = new HaqTemplateConfig(fullTag);
 		
-		var docAndCss = parser.getDocAndCss();
-		serializedDoc = Serializer.run(docAndCss.doc);
-		css = docAndCss.css;
-		
-		serverClassName = parser.getClassName();
-		serverHandlers = parser.getServerHandlers(serverClassName);
+		extend = config.extend;
+		serverClassName = config.serverClassName;
+		serializedDoc = config.serializedDoc;
+	}
+	
+	public function getSupportFilePath(fileName:String) : String
+	{
+		var path = fullTag.replace('.', '/') + '/' + HaqDefines.folders.support + '/' + fileName;
+		if (FileSystem.exists(path))
+		{
+			return path;
+		}
+		return extend != "" 
+			? new HaqTemplate(extend).getSupportFilePath(fileName)
+			: null;
 	}
 	
 	public function getDocCopy() : HtmlDocument
 	{
-		Lib.profiler.begin("getDocCopy");
-		var doc = Unserializer.run(serializedDoc);
-		Lib.profiler.end();
-		return doc;
-	}
-	
-	public function getSupportFilePath(relPath:String)
-	{
-		return parser.getSupportFilePath(relPath);
+		return Unserializer.run(serializedDoc);
 	}
 }

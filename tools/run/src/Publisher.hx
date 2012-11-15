@@ -32,7 +32,7 @@ class Publisher
 		this.files = new Hash<String>();
 	}
 	
-	public function prepare(src:String, fullTags:Hash<Int>) : Void
+	public function prepare(src:String, fullTags:Array<String>) : Void
 	{
 		src = src.rtrim("/");
 		
@@ -96,7 +96,7 @@ class Publisher
 		}
 	}
 	
-	function prepareComponents(src:String, dest:String, pack:String, fullTags:Hash<Int>) : Void
+	function prepareComponents(src:String, dest:String, pack:String, fullTags:Array<String>) : Void
 	{
 		if (FileSystem.exists(src) && FileSystem.isDirectory(src))
 		{
@@ -107,7 +107,7 @@ class Publisher
 				{
 					if (file != "support")
 					{
-						if (fullTags.exists(pack + "." + file))
+						if (Lambda.has(fullTags, pack + "." + file))
 						{
 							prepareFolder(path + "/support", dest + "/" + file + "/support", "", null, null);
 							prepareFile(path + "/template.html", dest + "/" + file + "/template.html");
