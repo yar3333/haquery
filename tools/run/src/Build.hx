@@ -88,7 +88,7 @@ class Build
     
 	function genImports(manager:HaqTemplateManager, src:String)
     {
-        log.start("Generate imports to 'gen/Imports.hx'");
+        log.start("Generate imports");
         
         hant.createDirectory("gen");
 		var fo = File.write("gen/Imports.hx", false);
