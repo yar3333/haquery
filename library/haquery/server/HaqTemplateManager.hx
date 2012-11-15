@@ -70,7 +70,6 @@ class HaqTemplateManager
 	function newComponent(template:HaqTemplate, parent:HaqComponent, id:String, attr:Hash<Dynamic>, parentNode:HtmlNodeElement, isCustomRender:Bool) : HaqComponent
 	{
         Lib.profiler.begin('newComponent');
-            trace("template.serverClassName = " + template.serverClassName);
 			var r : HaqComponent = Type.createInstance(Type.resolveClass(template.serverClassName), []);
 			r.construct(this, template.fullTag, parent, id, template.getDocCopy(), attr, parentNode, isCustomRender);
         Lib.profiler.end();
