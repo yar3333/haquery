@@ -11,13 +11,14 @@ import haquery.server.HaqCssGlobalizer;
 import sys.io.File;
 using StringTools;
 
-class HaqTemplateParser extends haquery.base.HaqTemplateParser
+class HaqTemplateParser
 {
 	static var MIN_DATE = new Date(2000, 0, 0, 0, 0, 0);
-	static var reSupportUrl = new EReg("~/([-_/\\.a-zA-Z0-9]*)\\b", "g");
+	static var reSupportUrl = new EReg("~/([-_/\\.a-zA-Z0-9]*)", "g");
 	
 	var log : Log;
 	var classPaths : Array<String>;
+	var fullTag : String;
 	var childFullTags : Array<String>;
 	
 	var config : HaqTemplateConfig;
@@ -29,10 +30,9 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser
 			throw new HaqTemplateRecursiveExtendsException(childFullTags.join(" - ") + " - " + fullTag);
 		}
 		
-		super(fullTag);
-		
 		this.log = log;
 		this.classPaths = classPaths;
+		this.fullTag = fullTag;
 		this.childFullTags = childFullTags;
 		
 		config = getConfig();
@@ -161,51 +161,6 @@ class HaqTemplateParser extends haquery.base.HaqTemplateParser
 		}
 		
 		return r;
-	}
-	
-	public function getLastMod() : Date
-	{
-		var r = MIN_DATE;
-		
-		var localPath = fullTag.replace(".", "/");
-		
-		for (file in [ "template.html", "Server.hx", "Client.hx", HaqDefines.folders.support ])
-		{
-			var path = getFullPath(localPath + "/" + file);
-			if (path != null)
-			{
-				r = maxDate(r, FileSystem.stat(path).mtime);
-			}
-		}
-		
-		r = maxDate(r, getConfigLastMod(localPath));
-		
-		var parentParser = getParentParser();
-		if (parentParser != null)
-		{
-			r = maxDate(r, parentParser.getLastMod());
-			r = maxDate(r, getConfigLastMod(parentParser.fullTag.replace(".", "/")));
-		}
-		
-		return r;
-	}
-	
-	function getConfigLastMod(localPath:String) : Date
-	{
-		if (localPath == null || localPath == "") return MIN_DATE;
-		
-		var configPath = getFullPath(localPath + '/config.xml');
-		var lastMod = configPath != null ? FileSystem.stat(configPath).mtime : MIN_DATE;
-		
-		var parts = localPath.split('/');
-		if (parts.length <= 1) return lastMod;
-		
-		return maxDate(lastMod, getConfigLastMod(parts.slice(0, parts.length - 1).join('/')));
-	}
-	
-	function maxDate(a:Date, b:Date) : Date 
-	{
-		return a.getTime() > b.getTime() ? a : b;
 	}
 	
 	public function getRequires() : Array<String>

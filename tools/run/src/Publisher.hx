@@ -46,12 +46,6 @@ class Publisher
 		
 		prepareFolder(src + "/ndll", "ndll", "", null, null);
 		
-		/*
-		<publish>
-			<dir src="local_path" [ dest="new_path" ] [ include="regex" ] [ exclude="regex" ] [ platform="neko|php|js" ] />
-			<file src="local_path_and_name" [ dest="new_path_and_name" ] [ platform="neko|php|js" ] />
-		</publish>
-		*/
 		var configFile = src + "/publish.xml";
 		if (FileSystem.exists(configFile))
 		{
@@ -110,16 +104,8 @@ class Publisher
 						if (Lambda.has(fullTags, pack + "." + file))
 						{
 							prepareFolder(path + "/support", dest + "/" + file + "/support", "", null, null);
-							prepareFile(path + "/template.html", dest + "/" + file + "/template.html");
 						}
 						prepareComponents(path, dest + "/" + file, pack + "." + file, fullTags);
-					}
-				}
-				else
-				{
-					if (file == "config.xml")
-					{
-						prepareFile(path, dest + "/" + file);
 					}
 				}
 			}
