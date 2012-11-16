@@ -1,7 +1,9 @@
 package ;
 
+import hant.Log;
 import hant.PathTools;
 import hant.Process;
+import haquery.Exception;
 import haquery.server.FileSystem;
 import sys.io.File;
 import haquery.Std;
@@ -9,7 +11,9 @@ using haquery.StringTools;
 
 class FlashDevelopProject 
 {
-	public var binPath(default, null) : String;
+	var log : Log;
+	
+	//public var binPath(default, null) : String;
 	public var classPaths(default, null) : Array<String>;
 	public var libPaths(default, null) : Hash<String>;
 	public var allClassPaths(default, null) : Array<String>;
@@ -18,17 +22,19 @@ class FlashDevelopProject
 	public var platform(default, null) : String;
 	public var additionalCompilerOptions(default, null) : Array<String>;
 	
-	public function new(dir:String) 
+	public function new(log:Log, dir:String) 
 	{
+		this.log = log;
+		
 		var projectFilePath = findProjectFile(dir);
 		if (projectFilePath == null)
 		{
-			throw "FlashDevelop project file not found.";
+			throw new Exception("FlashDevelop project file not found.");
 		}
 		
 		var xml = Xml.parse(File.getContent(projectFilePath));
 		
-		binPath = getBinPath(xml);
+		//binPath = getBinPath(xml);
 		classPaths = getClassPaths(xml);
 		libPaths = getLibPaths(xml);
 		allClassPaths = Lambda.array(libPaths).concat(classPaths);
@@ -55,7 +61,7 @@ class FlashDevelopProject
 		return null;
 	}
 	
-	function getBinPath(xml:Xml) : String
+	/*function getBinPath(xml:Xml) : String
 	{
 		var fast = new haxe.xml.Fast(xml.firstElement());
 		
@@ -71,7 +77,7 @@ class FlashDevelopProject
 		}
 		
 		return "bin";
-	}
+	}*/
 	
     function getClassPaths(xml:Xml) : Array<String>
     {
@@ -116,7 +122,7 @@ class FlashDevelopProject
 			}
 		}
 		
-		var lines = Process.run(PathTools.path2normal(Sys.environment().get("HAXEPATH")) + "/haxelib.exe", [ "path" ].concat(libs)).stdOut.split("\n");
+		var lines = Process.run(log, PathTools.path2normal(Sys.environment().get("HAXEPATH")) + "/haxelib.exe", [ "path" ].concat(libs)).stdOut.split("\n");
 		for (i in 0...lines.length)
 		{
 			if (lines[i].startsWith("-D "))

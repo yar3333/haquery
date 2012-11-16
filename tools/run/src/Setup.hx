@@ -6,20 +6,20 @@ import haxe.io.Path;
 import sys.io.File;
 import sys.FileSystem;
 import hant.Log;
-import hant.Hant;
+import hant.FileSystemTools;
 import hant.PathTools;
 using haquery.StringTools;
 
 class Setup 
 {
 	var log : Log;
-    var hant : Hant;
+    var fs : FileSystemTools;
 	var exeDir : String;
     
-	public function new(log:Log, hant:Hant, exeDir:String)
+	public function new(log:Log, fs:FileSystemTools, exeDir:String)
 	{
 		this.log = log;
-		this.hant = hant;
+		this.fs = fs;
 		this.exeDir = PathTools.path2normal(exeDir) + "/";
 	}
 	
@@ -80,7 +80,7 @@ class Setup
 				
 				var destFilePath = targetPath + '/' + file.fileName;
 				
-				hant.createDirectory(Path.directory(destFilePath));
+				fs.createDirectory(Path.directory(destFilePath));
 				
 				if (isMakeBackup && FileSystem.exists(destFilePath))
 				{

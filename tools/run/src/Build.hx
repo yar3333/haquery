@@ -1,9 +1,10 @@
 package ;
 
 import hant.Log;
-import hant.Hant;
+import hant.FileSystemTools;
 import hant.PathTools;
 import hant.Process;
+import haquery.Exception;
 import haxe.Serializer;
 import neko.Lib;
 import sys.io.File;
@@ -12,25 +13,30 @@ import haquery.common.HaqDefines;
 import haquery.server.FileSystem;
 using haquery.StringTools;
 
+class CompilationFailException extends Exception
+{
+	override public function toString() return message
+}
+
 class Build 
 {
 	var log : Log;
-    var hant : Hant;
+    var fs : FileSystemTools;
 	var exeDir : String;
     
 	var project : FlashDevelopProject;
 
-	public function new(log:Log, hant:Hant, exeDir:String) 
+	public function new(log:Log, fs:FileSystemTools, exeDir:String) 
 	{
 		this.log = log;
-		this.hant = hant;
+		this.fs = fs;
 		this.exeDir = PathTools.path2normal(exeDir) + "/";
-		project = new FlashDevelopProject("");
+		project = new FlashDevelopProject(log, "");
 	}
 	
-	public function preBuild(noGenCode:Bool, isJsModern:Bool, isDeadCodeElimination:Bool)
+	public function build(outputDir:String, noGenCode:Bool, jsModern:Bool, isDeadCodeElimination:Bool)
     {
-        log.start("Do pre-build step");
+        log.start("Build");
         
 		try
 		{
@@ -40,57 +46,46 @@ class Build
 			generateConfigClasses(manager);
 			genImports(manager, project.srcPath);
 			
-			if (noGenCode || (genCodeFromClient(project) && genCodeFromServer(project)))
+			if (!noGenCode)
 			{
-				try { saveLibFolderFileTimes(); } catch (e:Dynamic) { }
-				if (buildJs(isJsModern, isDeadCodeElimination))
-				{
-					log.finishOk();
-					return true;
-				}
+				genCodeFromClient(project);
+				genCodeFromServer(project);
 			}
-		}
-		catch (e:haquery.Exception)
-		{
-			log.finishFail();
-			throw e;
-		}
-		
-		return false;
-    }
-	
-    public function postBuild() : Bool
-    {
-        log.start("Do post-build step");
 			
-			var manager = new HaqTemplateManager(log, project.allClassPaths);
+			try { saveLibFolderFileTimes(outputDir); } catch (e:Dynamic) { }
+			
+			buildClient(outputDir, jsModern, isDeadCodeElimination);
+			buildServer(outputDir);
 			
 			log.start("Generate style file");
-				generateComponentsCssFile(manager, project.binPath);
+				generateComponentsCssFile(manager, outputDir);
 			log.finishOk();
 			
-			var publisher = new Publisher(log, hant, project.platform);
+			var publisher = new Publisher(log, fs, project.platform);
 			
-			log.start("Publish to " + project.binPath);
+			log.start("Publish to '" + outputDir + "'");
 				for (path in project.allClassPaths)
 				{
 					publisher.prepare(path, manager.fullTags);
 				}
-				publisher.publish(project.binPath);
+				publisher.publish(outputDir);
 			log.finishOk();
 			
-			loadLibFolderFileTimes();
-        
-        log.finishOk();
-		
-		return true;
+			loadLibFolderFileTimes(outputDir);
+			
+			log.finishOk();
+		}
+		catch (e:Dynamic)
+		{
+			log.finishFail(e);
+		}
     }
     
 	function genImports(manager:HaqTemplateManager, src:String)
     {
         log.start("Generate imports");
         
-        hant.createDirectory("gen");
+        fs.createDirectory("gen");
 		var fo = File.write("gen/Imports.hx", false);
 		
 		fo.writeString("#if !client\n\n");
@@ -116,7 +111,7 @@ class Build
 	function findBootstrapClassNames(basePath:String, relPath:String) : Array<String>
 	{
 		var r = [];
-		hant.findFiles(basePath + relPath, function(path)
+		fs.findFiles(basePath + relPath, function(path)
 		{
 			if (path.endsWith("/Bootstrap.hx"))
 			{
@@ -126,31 +121,31 @@ class Build
 		return r;
 	}
 	
-	function buildJs(isJsModern:Bool, isDeadCodeElimination:Bool) : Bool
+	function buildClient(outputDir:String, isJsModern:Bool, isDeadCodeElimination:Bool)
     {
-		var clientPath = project.binPath + '/haquery/client';
+		var clientPath = outputDir + '/haquery/client';
 		
 		log.start("Build client to '" + clientPath + "/haquery.js'");
         
 		if (FileSystem.exists(clientPath + "/haquery.js"))
 		{
-			hant.rename(clientPath + "/haquery.js", clientPath + "/haquery.js.old");
+			fs.rename(clientPath + "/haquery.js", clientPath + "/haquery.js.old");
 		}
 		
-		hant.createDirectory(clientPath);
+		fs.createDirectory(clientPath);
         
         var params = project.getBuildParams("js", clientPath + "/haquery.js", [ "noEmbedJS", "client" ]);
 		if (isJsModern) params.push("--js-modern");
 		if (isDeadCodeElimination) params.push("--dead-code-elimination");
-		var r = Process.run(hant.getHaxePath() + "haxe.exe", params);
+		var r = Process.run(log, fs.getHaxePath() + "haxe.exe", params);
 		Lib.print(r.stdOut);
 		Lib.print(r.stdErr);
         
 		if (FileSystem.exists(clientPath + "/haquery.js")
 		 && FileSystem.exists(clientPath + "/haquery.js.old"))
 		{
-			hant.restoreFileTimes(clientPath + "/haquery.js.old", clientPath + "/haquery.js");
-			hant.deleteFile(clientPath + "/haquery.js.old");
+			fs.restoreFileTimes(clientPath + "/haquery.js.old", clientPath + "/haquery.js");
+			fs.deleteFile(clientPath + "/haquery.js.old");
 		}
 		
 		if (r.exitCode == 0)
@@ -164,79 +159,91 @@ class Build
 		}
 		else
 		{
-			log.finishFail();
+			log.finishFail("Client compilation errors.");
 		}
-		
-		return r.exitCode == 0;
     }
+	
+	function buildServer(outputDir:String)
+	{
+		log.start("Build server to '" + outputDir + "'");
+        var params = project.getBuildParams(project.platform, project.platform != "neko" ? outputDir : outputDir + "/index.n", []);
+		var r = Process.run(log, fs.getHaxePath() + "haxe.exe", params);
+		Lib.print(r.stdOut);
+		Lib.print(r.stdErr);
+		
+		if (r.exitCode == 0)
+		{
+			log.finishOk();
+		}
+		else
+		{
+			log.finishFail("Server compilation errors.");
+		}
+	}
 	
     public function genTrm(?manager:HaqTemplateManager)
     {
         log.start("Generate template related mapping classes");
         
-        TrmGenerator.run(manager != null ? manager : new HaqTemplateManager(log, project.allClassPaths), hant);
+        TrmGenerator.run(manager != null ? manager : new HaqTemplateManager(log, project.allClassPaths), fs);
         
         log.finishOk();
     }
 	
-	function genCodeFromClient(project:FlashDevelopProject) : Bool
+	function genCodeFromClient(project:FlashDevelopProject)
 	{
         var tempPath = "gen/temp-haquery-gen-code.js";
 		
 		log.start("Generate code from client");
-		hant.createDirectory(Path.directory(tempPath));
+		fs.createDirectory(Path.directory(tempPath));
 		var params = project.getBuildParams("js", tempPath, [ "noEmbedJS", "client", "haqueryGenCode" ]);
-		var r = Process.run(hant.getHaxePath() + "haxe.exe", params);
-		hant.deleteFile(tempPath);
-		hant.deleteFile(tempPath + ".map");
+		var r = Process.run(log, fs.getHaxePath() + "haxe.exe", params);
+		fs.deleteFile(tempPath);
+		fs.deleteFile(tempPath + ".map");
 		Lib.print(r.stdOut);
 		Lib.print(r.stdErr);
-		if (r.exitCode != 0) return false;
-        log.finishOk();
-		
-		return true;
+		if (r.exitCode == 0) log.finishOk();
+		else                 log.finishFail(new CompilationFailException("Client compilation errors."));
 	}
 	
-	function genCodeFromServer(project:FlashDevelopProject) : Bool
+	function genCodeFromServer(project:FlashDevelopProject)
 	{
-        var tempPath = "gen/temp-haquery-gen-code.n";
+        var tempPath = project.platform == "neko" ?  "gen/temp-haquery-gen-code.n" : "gen/temp-haquery-gen-code";
 		
 		log.start("Generate code from server");
-		hant.createDirectory(Path.directory(tempPath));
-		var params = project.getBuildParams(project.platform.toLowerCase(), tempPath, [ "haqueryGenCode" ]);
-		var r = Process.run(hant.getHaxePath() + "haxe.exe", params);
-		hant.deleteFile(tempPath);
+		fs.createDirectory(project.platform == "neko" ? Path.directory(tempPath) : tempPath);
+		var params = project.getBuildParams(project.platform, tempPath, [ "haqueryGenCode" ]);
+		var r = Process.run(log, fs.getHaxePath() + "haxe.exe", params);
+		fs.deleteAny(tempPath);
 		Lib.print(r.stdOut);
 		Lib.print(r.stdErr);
-		if (r.exitCode != 0) return false;
-        log.finishOk();
-		
-		return true;
+		if (r.exitCode == 0) log.finishOk();
+		else                 log.finishFail(new CompilationFailException("Server compilation errors."));
 	}
 	
-	function saveLibFolderFileTimes()
+	function saveLibFolderFileTimes(outputDir:String)
 	{
-		if (FileSystem.exists(project.binPath + "/lib"))
+		if (FileSystem.exists(outputDir + "/lib"))
 		{
-			log.start("Save file times of the " + project.binPath + "/lib folder");
-			loadLibFolderFileTimes();
-			hant.rename(project.binPath + "/lib", project.binPath + "/lib.old");
+			log.start("Save file times of the " + outputDir + "/lib folder");
+			loadLibFolderFileTimes(outputDir);
+			fs.rename(outputDir + "/lib", outputDir + "/lib.old");
 			log.finishOk();
 		}
 	}
 
-	function loadLibFolderFileTimes()
+	function loadLibFolderFileTimes(outputDir:String)
 	{
-		if (FileSystem.exists(project.binPath + "/lib.old"))
+		if (FileSystem.exists(outputDir + "/lib.old"))
 		{
 			log.start("Load lib folder file times");
-			hant.restoreFileTimes(project.binPath + "/lib.old", project.binPath + "/lib", ~/[.](?:php|js)/i);
-			hant.deleteDirectory(project.binPath + "/lib.old");
+			fs.restoreFileTimes(outputDir + "/lib.old", outputDir + "/lib", ~/[.](?:php|js)/i);
+			fs.deleteDirectory(outputDir + "/lib.old");
 			log.finishOk();
 		}
 	}
 	
-	public function genCode() : Bool
+	public function genCode()
 	{
         log.start("Generate shared and another methods");
 		
@@ -248,16 +255,10 @@ class Build
 			generateConfigClasses(manager);
 			genImports(manager, project.srcPath);
 
-			var r = genCodeFromClient(project) && genCodeFromServer(project);
-			if (r)
-			{
-				log.finishOk();
-			}
-			else
-			{
-				log.finishFail();
-			}
-			return r;
+			genCodeFromClient(project);
+			genCodeFromServer(project);
+			
+			log.finishOk();
 		}
 		catch (e:Dynamic)
 		{

@@ -1,7 +1,7 @@
 package ;
 
 import hant.Log;
-import hant.Hant;
+import hant.FileSystemTools;
 import hant.PathTools;
 import hant.Process;
 import haquery.server.FileSystem;
@@ -14,7 +14,7 @@ using haquery.StringTools;
 class Publisher 
 {
 	var log : Log;
-    var hant : Hant;
+    var fs : FileSystemTools;
 	var exeDir : String;
 	
 	var platform : String;
@@ -24,10 +24,10 @@ class Publisher
 	 */
 	var files : Hash<String>;
 	
-	public function new(log:Log, hant:Hant, platform:String)
+	public function new(log:Log, fs:FileSystemTools, platform:String)
 	{
 		this.log = log;
-		this.hant = hant;
+		this.fs = fs;
 		this.platform = platform;
 		this.files = new Hash<String>();
 	}
@@ -157,8 +157,8 @@ class Publisher
 			var dest = destDir + "/" + destLocal;
 			if (!FileSystem.exists(dest) || FileSystem.stat(src).mtime.getTime() > FileSystem.stat(dest).mtime.getTime())
 			{
-				hant.createDirectory(Path.directory(dest));
-				hant.copyFile(src, dest);
+				fs.createDirectory(Path.directory(dest));
+				fs.copyFile(src, dest);
 			}
 		}
 	}

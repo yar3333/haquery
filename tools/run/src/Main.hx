@@ -1,7 +1,8 @@
 package ;
 
+import hant.CmdOptions;
 import hant.PathTools;
-import hant.Hant;
+import hant.FileSystemTools;
 import haquery.Exception;
 import neko.Lib;
 import neko.Sys;
@@ -29,7 +30,7 @@ class Main
 		}
 		
 		var log = new Log(2);
-		var hant = new Hant(log, exeDir + "/" + "hant-" + Sys.systemName().toLowerCase());
+		var fs = new FileSystemTools(log, exeDir + "/" + "hant-" + Sys.systemName().toLowerCase());
 		
         if (args.length > 0)
 		{
@@ -40,7 +41,7 @@ class Main
 				switch (command)
 				{
 					case 'gen-orm': 
-						var project = new FlashDevelopProject("");
+						var project = new FlashDevelopProject(log, "");
 						var databaseConnectionString = args.length > 0 ? args[0] : new HaqConfig(project.srcPath + "config.xml").databaseConnectionString;
 						if (databaseConnectionString != null && databaseConnectionString != "")
 						{
@@ -61,21 +62,20 @@ class Main
 							);
 						}
 					
-					case 'pre-build': 
-						if (!(new Build(log, hant, exeDir).preBuild(
-							  Lambda.has(args, "--no-gen-code")
-							, Lambda.has(args, "--js-modern")
-							, Lambda.has(args, "--dead-code-elimination")
-						))) fail();
-					
-					case 'post-build': 
-						if (!(new Build(log, hant, exeDir).postBuild())) fail();
+					case 'build': 
+						var options = new CmdOptions();
+						options.add("output", "bin", [ "--output" ]);
+						options.add("noGenCode", false, [ "--no-gen-code" ]);
+						options.add("jsModern", false, [ "--js-modern" ]);
+						options.add("deadCodeElimination", false, [ "--dead-code-elimination" ]);
+						options.parse(args);
+						new Build(log, fs, exeDir).build(options.get("output"), options.get("noGenCode"), options.get("jsModern"), options.get("deadCodeElimination"));
 					
 					case 'gen-code': 
-						if (!(new Build(log, hant, exeDir).genCode())) fail();
+						new Build(log, fs, exeDir).genCode();
 						
 					case 'install':
-						new Setup(log, hant, exeDir).install();
+						new Setup(log, fs, exeDir).install();
 					
 					default:
 						fail("command '" + command + "' is not supported.");
@@ -106,12 +106,11 @@ class Main
 			Lib.println("");
 			Lib.println("        install                        Install FlashDevelop templates.");
 			Lib.println("");
-			Lib.println("        pre-build                      Do pre-build step.");
+			Lib.println("        build                          Do project building.");
+			Lib.println("            [--output=<dir>]           Output folder (by default is 'bin').");
 			Lib.println("            [--no-gen-code]            Do not generate shared and another classes.");
 			Lib.println("            [--js-modern]              Generate js code in modern style.");
 			Lib.println("            [--dead-code-elimination]  For a while is not supported.");
-			Lib.println("");
-			Lib.println("        post-build                     Do post-build step.");
 			Lib.println("");
 			Lib.println("        gen-orm                        Generate object-related classes (managers and models).");
 			Lib.println("            [databaseConnectionString] Like 'mysql://user:pass@host/dbname'.");
