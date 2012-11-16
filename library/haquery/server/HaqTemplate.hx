@@ -30,8 +30,8 @@ class HaqTemplate extends haquery.base.HaqTemplate
 	
 	public function getSupportFilePath(fileName:String) : String
 	{
-		var path = fullTag.replace('.', '/') + '/' + HaqDefines.folders.support + '/' + fileName;
-		if (FileSystem.exists(path))
+		var path = fullTag.replace(".", "/") + "/" + HaqDefines.folders.support + "/" + fileName;
+		if (FileSystem.exists(path.rtrim("/")))
 		{
 			return path;
 		}
