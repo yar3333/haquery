@@ -147,9 +147,9 @@ class HaqPage extends HaqComponent
 				insertInitBlock(
 					  "<script>\n"
 					+ "if(typeof haquery=='undefined') alert('haquery.js must be loaded!');\n"
-					+ "haquery.client.HaqInternals.tagIDs = haquery.Std.hash({\n"
+					+ "haquery.client.HaqInternals.tagIDs = {\n"
 					+ Lambda.map({ iterator:tagIDs.keys }, function(tag) return "'" + tag + "':" + Json.stringify(tagIDs.get(tag))).join(",\n")
-					+ "\n});\n"
+					+ "\n};\n"
 					+ "haquery.client.HaqInternals.sharedStorage = haquery.client.HaqInternals.unserialize('" + Serializer.run(manager.sharedStorage) + "');\n"
 					+ "haquery.client.HaqInternals.listener = '" + (HaqSystem.listener != null ? HaqSystem.listener.getUri() : "") + "';\n"
 					+ "haquery.client.HaqInternals.pageKey = '" + pageKey + "';\n"

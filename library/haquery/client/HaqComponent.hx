@@ -12,7 +12,7 @@ using haquery.StringTools;
 
 #end
 
-@:autoBuild(haquery.macros.HaqComponentTools.build()) class HaqComponent extends haquery.base.HaqComponent
+@:autoBuild(haquery.macros.HaqComponentTools.build()) @:keepSub class HaqComponent extends haquery.base.HaqComponent
 {
 #if !macro
 
