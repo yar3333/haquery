@@ -148,6 +148,8 @@ class Build
 			fs.deleteFile(clientPath + "/haquery.js.old");
 		}
 		
+		fs.deleteFile(clientPath + "/haquery.js.map");
+		
 		if (r.exitCode == 0)
 		{
 			if (!project.isDebug)
