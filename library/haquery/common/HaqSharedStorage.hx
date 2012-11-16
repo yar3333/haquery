@@ -3,7 +3,7 @@ package haquery.common;
 import haquery.base.HaqComponent;
 using haquery.StringTools;
 
-class HaqSharedStorage
+@:keep class HaqSharedStorage
 {
     var data : Hash<Hash<Dynamic>>;
 	

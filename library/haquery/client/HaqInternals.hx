@@ -6,7 +6,7 @@ import haxe.Unserializer;
 
 @:keep @:expose class HaqInternals 
 {
-	static var tagIDs : Hash<Array<String>>;
+	static var tagIDs : Dynamic;
 
 	static var componentIDs_cached : Hash<String>;
 	
@@ -25,9 +25,9 @@ import haxe.Unserializer;
 		if (componentIDs_cached == null)
 		{
 			componentIDs_cached = new Hash<String>();
-			for (fullTag in tagIDs.keys())
+			for (fullTag in Reflect.fields(tagIDs))
 			{
-				for (id in tagIDs.get(fullTag))
+				for (id in cast(Reflect.field(tagIDs, fullTag), Array<Dynamic>))
 				{
 					componentIDs_cached.set(id, fullTag);
 				}

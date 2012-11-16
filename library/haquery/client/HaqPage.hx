@@ -3,7 +3,7 @@ package haquery.client;
 import haquery.client.HaqComponent;
 import haquery.client.HaqCookie;
 
-@:keep class HaqPage extends HaqComponent
+class HaqPage extends HaqComponent
 {
     public var cookie(default, null) : HaqCookie;
     
