@@ -14,6 +14,7 @@ import haquery.server.Lib;
 import haxe.htmlparser.HtmlNodeElement;
 import haxe.Serializer;
 import haxe.Unserializer;
+import haquery.common.HaqTemplateExceptions;
 using haquery.StringTools;
 
 class HaqTemplateManager
@@ -62,9 +63,15 @@ class HaqTemplateManager
 	
 	public function createComponent(parent:HaqComponent, tag:String, id:String, attr:Hash<Dynamic>, parentNode:HtmlNodeElement, isCustomRender:Bool) : HaqComponent
 	{
-        var template = get(tag);
-		Lib.assert(template != null, "HAQUERY ERROR could't find component '" + tag + "' for parent '" + parent.fullTag + "'.");
-		return newComponent(template, parent, id, attr, parentNode, isCustomRender);
+        try
+		{
+			return newComponent(get(tag), parent, id, attr, parentNode, isCustomRender);
+		}
+		catch (e:HaqTemplateNotFoundException)
+		{
+			throw new Exception("HAQUERY ERROR could't find component '" + tag + "' for parent '" + parent.fullTag + "'.");
+			return null;
+		}
 	}
 	
 	function newComponent(template:HaqTemplate, parent:HaqComponent, id:String, attr:Hash<Dynamic>, parentNode:HtmlNodeElement, isCustomRender:Bool) : HaqComponent

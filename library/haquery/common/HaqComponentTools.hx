@@ -41,8 +41,6 @@ class HaqComponentTools
 	
 	public static function htmlTagToFullTag(htmlTag:String) : String
 	{
-		var n = htmlTag.indexOf("-");
-		if (n < 0) return htmlTag;
 		return HaqDefines.folders.components + "." + StringTools.replace(htmlTag, "-", ".");
 	}
 	

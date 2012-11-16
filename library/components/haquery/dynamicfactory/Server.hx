@@ -1,5 +1,6 @@
 package components.haquery.dynamicfactory;
 
+import haquery.common.HaqComponentTools;
 import haxe.htmlparser.HtmlNodeElement;
 import haxe.Serializer;
 import haquery.Exception;
@@ -20,8 +21,8 @@ class Server extends BaseServer
 		{
 			if (child.name.startsWith("haq:"))
 			{
-				var tag = child.name.substr("haq:".length);
-				var t = manager.findTemplate(parentFullTag, tag);
+				var tag = HaqComponentTools.htmlTagToFullTag(child.name.substr("haq:".length));
+				var t = manager.get(tag);
 				if (t == null)
 				{
 					throw new Exception("Could not find template for the '" + tag + "' component for the '" + parentFullTag + "' parent component.");

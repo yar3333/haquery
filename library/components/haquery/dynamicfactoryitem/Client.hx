@@ -1,5 +1,6 @@
 package components.haquery.dynamicfactoryitem;
 
+import haquery.common.HaqComponentTools;
 import haquery.Exception;
 import js.JQuery;
 import haxe.htmlparser.HtmlDocument;
@@ -68,8 +69,8 @@ class Client extends BaseClient
 			else
 			{
 				var id = getComponentID(prefixID, child);
-				var tag = child.name.substr("haq:".length);
-				var t = manager.findTemplate(fullTag, tag);
+				var tag = HaqComponentTools.htmlTagToFullTag(child.name.substr("haq:".length));
+				var t = manager.get(tag);
 				if (t == null)
 				{
 					throw new Exception("Component template '" + tag + "' not found for parent component '" + fullTag + "'.");

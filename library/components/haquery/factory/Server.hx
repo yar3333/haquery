@@ -19,7 +19,7 @@ class Server extends Base
         {
 			components = new LazyItems(length, function(id:String)
 			{
-				return manager.createComponent(this, "factoryitem", id, null, innerNode, false);
+				return manager.createComponent(this, "components.haquery.factoryitem", id, null, innerNode, false);
 			});
         }
 	}
