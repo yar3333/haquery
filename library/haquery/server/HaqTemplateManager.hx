@@ -77,9 +77,23 @@ class HaqTemplateManager
 	function newComponent(template:HaqTemplate, parent:HaqComponent, id:String, attr:Hash<Dynamic>, parentNode:HtmlNodeElement, isCustomRender:Bool) : HaqComponent
 	{
         Lib.profiler.begin('newComponent');
-			var r : HaqComponent = Type.createInstance(Type.resolveClass(template.serverClassName), []);
+			Lib.assert(template != null, "Template for id = '" + id + "' not found.");
+			
+			var clas = Type.resolveClass(template.serverClassName);
+			Lib.assert(clas != null, "Server class '" + template.serverClassName + "' for component '" + template.fullTag + "' not found.");
+			
+			var r : HaqComponent = null;
+			try
+			{
+				r = cast(Type.createInstance(clas, []), HaqComponent);
+			}
+			catch (e:Dynamic)
+			{
+				Lib.assert(false, "Can't cast server class '" + template.serverClassName + "' to HaqComponent. Check class extends.");
+			}
+			
 			r.construct(this, template.fullTag, parent, id, template.getDocCopy(), attr, parentNode, isCustomRender);
-        Lib.profiler.end();
+		Lib.profiler.end();
 		return r;
 	}
 	
