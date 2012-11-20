@@ -35,6 +35,12 @@ class HaqTemplateParser
 		this.fullTag = fullTag;
 		this.childFullTags = childFullTags;
 		
+		var folder = fullTag.replace(".", "/") + "/";
+		if (getFullPath(folder + "template.html") == null && getFullPath(folder + "Server.hx") == null && getFullPath(folder + "Client.hx") == null)
+		{
+			throw new HaqTemplateNotFoundException(fullTag);
+		}
+		
 		config = getConfig();
 	}
 	
