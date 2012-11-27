@@ -185,7 +185,7 @@ class Build
 	
     public function genTrm(?manager:HaqTemplateManager)
     {
-        log.start("Generate template related mapping classes");
+        log.start("Generate template classes");
         
         TrmGenerator.run(manager != null ? manager : new HaqTemplateManager(log, project.allClassPaths), fs);
         
@@ -217,8 +217,8 @@ class Build
 		var params = project.getBuildParams(project.platform, tempPath, [ "haqueryGenCode" ]);
 		var r = Process.run(log, fs.getHaxePath() + "haxe.exe", params);
 		fs.deleteAny(tempPath);
-		Lib.print(r.stdOut);
-		Lib.print(r.stdErr);
+		if (r.stdOut.trim() != "") Lib.print(r.stdOut);
+		if (r.stdErr.trim() != "") Lib.print(r.stdErr);
 		if (r.exitCode == 0) log.finishOk();
 		else                 log.finishFail(new CompilationFailException("Server compilation errors."));
 	}
