@@ -411,6 +411,15 @@ class HaqQuery
 	public function data(name:String, ?val:Dynamic) : Dynamic
 	{
 		name = ~/[A-Z]/g.customReplace(name, function(re) return "-" + re.matched(0).toLowerCase()).ltrim("-");
-		return attr("data-" + name, Std.string(val));
+		if (val != null)
+		{
+			if (val == true) val = "true";
+			else if (val == false) val = "false";
+			return attr("data-" + name, val);
+		}
+		else
+		{
+			return Std.parseValue(attr("data-" + name));
+		}
 	}
 }
