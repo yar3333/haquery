@@ -27,7 +27,7 @@ class StringTools
 		}
 		while (s.length > 0 && chars.indexOf(s.substr(0, 1)) >= 0)
 		{
-			s = s.substr(1, s.length - 1);
+			s = s.substr(1);
 		}
 		return s;
         #end
