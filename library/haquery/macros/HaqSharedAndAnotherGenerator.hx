@@ -57,7 +57,7 @@ class HaqSharedAndAnotherGenerator
 						var callParams = [ 
 							  name.toExpr()
 							, Lambda.map(args, function(a) return Context.parse(a.name, pos)).toArray()
-							, !HaqTools.isVoid(ret) ? macro success : macro function(_) success()
+							, !HaqTools.isVoid(ret) ? macro success : macro function(_) if (success != null) success()
 							, macro fail
 						];
 						var callExpr = ExprDef.EBlock( [ ExprDef.ECall(macro component.callSharedServerMethod, callParams).at(pos) ] ).at(pos);
@@ -160,7 +160,7 @@ class HaqSharedAndAnotherGenerator
 							, macro this.component.fullID
 							, name.toExpr()
 							, Lambda.map(args, function(a) return Context.parse(a.name, pos)).toArray()
-							, !HaqTools.isVoid(ret) ? macro success : macro function(_) success()
+							, !HaqTools.isVoid(ret) ? macro success : macro function(_) if (success != null) success()
 							, macro fail
 						];
 						var callExpr = ExprDef.ECall(macro haquery.client.Lib.websocket.callAnotherServerMethod, callParams).at(pos);
