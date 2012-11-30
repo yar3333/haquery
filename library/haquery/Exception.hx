@@ -46,7 +46,7 @@ class Exception
 		var innerString = innerException != null ? innerException.toString() : "";
 		return message 
 			+ "\n\tStack trace:" + Stack.toString(stackTrace).replace("\n", "\n\t\t") 
-			+ (innerString != "" ? "INNER EXCEPTION: " + innerString : "");
+			+ (innerString != "" ? "\nINNER EXCEPTION: " + innerString : "");
 	}
 	
 	public static function rethrow(exception:Dynamic) : Void
