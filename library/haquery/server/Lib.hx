@@ -40,7 +40,7 @@ class Lib
 		#end
 		
 		db = null;
-		config = new HaqConfig("config.xml");
+		config = HaqConfig.load("config.xml");
 		uploads = new HaqUploads(HaqDefines.folders.temp + "/uploads", config.maxPostSize);
 		
 		try
