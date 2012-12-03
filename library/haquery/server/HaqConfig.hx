@@ -3,13 +3,14 @@ package haquery.server;
 import haquery.Exception;
 import haxe.htmlparser.HtmlDocument;
 import haxe.htmlparser.HtmlNodeElement;
-import haquery.server.db.HaqDb;
 import haquery.Std;
 import sys.io.File;
 using haquery.StringTools;
 
 class HaqConfig
 {
+	static var cache : Hash<{ lastModTime:Float, config:HaqConfig }>;
+	
 	/**
      * Database connection string in TYPE://USER:PASS@HOST/DBNAME form.
 	 * For example: mysql://root:123456@localhost/mytestdb 
@@ -50,16 +51,11 @@ class HaqConfig
 	
 	public var secret : String;
 	
-	public function new(filePath:String)
+	function new(path:String)
 	{
 		customs = new Hash<Dynamic>();
 		listeners = new Hash<HaqWebsocketListener>();
 		
-		load(filePath);
-	}
-	
-    public function load(path:String) : Void
-	{
 		if (FileSystem.exists(path))
 		{
 			var xml = new HtmlDocument(File.getContent(path));
@@ -126,6 +122,20 @@ class HaqConfig
 				}
 			}
 		}
+	}
+	
+    public static function load(path:String) : HaqConfig
+	{
+		if (cache == null) cache = new Hash<{ lastModTime:Float, config:HaqConfig }>();
+		
+		var item = cache.get(path);
+		if (item == null || item.lastModTime != FileSystem.stat(path).mtime.getTime())
+		{
+			var config = new HaqConfig(path);
+			cache.set(path, { lastModTime:FileSystem.stat(path).mtime.getTime(), config:config });
+			return config;
+		}
+		return item.config;
 	}
 	
 	function throwBadConfigFileRecord(path:String, node:HtmlNodeElement) : Void
