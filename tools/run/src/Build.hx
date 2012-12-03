@@ -54,8 +54,8 @@ class Build
 			
 			try { saveLibFolderFileTimes(outputDir); } catch (e:Dynamic) { }
 			
-			buildClient(outputDir, jsModern, isDeadCodeElimination);
 			buildServer(outputDir);
+			buildClient(outputDir, jsModern, isDeadCodeElimination);
 			
 			log.start("Generate style file");
 				generateComponentsCssFile(manager, outputDir);
@@ -257,8 +257,8 @@ class Build
 			generateConfigClasses(manager);
 			genImports(manager, project.srcPath);
 
-			genCodeFromClient(project);
 			genCodeFromServer(project);
+			genCodeFromClient(project);
 			
 			log.finishOk();
 		}
