@@ -11,10 +11,12 @@ private typedef NativeWeb = neko.Web;
 import haquery.common.HaqDefines;
 import haxe.Serializer;
 import sys.io.File;
+import sys.io.FileSeek;
 import sys.io.Process;
 import sys.net.Host;
 import sys.net.Socket;
 import sys.net.WebSocket;
+import haquery.Std;
 using haquery.StringTools;
 
 class HaqSystem 
@@ -147,8 +149,18 @@ class HaqSystem
 				.js("function updateListeners() { $('#listeners').load('/haquery-status-listeners/', function() { setTimeout(updateListeners, updateListenersTimeout); });  }")
 				.js("setTimeout(updateLog, updateLogTimeout);")
 				.js("setTimeout(updateListeners, updateListenersTimeout);")
-				.begin("pre", "id='listeners' style='margin-top:5px; position:absolute; right:0; background: #eee'").end()
-				.begin("pre", "id='log' style='margin-top:5px'").end();
+				.begin("table", "width='100%' border='0' style='border-collapse:collapse; margin-top:5px'")
+					.begin("tbody")
+						.begin("tr valign='top'")
+							.begin("td")
+								.begin("pre", "id='log' style='overflow-x:scroll'").end()
+							.end()
+							.begin("td width='200px'")
+								.begin("div", "id='listeners'").end()
+							.end()
+						.end()
+					.end()
+				.end();
 		}
 		else
 		{
@@ -167,7 +179,12 @@ class HaqSystem
 		var html = "";
 		if (isAdmin())
 		{
-			var logLines = File.getContent(HaqDefines.folders.temp + "/haquery.log").split("\n");
+			var f = File.read(HaqDefines.folders.temp + "/haquery.log");
+			f.seek(0, FileSeek.SeekEnd);
+			var size = f.tell();
+			f.seek(Std.max(0, size - 65536), FileSeek.SeekBegin);
+			var logLines = f.readAll().toString().split("\n");
+			f.close();
 			for (i in Std.max(0, logLines.length - 50)...logLines.length)
 			{
 				html += StringTools.htmlEscape(logLines[i]) + "\n";
@@ -177,7 +194,6 @@ class HaqSystem
 		{
 			html += "Access denided, please reload a page.";
 		}
-		
 		NativeLib.println(html);
 	}
 	
@@ -187,12 +203,14 @@ class HaqSystem
 		
 		if (isAdmin())
 		{
-			for (listener in Lib.config.listeners)
+			var listeners = Lambda.array(Lib.config.listeners);
+			listeners.sort(function(a, b) return a.name < b.name ? -1 : (a.name > b.name ? 1 : 0));
+			for (listener in listeners)
 			{
 				var status = listener.status();
-				html += "<fieldset style='display:inline-block'>"
+				html += "<fieldset style='background:#eee; margin-bottom:5px'>"
 							+ "<legend>" + listener.name + "</legend>"
-							+ (status != null ? status : "not run")
+							+ (status != null ? status.replace("\n", "<br/>") : "not run")
 					  + "</fieldset>";
 			}
 		}
