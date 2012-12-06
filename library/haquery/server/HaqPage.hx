@@ -1,5 +1,7 @@
 package haquery.server;
 
+#if server
+
 import haquery.common.HaqMessageListenerAnswer;
 import haquery.server.db.HaqDb;
 import haxe.htmlparser.HtmlNodeElement;
@@ -304,3 +306,5 @@ class HaqPage extends HaqComponent
 	 */
 	public function onDisconnect() {}
 }
+
+#end

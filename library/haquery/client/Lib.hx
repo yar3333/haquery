@@ -1,5 +1,7 @@
 package haquery.client;
 
+#if client
+
 import haquery.Exception;
 import haxe.Firebug;
 import haquery.client.HaqInternals;
@@ -13,8 +15,6 @@ import haquery.client.HaqInternals;
 	
 	static public function run(pageFullTag:String)
     {
-		haquery.macros.HaqBuild.preBuild();
-		
 		haxe.Log.trace = Firebug.detect() 
 			? Firebug.trace 
 			: haquery.client.Lib.trace;
@@ -63,3 +63,5 @@ import haquery.client.HaqInternals;
     public static inline function eval( code : String ) : Dynamic { return js.Lib.eval(code); }
 	public static inline function setErrorHandler( f ) { js.Lib.setErrorHandler(f); }
 }
+
+#end

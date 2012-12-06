@@ -1,5 +1,7 @@
 package haquery.client;
 
+#if client
+
 import js.Dom;
 import js.JQuery;
 import haquery.client.Lib;
@@ -85,3 +87,5 @@ class HaqElemEventManager
         return true;
 	}
 }
+
+#end

@@ -1,5 +1,7 @@
 package haquery.client;
 
+#if client
+
 import haquery.client.HaqComponent;
 import haquery.client.HaqCookie;
 
@@ -53,3 +55,5 @@ class HaqPage extends HaqComponent
 	 */
 	public function onDisconnect() {}
 }
+
+#end

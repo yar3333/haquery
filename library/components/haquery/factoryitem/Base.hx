@@ -1,10 +1,6 @@
 package components.haquery.factoryitem;
 
-#if !client
 import haquery.common.HaqEvent;
-#else
-import haquery.common.HaqEvent;
-#end
 
 class Base extends #if !client BaseServer #else BaseClient #end
 {

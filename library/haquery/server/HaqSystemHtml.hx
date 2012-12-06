@@ -1,5 +1,7 @@
 package haquery.server;
 
+#if server
+
 using haquery.StringTools;
 
 class HaqSystemHtml 
@@ -98,3 +100,5 @@ class HaqSystemHtml
 		return template.replace("{rawStyle}", rawStyle).replace("{rawJs}", rawJs).replace("{rawContent}", rawContent);
 	}
 }
+
+#end

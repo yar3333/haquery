@@ -1,5 +1,7 @@
 package haquery.server;
 
+#if server
+
 #if php
 private typedef NativeLib = php.Lib;
 private typedef NativeWeb = php.Web;
@@ -145,3 +147,5 @@ class HaqUploads
 		files.set(inputID, { fileID:fileID, size:uploadedFile.size, error:uploadedFile.error });
 	}
 }
+
+#end

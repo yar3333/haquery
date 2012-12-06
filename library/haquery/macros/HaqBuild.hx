@@ -7,9 +7,15 @@ import haxe.macro.Type;
 
 class HaqBuild
 {
-	@:macro public static function preBuild()
+	@:macro public static function startup()
 	{
-		if (!Context.defined("display"))
+		if (Context.defined("display"))
+		{
+			//if (Compiler.getDisplayPos().indexOf("client"))
+			Compiler.define("server");
+			Compiler.define("client");
+		}
+		else
 		{
 			Context.onGenerate(function(types:Array<Type>)
 			{
@@ -18,13 +24,12 @@ class HaqBuild
 					switch (type)
 					{
 						case Type.TInst(t, params):
-							HaqSharedAndAnotherGenerator.generate(t.get());
+								HaqSharedAndAnotherGenerator.generate(t.get());
 						default:
 					}
 				}
 			});
 		}
-		
 		return macro null;
 	}
 }

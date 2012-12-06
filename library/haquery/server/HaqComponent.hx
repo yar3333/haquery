@@ -1,5 +1,7 @@
 package haquery.server;
 
+#if (server || macro)
+
 #if !macro
 
 import haquery.Exception;
@@ -282,3 +284,5 @@ using haquery.StringTools;
 		return haquery.macros.HaqComponentTools.anotherServer(ethis, pageKey);
 	}
 }
+
+#end

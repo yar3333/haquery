@@ -1,5 +1,7 @@
 package haquery.server;
 
+#if server
+
 import haquery.StringTools;
 
 private typedef HaqProfilerBlock =
@@ -179,3 +181,4 @@ class HaqProfiler
     }
 }
 
+#end

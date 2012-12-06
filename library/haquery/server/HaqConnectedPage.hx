@@ -1,5 +1,7 @@
 package haquery.server;
 
+#if server
+
 import haquery.common.HaqMessageListenerAnswer;
 import haquery.server.db.HaqDb;
 import haquery.common.HaqComponentTools;
@@ -64,3 +66,5 @@ class HaqConnectedPage
 		ws.send(Serializer.run(a));
 	}
 }
+
+#end

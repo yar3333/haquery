@@ -1,5 +1,7 @@
 package haquery.client;
 
+#if client
+
 import haquery.common.HaqComponentTools;
 import haquery.common.HaqMessageListenerAnswer;
 import haquery.common.HaqMessageToListener;
@@ -128,3 +130,5 @@ class HaqServerCallerWebsocket
 		processSendQueue();
 	}
 }
+
+#end

@@ -1,5 +1,7 @@
 package haquery.server;
 
+#if server
+
 #if php
 private typedef NativeLib = php.Lib;
 private typedef NativeWeb = php.Web;
@@ -248,3 +250,5 @@ class HaqSystem
 		}
 	}
 }
+
+#end

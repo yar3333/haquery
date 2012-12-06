@@ -1,5 +1,7 @@
 package haquery.server;
 
+#if server
+
 #if php
 import php.Web;
 #elseif neko
@@ -25,3 +27,5 @@ class HaqRequestHeaders
 		return null;
     }
 }
+
+#end

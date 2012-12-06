@@ -1,5 +1,7 @@
 package haquery.client;
 
+#if client
+
 import haquery.common.HaqMessageListenerAnswer;
 import haxe.Serializer;
 import haxe.Unserializer;
@@ -97,3 +99,5 @@ class HaqServerCallerAjax
 		return elems;
 	}
 }
+
+#end

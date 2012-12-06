@@ -1,5 +1,7 @@
 package haquery.server;
 
+#if server
+
 #if php
 private typedef NativeLib = php.Lib;
 #elseif neko
@@ -115,3 +117,5 @@ class HaqTrace
         }
 	}
 }
+
+#end
