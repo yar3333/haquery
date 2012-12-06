@@ -1,4 +1,4 @@
-package haquery.macros.internal.macro.tools;
+package haquery.macro.internal.macro.tools;
 
 private typedef Inspect = Type;
 
@@ -6,14 +6,14 @@ import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.Type;
 import haxe.PosInfos;
-import haquery.macros.internal.core.types.Outcome;
+import haquery.macro.internal.core.types.Outcome;
 
 using Lambda;
 using StringTools;
-using haquery.macros.internal.macro.tools.PosTools;
-using haquery.macros.internal.macro.tools.ExprTools;
-using haquery.macros.internal.macro.tools.TypeTools;
-using haquery.macros.internal.core.types.Outcome;
+using haquery.macro.internal.macro.tools.PosTools;
+using haquery.macro.internal.macro.tools.ExprTools;
+using haquery.macro.internal.macro.tools.TypeTools;
+using haquery.macro.internal.core.types.Outcome;
 
 typedef VarDecl = { name : String, type : ComplexType, expr : Null<Expr> };
 

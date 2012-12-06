@@ -1,4 +1,4 @@
-package haquery.macros.internal.macro.tools;
+package haquery.macro.internal.macro.tools;
 
 /**
  * ...

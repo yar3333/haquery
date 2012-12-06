@@ -1,4 +1,4 @@
-package haquery.macros;
+package haquery.macro;
 
 import haxe.macro.Compiler;
 import haxe.macro.Context;

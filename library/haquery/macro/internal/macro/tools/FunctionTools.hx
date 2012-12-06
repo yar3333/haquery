@@ -1,11 +1,11 @@
-package haquery.macros.internal.macro.tools;
+package haquery.macro.internal.macro.tools;
 
 /**
  * ...
  * @author back2dos
  */
 import haxe.macro.Expr;
-using haquery.macros.internal.macro.tools.ExprTools;
+using haquery.macro.internal.macro.tools.ExprTools;
 class FunctionTools {
 	static public function toExpr(f:Function, ?name, ?pos) {
 		return EFunction(name, f).at(pos);

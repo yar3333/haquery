@@ -1,11 +1,11 @@
-package haquery.macros.internal.macro.build;
+package haquery.macro.internal.macro.build;
  
 import haxe.macro.Expr;
-import haquery.macros.internal.macro.tools.Printer;
-import haquery.macros.internal.core.types.Outcome;
+import haquery.macro.internal.macro.tools.Printer;
+import haquery.macro.internal.core.types.Outcome;
 
 using Lambda;
-using haquery.macros.internal.macro.tools.MacroTools;
+using haquery.macro.internal.macro.tools.MacroTools;
 
 typedef Meta = { 
 	name : String,

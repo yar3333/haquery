@@ -1,8 +1,8 @@
-package haquery.macros.internal.macro.tools;
+package haquery.macro.internal.macro.tools;
 
 import haxe.macro.Expr;
-using haquery.macros.internal.core.types.Outcome;
-using haquery.macros.internal.macro.tools.MacroTools;
+using haquery.macro.internal.core.types.Outcome;
+using haquery.macro.internal.macro.tools.MacroTools;
 
 /**
  * ...

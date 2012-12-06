@@ -1,4 +1,4 @@
-package haquery.macros.internal.macro.tools;
+package haquery.macro.internal.macro.tools;
 
 #if (macro || neko)
 /**
@@ -7,11 +7,11 @@ package haquery.macros.internal.macro.tools;
  */
 import haxe.macro.Context;
 import haxe.macro.Expr;
-import haquery.macros.internal.core.types.Outcome;
+import haquery.macro.internal.core.types.Outcome;
 
 using StringTools;
-using haquery.macros.internal.core.types.Outcome;
-using haquery.macros.internal.macro.tools.MacroTools;
+using haquery.macro.internal.core.types.Outcome;
+using haquery.macro.internal.macro.tools.MacroTools;
 
 class AST {
 	///returns an expression that evaluates to the ast of the given expression, while performing a number of substitutions

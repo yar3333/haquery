@@ -211,8 +211,8 @@ class FlashDevelopProject
 			{
 				if (elem.name == "option" && elem.has.additional)
 				{
-					var s = StringTools.urlDecode(elem.att.additional).trim();
-					return s != "" ? ~/\s+/.split(s) : [];
+					var s = elem.att.additional.replace("&#xA;", "\n").trim();
+					return s != "" ? ~/\s+/g.split(s) : [];
 				}
 			}
 		}

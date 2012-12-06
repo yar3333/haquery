@@ -1,14 +1,14 @@
-package haquery.macros.internal.macro.build;
+package haquery.macro.internal.macro.build;
 
 private typedef Enums = Type;
 
 import haxe.macro.Expr;
 import haxe.macro.Context;
 import haxe.macro.Type;
-import haquery.macros.internal.macro.tools.Printer;
+import haquery.macro.internal.macro.tools.Printer;
 
-using haquery.macros.internal.macro.tools.MacroTools;
-using haquery.macros.internal.core.types.Outcome;
+using haquery.macro.internal.macro.tools.MacroTools;
+using haquery.macro.internal.core.types.Outcome;
 
 /**
  * ...

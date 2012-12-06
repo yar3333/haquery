@@ -1,15 +1,15 @@
-package haquery.macros.internal.macro.tools;
+package haquery.macro.internal.macro.tools;
 
 import haxe.macro.Context;
 import haxe.macro.Expr;
-import haquery.macros.internal.core.types.Outcome;
+import haquery.macro.internal.core.types.Outcome;
 
 /**
  * ...
  * @author back2dos
  */
-using haquery.macros.internal.macro.tools.PosTools;
-using haquery.macros.internal.core.types.Outcome;
+using haquery.macro.internal.macro.tools.PosTools;
+using haquery.macro.internal.core.types.Outcome;
 
 class PosTools {
 
