@@ -1,5 +1,7 @@
 package haquery.server;
 
+#if neko
+
 import haxe.Serializer;
 import haxe.Unserializer;
 import neko.Sys;
@@ -126,3 +128,5 @@ class HaqWebsocketListener
 		}
 	}
 }
+
+#end

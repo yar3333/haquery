@@ -64,11 +64,16 @@ class Lib
 				}
 				else
 				{
-					var listener = getListenerToDispatchRequest();
 					var request = getRequest(route);
+					
+					#if neko
+					var listener = getListenerToDispatchRequest();
 					var response = listener != null
 								 ? listener.makeRequest(request)
 								 : runPage(request, route, bootstraps).response;
+					#else
+					var response = runPage(request, route, bootstraps).response;
+					#end
 					
 					if (db != null)
 					{
@@ -107,6 +112,7 @@ class Lib
         }
     }
 	
+	#if neko
 	static function getListenerToDispatchRequest() : HaqWebsocketListener
 	{
 		if (config.listeners.iterator().hasNext())
@@ -116,6 +122,7 @@ class Lib
 		}
 		return null;
 	}
+	#end
 	
 	static function getRequest(route:HaqRoute) : HaqRequest
 	{

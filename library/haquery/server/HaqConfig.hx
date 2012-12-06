@@ -47,14 +47,15 @@ class HaqConfig
      */
     public var customs : Hash<Dynamic>;
 	
+	#if neko
 	public var listeners : Hash<HaqWebsocketListener>;
+	#end
 	
 	public var secret : String;
 	
 	function new(path:String)
 	{
 		customs = new Hash<Dynamic>();
-		listeners = new Hash<HaqWebsocketListener>();
 		
 		if (FileSystem.exists(path))
 		{
@@ -108,6 +109,8 @@ class HaqConfig
 				}
 			}
 			
+			#if neko
+			listeners = new Hash<HaqWebsocketListener>();
 			for (node in xml.find(">config>listeners>websocket"))
 			{
 				if (node.hasAttribute("name") && node.hasAttribute("host") && node.hasAttribute("port"))
@@ -121,6 +124,7 @@ class HaqConfig
 					));
 				}
 			}
+			#end
 		}
 	}
 	

@@ -18,10 +18,14 @@ class HaqTrace
     {
 		var text = object2string(v, pos);
 		
+		#if neko
 		if (HaqSystem.listener != null)
 		{
 			NativeLib.println(text);
 		}
+		#else
+		NativeLib.println(text);
+		#end
 		
 		writeToFile(text);
     }
@@ -94,7 +98,11 @@ class HaqTrace
         {
 			if (text != "")
 			{
-				text = "[" + (HaqSystem.listener == null ? " " : HaqSystem.listener.name) + "] " 
+				text = "[" + #if neko 
+								(HaqSystem.listener == null ? " " : HaqSystem.listener.name)
+							 #else 
+								" "
+							 #end + "] " 
 				     + StringTools.replace(text, "\n", "\r\n\t") 
 					 + "\r\n";
 			}
