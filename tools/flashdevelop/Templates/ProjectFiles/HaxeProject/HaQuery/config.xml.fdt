@@ -1,23 +1,12 @@
 <config>
     <!-- use to specify inhehitance
-    <extend>
-        <component package="" />
-    </extend>
+    <extends package="components.myproject.mycomponent" />
     -->
     
-    <!-- specify components packages for using in template.html
-    <imports>
-        <components package="" />
-        <components package="" />
-        <components package="" />
-    </imports>
-    -->
-    
-    <!-- need in very rare case to prevent excluding dynamically used components
-    <requires>
-        <component package="" />
-        <component package="" />
-        <component package="" />
-    </requires>
+    <!-- specify component's package for using in template.html
+    <import package="components.haquery.*" />
+    <import package="components.myproject.mycomponent" />
+    <import package="components.myproject.mycomponent" as="tagalias" />
+    <import package="components.myproject.mycomponent" required="true" />
     -->
 </config>

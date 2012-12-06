@@ -1,9 +1,6 @@
 <config>
-    <extend>
-        <component package="pages.layout" />
-    </extend>
-    <imports>
-        <components package="components.myproject" />
-        <components package="components.haquery" />
-    </imports>
+    <extends component="pages.layout" />
+    
+    <import package="components.myproject.*" />
+    <import package="components.haquery.*" />
 </config>
