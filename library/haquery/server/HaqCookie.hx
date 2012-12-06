@@ -1,5 +1,7 @@
 package haquery.server;
 
+#if server
+
 #if php
 import php.Web;
 #elseif neko
@@ -43,3 +45,5 @@ class HaqCookie
 		}
     }
 }
+
+#end

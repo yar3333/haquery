@@ -1,5 +1,7 @@
 package haquery.server;
 
+#if server
+
 import haquery.Exception;
 import haquery.server.FileSystem;
 import haquery.common.HaqTemplateExceptions;
@@ -95,3 +97,5 @@ class HaqRouter
 		}
 	}
 }
+
+#end

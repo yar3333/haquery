@@ -1,11 +1,11 @@
 package haquery.common;
 
+import haxe.htmlparser.HtmlNodeElement;
 import haquery.Exception;
 using haquery.StringTools;
 
 #if !client
 import haquery.server.HaqComponent;
-import haxe.htmlparser.HtmlNodeElement;
 #else
 import haquery.client.HaqComponent;
 #end

@@ -14,8 +14,9 @@ class HaqSharedAndAnotherGenerator
 {
 	public static function generate(clas:ClassType)
 	{
-		if (HaqTools.isExtendsFrom(clas, "haquery.base.HaqComponent"))
-		{
+		if ((clas.name == "Server" || clas.name == "Client") 
+		 && HaqTools.isExtendsFrom(clas, "haquery.base.HaqComponent")
+		) {
 			if (clas.name == "Server")
 			{
 				generateSharedServer(clas);

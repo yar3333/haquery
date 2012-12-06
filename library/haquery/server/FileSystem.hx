@@ -1,5 +1,7 @@
 package haquery.server;
 
+#if (server || macro)
+
 class FileSystem 
 {
 	/**
@@ -95,3 +97,5 @@ class FileSystem
 	*/
 	public static inline function readDirectory(path:String) : Array<String> return sys.FileSystem.readDirectory(path)
 }
+
+#end

@@ -1,7 +1,8 @@
 package haquery.server;
 
-import haxe.htmlparser.HtmlNodeElement;
+#if server
 
+import haxe.htmlparser.HtmlNodeElement;
 using haquery.StringTools;
 
 class HaqCssGlobalizer extends haquery.base.HaqCssGlobalizer
@@ -49,3 +50,5 @@ class HaqCssGlobalizer extends haquery.base.HaqCssGlobalizer
 		}
 	}
 }
+
+#end

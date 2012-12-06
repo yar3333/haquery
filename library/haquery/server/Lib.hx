@@ -1,14 +1,12 @@
 package haquery.server;
 
-#if php
-private typedef NativeLib = php.Lib;
-#elseif neko
-private typedef NativeLib = neko.Lib;
-#end
+#if server
 
 #if php
+private typedef NativeLib = php.Lib;
 typedef Web = php.Web;
 #elseif neko
+private typedef NativeLib = neko.Lib;
 typedef Web = neko.Web;
 #end
 
@@ -33,8 +31,6 @@ class Lib
     
     public static function run() : Void
     {
-		haquery.macros.HaqBuild.preBuild();
-		
 		#if neko
 		Sys.setCwd(getCwd());
 		#end
@@ -338,3 +334,5 @@ class Lib
 	
 	static function getCwd() { return Web.getCwd().replace("\\", "/").rtrim("/"); }
 }
+
+#end

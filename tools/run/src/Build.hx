@@ -168,7 +168,7 @@ class Build
 	function buildServer(outputDir:String)
 	{
 		log.start("Build server to '" + outputDir + "'");
-        var params = project.getBuildParams(project.platform, project.platform != "neko" ? outputDir : outputDir + "/index.n", []);
+        var params = project.getBuildParams(project.platform, project.platform != "neko" ? outputDir : outputDir + "/index.n", [ "server" ]);
 		var r = Process.run(log, fs.getHaxePath() + "haxe.exe", params);
 		Lib.print(r.stdOut);
 		Lib.print(r.stdErr);

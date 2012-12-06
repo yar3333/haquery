@@ -1,5 +1,7 @@
 package haquery.server;
 
+#if server
+
 import haquery.common.HaqComponentTools;
 import haquery.common.HaqSharedStorage;
 import haquery.Exception;
@@ -167,3 +169,5 @@ class HaqTemplateManager
 		return r;
     }
 }
+
+#end

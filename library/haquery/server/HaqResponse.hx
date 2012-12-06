@@ -1,5 +1,7 @@
 package haquery.server;
 
+#if server
+
 typedef HaqResponse =
 {
 	var responseHeaders : HaqResponseHeaders;
@@ -9,3 +11,5 @@ typedef HaqResponse =
 	var ajaxResponse : String;
 	var result : Dynamic;
 }
+
+#end

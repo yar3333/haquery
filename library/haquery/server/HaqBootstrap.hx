@@ -1,5 +1,7 @@
 package haquery.server;
 
+#if server
+
 class HaqBootstrap
 {
 	public function new() { }
@@ -19,3 +21,5 @@ class HaqBootstrap
 		// nothing to do
 	}
 }
+
+#end

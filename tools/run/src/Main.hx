@@ -42,7 +42,7 @@ class Main
 				{
 					case 'gen-orm': 
 						var project = new FlashDevelopProject(log, "");
-						var databaseConnectionString = args.length > 0 ? args[0] : new HaqConfig(project.srcPath + "config.xml").databaseConnectionString;
+						var databaseConnectionString = args.length > 0 ? args[0] : HaqConfig.load(project.srcPath + "config.xml").databaseConnectionString;
 						if (databaseConnectionString != null && databaseConnectionString != "")
 						{
 							log.start("Generate object related mapping classes");

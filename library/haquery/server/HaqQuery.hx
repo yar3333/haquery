@@ -1,5 +1,7 @@
 package haquery.server;
 
+#if server
+
 import haquery.Std;
 import haxe.htmlparser.HtmlNodeElement;
 import haquery.base.HaqCssGlobalizer;
@@ -423,3 +425,5 @@ class HaqQuery
 		}
 	}
 }
+
+#end

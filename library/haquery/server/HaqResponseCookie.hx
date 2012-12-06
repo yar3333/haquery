@@ -1,5 +1,7 @@
 package haquery.server;
 
+#if server
+
 #if php
 import php.Web;
 #elseif neko
@@ -39,3 +41,5 @@ class HaqResponseCookie
 		cookies = new Hash<{ value:String, expire:Date, path:String, domain:String }>();
 	}
 }
+
+#end

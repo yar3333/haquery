@@ -1,5 +1,7 @@
 package haquery.server;
 
+#if server
+
 typedef HaqRequest =
 {
 	var pageFullTag : String;
@@ -34,3 +36,5 @@ typedef HaqRequest =
 	
 	var pageSecret : String;
 }
+
+#end

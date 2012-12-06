@@ -1,5 +1,7 @@
 package haquery.server;
 
+#if server
+
 class HaqCli 
 {
 	public static function getURI() : String
@@ -25,3 +27,5 @@ class HaqCli
 	}
 	
 }
+
+#end

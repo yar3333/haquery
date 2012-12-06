@@ -1,5 +1,7 @@
 package haquery.server;
 
+#if server
+
 import haxe.Serializer;
 import haxe.Unserializer;
 import haxe.htmlparser.HtmlDocument;
@@ -45,3 +47,5 @@ class HaqTemplate extends haquery.base.HaqTemplate
 		return Unserializer.run(serializedDoc);
 	}
 }
+
+#end

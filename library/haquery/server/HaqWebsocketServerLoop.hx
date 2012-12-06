@@ -1,5 +1,7 @@
 package haquery.server;
 
+#if server
+
 import haquery.Exception;
 import haquery.server.db.HaqDb;
 import haxe.PosInfos;
@@ -243,3 +245,5 @@ class HaqWebsocketServerLoop
 		}
 	}
 }
+
+#end
