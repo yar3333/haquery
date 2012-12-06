@@ -36,8 +36,8 @@ class HaqUploads
 		var nativeFiles : Hash<php.NativeArray> = php.Lib.hashOfAssociativeArray(untyped __var__("_FILES"));
 		for (id in nativeFiles.keys())
 		{
-			var file : php.NativeArray = nativeFiles.values().first();
-			saveUploadedFile(files, uploadsDir, id, newUploadFileID(uploadsDir), new HaqUploadedFile(
+			var file : php.NativeArray = nativeFiles.iterator().next();
+			saveUploadedFile(files, uploadsDir, id, newUploadFileID(), new HaqUploadedFile(
 				  file[untyped "tmp_name"]
 				, file[untyped "name"]
 				, file[untyped "size"]

@@ -21,7 +21,9 @@ using haquery.StringTools;
 
 class HaqSystem 
 {
+	#if neko
 	public static var listener(default, null) : HaqWebsocketListener;
+	#end
 	
 	public static function run(command:String)
 	{
@@ -32,8 +34,10 @@ class HaqSystem
 			case "haquery-flush":
 				system.doFlushCommnd();
 				
+			#if neko
 			case "haquery-listener":
 				system.doListenerCommand();
+			#end
 			
 			case "haquery-status":
 				system.doStatusCommand();
@@ -41,8 +45,10 @@ class HaqSystem
 			case "haquery-status-log":
 				system.doStatusLogCommand();
 			
+			#if neko
 			case "haquery-status-listeners":
 				system.doStatusListenersCommand();
+			#end
 			
 			case "haquery-upload":
 				system.doUploadCommand();
@@ -69,6 +75,7 @@ class HaqSystem
 		FileSystem.deleteDirectory(path + "/templates");
 	}
 	
+	#if neko
 	function doListenerCommand()
 	{
 		if (Lib.isCli())
@@ -127,6 +134,7 @@ class HaqSystem
 			NativeLib.println("This command allowed from the command-line only.");
 		}
 	}
+	#end
 	
 	function isAdmin() : Bool
 	{
@@ -197,6 +205,7 @@ class HaqSystem
 		NativeLib.println(html);
 	}
 	
+	#if neko
 	function doStatusListenersCommand()
 	{
 		var html = "";
@@ -221,6 +230,7 @@ class HaqSystem
 	
 		NativeLib.println(html);
 	}
+	#end
 	
 	function doUploadCommand()
 	{

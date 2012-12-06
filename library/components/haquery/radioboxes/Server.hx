@@ -68,15 +68,15 @@ class Server extends BaseServer
         }
     }
 	
-	override function loadFieldValues(params:Hash<String>) 
+	override function loadFieldValues(params:Hash<Dynamic>) 
 	{
 		super.loadFieldValues(params);
 		
 		if (!page.isPostback)
 		{
-			if (params.exists("value"))
+			if (Reflect.hasField(params, "value"))
 			{
-				value = params.get("value");
+				value = Reflect.field(params, "value");
 			}
 		}
 	}

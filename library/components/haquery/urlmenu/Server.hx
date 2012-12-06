@@ -1,7 +1,6 @@
 package components.haquery.urlmenu;
 
 import haquery.server.HaqQuery;
-import haquery.server.Lib;
 using haquery.StringTools;
 
 class Server extends BaseServer
@@ -33,7 +32,7 @@ class Server extends BaseServer
             
             elem.setAttribute('href', href);
             
-            var uri = Lib.getURI().rtrim('/') + '/';
+            var uri = page.uri.rtrim('/') + '/';
             if (uri == href || uri.startsWith(href))
             {
                 if (bestLink == null || href.split('/').length > bestDeep)
