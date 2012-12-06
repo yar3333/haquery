@@ -1,9 +1,9 @@
-package haquery.macros.internal.macro.build;
+package haquery.macro.internal.macro.build;
 
 import haxe.macro.Expr;
-import haquery.macros.internal.macro.tools.ExprTools;
+import haquery.macro.internal.macro.tools.ExprTools;
 
-using haquery.macros.internal.macro.tools.MacroTools;
+using haquery.macro.internal.macro.tools.MacroTools;
 
 class Constructor {
 	var oldStatements:Array<Expr>;

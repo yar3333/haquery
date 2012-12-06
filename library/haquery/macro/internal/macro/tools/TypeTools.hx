@@ -1,4 +1,4 @@
-package haquery.macros.internal.macro.tools;
+package haquery.macro.internal.macro.tools;
 
 /**
  * ...
@@ -8,9 +8,9 @@ import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.Type;
 
-using haquery.macros.internal.macro.tools.ExprTools;
-using haquery.macros.internal.macro.tools.PosTools;
-using haquery.macros.internal.core.types.Outcome;
+using haquery.macro.internal.macro.tools.ExprTools;
+using haquery.macro.internal.macro.tools.PosTools;
+using haquery.macro.internal.core.types.Outcome;
 
 class TypeTools {
 	static var types = new IntHash<Type>();
@@ -230,7 +230,7 @@ class TypeTools {
 				TPath({
 					pack : ['haxe','macro'],
 					name : 'MacroType',
-					params : [TPExpr('haquery.macros.internal.macro.tools.TypeTools.getType'.resolve().call([register(type).toExpr()]))],
+					params : [TPExpr('haquery.macro.internal.macro.tools.TypeTools.getType'.resolve().call([register(type).toExpr()]))],
 					sub : null,				
 				});		
 	}	

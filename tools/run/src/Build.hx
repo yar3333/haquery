@@ -214,7 +214,7 @@ class Build
 		
 		log.start("Generate code from server");
 		fs.createDirectory(project.platform == "neko" ? Path.directory(tempPath) : tempPath);
-		var params = project.getBuildParams(project.platform, tempPath, [ "haqueryGenCode" ]);
+		var params = project.getBuildParams(project.platform, tempPath, [ "server", "haqueryGenCode" ]);
 		var r = Process.run(log, fs.getHaxePath() + "haxe.exe", params);
 		fs.deleteAny(tempPath);
 		if (r.stdOut.trim() != "") Lib.print(r.stdOut);

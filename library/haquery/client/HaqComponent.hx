@@ -12,7 +12,7 @@ using haquery.StringTools;
 
 #end
 
-@:autoBuild(haquery.macros.HaqComponentTools.build()) @:keepSub class HaqComponent extends haquery.base.HaqComponent
+@:autoBuild(haquery.macro.HaqComponentTools.build()) @:keepSub class HaqComponent extends haquery.base.HaqComponent
 {
 #if !macro
 
@@ -118,16 +118,16 @@ using haquery.StringTools;
 	
 	@:macro public function template(ethis:haxe.macro.Expr)
 	{
-		return haquery.macros.HaqComponentTools.template(ethis);
+		return haquery.macro.HaqComponentTools.template(ethis);
 	}
 	
 	@:macro public function server(ethis:haxe.macro.Expr, ?pageKey:haxe.macro.Expr.ExprOf<String>)
 	{
-		return haquery.macros.HaqTools.isNull(pageKey) ? haquery.macros.HaqComponentTools.shared(ethis) : haquery.macros.HaqComponentTools.anotherServer(ethis, pageKey);
+		return haquery.macro.HaqTools.isNull(pageKey) ? haquery.macro.HaqComponentTools.shared(ethis) : haquery.macro.HaqComponentTools.anotherServer(ethis, pageKey);
 	}
 	
 	@:macro public function client(ethis:haxe.macro.Expr, pageKey:haxe.macro.Expr.ExprOf<String>)
 	{
-		return haquery.macros.HaqComponentTools.anotherClient(ethis, pageKey);
+		return haquery.macro.HaqComponentTools.anotherClient(ethis, pageKey);
 	}
 }

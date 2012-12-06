@@ -1,4 +1,4 @@
-package haquery.macros.internal.core.types;
+package haquery.macro.internal.core.types;
 
 /**
  * ...

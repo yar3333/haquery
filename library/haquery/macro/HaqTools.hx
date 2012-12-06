@@ -1,4 +1,4 @@
-package haquery.macros;
+package haquery.macro;
 
 #if macro
 import haxe.macro.Context;
@@ -9,7 +9,7 @@ import sys.io.File;
 import haxe.macro.Expr;
 import haxe.macro.Type;
 using haquery.StringTools;
-using haquery.macros.internal.macro.tools.MacroTools;
+using haquery.macro.internal.macro.tools.MacroTools;
 
 class HaqTools
 {

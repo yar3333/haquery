@@ -1,4 +1,4 @@
-package haquery.macros;
+package haquery.macro;
 
 import haxe.macro.Context;
 import sys.FileSystem;
@@ -6,7 +6,7 @@ import sys.io.File;
 import haxe.macro.Compiler;
 import haxe.macro.Expr;
 import haxe.macro.Type;
-using haquery.macros.internal.macro.tools.MacroTools;
+using haquery.macro.internal.macro.tools.MacroTools;
 
 private typedef EventHandler = { name:String, pos:Position, args:Array<FunctionArg> };
 

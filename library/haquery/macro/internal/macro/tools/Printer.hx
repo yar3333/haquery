@@ -1,8 +1,8 @@
-package haquery.macros.internal.macro.tools;
+package haquery.macro.internal.macro.tools;
 
 import haxe.macro.Expr;
 using Lambda;
-using haquery.macros.internal.macro.tools.ExprTools;
+using haquery.macro.internal.macro.tools.ExprTools;
 
 class Printer {
 	static var binops = '+,*,/,-,=,==,!=,>,>=,<,<=,&,|,^,&&,||,<<,>>,>>>,%,NONE,...'.split(',');

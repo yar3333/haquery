@@ -1,4 +1,4 @@
-package haquery.macros.internal.macro.tools;
+package haquery.macro.internal.macro.tools;
 
 /**
  * ...
@@ -7,8 +7,8 @@ package haquery.macros.internal.macro.tools;
 #if (macro || neko)
 	import haxe.macro.Context;
 	import haxe.macro.Expr;
-	using haquery.macros.internal.macro.tools.PosTools;
-	using haquery.macros.internal.macro.tools.ExprTools;
+	using haquery.macro.internal.macro.tools.PosTools;
+	using haquery.macro.internal.macro.tools.ExprTools;
 #end
 class Bouncer {
 	//TODO: as is, a more less empty class is generated in the output. This is unneccessary.
@@ -19,13 +19,13 @@ class Bouncer {
 		static public function bounce(f:Void->Expr, ?pos) {
 			var id = idCounter++;
 			bounceMap.set(id, f);
-			return 'haquery.macros.internal.macro.tools.Bouncer.catchBounce'.resolve(pos).call([id.toExpr(pos)], pos);
+			return 'haquery.macro.internal.macro.tools.Bouncer.catchBounce'.resolve(pos).call([id.toExpr(pos)], pos);
 		}
 		static public function outerTransform(e:Expr, transform:Expr->Expr) {
 			var id = idCounter++,
 				pos = e.pos;
 			outerMap.set(id, transform);
-			return 'haquery.macros.internal.macro.tools.Bouncer.makeOuter'.resolve(pos).call([e], pos).field('andBounce', pos).call([id.toExpr(pos)], pos);
+			return 'haquery.macro.internal.macro.tools.Bouncer.makeOuter'.resolve(pos).call([e], pos).field('andBounce', pos).call([id.toExpr(pos)], pos);
 		}		
 		static function doOuter(id:Int, e:Expr) {
 			return
