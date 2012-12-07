@@ -3,8 +3,8 @@ package haquery.client;
 #if client
 
 import haquery.Exception;
-import haxe.Firebug;
 import haquery.client.HaqInternals;
+using haquery.StringTools;
 
 @:keep @:expose class Lib
 {
@@ -15,9 +15,7 @@ import haquery.client.HaqInternals;
 	
 	static public function run(pageFullTag:String)
     {
-		haxe.Log.trace = Firebug.detect() 
-			? Firebug.trace 
-			: haquery.client.Lib.trace;
+		haxe.Log.trace = haquery.client.Lib.trace;
         
 		ajax = new HaqServerCallerAjax(HaqInternals.pageKey, HaqInternals.pageSecret);
 		websocket = HaqInternals.listener != "" ? new HaqServerCallerWebsocket(HaqInternals.listener, HaqInternals.pageKey, HaqInternals.pageSecret) : null;
@@ -43,7 +41,17 @@ import haquery.client.HaqInternals;
 	
     static function trace(v:Dynamic, ?pos : haxe.PosInfos) : Void
     {
-        // DO NOTHING
+		var s = (pos != null ? pos.fileName + ":" + pos.lineNumber + ": " : "") + v.replace("%", "%%");
+		
+		untyped __js__("
+			if (typeof console == 'object')
+			{
+				if (typeof console.log == 'function')
+				{
+					console.log(s);
+				}
+			}
+		");
     }
 
 	public static inline function confirm( v : Dynamic ) : Bool
