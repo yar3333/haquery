@@ -2,6 +2,7 @@ package haquery.client;
 
 #if client
 
+import haquery.common.HaqDumper;
 import haquery.Exception;
 import haquery.client.HaqInternals;
 using haquery.StringTools;
@@ -41,15 +42,12 @@ using haquery.StringTools;
 	
     static function trace(v:Dynamic, ?pos : haxe.PosInfos) : Void
     {
-		var s = (pos != null ? pos.fileName + ":" + pos.lineNumber + ": " : "") + v.replace("%", "%%");
+		var s = (pos != null ? pos.fileName + ":" + pos.lineNumber + ": " : "") + (Std.is(v, String) ? cast(v, String) : HaqDumper.getDump(v));
 		
 		untyped __js__("
-			if (typeof console == 'object')
+			if (typeof console == 'object' && typeof console.log == 'function')
 			{
-				if (typeof console.log == 'function')
-				{
-					console.log(s);
-				}
+				console.log(s);
 			}
 		");
     }
