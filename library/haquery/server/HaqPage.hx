@@ -46,6 +46,8 @@ class HaqPage extends HaqComponent
 	
 	public var config(default, null) : HaqConfig;
 	
+	public var db(default, null) : HaqDb;
+	
 	/**
 	 * Default value is "text/html; charset=utf-8".
 	 */

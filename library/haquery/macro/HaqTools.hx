@@ -1,6 +1,6 @@
 package haquery.macro;
 
-#if macro
+#if (macro || display)
 import haxe.macro.Context;
 import sys.FileSystem;
 import sys.io.File;
@@ -13,7 +13,7 @@ using haquery.macro.internal.macro.tools.MacroTools;
 
 class HaqTools
 {
-	#if macro
+	#if (macro || display)
 	
 	public static function log(s:String) : Void
 	{

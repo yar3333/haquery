@@ -3,7 +3,6 @@ package haquery.server;
 #if server
 
 import haquery.common.HaqMessageListenerAnswer;
-import haquery.server.db.HaqDb;
 import haquery.common.HaqComponentTools;
 import haxe.Serializer;
 import sys.net.WebSocket;
@@ -11,20 +10,18 @@ import sys.net.WebSocket;
 class HaqConnectedPage
 {
 	public var page(default, null) : HaqPage;
-	public var db(default, null) : HaqDb;
 	public var ws(default, null) : WebSocket;
 	
-	public function new(page:HaqPage, db:HaqDb, ws:WebSocket)
+	public function new(page:HaqPage, ws:WebSocket)
 	{
 		this.page = page;
-		this.db = db;
 		this.ws = ws;
 	}
 	
 	public function callServerMethod(componentFullID:String, method:String, params:Array<Dynamic>) : HaqResponse
 	{
 		var r : Dynamic = null;
-		Lib.pageContext(page, page.config, page.clientIP, db, function()
+		Lib.pageContext(page, page.config, page.clientIP, function()
 		{
 			r = page.generateResponseOnPostback(componentFullID, method, params);
 		});
@@ -34,7 +31,7 @@ class HaqConnectedPage
 	public function callSharedServerMethod(componentFullID:String, method:String, params:Array<Dynamic>) : HaqResponse
 	{
 		var r : Dynamic = null;
-		Lib.pageContext(page, page.config, page.clientIP, db, function()
+		Lib.pageContext(page, page.config, page.clientIP, function()
 		{
 			r = page.generateResponseOnPostback(componentFullID, method, params, "shared");
 		});
@@ -44,7 +41,7 @@ class HaqConnectedPage
 	public function callAnotherServerMethod(componentFullID:String, method:String, params:Array<Dynamic>) : Dynamic
 	{
 		var r = null;
-		Lib.pageContext(page, page.config, page.clientIP, db, function()
+		Lib.pageContext(page, page.config, page.clientIP, function()
 		{
 			var response = page.generateResponseOnPostback(componentFullID, method, params, "another");
 			send(HaqMessageListenerAnswer.ProcessUncalledServerMethodAnswer(response.ajaxResponse));

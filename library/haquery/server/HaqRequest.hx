@@ -37,6 +37,8 @@ typedef HaqRequest =
 	var pageSecret : String;
 	
 	var config : HaqConfig;
+	
+	var db : haquery.server.db.HaqDb;
 }
 
 #end
