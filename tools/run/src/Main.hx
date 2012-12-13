@@ -112,7 +112,7 @@ class Main
 			Lib.println("            [--js-modern]              Generate js code in modern style.");
 			Lib.println("            [--dead-code-elimination]  For a while is not supported.");
 			Lib.println("");
-			Lib.println("        gen-orm                        Generate object-related classes (managers and models).");
+			Lib.println("        gen-orm                        Generate object-related classes.");
 			Lib.println("            [databaseConnectionString] Like 'mysql://user:pass@host/dbname'.");
 			Lib.println("");
 			Lib.println("        gen-code                       Generate shared and another classes.");
