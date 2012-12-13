@@ -122,7 +122,7 @@ private typedef Page = haquery.client.HaqPage;
 		if (isFromTopToBottom && Reflect.isFunction(Reflect.field(this, f)))
         {
             #if !client
-			if (Lib.config.isTraceComponent)
+			if (page.config.isTraceComponent)
 			{
 				trace("HAQUERY [" + fullID + "] " + fullTag + "." + f + "...");
 			}
@@ -135,7 +135,7 @@ private typedef Page = haquery.client.HaqPage;
         if (!isFromTopToBottom && Reflect.isFunction(Reflect.field(this, f)))
         {
             #if !client
-			if (Lib.config.isTraceComponent)
+			if (page.config.isTraceComponent)
 			{
 				trace("HAQUERY [" + fullID + "] " + fullTag + "." + f + "...");
 			}

@@ -14,7 +14,7 @@ import neko.net.WebSocketServerLoop;
 import neko.vm.Gc;
 import sys.net.WebSocket;
 
-private typedef WaitedPage = { page:HaqPage, config:HaqConfig, db:HaqDb, created:Float }
+private typedef WaitedPage = { page:HaqPage, db:HaqDb, created:Float }
 
 private class ClientData extends WebSocketServerLoop.ClientData
 {
@@ -59,7 +59,7 @@ class HaqWebsocketServerLoop
 				{
 					if (p.page != null)
 					{
-						Lib.pageContext(p.page, p.page.clientIP, p.config, p.db, function()
+						Lib.pageContext(p.page, p.page.config, p.page.clientIP, p.db, function()
 						{
 							p.page.onDisconnect();
 						});
@@ -112,11 +112,11 @@ class HaqWebsocketServerLoop
 				case HaqMessageToListener.MakeRequest(request):
 					trace("INCOMING MakeRequest [" + request.pageKey + "] URI = " + request.uri);
 					var route = new HaqRouter(HaqDefines.folders.pages, Lib.manager).getRoute(request.params.get("route"));
-					var bootstraps = Lib.loadBootstraps(route.path);
+					var bootstraps = Lib.loadBootstraps(route.path, request.config);
 					var r = Lib.runPage(request, route, bootstraps);
 					if (!request.isPostback)
 					{
-						waitedPages.set(r.page.pageKey, { page:r.page, config:r.config, db:r.db, created:Date.now().getTime() / 1000 } );
+						waitedPages.set(r.page.pageKey, { page:r.page, db:r.db, created:Date.now().getTime() / 1000 } );
 					}
 					client.send(HaqMessageListenerAnswer.MakeRequestAnswer(r.response));
 				
@@ -128,7 +128,7 @@ class HaqWebsocketServerLoop
 					
 					if (p != null && p.page.pageSecret == pageSecret)
 					{
-						var p = new HaqConnectedPage(p.page, p.config, p.db, client.ws);
+						var p = new HaqConnectedPage(p.page, p.db, client.ws);
 						var response = p.callServerMethod("", "onConnect", []);
 						client.send(HaqMessageListenerAnswer.ProcessUncalledServerMethodAnswer(response.ajaxResponse));
 						if (response.result != false)

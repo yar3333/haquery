@@ -22,7 +22,7 @@ class HaqConfig
 	/**
 	 * Default is 16M.
 	 */
-	public var maxPostSize = 16 * 1024 * 1024;
+	public var maxPostSize(default, null) : Int;
 	
     /**
      * Level of tracing SQL:
@@ -47,16 +47,17 @@ class HaqConfig
 	/**
      * User-defined data.
      */
-    public var customs : Hash<Dynamic>;
+    public var customs(default, null) : Hash<Dynamic>;
 	
 	#if neko
-	public var listeners : Hash<HaqWebsocketListener>;
+	public var listeners(default, null) : Hash<HaqWebsocketListener>;
 	#end
 	
 	public var secret : String;
 	
 	function new(path:String)
 	{
+		maxPostSize = 16 * 1024 * 1024;
 		customs = new Hash<Dynamic>();
 		
 		if (FileSystem.exists(path))
