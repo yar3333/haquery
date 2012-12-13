@@ -35,6 +35,8 @@ typedef HaqRequest =
 	var pageKey : String;
 	
 	var pageSecret : String;
+	
+	var config : HaqConfig;
 }
 
 #end

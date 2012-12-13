@@ -23,7 +23,6 @@ using haquery.StringTools;
 
 class Lib
 {
-	public static var config(default, null) : HaqConfig;
     public static var profiler(default, null) : HaqProfiler;
 	public static var db(default, null) : HaqDb;
 	public static var manager(default, null) : HaqTemplateManager;
@@ -36,7 +35,7 @@ class Lib
 		#end
 		
 		db = null;
-		config = HaqConfig.load("config.xml");
+		var config = HaqConfig.load("config.xml");
 		uploads = new HaqUploads(HaqDefines.folders.temp + "/uploads", config.maxPostSize);
 		
 		try
@@ -51,19 +50,18 @@ class Lib
 				}
 				
 				var route = new HaqRouter(HaqDefines.folders.pages, manager).getRoute(!isCli() ? Web.getParams().get("route") : HaqCli.getURI());
-				
-				var bootstraps = loadBootstraps(route.path);
+				var bootstraps = loadBootstraps(route.path, config);
 				
 				if (route.pageID != null && route.pageID.startsWith("haquery-"))
 				{
-					HaqSystem.run(route.pageID);
+					HaqSystem.run(route.pageID, config);
 				}
 				else
 				{
-					var request = getRequest(route);
+					var request = getRequest(route, config);
 					
 					#if neko
-					var listener = getListenerToDispatchRequest();
+					var listener = getListenerToDispatchRequest(config);
 					var response = listener != null
 								 ? listener.makeRequest(request)
 								 : runPage(request, route, bootstraps).response;
@@ -109,7 +107,7 @@ class Lib
     }
 	
 	#if neko
-	static function getListenerToDispatchRequest() : HaqWebsocketListener
+	static function getListenerToDispatchRequest(config:HaqConfig) : HaqWebsocketListener
 	{
 		if (config.listeners.iterator().hasNext())
 		{
@@ -120,7 +118,7 @@ class Lib
 	}
 	#end
 	
-	static function getRequest(route:HaqRoute) : HaqRequest
+	static function getRequest(route:HaqRoute, config:HaqConfig) : HaqRequest
 	{
 		var params = !isCli() ? Web.getParams() : HaqCli.getParams();
 		return {
@@ -136,17 +134,18 @@ class Lib
 			, queryString: getParamsString()
 			, pageKey: !isCli() && params.get('HAQUERY_PAGE_KEY') != null ? params.get('HAQUERY_PAGE_KEY') : Uuid.newUuid()
 			, pageSecret: !isCli() && params.get('HAQUERY_PAGE_SECRET') != null ? params.get('HAQUERY_PAGE_SECRET') : newPageSecret()
+			, config: config
 		};
 	}
 	
-	public static function runPage(request:HaqRequest, route:HaqRoute, bootstraps:Array<HaqBootstrap>) : { page:HaqPage, response:HaqResponse, config:HaqConfig, db:HaqDb }
+	public static function runPage(request:HaqRequest, route:HaqRoute, bootstraps:Array<HaqBootstrap>) : { page:HaqPage, response:HaqResponse, db:HaqDb }
 	{
-		profiler = new HaqProfiler(config.enableProfiling);
+		profiler = new HaqProfiler(request.config.enableProfiling);
 		
 		var page : HaqPage;
 		var response : HaqResponse;
 		
-		var r = pageContext(null, request.clientIP, Reflect.copy(config), null, function()
+		var r = pageContext(null, request.config, request.clientIP, null, function()
 		{
 			profiler.begin("HAQUERY");
 			
@@ -155,9 +154,9 @@ class Lib
 					bootstrap.init(request);
 				}
 			
-				if (config.databaseConnectionString != null && config.databaseConnectionString != "")
+				if (request.config.databaseConnectionString != null && request.config.databaseConnectionString != "")
 				{
-					db = new HaqDb(config.databaseConnectionString, config.sqlLogLevel, profiler);
+					db = new HaqDb(request.config.databaseConnectionString, request.config.sqlLogLevel, profiler);
 				}
 				
 				for (bootstrap in bootstraps)
@@ -170,7 +169,7 @@ class Lib
 					
 					page = manager.createPage(route.fullTag, Std.hash(request));
 					
-					pageContext(page, page.clientIP, Lib.config, Lib.db, function()
+					pageContext(page, page.config, page.clientIP, Lib.db, function()
 					{
 						page.forEachComponent("preInit", true);
 						page.forEachComponent("init", false);
@@ -196,16 +195,13 @@ class Lib
 			profiler.traceResults();	
 		});
 			
-		return { page:page, response:response, config:r.config, db:r.db };
+		return { page:page, response:response, db:r.db };
 	}
 	
-	public static function pageContext(page:HaqPage, clientIP:String, config:HaqConfig, db:HaqDb, f:Void->Void) : { config:HaqConfig, db:HaqDb }
+	public static function pageContext(page:HaqPage, config:HaqConfig, clientIP:String, db:HaqDb, f:Void->Void) : { db:HaqDb }
 	{
 		var oldTrace = haxe.Log.trace;
-		haxe.Log.trace = function(v:Dynamic, ?pos:PosInfos) HaqTrace.page(page, clientIP, v, pos);
-		
-		var oldConfig = Lib.config;
-		Lib.config = config;
+		haxe.Log.trace = function(v:Dynamic, ?pos:PosInfos) HaqTrace.page(page, config, clientIP, v, pos);
 		
 		var oldDb = Lib.db;
 		Lib.db = db;
@@ -219,10 +215,9 @@ class Lib
 			Exception.trace(e);
 		}
 		
-		var r = { config:Lib.config, db:Lib.db };
+		var r = { db:Lib.db };
 		
 		Lib.db = oldDb;
-		Lib.config = oldConfig;
 		haxe.Log.trace = oldTrace;
 		
 		return r;
@@ -247,7 +242,7 @@ class Lib
     /**
      * Load bootstrap files from current folder to relativePath.
      */
-    public static function loadBootstraps(relativePath:String) : Array<HaqBootstrap>
+    public static function loadBootstraps(relativePath:String, config:HaqConfig) : Array<HaqBootstrap>
     {
         var bootstraps = [];
 		
@@ -260,7 +255,7 @@ class Lib
             {
 				try
 				{
-					var bootstrap = cast(Type.createInstance(clas, []), HaqBootstrap);
+					var bootstrap = cast(Type.createInstance(clas, [ config ]), HaqBootstrap);
 					bootstraps.push(bootstrap);
 				}
 				catch (e:Dynamic)

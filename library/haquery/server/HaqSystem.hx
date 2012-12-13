@@ -27,9 +27,16 @@ class HaqSystem
 	public static var listener(default, null) : HaqWebsocketListener;
 	#end
 	
-	public static function run(command:String)
+	var config : HaqConfig;
+	
+	function new(config:HaqConfig)
 	{
-		var system = new HaqSystem();
+		this.config = config;
+	}
+	
+	public static function run(command:String, config:HaqConfig)
+	{
+		var system = new HaqSystem(config);
 		
 		switch (command)
 		{
@@ -60,8 +67,6 @@ class HaqSystem
 		}
 	}
 	
-	function new() {}
-	
 	function doFlushCommnd()
 	{
 		NativeLib.println("<b>HAQUERY FLUSH</b><br /><br />");
@@ -91,7 +96,7 @@ class HaqSystem
 						if (args.length >= 3)
 						{
 							var name = args[2];
-							listener = Lib.config.listeners.get(name);
+							listener = config.listeners.get(name);
 							if (listener == null) throw "Unknow listener '" + name + "'.";
 							listener.run();
 						}
@@ -100,13 +105,13 @@ class HaqSystem
 						if (args.length >= 3)
 						{
 							var name = args[2];
-							if (!Lib.config.listeners.exists(name)) throw "Unknow listener '" + name + "'.";
-							var p = Lib.config.listeners.get(name).start();
+							if (!config.listeners.exists(name)) throw "Unknow listener '" + name + "'.";
+							var p = config.listeners.get(name).start();
 							NativeLib.println("Listener '" + name + "' PID: " + p.getPid());
 						}
 						else
 						{
-							for (listener in Lib.config.listeners)
+							for (listener in config.listeners)
 							{
 								var p = listener.start();
 								NativeLib.println("Listener '" + listener.name + "' PID: " + p.getPid());
@@ -117,7 +122,7 @@ class HaqSystem
 						if (args.length >= 3)
 						{
 							var name = args[2];
-							var listener = Lib.config.listeners.get(name);
+							var listener = config.listeners.get(name);
 							if (listener == null) throw "Unknow listener '" + name + "'.";
 							listener.stop();
 						}
@@ -140,9 +145,9 @@ class HaqSystem
 	
 	function isAdmin() : Bool
 	{
-		return Lib.config.secret != null 
-			&& Lib.config.secret != "" 
-			&& NativeWeb.getCookies().get("haquery_secret") == Lib.config.secret.urlEncode();
+		return config.secret != null 
+			&& config.secret != "" 
+			&& NativeWeb.getCookies().get("haquery_secret") == config.secret.urlEncode();
 	}
 	
 	function doStatusCommand()
@@ -214,7 +219,7 @@ class HaqSystem
 		
 		if (isAdmin())
 		{
-			var listeners = Lambda.array(Lib.config.listeners);
+			var listeners = Lambda.array(config.listeners);
 			listeners.sort(function(a, b) return a.name < b.name ? -1 : (a.name > b.name ? 1 : 0));
 			for (listener in listeners)
 			{

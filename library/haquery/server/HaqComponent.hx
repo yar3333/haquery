@@ -126,7 +126,7 @@ using haquery.StringTools;
 			return "";
 		}
         
-		if (Lib.config.isTraceComponent) trace("render " + fullID);
+		if (page.config.isTraceComponent) trace("render " + fullID);
 		
 		HaqComponentTools.expandDocElemIDs(prefixID, doc);
 		if (parent != null && innerNode != null)

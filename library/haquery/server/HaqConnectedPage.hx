@@ -11,14 +11,12 @@ import sys.net.WebSocket;
 class HaqConnectedPage
 {
 	public var page(default, null) : HaqPage;
-	public var config(default, null) : HaqConfig;
 	public var db(default, null) : HaqDb;
 	public var ws(default, null) : WebSocket;
 	
-	public function new(page:HaqPage, config:HaqConfig, db:HaqDb, ws:WebSocket)
+	public function new(page:HaqPage, db:HaqDb, ws:WebSocket)
 	{
 		this.page = page;
-		this.config = config;
 		this.db = db;
 		this.ws = ws;
 	}
@@ -26,7 +24,7 @@ class HaqConnectedPage
 	public function callServerMethod(componentFullID:String, method:String, params:Array<Dynamic>) : HaqResponse
 	{
 		var r : Dynamic = null;
-		Lib.pageContext(page, page.clientIP, config, db, function()
+		Lib.pageContext(page, page.config, page.clientIP, db, function()
 		{
 			r = page.generateResponseOnPostback(componentFullID, method, params);
 		});
@@ -36,7 +34,7 @@ class HaqConnectedPage
 	public function callSharedServerMethod(componentFullID:String, method:String, params:Array<Dynamic>) : HaqResponse
 	{
 		var r : Dynamic = null;
-		Lib.pageContext(page, page.clientIP, config, db, function()
+		Lib.pageContext(page, page.config, page.clientIP, db, function()
 		{
 			r = page.generateResponseOnPostback(componentFullID, method, params, "shared");
 		});
@@ -46,7 +44,7 @@ class HaqConnectedPage
 	public function callAnotherServerMethod(componentFullID:String, method:String, params:Array<Dynamic>) : Dynamic
 	{
 		var r = null;
-		Lib.pageContext(page, page.clientIP, config, db, function()
+		Lib.pageContext(page, page.config, page.clientIP, db, function()
 		{
 			var response = page.generateResponseOnPostback(componentFullID, method, params, "another");
 			send(HaqMessageListenerAnswer.ProcessUncalledServerMethodAnswer(response.ajaxResponse));
