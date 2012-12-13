@@ -11,17 +11,17 @@ class HaqBootstrap
 		this.config = config;
 	}
 	
-	public function init(request:HaqRequest) : Void
+	public function init(request:haquery.server.HaqRequest) : Void
 	{
 		// nothing to do
 	}
 	
-	public function start() : Void
+	public function start(db:haquery.server.db.HaqDb) : Void
 	{
 		// nothing to do
 	}
 	
-	public function finish(page:HaqPage) : Void
+	public function finish(page:haquery.server.HaqPage) : Void
 	{
 		// nothing to do
 	}

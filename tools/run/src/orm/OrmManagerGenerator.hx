@@ -43,20 +43,19 @@ class OrmManagerGenerator
 	{
 		var model:HaxeClass = new HaxeClass(fullClassName, baseFullClassName);
 		
-		model.addImport('haquery.server.Lib');
-		model.addImport('sys.db.ResultSet');
+		model.addVar({ haxeName:"db", haxeType:"haquery.server.db.HaqDb", haxeDefVal:null }, true);
 		
-		model.addMethod('new', [], 'Void', '');
+		model.addMethod('new', [ { haxeName:"db", haxeType:"haquery.server.db.HaqDb", haxeDefVal:null } ], 'Void', 'this.db = db;');
         
         model.addMethod('newModelFromParams', vars, modelFullClassName,
-			 "var _obj = new " + modelFullClassName + "();\n"
+			 "var _obj = new " + modelFullClassName + "(db);\n"
 			+Lambda.map(vars, function(v:OrmHaxeVar) { return '_obj.' + v.haxeName + ' = ' + v.haxeName + ';'; } ).join('\n') + "\n"
 			+"return _obj;",
 			true
 		);
 		
 		model.addMethod('newModelFromRow', [ OrmTools.createVar('d', 'Dynamic') ], modelFullClassName,
-			 "var _obj = new " + modelFullClassName + "();\n"
+			 "var _obj = new " + modelFullClassName + "(db);\n"
 			 +Lambda.map(vars, function(v:OrmHaxeVar) { return '_obj.' + v.haxeName + " = Reflect.field(d, '" + v.haxeName + "');"; } ).join('\n') + "\n"
 			+"return _obj;",
 			true
@@ -78,24 +77,24 @@ class OrmManagerGenerator
                 Lambda.exists(createVars, function(v:OrmHaxeVar) { return v.name == 'position'; } )
                 ? "if (position == null)\n"
                  +"{\n"
-                 +"\tposition = Lib.db.query('SELECT MAX(`position`) FROM `" + table + "`" 
+                 +"\tposition = db.query('SELECT MAX(`position`) FROM `" + table + "`" 
                     +getWhereSql(getForeignKeyVars(db, table, vars))
                     +").getIntResult(0) + 1;\n"
                  +"}\n\n"
                 : ""
             )
-			+"Lib.db.query('INSERT INTO `" + table + "`("
+			+"db.query('INSERT INTO `" + table + "`("
 				+Lambda.map(createVars, function(v) { return "`" + v.name + "`"; } ).join(", ")
 			+") VALUES (' + "
-				+Lambda.map(createVars, function(v) { return "Lib.db.quote(" + v.haxeName + ")"; } ).join(" + ', ' + ")
+				+Lambda.map(createVars, function(v) { return "db.quote(" + v.haxeName + ")"; } ).join(" + ', ' + ")
 			+" + ')');\n"
-			+"return newModelFromParams(" + Lambda.map(vars, function(v) { return v.isAutoInc ? 'Lib.db.lastInsertId()' : v.haxeName; } ).join(", ") + ");"
+			+"return newModelFromParams(" + Lambda.map(vars, function(v) { return v.isAutoInc ? 'db.lastInsertId()' : v.haxeName; } ).join(", ") + ");"
 		);
 		
 		var deleteVars = Lambda.filter(vars, function(v:OrmHaxeVar) { return v.isKey; } );
 		if (deleteVars.length == 0) deleteVars = vars;
 		model.addMethod('delete', deleteVars, 'Void',
-			"Lib.db.query('DELETE FROM `" + table + "`" + getWhereSql(deleteVars) + " + ' LIMIT 1');"
+			"db.query('DELETE FROM `" + table + "`" + getWhereSql(deleteVars) + " + ' LIMIT 1');"
 		);
 		
 		model.addMethod('getAll', [ OrmTools.createVar('_order', 'String', getOrderDefVal(vars)) ], 'Array<'+modelFullClassName+'>',
@@ -103,13 +102,13 @@ class OrmManagerGenerator
 		);
 		
 		model.addMethod('getBySqlOne', [ OrmTools.createVar('sql', 'String') ], modelFullClassName,
-			 "var rows : ResultSet = Lib.db.query(sql + ' LIMIT 1');\n"
+			 "var rows = db.query(sql + ' LIMIT 1');\n"
 			+"if (rows.length == 0) return null;\n"
 			+"return newModelFromRow(rows.next());"
 		);
 		
 		model.addMethod('getBySqlMany', [ OrmTools.createVar('sql', 'String') ], 'Array<'+modelFullClassName+'>',
-			 "var rows : ResultSet = Lib.db.query(sql);\n"
+			 "var rows = db.query(sql);\n"
 			+"var list : Array<" + modelFullClassName + "> = [];\n"
 			+"for (row in rows)\n"
 			+"{\n"
@@ -139,7 +138,6 @@ class OrmManagerGenerator
 	{
 		var model:HaxeClass = new HaxeClass(fullClassName, baseFullClassName);
 		
-		model.addImport('haquery.server.Lib');
 		model.addImport(modelFullClassName);
 		
 		return model;
@@ -180,7 +178,7 @@ class OrmManagerGenerator
     static function getWhereSql(vars:Iterable<OrmHaxeVar>) : String
     {
         return vars.iterator().hasNext()
-            ? " WHERE " + Lambda.map(vars, function(v) { return "`" + v.name + "` = ' + Lib.db.quote(" + v.haxeName + ")"; } ).join("+' AND ")
+            ? " WHERE " + Lambda.map(vars, function(v) { return "`" + v.name + "` = ' + db.quote(" + v.haxeName + ")"; } ).join("+ ' AND ")
             : "'";
     }
     

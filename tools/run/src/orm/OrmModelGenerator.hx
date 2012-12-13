@@ -42,14 +42,14 @@ class OrmModelGenerator
 	{
 		var model = new HaxeClass(fullClassName, baseFullClassName);
 		
-		model.addImport('haquery.server.Lib');
+		model.addVar({ haxeName:"db", haxeType:"haquery.server.db.HaqDb", haxeDefVal:null }, true);
 		
 		for (v in vars)
 		{
 			model.addVar(v);
 		}
 		
-        model.addMethod('new', [], 'Void', '');
+		model.addMethod('new', [ { haxeName:"db", haxeType:"haquery.server.db.HaqDb", haxeDefVal:null } ], 'Void', 'this.db = db;');
         
         if (Lambda.exists(vars, function(v:OrmHaxeVar) { return v.isKey; } ) && Lambda.exists(vars, function(v:OrmHaxeVar) { return !v.isKey; } ))
 		{
@@ -64,11 +64,11 @@ class OrmModelGenerator
 			var savedVars = Lambda.filter(vars, function(v:OrmHaxeVar) { return !v.isKey; } );
 			var whereVars = Lambda.filter(vars, function(v:OrmHaxeVar) { return v.isKey; } );
 			model.addMethod('save', new List<OrmHaxeVar>(), 'Void',
-				 "Lib.db.query(\n"
+				 "db.query(\n"
 				    +"\t 'UPDATE `" + table + "` SET '\n"
-					+"\t\t+  '" + Lambda.map(savedVars, function(v:OrmHaxeVar) { return "`" + v.name + "` = ' + Lib.db.quote(" + v.haxeName + ")"; }).join("\n\t\t+', ")
+					+"\t\t+  '" + Lambda.map(savedVars, function(v:OrmHaxeVar) { return "`" + v.name + "` = ' + db.quote(" + v.haxeName + ")"; }).join("\n\t\t+', ")
 					+"\n\t+' WHERE " 
-					+Lambda.map(whereVars, function(v:OrmHaxeVar) { return "`" + v.name + "` = ' + Lib.db.quote(" + v.haxeName + ")"; } ).join("+' AND ")
+					+Lambda.map(whereVars, function(v:OrmHaxeVar) { return "`" + v.name + "` = ' + db.quote(" + v.haxeName + ")"; } ).join("+' AND ")
 					+"\n\t+' LIMIT 1'"
 				+"\n);"
 			);
@@ -79,12 +79,6 @@ class OrmModelGenerator
 
 	static function getCustomModel(table:String, vars:List<OrmHaxeVar>, fullClassName:String, baseFullClassName:String, customManagerFullClassName:String) : HaxeClass
 	{
-		var model:HaxeClass = new HaxeClass(fullClassName, baseFullClassName);
-		
-		model.addImport('haquery.server.Lib');
-		
-		model.addVar(OrmTools.createVar('manager', customManagerFullClassName, 'new ' + customManagerFullClassName + '()'), false, true);
-		
-		return model;
+		return new HaxeClass(fullClassName, baseFullClassName);
 	}
 }

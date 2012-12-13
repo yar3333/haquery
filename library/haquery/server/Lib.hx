@@ -24,7 +24,6 @@ using haquery.StringTools;
 class Lib
 {
     public static var profiler(default, null) : HaqProfiler;
-	public static var db(default, null) : HaqDb;
 	public static var manager(default, null) : HaqTemplateManager;
 	public static var uploads(default, null) : HaqUploads;
     
@@ -34,7 +33,7 @@ class Lib
 		Sys.setCwd(getCwd());
 		#end
 		
-		db = null;
+		var db : HaqDb = null;
 		var config = HaqConfig.load("config.xml");
 		uploads = new HaqUploads(HaqDefines.folders.temp + "/uploads", config.maxPostSize);
 		
@@ -135,17 +134,18 @@ class Lib
 			, pageKey: !isCli() && params.get('HAQUERY_PAGE_KEY') != null ? params.get('HAQUERY_PAGE_KEY') : Uuid.newUuid()
 			, pageSecret: !isCli() && params.get('HAQUERY_PAGE_SECRET') != null ? params.get('HAQUERY_PAGE_SECRET') : newPageSecret()
 			, config: config
+			, db: null
 		};
 	}
 	
-	public static function runPage(request:HaqRequest, route:HaqRoute, bootstraps:Array<HaqBootstrap>) : { page:HaqPage, response:HaqResponse, db:HaqDb }
+	public static function runPage(request:HaqRequest, route:HaqRoute, bootstraps:Array<HaqBootstrap>) : { page:HaqPage, response:HaqResponse }
 	{
 		profiler = new HaqProfiler(request.config.enableProfiling);
 		
 		var page : HaqPage;
 		var response : HaqResponse;
 		
-		var r = pageContext(null, request.config, request.clientIP, null, function()
+		var r = pageContext(null, request.config, request.clientIP, function()
 		{
 			profiler.begin("HAQUERY");
 			
@@ -156,12 +156,12 @@ class Lib
 			
 				if (request.config.databaseConnectionString != null && request.config.databaseConnectionString != "")
 				{
-					db = new HaqDb(request.config.databaseConnectionString, request.config.sqlLogLevel, profiler);
+					request.db = new HaqDb(request.config.databaseConnectionString, request.config.sqlLogLevel, profiler);
 				}
 				
 				for (bootstrap in bootstraps)
 				{
-					bootstrap.start();
+					bootstrap.start(request.db);
 				}
 				
 				profiler.begin("page");
@@ -169,7 +169,7 @@ class Lib
 					
 					page = manager.createPage(route.fullTag, Std.hash(request));
 					
-					pageContext(page, page.config, page.clientIP, Lib.db, function()
+					pageContext(page, page.config, page.clientIP, function()
 					{
 						page.forEachComponent("preInit", true);
 						page.forEachComponent("init", false);
@@ -195,16 +195,13 @@ class Lib
 			profiler.traceResults();	
 		});
 			
-		return { page:page, response:response, db:r.db };
+		return { page:page, response:response };
 	}
 	
-	public static function pageContext(page:HaqPage, config:HaqConfig, clientIP:String, db:HaqDb, f:Void->Void) : { db:HaqDb }
+	public static function pageContext(page:HaqPage, config:HaqConfig, clientIP:String, f:Void->Void) : Void
 	{
 		var oldTrace = haxe.Log.trace;
 		haxe.Log.trace = function(v:Dynamic, ?pos:PosInfos) HaqTrace.page(page, config, clientIP, v, pos);
-		
-		var oldDb = Lib.db;
-		Lib.db = db;
 		
 		try
 		{
@@ -215,12 +212,7 @@ class Lib
 			Exception.trace(e);
 		}
 		
-		var r = { db:Lib.db };
-		
-		Lib.db = oldDb;
 		haxe.Log.trace = oldTrace;
-		
-		return r;
 	}
 	
 	#if debug
