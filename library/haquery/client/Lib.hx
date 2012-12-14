@@ -19,7 +19,7 @@ using haquery.StringTools;
 		haxe.Log.trace = haquery.client.Lib.trace;
         
 		ajax = new HaqServerCallerAjax(HaqInternals.pageKey, HaqInternals.pageSecret);
-		websocket = HaqInternals.listener != "" ? new HaqServerCallerWebsocket(HaqInternals.listener, HaqInternals.pageKey, HaqInternals.pageSecret) : null;
+		websocket = HaqInternals.listener != null ? new HaqServerCallerWebsocket(HaqInternals.listener, HaqInternals.pageKey, HaqInternals.pageSecret) : null;
 		
 		var manager = new HaqTemplateManager();
 		page = manager.createPage(pageFullTag);
