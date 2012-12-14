@@ -6,11 +6,9 @@ package haquery.server;
 
 import haquery.Exception;
 import haquery.Std;
-import haquery.server.HaqCssGlobalizer;
 import haxe.htmlparser.HtmlDocument;
 import haxe.htmlparser.HtmlNodeElement;
 import haxe.htmlparser.HtmlNodeText;
-import haquery.server.Lib;
 import haquery.common.HaqComponentTools;
 import haxe.Serializer;
 using haquery.StringTools;
@@ -21,7 +19,9 @@ using haquery.StringTools;
 {
 #if !macro
 
-    /**
+	public var page(default,null) : HaqPage;
+    
+	/**
      * template.html as DOM tree.
      */
     public var doc(default, null) : HtmlDocument;
@@ -57,7 +57,8 @@ using haquery.StringTools;
     public function construct(manager:HaqTemplateManager, fullTag:String, parent:HaqComponent, id:String, doc:HtmlDocument, params:Hash<Dynamic>, innerNode:HtmlNodeElement, isInnerComponent:Bool) : Void
     {
 		super.commonConstruct(manager, fullTag, parent, id);
-        
+		
+		this.page = parent != null ? parent.page : cast(this, HaqPage);
         this.doc = doc;
         this.innerNode = innerNode;
 		this.isInnerComponent = isInnerComponent;
