@@ -4,17 +4,15 @@ package haquery.base;
 
 import haquery.common.HaqDefines;
 import haquery.common.HaqEvent;
+import haquery.Exception;
 using haquery.StringTools;
-#if !client
-import haquery.server.Lib;
+
+#if server
 import haquery.server.HaqTemplateManager;
 private typedef Component = haquery.server.HaqComponent;
-private typedef Page = haquery.server.HaqPage;
 #else
-import haquery.client.Lib;
 import haquery.client.HaqTemplateManager;
 private typedef Component = haquery.client.HaqComponent;
-private typedef Page = haquery.client.HaqPage;
 #end
 
 #end
@@ -24,8 +22,6 @@ private typedef Page = haquery.client.HaqPage;
 #if !macro
 
     public var manager(default,null) : HaqTemplateManager;
-	
-	public var page(default,null) : Page;
 	
 	public var parent(default,null) : Component;
 
@@ -73,7 +69,6 @@ private typedef Page = haquery.client.HaqPage;
 		if (id == null || id == '') id = parent != null ? parent.getNextAnonimID() : '';
 		
 		this.manager = manager;
-		this.page = parent != null ? parent.page : cast(this, Page);
 		this.fullTag = fullTag;
 		this.parent = parent;
 		this.id = id;
@@ -83,7 +78,10 @@ private typedef Page = haquery.client.HaqPage;
 		
 		if (parent != null) 
 		{
-			Lib.assert(!parent.components.exists(id), "Component with same id '" + id + "' already exist.");
+			if (parent.components.exists(id))
+			{
+				throw new Exception("Component with same id = '" + id + "' already exist.");
+			}
 			parent.components.set(id, cast this);
 		}
 	}
@@ -121,12 +119,6 @@ private typedef Page = haquery.client.HaqPage;
     {
 		if (isFromTopToBottom && Reflect.isFunction(Reflect.field(this, f)))
         {
-            #if !client
-			if (page.config.isTraceComponent)
-			{
-				trace("HAQUERY [" + fullID + "] " + fullTag + "." + f + "...");
-			}
-			#end
 			Reflect.callMethod(this, Reflect.field(this, f), []);
         }
         
@@ -134,12 +126,6 @@ private typedef Page = haquery.client.HaqPage;
         
         if (!isFromTopToBottom && Reflect.isFunction(Reflect.field(this, f)))
         {
-            #if !client
-			if (page.config.isTraceComponent)
-			{
-				trace("HAQUERY [" + fullID + "] " + fullTag + "." + f + "...");
-			}
-			#end
             Reflect.callMethod(this, Reflect.field(this, f), []);
         }
     }

@@ -2,10 +2,8 @@ package haquery.client;
 
 #if !macro
 
-import haquery.client.Lib;
-import haquery.client.HaqCssGlobalizer;
-import haquery.client.HaqQuery;
 import haquery.common.HaqComponentTools;
+import haquery.client.HaqPage;
 import haquery.Exception;
 import js.JQuery;
 using haquery.StringTools;
@@ -16,12 +14,15 @@ using haquery.StringTools;
 {
 #if !macro
 
+	public var page(default,null) : HaqPage;
+	
 	var isDynamic : Bool;
 	
 	public function construct(manager:HaqTemplateManager, fullTag:String, parent:HaqComponent, id:String, isDynamic:Bool, dynamicParams:Dynamic) : Void
 	{
 		super.commonConstruct(manager, fullTag, parent, id);
 		
+		this.page = parent != null ? parent.page : cast(this, HaqPage);
 		this.isDynamic = isDynamic;
 		
 		connectElemEventHandlers();
