@@ -36,15 +36,15 @@ class HaxeClass
 	
 	public function addImport(packageName:String) : Void
 	{
-		imports.push('import ' + packageName + ';');
+		imports.push("import " + packageName + ";");
 	}
 	
-	public function addVar(v:HaxeVar, isPrivate=false, isStatic=false) : Void
+	public function addVar(v:HaxeVar, isPrivate=false, isStatic=false, isReadOnlyProperty=false) : Void
 	{
-		var s = (isPrivate ? '' : 'public ')
-			  + (isStatic ? 'static ' : '')
-			  + 'var ' + v.haxeName + ' : ' + v.haxeType
-			  + (isStatic && v.haxeDefVal != null ? ' = ' + v.haxeDefVal : '')
+		var s = (isPrivate ? "" : "public ")
+			  + (isStatic ? "static " : "")
+			  + "var " + v.haxeName + (isReadOnlyProperty ? "(default, null)" : "") + " : " + v.haxeType
+			  + (isStatic && v.haxeDefVal != null ? " = " + v.haxeDefVal : "")
 			  + ";";
 		vars.push(s);
  	}
@@ -52,15 +52,15 @@ class HaxeClass
 	public function addVarGetter(v:HaxeVarGetter, isPrivate = false, isStatic = false, isInline = false) : Void
 	{
 		var s = "\n\t"
-		      + (isPrivate ? '' : 'public ')
-			  + (isStatic ? 'static ' : '')
-			  + 'var ' + v.haxeName + '(' + v.haxeName + '_getter, null)' + ' : ' + v.haxeType
+		      + (isPrivate ? "" : "public ")
+			  + (isStatic ? "static " : "")
+			  + "var " + v.haxeName + "(" + v.haxeName + "_getter, null)" + " : " + v.haxeType
 			  + ";\n";
 		
-		s += (isInline ? '\tinline ' : '\t')
+		s += (isInline ? "\tinline " : "\t")
 		   + "function " + v.haxeName + "_getter() : " + v.haxeType + "\n"
 		   + "\t{\n"
-		   + indent(v.haxeBody.trim(), '\t\t') + '\n'
+		   + indent(v.haxeBody.trim(), "\t\t") + "\n"
 		   + "\t}";
 		
 		vars.push(s);

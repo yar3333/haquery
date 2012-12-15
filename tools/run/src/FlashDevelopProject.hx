@@ -238,15 +238,15 @@ class FlashDevelopProject
 	{
         var params = new Array<String>();
         
-		for (path in classPaths)
-        {
-			params.push("-cp"); params.push(path.rtrim("/"));
-        }
-        
 		for (name in libPaths.keys())
         {
 			params.push("-lib"); params.push(name);
 		}
+		
+		for (path in classPaths)
+        {
+			params.push("-cp"); params.push(path.rtrim("/"));
+        }
 		
 		params.push("-" + platform);
 		params.push(destPath);

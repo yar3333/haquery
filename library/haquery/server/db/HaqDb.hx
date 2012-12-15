@@ -4,13 +4,14 @@ import haquery.Exception;
 import haquery.server.db.HaqDbDriver;
 import haquery.server.db.HaqDbDriver_mysql;
 import haquery.server.HaqProfiler;
+import models.server.Orm;
 import sys.db.ResultSet;
 
 class HaqDb
 {
     static var pool = new Hash<HaqDbDriver>();
 	
-	public var connection : HaqDbDriver = null;
+	public var connection(default ,null) : HaqDbDriver = null;
 	
     /**
      * Level of tracing SQL:
@@ -21,6 +22,8 @@ class HaqDb
 	public var logLevel : Int;
 	
 	public var profiler : HaqProfiler = null;
+	
+	public var orm(default ,null) : Orm;
 	
     public function new(connectionString:String, logLevel=0, ?profiler:HaqProfiler) : Void
     {
@@ -42,6 +45,8 @@ class HaqDb
 		
 		this.logLevel = logLevel;
 		this.profiler = profiler;
+		
+		this.orm = new Orm(this);
     }
 
 	public function query(sql:String, ?params:Dynamic) : ResultSet
