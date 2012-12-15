@@ -4,7 +4,7 @@ class Main
 {
 	static function main() 
 	{
-		#if !client
+		#if server
         haquery.server.Lib.run();
 		#end
  	}

@@ -1,6 +1,4 @@
 <config>
-	<imports>
-		<components package="components.shared" />
-		<components package="components.haquery" />
-	</imports> 
+	<import component="components.haquery.*" />
+	<import component="components.shared.*" />
 </config>
