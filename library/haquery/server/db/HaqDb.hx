@@ -9,8 +9,6 @@ import sys.db.ResultSet;
 
 class HaqDb
 {
-    static var pool = new Hash<HaqDbDriver>();
-	
 	public var connection(default ,null) : HaqDbDriver = null;
 	
     /**
@@ -26,22 +24,15 @@ class HaqDb
 	public var orm(default ,null) : Orm;
 	
     public function new(connectionString:String, logLevel=0, ?profiler:HaqProfiler) : Void
-    {
-		connection = pool.get(connectionString);
+	{
+		var params = new HaqDbConectionString(connectionString);
 		
-		if (connection == null)
-		{
-			var params = new HaqDbConectionString(connectionString);
-			
-			if (profiler != null) profiler.begin("openDatabase");
-				connection = Type.createInstance(
-					 Type.resolveClass('haquery.server.db.HaqDbDriver_' + params.type)
-					,[ params.host, params.user, params.password, params.dbname, params.port ]
-				);
-			if (profiler != null) profiler.end();
-			
-			pool.set(connectionString, connection);
-		}
+		if (profiler != null) profiler.begin("openDatabase");
+			connection = Type.createInstance(
+				 Type.resolveClass('haquery.server.db.HaqDbDriver_' + params.type)
+				,[ params.host, params.user, params.password, params.dbname, params.port ]
+			);
+		if (profiler != null) profiler.end();
 		
 		this.logLevel = logLevel;
 		this.profiler = profiler;

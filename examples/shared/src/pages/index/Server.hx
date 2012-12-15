@@ -1,7 +1,5 @@
 package pages.index;
 
-import haquery.server.Lib;
-import haquery.server.HaqConnectedPage;
 import haquery.server.HaqPage;
 
 class Server extends HaqPage
