@@ -5,6 +5,7 @@ package haquery.server;
 import haquery.Std;
 import haxe.htmlparser.HtmlNodeElement;
 import haquery.base.HaqCssGlobalizer;
+import models.server.Page;
 using haquery.StringTools;
 
 /**
@@ -12,7 +13,7 @@ using haquery.StringTools;
  */
 class HaqQuery
 {
-    public var page(default, null) : HaqPage;
+    public var page(default, null) : Page;
     public var prefixID(default, null) : String;
    
 	public var cssGlobalizer(default, null) : HaqCssGlobalizer;

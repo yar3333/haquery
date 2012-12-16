@@ -19,6 +19,7 @@ import haxe.PosInfos;
 import haquery.common.HaqDefines;
 import haquery.server.db.HaqDb;
 import haquery.server.HaqRouter;
+import models.server.Page;
 using haquery.StringTools;
 
 class Lib
@@ -138,11 +139,11 @@ class Lib
 		};
 	}
 	
-	public static function runPage(request:HaqRequest, route:HaqRoute, bootstraps:Array<HaqBootstrap>) : { page:HaqPage, response:HaqResponse }
+	public static function runPage(request:HaqRequest, route:HaqRoute, bootstraps:Array<HaqBootstrap>) : { page:Page, response:HaqResponse }
 	{
 		profiler = new HaqProfiler(request.config.enableProfiling);
 		
-		var page : HaqPage;
+		var page : Page;
 		var response : HaqResponse;
 		
 		var r = pageContext(null, request.config, request.clientIP, function()
@@ -198,7 +199,7 @@ class Lib
 		return { page:page, response:response };
 	}
 	
-	public static function pageContext(page:HaqPage, config:HaqConfig, clientIP:String, f:Void->Void) : Void
+	public static function pageContext(page:Page, config:HaqConfig, clientIP:String, f:Void->Void) : Void
 	{
 		var oldTrace = haxe.Log.trace;
 		haxe.Log.trace = function(v:Dynamic, ?pos:PosInfos) HaqTrace.page(page, config, clientIP, v, pos);

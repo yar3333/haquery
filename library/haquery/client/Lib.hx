@@ -5,6 +5,7 @@ package haquery.client;
 import haquery.common.HaqDumper;
 import haquery.Exception;
 import haquery.client.HaqInternals;
+import models.client.Page;
 using haquery.StringTools;
 
 @:keep @:expose class Lib
@@ -12,7 +13,7 @@ using haquery.StringTools;
 	public static var ajax(default, null) : HaqServerCallerAjax;
 	public static var websocket(default, null) : HaqServerCallerWebsocket;
 	
-	public static var page(default, null) : HaqPage;
+	public static var page(default, null) : Page;
 	
 	static public function run(pageFullTag:String)
     {

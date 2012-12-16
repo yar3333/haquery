@@ -5,14 +5,15 @@ package haquery.server;
 import haquery.common.HaqMessageListenerAnswer;
 import haquery.common.HaqComponentTools;
 import haxe.Serializer;
+import models.server.Page;
 import sys.net.WebSocket;
 
 class HaqConnectedPage
 {
-	public var page(default, null) : HaqPage;
+	public var page(default, null) : Page;
 	public var ws(default, null) : WebSocket;
 	
-	public function new(page:HaqPage, ws:WebSocket)
+	public function new(page:Page, ws:WebSocket)
 	{
 		this.page = page;
 		this.ws = ws;

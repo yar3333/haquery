@@ -3,7 +3,7 @@ package haquery.client;
 #if !macro
 
 import haquery.common.HaqComponentTools;
-import haquery.client.HaqPage;
+import models.client.Page;
 import haquery.Exception;
 import js.JQuery;
 using haquery.StringTools;
@@ -14,7 +14,7 @@ using haquery.StringTools;
 {
 #if !macro
 
-	public var page(default,null) : HaqPage;
+	public var page(default,null) : Page;
 	
 	var isDynamic : Bool;
 	
@@ -22,7 +22,7 @@ using haquery.StringTools;
 	{
 		super.commonConstruct(manager, fullTag, parent, id);
 		
-		this.page = parent != null ? parent.page : cast(this, HaqPage);
+		this.page = parent != null ? parent.page : cast(this, Page);
 		this.isDynamic = isDynamic;
 		
 		connectElemEventHandlers();

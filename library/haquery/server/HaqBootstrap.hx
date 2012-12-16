@@ -21,7 +21,7 @@ class HaqBootstrap
 		// nothing to do
 	}
 	
-	public function finish(page:haquery.server.HaqPage) : Void
+	public function finish(page:models.server.Page) : Void
 	{
 		// nothing to do
 	}

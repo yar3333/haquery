@@ -11,6 +11,7 @@ private typedef NativeLib = neko.Lib;
 import haxe.PosInfos;
 import haquery.common.HaqDefines;
 import haquery.common.HaqDumper;
+import models.server.Page;
 import sys.io.File;
 using haquery.StringTools;
 
@@ -32,7 +33,7 @@ class HaqTrace
 		writeToFile(text);
     }
 	
-	public static function page(page:HaqPage, config:HaqConfig, clientIP:String, v:Dynamic, pos:PosInfos)
+	public static function page(page:Page, config:HaqConfig, clientIP:String, v:Dynamic, pos:PosInfos)
 	{
 		if (config.filterTracesByIP == null || config.filterTracesByIP == '' || config.filterTracesByIP == clientIP)
 		{
@@ -80,7 +81,7 @@ class HaqTrace
 	/**
 	 * type: log, debug, info, warn, error
 	 */
-	static function writeToConsole(page:HaqPage, type:String, text:String)
+	static function writeToConsole(page:Page, type:String, text:String)
 	{
 		if (page != null)
 		{

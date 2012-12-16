@@ -14,8 +14,9 @@ import neko.net.WebSocketThreadServer;
 import neko.vm.Gc;
 import neko.vm.Thread;
 import sys.net.WebSocket;
+import models.server.Page;
 
-private typedef WaitedPage = { page:HaqPage, created:Float }
+private typedef WaitedPage = { page:Page, created:Float }
 
 class HaqWebsocketThreadServer
 {

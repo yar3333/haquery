@@ -11,6 +11,7 @@ import haxe.htmlparser.HtmlNodeElement;
 import haxe.htmlparser.HtmlNodeText;
 import haquery.common.HaqComponentTools;
 import haxe.Serializer;
+import models.server.Page;
 using haquery.StringTools;
 
 #end
@@ -19,7 +20,7 @@ using haquery.StringTools;
 {
 #if !macro
 
-	public var page(default,null) : HaqPage;
+	public var page(default,null) : Page;
     
 	/**
      * template.html as DOM tree.
@@ -58,7 +59,7 @@ using haquery.StringTools;
     {
 		super.commonConstruct(manager, fullTag, parent, id);
 		
-		this.page = parent != null ? parent.page : cast(this, HaqPage);
+		this.page = parent != null ? parent.page : cast(this, Page);
         this.doc = doc;
         this.innerNode = innerNode;
 		this.isInnerComponent = isInnerComponent;
