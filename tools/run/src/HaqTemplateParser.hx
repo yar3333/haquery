@@ -109,7 +109,7 @@ class HaqTemplateParser
 		var r = getGlobalClassName("Server");
 		return r != null && r != "" 
 			? r 
-			: (fullTag.startsWith("pages.") ? "haquery.server.HaqPage" : "haquery.server.HaqComponent");
+			: (fullTag.startsWith("pages.") ? "models.server.Page" : "haquery.server.HaqComponent");
 	}
 	
 	public function getClientClassName()
@@ -117,7 +117,7 @@ class HaqTemplateParser
 		var r = getGlobalClassName("Client");
 		return r != null && r != ""  
 			? r 
-			: (fullTag.startsWith("pages.") ? "haquery.client.HaqPage" : "haquery.client.HaqComponent");
+			: (fullTag.startsWith("pages.") ? "models.client.Page" : "haquery.client.HaqComponent");
 	}
 	
 	public function hasLocalServerClass() : Bool
@@ -179,7 +179,7 @@ class HaqTemplateParser
 		var parentParser = getParentParser();
 		return parentParser != null 
 			? parentParser.getServerClassName() 
-			: (fullTag.startsWith("pages.") ? "haquery.server.HaqPage" : "haquery.server.HaqComponent");
+			: (fullTag.startsWith("pages.") ? "models.server.Page" : "haquery.server.HaqComponent");
 	}	
 	
 	public function getBaseClientClass() : String
@@ -187,7 +187,7 @@ class HaqTemplateParser
 		var parentParser = getParentParser();
 		return parentParser != null 
 			? parentParser.getClientClassName() 
-			: (fullTag.startsWith("pages.") ? "haquery.client.HaqPage" : "haquery.client.HaqComponent");
+			: (fullTag.startsWith("pages.") ? "models.client.Page" : "haquery.client.HaqComponent");
 	}
 	
 	function setDocComponentsParent(doc:HtmlNodeElement)
