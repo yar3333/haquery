@@ -54,9 +54,14 @@ class HaqPage extends HaqComponent
     public var contentType = "text/html; charset=utf-8";
     
     /**
-     * Disable special CSS and JS inserts to your HTML pages.
+     * Disable system CSS and JS inserts to your HTML pages.
      */
-	public var disableSystemHtmlInserts : Bool;
+	public var disableSystemHtmlInserts = false;
+	
+    /**
+     * Disable waiting websocket connection from client. Use for optimization on special pages.
+     */
+	public var disableListener = false;
 	
 	/**
 	 * Js code to response.
@@ -158,7 +163,7 @@ class HaqPage extends HaqComponent
 					+ "\n};\n"
 					+ "haquery.client.HaqInternals.sharedStorage = haquery.client.HaqInternals.unserialize('" + Serializer.run(manager.sharedStorage) + "');\n"
 					#if neko
-					+ "haquery.client.HaqInternals.listener = " + (HaqSystem.listener != null ? "'" + HaqSystem.listener.getUri() + "'" : "null") + ";\n"
+					+ "haquery.client.HaqInternals.listener = " + (!disableListener && HaqSystem.listener != null ? "'" + HaqSystem.listener.getUri() + "'" : "null") + ";\n"
 					+ "haquery.client.HaqInternals.pageKey = '" + pageKey + "';\n"
 					+ "haquery.client.HaqInternals.pageSecret = '" + pageSecret + "';\n"
 					#end

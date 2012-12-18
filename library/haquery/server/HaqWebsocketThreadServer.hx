@@ -101,7 +101,7 @@ class HaqWebsocketThreadServer
 						var route = new HaqRouter(HaqDefines.folders.pages, Lib.manager).getRoute(request.params.get("route"));
 						var bootstraps = Lib.loadBootstraps(route.path, request.config);
 						var r = Lib.runPage(request, route, bootstraps);
-						if (!request.isPostback)
+						if (!r.page.disableListener && !request.isPostback)
 						{
 							waitedPages.set(r.page.pageKey, { page:r.page, created:Date.now().getTime() / 1000 } );
 						}
