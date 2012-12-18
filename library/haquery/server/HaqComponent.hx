@@ -10,6 +10,7 @@ import haxe.htmlparser.HtmlDocument;
 import haxe.htmlparser.HtmlNodeElement;
 import haxe.htmlparser.HtmlNodeText;
 import haquery.common.HaqComponentTools;
+import haxe.PosInfos;
 import haxe.Serializer;
 import models.server.Page;
 using haquery.StringTools;
@@ -267,6 +268,11 @@ using haquery.StringTools;
 			}
 		}
 		return relpath;
+	}
+	
+	public function trace(v:Dynamic, ?pos:PosInfos)
+	{
+		HaqTrace.page(page, v, pos);
 	}
 
 #end

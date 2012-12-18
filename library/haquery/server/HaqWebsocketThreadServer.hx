@@ -3,7 +3,6 @@ package haquery.server;
 #if server
 
 import haquery.Exception;
-import haquery.server.db.HaqDb;
 import haxe.PosInfos;
 import haxe.Serializer;
 import haxe.Unserializer;
@@ -25,8 +24,8 @@ class HaqWebsocketThreadServer
 	var name : String;
 	var compilationDate : Date;
 	
-	var waitedPages : Hash<WaitedPage>;
-	public var pages(default, null) : Hash<HaqConnectedPage>;
+	var waitedPages : SafeHash<WaitedPage>;
+	public var connectedPages(default, null) : SafeHash<HaqConnectedPage>;
 	
 	var server : WebSocketThreadServer;
 	
@@ -35,8 +34,8 @@ class HaqWebsocketThreadServer
 		this.name = name;
 		this.compilationDate = Lib.getCompilationDate();
 		
-		this.waitedPages = new Hash<WaitedPage>();
-		this.pages = new Hash<HaqConnectedPage>();
+		this.waitedPages = new SafeHash<WaitedPage>();
+		this.connectedPages = new SafeHash<HaqConnectedPage>();
 		
 		this.server = new WebSocketThreadServer();
 		
@@ -57,10 +56,14 @@ class HaqWebsocketThreadServer
 				
 				for (pageKey in waitedPages.keys())
 				{
-					if (now - waitedPages.get(pageKey).created > removeWaitedPageInterval)
+					try
 					{
-						waitedPages.remove(pageKey);
+						if (now - waitedPages.get(pageKey).created > removeWaitedPageInterval)
+						{
+							waitedPages.remove(pageKey);
+						}
 					}
+					catch (e:Dynamic) {}
 				}
 				
 				var nowCompilationDate : Date = compilationDate; 
@@ -83,7 +86,7 @@ class HaqWebsocketThreadServer
 	
 	function processIncomingConnection(ws:WebSocket)
 	{
-		var pageKey : String = null;
+		var connected : HaqConnectedPage = null;
 		
 		var text : String; 
 		while ((text = ws.recv()) != null)
@@ -104,68 +107,66 @@ class HaqWebsocketThreadServer
 						}
 						ws.send(Serializer.run(HaqMessageListenerAnswer.MakeRequestAnswer(r.response)));
 					
-					case HaqMessageToListener.ConnectToPage(pageKeyParam, pageSecret):
-						trace("INCOMING ConnectToPage [" + pageKeyParam + "]");
-						pageKey = pageKeyParam;
-						var p = waitedPages.get(pageKey);
+					case HaqMessageToListener.ConnectToPage(pageKey, pageSecret):
+						trace("INCOMING ConnectToPage [" + pageKey + "]");
+						var waited = waitedPages.get(pageKey);
 						waitedPages.remove(pageKey);
 						
-						if (p != null && p.page.pageSecret == pageSecret)
+						if (waited != null && waited.page.pageSecret == pageSecret)
 						{
-							var p = new HaqConnectedPage(p.page, ws);
-							var response = p.callServerMethod("", "onConnect", []);
+							connected = new HaqConnectedPage(waited.page, ws);
+							var response = connected.callServerMethod("", "onConnect", []);
 							ws.send(Serializer.run(HaqMessageListenerAnswer.ProcessUncalledServerMethodAnswer(response.ajaxResponse)));
 							if (response.result != false)
 							{
-								pages.set(pageKey, p);
+								connectedPages.set(pageKey, connected);
 							}
 							else
 							{
-								close(ws, pageKey);
+								break;
 							}
 						}
 						else
 						{
-							close(ws, pageKey);
+							break;
 						}
 					
 					case HaqMessageToListener.CallSharedServerMethod(componentFullID, method, params):
-						trace("INCOMING CallSharedServerMethod [" + pageKey + "] method = " + componentFullID + "." + method);
-						var p = pages.get(pageKey);
-						var response = p.callSharedServerMethod(componentFullID, method, params);
-						ws.send(Serializer.run(HaqMessageListenerAnswer.CallSharedServerMethodAnswer(response.ajaxResponse, CallbackResult.Success(response.result))));
+						trace("INCOMING CallSharedServerMethod [" + connected.pageKey + "] method = " + componentFullID + "." + method);
+						var response = connected.callSharedServerMethod(componentFullID, method, params);
+						connected.send(HaqMessageListenerAnswer.CallSharedServerMethodAnswer(response.ajaxResponse, CallbackResult.Success(response.result)));
 					
 					case HaqMessageToListener.CallAnotherClientMethod(pageKey, componentFullID, method, params):
-						trace("INCOMING CallAnotherClientMethod [" + pageKey + "] pageKey = " + pageKey + ", method = " + componentFullID + "." + method);
-						var p = pages.get(pageKey);
+						trace("INCOMING CallAnotherClientMethod [" + connected.pageKey + "] pageKey = " + pageKey + ", method = " + componentFullID + "." + method);
+						var anotherConnected = connectedPages.get(pageKey);
 						try
 						{
-							p.callAnotherClientMethod(componentFullID, method, params);
-							ws.send(Serializer.run(HaqMessageListenerAnswer.CallAnotherClientMethodAnswer(CallbackResult.Success(null))));
+							anotherConnected.callAnotherClientMethod(componentFullID, method, params);
+							connected.send(HaqMessageListenerAnswer.CallAnotherClientMethodAnswer(CallbackResult.Success(null)));
 						}
 						catch (e:Dynamic)
 						{
 							Exception.trace(e);
-							ws.send(Serializer.run(HaqMessageListenerAnswer.CallAnotherClientMethodAnswer(CallbackResult.Fail(Exception.wrap(e)))));
+							connected.send(HaqMessageListenerAnswer.CallAnotherClientMethodAnswer(CallbackResult.Fail(Exception.wrap(e))));
 						}
 					
 					case HaqMessageToListener.CallAnotherServerMethod(pageKey, componentFullID, method, params):
-						trace("INCOMING CallAnotherServerMethod [" + pageKey + "] pageKey = " + pageKey + ", method = " + componentFullID + "." + method);
-						var p = pages.get(pageKey);
+						trace("INCOMING CallAnotherServerMethod [" + connected.pageKey + "] pageKey = " + pageKey + ", method = " + componentFullID + "." + method);
+						var p = connectedPages.get(pageKey);
 						try
 						{
 							var result = p.callAnotherServerMethod(componentFullID, method, params);
-							ws.send(Serializer.run(HaqMessageListenerAnswer.CallAnotherServerMethodAnswer(CallbackResult.Success(result))));
+							connected.send(HaqMessageListenerAnswer.CallAnotherServerMethodAnswer(CallbackResult.Success(result)));
 						}
 						catch (e:Dynamic)
 						{
 							Exception.trace(e);
-							ws.send(Serializer.run(HaqMessageListenerAnswer.CallAnotherServerMethodAnswer(CallbackResult.Fail(Exception.wrap(e)))));
+							connected.send(HaqMessageListenerAnswer.CallAnotherServerMethodAnswer(CallbackResult.Fail(Exception.wrap(e))));
 						}
 					
 					case HaqMessageToListener.Status:
-						var s = "connected pages: " + Lambda.count(pages) + "\n"
-							  + "waited pages: " + Lambda.count(waitedPages) + "\n"
+						var s = "connected pages: " + connectedPages.length + "\n"
+							  + "waited pages: " + waitedPages.length + "\n"
 							  + "memory heap: " + groupDigits(Math.round(Gc.stats().heap / 1024), " ") + " KB\n";
 						ws.send(s);
 					
@@ -180,39 +181,24 @@ class HaqWebsocketThreadServer
 			}
 		}
 		
-		close(ws, pageKey);
-	}
-	
-	public function disconnectPage(pageKey:String)
-	{
-		var p = pages.get(pageKey);
-		if (p != null)
+		if (connected != null)
 		{
-			try p.ws.socket.close() catch (e:Dynamic) {}
-			
-			if (p.page != null)
-			{
-				Lib.pageContext(p.page, p.page.config, p.page.clientIP, function()
-				{
-					p.page.onDisconnect();
-				});
-				
-				if (p.page.pageKey != null)
-				{
-					pages.remove(p.page.pageKey);
-				}
-			}
-			
+			disconnect(connected.pageKey);
 		}
+		
+		try if (ws != null) ws.socket.close() catch (e:Dynamic) {}
 	}
 	
-	function close(ws:WebSocket, pageKey:String)
+	public function disconnect(pageKey:String)
 	{
-		try ws.socket.close() catch (e:Dynamic) {}
-	
 		if (pageKey != null)
 		{
-			disconnectPage(pageKey);
+			var p = connectedPages.get(pageKey);
+			if (p != null)
+			{
+				connectedPages.remove(pageKey);
+				p.disconnect();
+			}
 		}
 	}
 	
@@ -221,7 +207,7 @@ class HaqWebsocketThreadServer
 	* E.g. the number 1024 is converted to the string '1.024'.
 	* @param thousandsSeparator a character to use as a thousands separator. The default value is ".".
 	*/
-	static function groupDigits(x:Int, ?thousandsSeparator = '.'):String
+	static function groupDigits(x:Int, ?thousandsSeparator = '.') : String
 	{
 		var n : Float = x;
 		var c = 0;
