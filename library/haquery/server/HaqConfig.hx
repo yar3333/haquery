@@ -12,6 +12,11 @@ using haquery.StringTools;
 class HaqConfig
 {
 	static var cache : Hash<{ lastModTime:Float, config:HaqConfig }>;
+
+    /**
+     * Log only if access from specified IP.
+     */
+    public static var filterTracesByIP(default, null) : String;
 	
 	/**
      * Database connection string in TYPE://USER:PASS@HOST/DBNAME form.
@@ -19,16 +24,11 @@ class HaqConfig
      */
 	public var databaseConnectionString : String = null;
 	
-	/**
-	 * Default is 16M.
-	 */
-	public var maxPostSize(default, null) : Int;
-	
     /**
      * Level of tracing SQL:
 	 * 0 - show errors only;
 	 * 1 - show queries;
-	 * 2 - show queries and times.
+	 * 2 - show queries and durations.
      */
     public var sqlLogLevel = 0;
 
@@ -39,15 +39,15 @@ class HaqConfig
      */
     public var isTraceComponent = false;
 
-    /**
-     * Log only if access from specified IP.
-     */
-    public var filterTracesByIP = "";
-
 	/**
      * User-defined data.
      */
     public var customs(default, null) : Hash<Dynamic>;
+	
+	/**
+	 * Default is 16M.
+	 */
+	public var maxPostSize(default, null) : Int;
 	
 	#if neko
 	public var listeners(default, null) : Hash<HaqWebsocketListener>;
@@ -58,6 +58,7 @@ class HaqConfig
 	function new(path:String)
 	{
 		maxPostSize = 16 * 1024 * 1024;
+		filterTracesByIP = "";
 		customs = new Hash<Dynamic>();
 		
 		if (FileSystem.exists(path))

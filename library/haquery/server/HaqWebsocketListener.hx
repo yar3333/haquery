@@ -18,7 +18,7 @@ class HaqWebsocketListener
 	public var autorun(default, null) : Bool;
 	
 	var server : HaqWebsocketThreadServer;
-	public var pages(getPages, null) : Hash<HaqConnectedPage>;
+	public var pages(getPages, null) : SafeHash<HaqConnectedPage>;
 	
 	public function new(name:String, host:String, port:Int, autorun:Bool) 
 	{
@@ -115,16 +115,16 @@ class HaqWebsocketListener
 		server.run(host, port);
 	}
 	
-	function getPages() : Hash<HaqConnectedPage>
+	function getPages() : SafeHash<HaqConnectedPage>
 	{
-		return server != null ? server.pages : null;
+		return server != null ? server.connectedPages : null;
 	}
 	
 	public function disconnectPage(pageKey:String)
 	{
 		if (server != null)
 		{
-			server.disconnectPage(pageKey);
+			server.disconnect(pageKey);
 		}
 	}
 }

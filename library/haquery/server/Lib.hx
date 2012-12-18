@@ -146,74 +146,51 @@ class Lib
 		var page : Page;
 		var response : HaqResponse;
 		
-		var r = pageContext(null, request.config, request.clientIP, function()
-		{
-			profiler.begin("HAQUERY");
+		profiler.begin("HAQUERY");
+		
+			for (bootstrap in bootstraps)
+			{
+				bootstrap.init(request);
+			}
+		
+			if (request.config.databaseConnectionString != null && request.config.databaseConnectionString != "")
+			{
+				request.db = new HaqDb(request.config.databaseConnectionString, request.config.sqlLogLevel, profiler);
+			}
 			
-				for (bootstrap in bootstraps)
-				{
-					bootstrap.init(request);
-				}
+			for (bootstrap in bootstraps)
+			{
+				bootstrap.start(request.db);
+			}
 			
-				if (request.config.databaseConnectionString != null && request.config.databaseConnectionString != "")
-				{
-					request.db = new HaqDb(request.config.databaseConnectionString, request.config.sqlLogLevel, profiler);
-				}
+			profiler.begin("page");
+				trace("HAQUERY START " + (isCli() ? "CLI" : "WEB") + " pageFullTag = " + route.fullTag +  ", HTTP_HOST = " + getHttpHost() + ", clientIP = " + getClientIP() + ", pageID = " + route.pageID);
 				
-				for (bootstrap in bootstraps)
-				{
-					bootstrap.start(request.db);
-				}
+				page = manager.createPage(route.fullTag, Std.hash(request));
 				
-				profiler.begin("page");
-					trace("HAQUERY START " + (isCli() ? "CLI" : "WEB") + " pageFullTag = " + route.fullTag +  ", HTTP_HOST = " + getHttpHost() + ", clientIP = " + getClientIP() + ", pageID = " + route.pageID);
-					
-					page = manager.createPage(route.fullTag, Std.hash(request));
-					
-					pageContext(page, page.config, page.clientIP, function()
-					{
-						page.forEachComponent("preInit", true);
-						page.forEachComponent("init", false);
-						
-						response = !request.isPostback
-								 ? page.generateResponseOnRender()
-								 : page.generateResponseOnPostback(
-										  request.params.get('HAQUERY_COMPONENT')
-										, request.params.get('HAQUERY_METHOD')
-										, Unserializer.run(request.params.get('HAQUERY_PARAMS'))
-										, "shared"
-								   );
-					});
-				profiler.end();
+				page.forEachComponent("preInit", true);
+				page.forEachComponent("init", false);
 				
-				bootstraps.reverse();
-				for (i in 0...bootstraps.length)
-				{
-					bootstraps[bootstraps.length - i - 1].finish(page);
-				}
-			
+				response = !request.isPostback
+						 ? page.generateResponseOnRender()
+						 : page.generateResponseOnPostback(
+								  request.params.get('HAQUERY_COMPONENT')
+								, request.params.get('HAQUERY_METHOD')
+								, Unserializer.run(request.params.get('HAQUERY_PARAMS'))
+								, "shared"
+						   );
 			profiler.end();
-			profiler.traceResults();	
-		});
+			
+			bootstraps.reverse();
+			for (i in 0...bootstraps.length)
+			{
+				bootstraps[bootstraps.length - i - 1].finish(page);
+			}
+		
+		profiler.end();
+		profiler.traceResults();	
 			
 		return { page:page, response:response };
-	}
-	
-	public static function pageContext(page:Page, config:HaqConfig, clientIP:String, f:Void->Void) : Void
-	{
-		var oldTrace = haxe.Log.trace;
-		haxe.Log.trace = function(v:Dynamic, ?pos:PosInfos) HaqTrace.page(page, config, clientIP, v, pos);
-		
-		try
-		{
-			f();
-		}
-		catch (e:Dynamic)
-		{
-			Exception.trace(e);
-		}
-		
-		haxe.Log.trace = oldTrace;
 	}
 	
 	#if debug

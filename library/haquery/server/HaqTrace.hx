@@ -33,9 +33,9 @@ class HaqTrace
 		writeToFile(text);
     }
 	
-	public static function page(page:Page, config:HaqConfig, clientIP:String, v:Dynamic, pos:PosInfos)
+	public static function page(page:Page, v:Dynamic, pos:PosInfos)
 	{
-		if (config.filterTracesByIP == null || config.filterTracesByIP == '' || config.filterTracesByIP == clientIP)
+		if (HaqConfig.filterTracesByIP == null || HaqConfig.filterTracesByIP == "" || HaqConfig.filterTracesByIP == page.clientIP)
 		{
 			var text = object2string(v, pos);
 			
