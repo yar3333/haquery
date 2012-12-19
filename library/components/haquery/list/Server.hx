@@ -1,26 +1,21 @@
 package components.haquery.list;
 
 import haquery.server.Lib;
-import haquery.common.HaqEvent;
 import haquery.server.HaqComponent;
-
-typedef ItemDataBoundEventArgs = {
-	var item:HaqComponent;
-	var obj:Dynamic;
-}
 
 class Server extends BaseServer
 {
-	public var event_itemDataBound : HaqEvent<ItemDataBoundEventArgs>;
-	
-	public function bind(objects:Iterable<Dynamic>)
+	public function bind<Data>(objects:Iterable<Data>, ?itemDataBound:HaqComponent->Data->Void)
     {
         Lib.assert(!page.isPostback, "List binding on postback is not allowed.");
 		
         for (obj in objects)
         {
             var item = create(obj);
-			event_itemDataBound.call({ item:item, obj:obj });
+			if (itemDataBound != null)
+			{
+				itemDataBound(item, obj);
+			}
         }
     }
 }
