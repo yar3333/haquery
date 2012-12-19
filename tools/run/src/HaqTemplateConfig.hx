@@ -50,7 +50,7 @@ class HaqTemplateConfig
 					
 					if ((~/^(?:[_a-z][_a-z0-9]*[.])+[*]$/i.match(componentPack)))
 					{
-						imports.push({ component:HaqTemplateTools.getPack(componentPack), asTag:null });
+						imports.unshift({ component:HaqTemplateTools.getPack(componentPack), asTag:null });
 					}
 					else
 					if (~/^(?:[_a-z][_a-z0-9]*[.])+[_a-z][_a-z0-9]*$/i.match(componentPack))
@@ -60,7 +60,7 @@ class HaqTemplateConfig
 							requires.push(componentPack);
 						}
 						var asTag = importNode.hasAttribute("as") ? importNode.getAttribute("as") : HaqTemplateTools.getTag(componentPack);
-						imports.push({ component:HaqTemplateTools.getPack(componentPack), asTag:asTag });
+						imports.unshift({ component:HaqTemplateTools.getPack(componentPack), asTag:asTag });
 					}
 					else
 					{
