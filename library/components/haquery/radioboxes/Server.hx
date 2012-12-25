@@ -7,7 +7,7 @@ using haquery.StringTools;
 
 class Server extends BaseServer
 {
-    public var value(getValue, setValue) : String;
+    public var value(get_value, set_value) : String;
     
     function getInputElements() : List<HtmlNodeElement>
     {
@@ -15,7 +15,7 @@ class Server extends BaseServer
         return Lambda.filter(inputs, function(input) return input.getAttribute('type').toLowerCase()=='radio');
     }
     
-    function getValue() : String
+    function get_value() : String
     {
         if (!page.isPostback)
         {
@@ -34,13 +34,13 @@ class Server extends BaseServer
         }
     }
     
-    function setValue(v:String) : String
+    function set_value(v:String) : String
     {
         if (!page.isPostback)
         {
             for (elem in getInputElements())
             {
-                if (elem.getAttribute("value")==v)
+                if (elem.getAttribute("value") == v)
                 {
                     elem.setAttribute("checked", "checked");
                 }

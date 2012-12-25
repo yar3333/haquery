@@ -4,24 +4,24 @@ import haquery.Std;
 
 class Server extends BaseServer
 {
-    public var checked(getChecked, setChecked) : Bool;
+    public var checked(get_checked, set_checked) : Bool;
 	public var text : String;
     
-	function getChecked() : Bool
+	function get_checked() : Bool
 	{
 		if (!page.isPostback)
 		{
-			return Std.bool(q('#cb').attr("checked"));
+			return Std.bool(template().checkbox.attr("checked"));
 		}
 		else
 		{
-			return Std.bool(q('#cb').val());
+			return Std.bool(template().checkbox.val());
 		}
 	}
 	
-	function setChecked(v:Bool) : Bool
+	function set_checked(v:Bool) : Bool
 	{
-		q('#cb').val(v);
+		template().checkbox.val(v);
 		return v;
 	}
 	

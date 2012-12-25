@@ -4,11 +4,11 @@ import haquery.server.HaqComponent;
 
 class Server extends BaseServer
 {
-    public var active = 0;
+    public var activeIndex = 0;
     
     function preRender()
     {
-        for  (i in 0...active)
+        for  (i in 0...activeIndex)
         {
 			if (innerNode.children.length == 0) break;
             innerNode.children[0].remove();

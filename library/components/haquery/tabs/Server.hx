@@ -4,33 +4,40 @@ import haquery.server.Lib;
 
 class Server extends BaseServer
 {
-    public var active = 0;
+    public var activeIndex = 0;
+	public var cssClass = "";
     
     function preRender()
     {
+		Lib.assert(innerNode.children.length >= 1 && innerNode.children.length <= 2, "Tabs component must contain one or two subelements.");
+		
 		var buttonsAndPanels = innerNode.children;
-		Lib.assert(buttonsAndPanels.length == 2, "Tabs component must contain exactly two subelements.");
 		
 		var buttons = buttonsAndPanels[0].children;
 		var i = 0;
 		for (child in buttons)
 		{
-			if (i == active)
+			if (i == activeIndex)
 			{
 				q(child).addClass('active');
 			}
 			i++;
 		}
 		
-		var panels = buttonsAndPanels[1].children;
-		var j = 0;
-		for (child in panels)
+		if (buttonsAndPanels.length > 1)
 		{
-			if (j == active)
+			var panels = buttonsAndPanels[1].children;
+			var j = 0;
+			for (child in panels)
 			{
-				q(child).addClass('active');
+				if (j == activeIndex)
+				{
+					q(child).addClass('active');
+				}
+				j++;
 			}
-			j++;
 		}
+		
+		template().container.addClass(cssClass);
     }
 }

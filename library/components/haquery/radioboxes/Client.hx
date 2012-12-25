@@ -6,7 +6,7 @@ import js.JQuery;
 
 class Client extends BaseClient
 {
-    public var value(getValue, setValue) : String;
+    public var value(get_value, set_value) : String;
     
     var event_change : HaqEvent<JqEvent>;
     
@@ -31,7 +31,7 @@ class Client extends BaseClient
         return inputs;
     }
     
-    function getValue() : String
+    function get_value() : String
     {
         for (elem in getInputElements())
         {
@@ -43,7 +43,7 @@ class Client extends BaseClient
         return null;
     }
     
-    function setValue(v:String) : String
+    function set_value(v:String) : String
     {
         for (elem in getInputElements())
         {

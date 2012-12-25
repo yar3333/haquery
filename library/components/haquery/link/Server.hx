@@ -8,8 +8,8 @@ class Server extends Base
 	
     function preRender()
 	{
-        q('#href').val(href);
-        link.text = text;
-		link.cssClass = cssClass;
+        template().href.val(href);
+        template().text = text;
+		template().cssClass = cssClass;
 	}
 }

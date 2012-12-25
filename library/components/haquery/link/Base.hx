@@ -2,27 +2,16 @@ package components.haquery.link;
 
 class Base extends #if !client BaseServer #else BaseClient #end
 {
-    public var enabled(enabled_getter, enabled_setter) : Bool;
+    public var enabled(get_enabled, set_enabled) : Bool;
     
-    #if !client
-    var link : components.haquery.button.Server;
-    #else
-    var link : components.haquery.button.Client;
-    #end
-    
-    function init()
+    function get_enabled() : Bool
     {
-        link = cast components.get('link');
+        return template().link.enabled;
     }
     
-    function enabled_getter() : Bool
+    function set_enabled(enable:Bool) : Bool
     {
-        return link.enabled;
-    }
-    
-    function enabled_setter(enable : Bool) : Bool
-    {
-        link.enabled = enable;
+        template().link.enabled = enable;
         return enable;
     }
 }
