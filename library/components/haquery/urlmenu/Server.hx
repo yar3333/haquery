@@ -12,7 +12,7 @@ class Server extends BaseServer
     {
         if (cssClass != null)
         {
-            q('#m').addClass(cssClass);
+            template().container.addClass(cssClass);
         }
         
         var bestLink : HaqQuery = null;

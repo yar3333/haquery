@@ -1,18 +1,24 @@
 package components.haquery.button;
 
+#if server 
+private typedef Template = TemplateServer;
+#else
+private typedef Template = TemplateClient;
+#end
+
 class Base extends #if !client BaseServer #else BaseClient #end
 {
-    public var enabled(enabled_getter, enabled_setter) : Bool;
+    public var enabled(get_enabled, set_enabled) : Bool;
     
-    function enabled_getter() : Bool
+    function get_enabled() : Bool
     {
-        return !q('#b').hasClass('disabled');
+        return !new Template(this).container.hasClass('disabled');
     }
     
-    function enabled_setter(enable : Bool) : Bool
+    function set_enabled(enable:Bool) : Bool
     {
-        if (enable) q('#b').removeClass('disabled');
-        else        q('#b').addClass('disabled');
+        if (enable) new Template(this).container.removeClass('disabled');
+        else        new Template(this).container.addClass('disabled');
         return enable;
     }
 }

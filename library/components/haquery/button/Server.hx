@@ -12,11 +12,12 @@ class Server extends Base
 	
 	function preRender()
 	{
-        q('#b').html(text);
-        q('#b').addClass(cssClass);
+        template().container
+			.html(text)
+			.addClass(cssClass);
 	}
 	
-	function b_click(t, e)
+	function container_click(t, e)
 	{
 		event_click.call(e);
 	}

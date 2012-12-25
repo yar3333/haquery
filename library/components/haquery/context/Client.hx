@@ -10,25 +10,20 @@ class Client extends BaseClient
     var elem : JQuery;
     var timer : haxe.Timer;
     
-    public var dataID(getDataID, null) : String;
-    function getDataID() : String
-    {
-        return q('#dataID').val();
-    }
-    
+    public var dataID(default, null) : String;
+	
     var mouseOver : JqEvent->Void;
     var mouseOut : JqEvent->Void;
     
     public function init()
     {
-        mouseOver = function(e:JqEvent) { elem = new JQuery(e.currentTarget);  innerMouseOver(); };
-        mouseOut = function(e:JqEvent) { innerMouseOut(); };
+        mouseOver = function(e) { elem = new JQuery(e.currentTarget);  innerMouseOver(); };
+        mouseOut = function(e) { innerMouseOut(); };
     }
 
     function innerMouseOver()
     {
-        var dataID = elem.data(prefixID + "dataID");
-        q('#dataID').val(dataID);
+        dataID = elem.data(prefixID + "dataID");
         show();
         if (timer != null)
         {
@@ -51,14 +46,14 @@ class Client extends BaseClient
     
     function show()
     {
-		q('#container').show();
-        q('#container').offset(getContextPosition(elem));
+		template().container.show();
+        template().container.offset(getContextPosition(elem));
         event_show.call({ elem:elem });
     }
 	
 	function hide()
 	{
-		q('#container').hide();
+		template().container.hide();
 	}
 	
 	/**
@@ -69,7 +64,7 @@ class Client extends BaseClient
 	{
 		var pos = elem.offset();
 		return {
-			 left: Math.round(pos.left + elem.width() - q('#container').width())
+			 left: Math.round(pos.left + elem.width() - template().container.width())
 			,top:  Math.round(pos.top)
 		};
 	}

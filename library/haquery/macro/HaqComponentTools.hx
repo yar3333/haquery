@@ -232,7 +232,7 @@ class HaqComponentTools
 			switch (field.kind)
 			{
 				case FieldType.FFun(f):
-					if (field.name.indexOf("_") > 0)
+					if (field.name.indexOf("_") > 0 && !StringTools.startsWith(field.name, "get_") && !StringTools.startsWith(field.name, "set_"))
 					{
 						//Context.warning("Handler found: " + field.name, field.pos);
 						if (f.args.length == 2)
