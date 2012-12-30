@@ -3,7 +3,6 @@ package haquery.server;
 #if server
 
 import haquery.Exception;
-//import haxe.PosInfos;
 import haxe.Serializer;
 import haxe.Unserializer;
 import haquery.common.HaqMessageToListener;

@@ -24,6 +24,8 @@ class HaqConnectedPage
 		this.page = page;
 		this.ws = ws;
 		this.mutex = new Mutex();
+		
+		page.db.makePooled();
 	}
 	
 	public function callServerMethod(componentFullID:String, method:String, params:Array<Dynamic>) : HaqResponse
