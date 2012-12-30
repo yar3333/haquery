@@ -52,6 +52,7 @@ class HaqInternalServer
 						var r = Lib.runPage(request, route, bootstraps);
 						if (!r.page.disableListener && !request.isPostback)
 						{
+							r.page.db.makePooled();
 							waitedPages.set(r.page.pageKey, { page:r.page, created:Date.now().getTime() / 1000 } );
 						}
 						ws.send(Serializer.run(HaqMessageListenerAnswer.MakeRequestAnswer(r.response)));
