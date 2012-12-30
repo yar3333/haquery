@@ -24,8 +24,6 @@ class HaqConnectedPage
 		this.page = page;
 		this.ws = ws;
 		this.mutex = new Mutex();
-		
-		page.db.makePooled();
 	}
 	
 	public function callServerMethod(componentFullID:String, method:String, params:Array<Dynamic>) : HaqResponse
@@ -74,7 +72,6 @@ class HaqConnectedPage
 	{
 		mutex.acquire();
 		try page.onDisconnect() catch (e:Dynamic) Exception.trace(e);
-		try if (page.db != null) page.db.close() catch (e:Dynamic) {}
 		try ws.socket.close() catch(e:Dynamic) {}
 		mutex.release();
 	}
