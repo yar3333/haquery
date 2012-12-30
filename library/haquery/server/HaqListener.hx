@@ -5,40 +5,45 @@ package haquery.server;
 import haxe.Serializer;
 import haxe.Unserializer;
 import neko.Sys;
+import neko.vm.Thread;
 import sys.io.Process;
 import sys.net.WebSocket;
 import haquery.common.HaqMessageToListener;
 import haquery.common.HaqMessageListenerAnswer;
 
-class HaqWebsocketListener
+class HaqListener
 {
 	public var name(default, null) : String;
 	public var host(default, null) : String;
-	public var port(default, null) : Int;
+	public var internalPort(default, null) : Int;
+	public var externalPort(default, null) : Int;
 	public var autorun(default, null) : Bool;
 	
-	var server : HaqWebsocketThreadServer;
+	var internalServer : HaqInternalServer;
+	var externalServer : HaqExternalServer;
+	
 	public var pages(getPages, null) : SafeHash<HaqConnectedPage>;
 	
-	public function new(name:String, host:String, port:Int, autorun:Bool) 
+	public function new(name:String, host:String, internalPort:Int, externalPort:Int, autorun:Bool) 
 	{
 		this.name = name;
 		this.host = host;
-		this.port = port;
+		this.internalPort = internalPort;
+		this.externalPort = externalPort;
 		this.autorun = autorun;
 	}
 	
 	public function getUri()
 	{
-		return "ws://" + host + ":" + port;
+		return "ws://" + host + ":" + externalPort;
 	}
 	
 	public function makeRequest(request:HaqRequest) : HaqResponse
 	{
-		trace("makeRequest to " + host + ":" + port);
+		trace("makeRequest to " + host + ":" + internalPort);
 		
 		var ws : WebSocket;
-		try { ws = WebSocket.connect(host, port, "haquery", host); } 
+		try { ws = WebSocket.connect(host, internalPort, "haquery", host); } 
 		catch (e:Dynamic)
 		{
 			if (autorun)
@@ -47,7 +52,7 @@ class HaqWebsocketListener
 				var p = start();
 				trace(p != null ? "SUCCESS PID = " + p.getPid() : "FAIL");
 				Sys.sleep(1);
-				ws = WebSocket.connect(host, port, "haquery", host);
+				ws = WebSocket.connect(host, internalPort, "haquery", host);
 			}
 			else
 			{
@@ -79,7 +84,7 @@ class HaqWebsocketListener
 	{
 		try
 		{
-			var ws = WebSocket.connect(host, port, "haquery", host);
+			var ws = WebSocket.connect(host, internalPort, "haquery", host);
 			ws.send(Serializer.run(HaqMessageToListener.Status));
 			var r = ws.recv();
 			ws.socket.close();
@@ -100,7 +105,7 @@ class HaqWebsocketListener
 	{
 		try
 		{
-			var ws = WebSocket.connect(host, port, "haquery", host);
+			var ws = WebSocket.connect(host, internalPort, "haquery", host);
 			ws.send(Serializer.run(HaqMessageToListener.Stop));
 			ws.socket.close();
 		}
@@ -111,20 +116,27 @@ class HaqWebsocketListener
 	
 	public function run()
 	{
-		server = new HaqWebsocketThreadServer(name);
-		server.run(host, port);
+		internalServer = new HaqInternalServer(name);
+		externalServer = new HaqExternalServer(name, internalServer.waitedPages);
+		
+		Thread.create(function()
+		{
+			externalServer.run(host, externalPort);
+		});
+		
+		internalServer.run(host, internalPort);
 	}
 	
 	function getPages() : SafeHash<HaqConnectedPage>
 	{
-		return server != null ? server.connectedPages : null;
+		return externalServer != null ? externalServer.connectedPages : null;
 	}
 	
 	public function disconnectPage(pageKey:String)
 	{
-		if (server != null)
+		if (externalServer != null)
 		{
-			server.disconnect(pageKey);
+			externalServer.disconnect(pageKey);
 		}
 	}
 }
