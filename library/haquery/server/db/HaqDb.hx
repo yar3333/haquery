@@ -1,7 +1,6 @@
 package haquery.server.db;
 
 import haquery.Exception;
-import haquery.server.db.HaqDbDriver;
 import haquery.server.db.HaqDbDriver_mysql;
 import haquery.server.HaqProfiler;
 import models.server.Orm;
@@ -9,6 +8,10 @@ import sys.db.ResultSet;
 
 class HaqDb
 {
+	static var pool = new Hash<HaqDbDriver>();
+	
+	var connectionString : String;
+	
 	public var connection(default ,null) : HaqDbDriver = null;
 	
     /**
@@ -25,6 +28,8 @@ class HaqDb
 	
     public function new(connectionString:String, logLevel=0, ?profiler:HaqProfiler) : Void
 	{
+		this.connectionString = connectionString;
+		
 		var params = new HaqDbConectionString(connectionString);
 		
 		if (profiler != null) profiler.begin("openDatabase");
@@ -94,5 +99,14 @@ class HaqDb
 			}
 			throw "Param '" + name + "' not found while binding sql query '" + sql + "'.";
 		});
+	}
+	
+	public function makePooled()
+	{
+		if (!pool.exists(connectionString))
+		{
+			pool.set(connectionString, connection);
+		}
+		connection = pool.get(connectionString);
 	}
 }
