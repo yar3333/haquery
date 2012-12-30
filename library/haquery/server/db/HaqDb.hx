@@ -83,8 +83,7 @@ class HaqDb
 	
 	public function close() : Void
 	{
-		try { connection.close(); } 
-		catch (e:Dynamic) {}
+		try connection.close() catch (e:Dynamic) {}
 		connection = null;
 	}
 	
@@ -107,6 +106,10 @@ class HaqDb
 		{
 			pool.set(connectionString, connection);
 		}
-		connection = pool.get(connectionString);
+		else
+		{
+			try connection.close() catch (e:Dynamic) {}
+			connection = pool.get(connectionString);	
+		}
 	}
 }
