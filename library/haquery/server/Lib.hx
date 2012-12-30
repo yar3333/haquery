@@ -107,7 +107,7 @@ class Lib
     }
 	
 	#if neko
-	static function getListenerToDispatchRequest(config:HaqConfig) : HaqWebsocketListener
+	static function getListenerToDispatchRequest(config:HaqConfig) : HaqListener
 	{
 		if (config.listeners.iterator().hasNext())
 		{

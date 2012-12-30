@@ -24,7 +24,7 @@ using haquery.StringTools;
 class HaqSystem 
 {
 	#if neko
-	public static var listener(default, null) : HaqWebsocketListener;
+	public static var listener(default, null) : HaqListener;
 	#end
 	
 	var config : HaqConfig;
