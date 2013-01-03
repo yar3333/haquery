@@ -1,45 +1,49 @@
 package haquery.client;
 
-import haxe.Unserializer;
-import js.Lib;
-import js.Dom;
+#if client
 
-class HaqInternals 
+import haquery.common.HaqSharedStorage;
+import haquery.common.HaqTemplateExceptions;
+import haxe.Unserializer;
+
+@:keep @:expose class HaqInternals 
 {
-    public static var componentsFolders : Array<String>;
+	static var tagIDs : Dynamic;
+
+	static var componentIDs_cached : Hash<String>;
 	
-    private static var tags : Array<Array<String>>;
-	public static var id_tag(id_tag_getter, null) : Hash<String>;
-	static var id_tag_cached : Hash<String>;
-	static function id_tag_getter() : Hash<String>
+	public static var sharedStorage(default, null) : HaqSharedStorage;
+	
+	public static var listener(default, null) : String;
+	
+	public static var pageKey(default, null) : String;
+	public static var pageSecret(default, null) : String;
+	
+	/**
+	 * @return componentID => fullTag
+	 */
+	public static function getComponentIDs() : Hash<String>
 	{
-		if (id_tag_cached == null)
+		if (componentIDs_cached == null)
 		{
-			id_tag_cached = new Hash<String>();
-			for (tagAndIDs in tags)
+			componentIDs_cached = new Hash<String>();
+			for (fullTag in Reflect.fields(tagIDs))
 			{
-				var tag = tagAndIDs[0];
-				var ids : Array<String> = tagAndIDs[1].split(',');
-				if (ids.length==1 && ids[0]=='') ids = [];
-				for (id in ids) id_tag_cached.set(id, tag);
+				for (id in cast(Reflect.field(tagIDs, fullTag), Array<Dynamic>))
+				{
+					componentIDs_cached.set(id, fullTag);
+				}
 			}
 		}
-		return id_tag_cached;
+		return componentIDs_cached;
 	}
-    
 	
-    static var serializedServerHandlers : String;
-    public static var serverHandlers(serverHandlers_getter, null) : Hash<Hash<Array<String>>>;
-    static var serverHandlers_cached : Hash<Hash<Array<String>>>;
-    static function serverHandlers_getter() : Hash<Hash<Array<String>>>
-    {
-        if (serverHandlers_cached == null)
-        {
-            serverHandlers_cached = Unserializer.run(serializedServerHandlers);
-        }
-        return serverHandlers_cached;
-    }
-    
-    
-    public static var pagePackage : String;
+	public static function addComponent(fullTag:String, fullID:String)
+	{
+		getComponentIDs().set(fullID, fullTag);
+	}
+	
+	static function unserialize(s:String) : String return Unserializer.run(s)
 }
+
+#end

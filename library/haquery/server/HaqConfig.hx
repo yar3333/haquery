@@ -1,147 +1,156 @@
-#if php
 package haquery.server;
 
-import php.FileSystem;
-import php.io.File;
-import php.NativeArray;
-import haquery.server.HaqXml;
+#if server
 
+import haquery.Exception;
+import haxe.htmlparser.HtmlDocument;
+import haxe.htmlparser.HtmlNodeElement;
+import haquery.Std;
+import sys.io.File;
 using haquery.StringTools;
 
 class HaqConfig
 {
-    public var db : { type:String, host:String, user:String, pass:String, database:String };
+	static var cache : Hash<{ lastModTime:Float, config:HaqConfig }>;
+
+    /**
+     * Log only if access from specified IP.
+     */
+    public static var filterTracesByIP(default, null) : String;
 	
-    public var autoSessionStart : Bool;
-
-    public var autoDatabaseConnect : Bool;
-
+	/**
+     * Database connection string in TYPE://USER:PASS@HOST/DBNAME form.
+	 * For example: mysql://root:123456@localhost/mytestdb 
+     */
+	public var databaseConnectionString : String = null;
+	
     /**
      * Level of tracing SQL:
-     * 0 - do not show anything;
-     * 1 - show errors;
-     * 2 - show queries too;
-     * 3 - show queries too and results statuses.
+	 * 0 - show errors only;
+	 * 1 - show queries;
+	 * 2 - show queries and durations.
      */
-    public var sqlTraceLevel : Int;
+    public var sqlLogLevel = 0;
 
-    /**
+    public var enableProfiling = false;
+	
+	/**
      * Trace when components renders.
      */
-    public var isTraceComponent : Bool;
-
-    /**
-     * Log only for users from IP.
-     */
-    public var filterTracesByIP : String;
-
-    /**
-     * User-defined data.
-     */
-    public var custom : Hash<Dynamic>;
+    public var isTraceComponent = false;
 
 	/**
-	 * Project-specific components package.
-	 * Parent components package must be specified in config.xml file.
+     * User-defined data.
+     */
+    public var customs(default, null) : Hash<Dynamic>;
+	
+	/**
+	 * Default is 16M.
 	 */
-	public var componentsPackage : String;
-    
-    /**
-     * Path to layout file (null if layout not need).
-     */
-    public var layout : String;
-    
-    /**
-     * Disable special CSS and JS inserts to your HTML pages.
-     */
-    public var disablePageMetaData : Bool;
+	public var maxPostSize(default, null) : Int;
 	
-	public function new() : Void
+	#if neko
+	public var listeners(default, null) : Hash<HaqListener>;
+	#end
+	
+	public var secret : String;
+	
+	function new(path:String)
 	{
-		db = {
-			 type : null
-			,host : null
-			,user : null
-			,pass : null
-			,database : null
-		};
-		autoSessionStart = true;
-		autoDatabaseConnect = true;
-		sqlTraceLevel = 1;
-		isTraceComponent = false;
-		filterTracesByIP = '';
-		custom = new Hash<Dynamic>();
-		componentsPackage = 'haquery.components';
-        layout = null;
-        disablePageMetaData = false;
-	}
-	
-	static var componentsConfigCache = new Hash<{ extendsPackage : String }>();
-	
-	public static function getComponentsConfig(classPaths:Array<String>, componentsPackage:String) : { extendsPackage : String }
-	{
-		var cacheKey = classPaths.join(";") + "|" + componentsPackage;
-		if (componentsConfigCache.exists(cacheKey))
+		maxPostSize = 16 * 1024 * 1024;
+		filterTracesByIP = "";
+		customs = new Hash<Dynamic>();
+		
+		if (FileSystem.exists(path))
 		{
-			return componentsConfigCache.get(cacheKey);
-		}
-		
-		var r = { extendsPackage : componentsPackage != "haquery.components" ? "haquery.components" : null };
-		
-		var configFilePath = componentsPackage.replace(".", "/") + "/config.xml";
-		
-		var i = classPaths.length - 1;
-		while (i >= 0)
-		{
-			var basePath = classPaths[i];
-			if (FileSystem.exists(basePath.rtrim("/") + "/" + configFilePath))
+			var xml = new HtmlDocument(File.getContent(path));
+			
+			for (node in xml.find(">config>param"))
 			{
-				var text = File.getContent(basePath + configFilePath);
-				var xml = new HaqXml(text);
-				var nativeNodes : NativeArray = xml.find(">components>extends");
-				if (nativeNodes != null)
+				if (node.hasAttribute("name") && node.hasAttribute("value"))
 				{
-					var nodes : Array<HaqXmlNodeElement> = cast Lib.toHaxeArray(nativeNodes);
-					if (nodes.length > 0)
+					var name = node.getAttribute("name");
+					var value = node.getAttribute("value");
+					
+					switch (name)
 					{
-						if (nodes[0].hasAttribute("package"))
-						{
-							r.extendsPackage = nodes[0].getAttribute("package");
-						}
+						case "databaseConnectionString":
+							databaseConnectionString = value;
+						
+						case "maxPostSize":
+							maxPostSize = Std.parseInt(value);
+						
+						case "sqlLogLevel":
+							sqlLogLevel = Std.parseInt(value);
+						
+						case "enableProfiling":
+							enableProfiling = Std.bool(value);
+						
+						case "isTraceComponent":
+							isTraceComponent = Std.bool(value);
+						
+						case "filterTracesByIP":
+							filterTracesByIP = value;
+						
+						case "secret":
+							secret = value;
+						
+						default:
+							throwBadConfigFileRecord(path, node);
 					}
 				}
+				else
+				{
+					throwBadConfigFileRecord(path, node);
+				}
 			}
-			i--;
+			
+			for (node in xml.find(">config>custom"))
+			{
+				if (node.hasAttribute("name") && node.hasAttribute("value"))
+				{
+					customs.set(node.getAttribute("name"), Std.parseValue(node.getAttribute("value")));
+				}
+			}
+			
+			#if neko
+			listeners = new Hash<HaqListener>();
+			for (node in xml.find(">config>listeners>websocket"))
+			{
+				if (node.hasAttribute("name") && node.hasAttribute("host") && node.hasAttribute("internalPort") && node.hasAttribute("externalPort"))
+				{
+					var name = node.getAttribute("name");
+					listeners.set(name, new HaqListener(
+						  name
+						, node.getAttribute("host")
+						, Std.parseInt(node.getAttribute("internalPort"), 20000)
+						, Std.parseInt(node.getAttribute("externalPort"), 30000)
+						, Std.bool(node.getAttribute("autorun"))
+					));
+				}
+			}
+			#end
 		}
-		
-		componentsConfigCache.set(cacheKey, r);
-		
-		return r;
 	}
 	
-	public static function getComponentsFolders(basePath:String, componentsPackage:String) : Array<String>
+    public static function load(path:String) : HaqConfig
 	{
-		if (basePath != "") basePath = basePath.replace('\\', '/').rtrim('/') + '/';
+		if (cache == null) cache = new Hash<{ lastModTime:Float, config:HaqConfig }>();
 		
-		var r : Array<String> = [];
-		
-		if (componentsPackage != null && componentsPackage != "")
+		var item = cache.get(path);
+		if (item == null || item.lastModTime != FileSystem.stat(path).mtime.getTime())
 		{
-			var path = componentsPackage.replace(".", "/");
-			if (!FileSystem.isDirectory(basePath + path))
-			{
-				throw "Components directory '" + path + "' do not exists.";
-			}
-			r.unshift(path + '/');
-			
-			var config = getComponentsConfig([ basePath ], componentsPackage);
-			for (path in getComponentsFolders(basePath, config.extendsPackage))
-			{
-				r.unshift(path);
-			}
+			var config = new HaqConfig(path);
+			cache.set(path, { lastModTime:FileSystem.stat(path).mtime.getTime(), config:config });
+			return config;
 		}
-		
-		return r;
+		return item.config;
+	}
+	
+	function throwBadConfigFileRecord(path:String, node:HtmlNodeElement) : Void
+	{
+		throw new Exception("HAQUERY ERROR: Bad config file ('" + path + "') record ('" + node + "').");
 	}
 }
+
 #end

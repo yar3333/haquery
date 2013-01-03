@@ -1,0 +1,12 @@
+<project name='HaQuery' url='http://haquery.com/haquery/' license='LGPL'>
+    <user name='yar3333' />
+    <tag v='js' />
+    <tag v='php' />
+    <tag v='neko' />
+    <tag v='haquery' />
+    <tag v='web' />
+    <description>Web framework with php/neko and js target.</description>
+    <version name='5.0'>Server daemon mode and interaction through websocket. Avoid many global static's. Avoid FirePHP dependency.</version>
+    <depends name="HtmlParser" />
+    <depends name="WebSocket" />
+</project>

@@ -1,0 +1,8 @@
+<config>
+    <imports>
+        <components package="components.set1" />
+    </imports>
+    <requires>
+        <component package="components.set1.randnum" />
+    </requires>
+</config>

@@ -1,0 +1,9 @@
+<config>
+	<extend>
+		<component package="pages.layout" />
+	</extend>
+	<imports>
+		<components package="components.calculator" />
+		<components package="components.haquery" />
+	</imports>
+</config>

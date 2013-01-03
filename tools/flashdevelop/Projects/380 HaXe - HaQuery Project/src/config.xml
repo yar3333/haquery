@@ -1,0 +1,3 @@
+<config>
+    <param name="databaseConnectionString" value="mysql://user:pass@host/dbname" />
+</config>

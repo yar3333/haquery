@@ -1,75 +1,101 @@
 package haquery.server;
 
-import haquery.server.HaqXml;
-import haquery.server.Lib;
-import haquery.Std;
-import Type;
+#if (server || macro)
 
+#if !macro
+
+import haquery.Exception;
+import haquery.Std;
+import haxe.htmlparser.HtmlDocument;
+import haxe.htmlparser.HtmlNodeElement;
+import haxe.htmlparser.HtmlNodeText;
+import haquery.common.HaqComponentTools;
+import haxe.PosInfos;
+import haxe.Serializer;
+import models.server.Page;
 using haquery.StringTools;
 
-class HaqComponent extends haquery.base.HaqComponent
-{
-    var manager : HaqComponentManager;
-    
-    /**
-     * HTML between component's open and close tags (where component inserted).
-     */
-    var parentNode : HaqXmlNodeElement;
+#end
 
-    /**
+@:autoBuild(haquery.macro.HaqComponentTools.build()) class HaqComponent extends haquery.base.HaqComponent
+{
+#if !macro
+
+	public var page(default,null) : Page;
+    
+	/**
      * template.html as DOM tree.
      */
-    var doc : HaqXml;
+    public var doc(default, null) : HtmlDocument;
     
     /**
+     * HTML element, which contain this component.
+     */
+    public var innerNode(default, null) : HtmlNodeElement;
+    
+	/**
+	 * True for components declared inside another components (i.e. between tags (<haq:*>...</haq:*>).
+	 */
+	public var isInnerComponent(default, null) : Bool;
+	
+    /**
+     * These components was declared between <haq:*> and </haq:*> tags of this component.
+     */
+	var innerComponents : Array<HaqComponent>;
+	
+	/**
      * Need render?
      */
     public var visible : Bool;
-	
-    public function new() : Void
+    
+	public function new() : Void
 	{
 		super();
+		
+		innerComponents = [];
 		visible = true;
 	}
     
-    public function construct(manager:HaqComponentManager, parent:HaqComponent, tag:String, id:String, doc:HaqXml, params:Hash<String>, parentNode:HaqXmlNodeElement) : Void
+    public function construct(manager:HaqTemplateManager, fullTag:String, parent:HaqComponent, id:String, doc:HtmlDocument, params:Hash<Dynamic>, innerNode:HtmlNodeElement, isInnerComponent:Bool) : Void
     {
-		super.commonConstruct(parent, tag, id);
-        
-		this.manager = manager;
-        this.doc = doc;
-        this.parentNode = parentNode;
+		super.commonConstruct(manager, fullTag, parent, id);
 		
-		// loading params to object fields
+		this.page = parent != null ? parent.page : cast(this, Page);
+        this.doc = doc;
+        this.innerNode = innerNode;
+		this.isInnerComponent = isInnerComponent;
+		
 		if (params != null)
 		{
+			Lib.profiler.begin("loadFieldValues");
 			loadFieldValues(params);
+			Lib.profiler.end();
 		}
         
+		Lib.profiler.begin("createEvents");
 		createEvents();
-        createChildComponents();
-		
-        if (Reflect.isFunction(Reflect.field(this, 'init')))
-        {
-            Reflect.callMethod(this, Reflect.field(this, 'init'), []);
-        }
+		Lib.profiler.end();
+        
+		Lib.profiler.begin("createChildComponents");
+		createChildComponents();
+		Lib.profiler.end();
     }
 	
-	function loadFieldValues(params:Hash<String>) : Void
+	function loadFieldValues(params:Hash<Dynamic>) : Void
 	{
-		var fields = manager.getFieldsToLoadParams(this);
+		var fields = HaqComponentTools.getFieldsToLoadParams(this);
 		
 		for (k in params.keys())
 		{
 			var v : Dynamic = params.get(k);
 			k = k.toLowerCase();
-			if (fields.exists(k))
+			if (fields.exists(k) || fields.exists(k + "_"))
 			{
-				var field = fields.get(k);
+				var field = fields.exists(k) ? fields.get(k) : fields.get(k + "_");
 				switch (Type.typeof(Reflect.field(this, field)))
 				{
-					case ValueType.TInt:    v = Std.parseInt(v);
-					case ValueType.TFloat:  v = Std.parseFloat(v);
+					case ValueType.TInt:    v = Std.is(v, Int) ? v : Std.parseInt(v);
+					case ValueType.TFloat:  v = Std.is(v, Float) ? v : Std.parseFloat(v);
 					case ValueType.TBool:   v = Std.bool(v);
 					default:                // nothing to do
 				}
@@ -80,17 +106,61 @@ class HaqComponent extends haquery.base.HaqComponent
 	
 	function createChildComponents()
 	{
-		if (doc != null) manager.createChildComponents(this, doc);
+		if (innerNode != null)
+		{
+			innerComponents = manager.createDocComponents(parent, innerNode, true);
+		}
+		
+		if (doc != null)
+		{
+			manager.createDocComponents(this, doc, false);
+		}
 	}
 
     public function render() : String
     {
-        if (Lib.config.isTraceComponent) trace("render " + this.fullID);
+		if (!visible)
+		{
+			for (child in innerComponents)
+			{
+				child.visible = false;
+			}
+			
+			return "";
+		}
+        
+		if (page.config.isTraceComponent) trace("render " + fullID);
 		
-		manager.prepareDocToRender(prefixID, doc);
-
-        var r = doc.toString().trim("\r\n");
-        return r;
+		HaqComponentTools.expandDocElemIDs(prefixID, doc);
+		if (parent != null && innerNode != null)
+		{
+			HaqComponentTools.expandDocElemIDs(parent.prefixID, innerNode);
+		}
+		
+		for (child in innerComponents)
+		{
+			child.innerNode.parent.replaceChild(child.innerNode, new HtmlNodeText(child.render()));
+		}
+		
+		for (child in components)
+		{
+			if (!child.isInnerComponent)
+			{
+				Lib.assert(child != null);
+				Lib.assert(child.innerNode != null);
+				Lib.assert(child.innerNode.parent != null);
+				child.innerNode.parent.replaceChild(child.innerNode, new HtmlNodeText(child.render()));
+			}
+		}
+		
+		var text = doc.innerHTML;
+		if (innerNode != null)
+		{
+			var reInnerContent = new EReg("<innercontent\\s*[/]?>", "i");
+			text = reInnerContent.replace(text, innerNode.innerHTML);
+		}
+		
+		return text.trim(" \t\r\n");
     }
 
     /**
@@ -99,62 +169,58 @@ class HaqComponent extends haquery.base.HaqComponent
      */
     public function q(?query:Dynamic=null) : HaqQuery
     {
-        if (query == null) return new HaqQuery(this.prefixID, '', null);
-        if (Type.getClass(query) == haquery.server.HaqQuery) return query;
-		if (untyped __php__("$query instanceof HaqXmlNodeElement"))
+		if (Type.getClass(query) == haquery.server.HaqQuery)
 		{
-			Lib.assert(!Lib.isPostback, "Calling of the HaqComponent.q() with HaqXmlNodeElement parameter do not possible on the postback.");
-			return new HaqQuery(this.prefixID, "", Lib.toPhpArray([ query ]));
+			return query;
 		}
-        if (Type.getClassName(Type.getClass(query)) != 'String')
+		
+		var cssGlobalizer = new HaqCssGlobalizer(fullTag);
+		
+		if (query == null)
 		{
-			throw "HaqComponent.q() error - 'query' parameter must be a string or HaqQuery.";
+			return new HaqQuery(this, cssGlobalizer, '', null);
 		}
         
-        var nodes = this.doc.find(query);
+		
+		if (Type.getClass(query) == HtmlNodeElement)
+		{
+			Lib.assert(!page.isPostback, "Calling of the HaqComponent.q() with HtmlNodeElement parameter do not possible on the postback.");
+			return new HaqQuery(this, cssGlobalizer, "", [ query ]);
+		}
+		
+		if (Type.getClass(query) == Array)
+		{
+			Lib.assert(!page.isPostback, "Calling of the HaqComponent.q() with Array parameter do not possible on the postback.");
+			return new HaqQuery(this, cssGlobalizer, "", query);
+		}
         
-        return new HaqQuery(this.prefixID, query, nodes);
-    }
-
-    /**
-	 * Later call of the client method.
-     * @deprecated Use callSharedMethod() instead.
-     */
-	function callClientMethod(method:String, ?params:Array<Dynamic>) : Void
-    {
-		Lib.assert(Lib.isPostback, "HaqComponent.callClientMethod() allowed on the postback only.");
+		if (Type.getClass(query) == String)
+		{
+			
+			var nodes = doc.find(cssGlobalizer.selector(query));
+			return new HaqQuery(this, cssGlobalizer, query, nodes);
+		}
         
-        var funcName = this.fullID.length != 0
-            ? "haquery.client.HaqSystem.page.findComponent('" + fullID + "')." + method
-            : "haquery.client.HaqSystem.page." + method;
-        
-        HaqInternals.addAjaxResponse(HaqTools.getCallClientFunctionString(funcName, params) + ';');
+		throw new Exception("HaqComponent.q() error - 'query' parameter must be a String, HaqQuery or HtmlNodeElement.");
     }
 	
 	/**
 	 * Delayed call client method, marked as @shared.
 	 */
-	function callSharedMethod(method:String, ?params:Array<Dynamic>) : Void
+	public function callSharedClientMethodDelayed(method:String, params:Array<Dynamic>) : Void
 	{
-		Lib.assert(Lib.isPostback, "HaqComponent.callSharedMethod() allowed on the postback only.");
+		Lib.assert(page.isPostback, "HaqComponent.callSharedMethod() allowed on the postback only.");
         
-        var funcName = this.fullID.length != 0
-            ? "haquery.client.HaqSystem.page.findComponent('" + fullID + "')." + method
-            : "haquery.client.HaqSystem.page." + method;
-        
-        HaqInternals.addAjaxResponse(HaqTools.getCallClientFunctionString(funcName, params) + ';');
+        page.addAjaxResponse(
+			  "haquery.client.Lib.page." + (fullID != "" ? "findComponent('" + fullID + "')." : "") + method
+			+ "(" + Lambda.map(params != null ? params : [], function(p) return "haquery.client.HaqInternals.unserialize('" + Serializer.run(p) + "')").join(",") + ');'
+		);
 	}
     
-    public function callElemEventHandler(elemID:String, eventName:String) : Dynamic
-    {
-        var handler = elemID + '_' + eventName;
-        return Reflect.callMethod(this, handler, [ this ]);
-    }
-    
-    function getSupportPath() : String
-    {
-        return manager.getSupportPath(tag);
-    }
+	public function callServerMethod(method:String, params:Array<Dynamic>, ?meta:String) : Dynamic
+	{
+		return HaqComponentTools.callMethod(this, method, params, meta);
+	}
 	
 	/**
 	 * Tells HaQuery to load JS file from support component folder.
@@ -166,7 +232,7 @@ class HaqComponent extends haquery.base.HaqComponent
 	 */
 	function registerScript(url:String)
 	{
-		manager.registerScript(tag, url);
+		manager.registerScript(fullTag, url);
 	}
 	
 	/**
@@ -175,6 +241,56 @@ class HaqComponent extends haquery.base.HaqComponent
 	 */
 	function registerStyle(url:String)
 	{
-		manager.registerStyle(tag, url);
+		manager.registerStyle(fullTag, url);
+	}
+	
+	function getSupportPath() : String
+	{
+		return manager.get(fullTag).getSupportFilePath("");
+	}
+	
+	/**
+	 * Search for file (can search in "support" folders if relpath starts with "~/").
+	 * @param	relpath File name or path (can starts with "~/").
+	 * @return	Path to finded file or null if file not found.
+	 */
+	function resolveFilePath(relpath:String) : String
+	{
+		if (relpath.startsWith("~/"))
+		{
+			relpath = manager.get(fullTag).getSupportFilePath(relpath.substr(2));
+		}
+		else
+		{
+			if (!FileSystem.exists(relpath))
+			{
+				relpath = null;
+			}
+		}
+		return relpath;
+	}
+	
+	public function trace(v:Dynamic, ?pos:PosInfos)
+	{
+		HaqTrace.page(page, v, pos);
+	}
+
+#end
+	
+	@:macro public function template(ethis:haxe.macro.Expr)
+	{
+		return haquery.macro.HaqComponentTools.template(ethis);
+	}
+	
+	@:macro public function client(ethis:haxe.macro.Expr, ?pageKey:haxe.macro.Expr.ExprOf<String>)
+	{
+		return haquery.macro.HaqTools.isNull(pageKey) ? haquery.macro.HaqComponentTools.shared(ethis) : haquery.macro.HaqComponentTools.anotherClient(ethis, pageKey);
+	}
+	
+	@:macro public function server(ethis:haxe.macro.Expr, pageKey:haxe.macro.Expr.ExprOf<String>)
+	{
+		return haquery.macro.HaqComponentTools.anotherServer(ethis, pageKey);
 	}
 }
+
+#end

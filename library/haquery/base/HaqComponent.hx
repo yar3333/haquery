@@ -1,30 +1,39 @@
 package haquery.base;
 
-#if php
-import haquery.server.HaqEvent;
-import haquery.server.Lib;
+#if !macro
+
+import haquery.common.HaqDefines;
+import haquery.common.HaqEvent;
+import haquery.Exception;
+using haquery.StringTools;
+
+#if server
+import haquery.server.HaqTemplateManager;
 private typedef Component = haquery.server.HaqComponent;
 #else
-import haquery.client.HaqEvent;
-import haquery.client.Lib;
+import haquery.client.HaqTemplateManager;
 private typedef Component = haquery.client.HaqComponent;
 #end
 
-using haquery.StringTools;
+#end
 
-class HaqComponent
+@:keepSub class HaqComponent
 {
+#if !macro
+
+    public var manager(default,null) : HaqTemplateManager;
+	
+	public var parent(default,null) : Component;
+
+    /**
+     * Component package name (for example: 'components.haquery.button').
+     */
+    public var fullTag(default, null)  : String;
+    
     /**
      * Empty for page.
      */
     public var id(default,null) : String;
-
-    public var parent(default,null) : Component;
-
-    /**
-     * Component name.
-     */
-    public var tag(default,null)  : String;
 
     /**
      * Empty for page.
@@ -32,49 +41,36 @@ class HaqComponent
     public var fullID(default,null) : String;
 
     /**
-     * Prefix for DOM elemets ID.
+     * Prefix for DOM elements ID.
      */
     public var prefixID(default,null) : String;
 	
     /**
      * Children components.
      */
-    public var components(default, null) : Hash<Component>;
+    public var components(default, null) : HaqComponents<Component>;
 	
     var nextAnonimID : Int;
 	
-	function new() : Void
+	public function new() : Void
 	{
 		components = new Hash<Component>();
 		nextAnonimID = 0;
 		
-		switch (Type.typeof(this))
+		var templateClass = haquery.common.HaqComponentTools.getTemplateClass(Type.getClass(this));
+		if (templateClass != null)
 		{
-			case ValueType.TClass(cls):
-				if (Lambda.has(Type.getInstanceFields(cls), "template"))
-				{
-					var className : String = Type.getClassName(cls);
-					var lastPointPos = className.lastIndexOf(".");
-					if (lastPointPos > 0)
-					{
-						var templateClassName = className.substr(0, lastPointPos) + ".Template";
-						var templateClass = Type.resolveClass(templateClassName);
-						if (templateClass != null)
-						{
-							Reflect.setField(this, "template", Type.createInstance(templateClass, [this]));
-						}
-					}
-				}
-			default:
+			Reflect.setField(this, "_template", Type.createInstance(templateClass, [ this ]));
 		}
 	}
 	
-	function commonConstruct(parent:Component, tag:String,  id:String) 
+	function commonConstruct(manager:HaqTemplateManager, fullTag:String, parent:Component, id:String) 
 	{
 		if (id == null || id == '') id = parent != null ? parent.getNextAnonimID() : '';
 		
+		this.manager = manager;
+		this.fullTag = fullTag;
 		this.parent = parent;
-		this.tag = tag;
 		this.id = id;
 		
 		this.fullID = (parent!=null ? parent.prefixID : '') + id;
@@ -82,7 +78,10 @@ class HaqComponent
 		
 		if (parent != null) 
 		{
-			Lib.assert(!parent.components.exists(id), "Component with same id '" + id + "' already exist.");
+			if (parent.components.exists(id))
+			{
+				throw new Exception("Component with same id = '" + id + "' already exist.");
+			}
 			parent.components.set(id, cast this);
 		}
 	}
@@ -95,7 +94,7 @@ class HaqComponent
 			{
 				if (field.startsWith('event_'))
 				{
-					var event : HaqEvent = Reflect.field(this, field);
+					var event : HaqEvent<Dynamic> = Reflect.field(this, field);
 					if (event == null)
 					{
 						event = new HaqEvent(cast this, field.substr("event_".length));
@@ -107,13 +106,12 @@ class HaqComponent
 		}
 	}
 	
-	public function connectEventHandlers(event:HaqEvent) : Void
+	public function connectEventHandlers(event:HaqEvent<Dynamic>) : Void
 	{
-		//trace("base[" + fullID + "] connectEventHandlers event = " + event.name);
         var handlerName = event.component.id + '_' + event.name;
         if (Reflect.isFunction(Reflect.field(this, handlerName)))
         {
-            event.bind(cast this, Reflect.field(this, handlerName));
+            event.bind(cast this, handlerName);
         }
 	}
 	
@@ -121,10 +119,10 @@ class HaqComponent
     {
 		if (isFromTopToBottom && Reflect.isFunction(Reflect.field(this, f)))
         {
-            Reflect.callMethod(this, Reflect.field(this, f), []);
+			Reflect.callMethod(this, Reflect.field(this, f), []);
         }
         
-        for (component in this.components) component.forEachComponent(f, isFromTopToBottom);
+        for (component in components) component.forEachComponent(f, isFromTopToBottom);
         
         if (!isFromTopToBottom && Reflect.isFunction(Reflect.field(this, f)))
         {
@@ -158,4 +156,25 @@ class HaqComponent
 		nextAnonimID++;
 		return "haqc_" + Std.string(nextAnonimID);
 	}
+	
+	public function callElemEventHandler(elemID:String, eventName:String) : Dynamic
+    {
+		var handler = elemID + '_' + eventName;
+		
+		try
+		{
+			return Reflect.callMethod(this, Reflect.field(this, handler), [ this, null ]);
+		}
+		catch (e:String)
+		{
+			if (e == "Invalid call")
+			{
+				throw new Exception("Invalid call: " + Type.getClassName(Type.getClass(this)) + "." + handler + "(t, e).", e);
+			}
+			Exception.rethrow(e);
+			return null;
+		}
+    }
+
+#end
 }

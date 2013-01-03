@@ -1,157 +1,259 @@
 package haquery.server;
 
-import haxe.Serializer;
-import haxe.Unserializer;
-import php.FileSystem;
-import php.io.File;
-import php.io.Path;
-import php.Sys;
-import haquery.server.Web;
-import haquery.server.Lib;
-import haquery.server.HaqComponent;
-import haquery.server.HaqProfiler;
-import haquery.server.HaqRoute;
-import haquery.server.HaqDefines;
+#if server
 
+#if php
+private typedef NativeLib = php.Lib;
+private typedef NativeWeb = php.Web;
+#elseif neko
+private typedef NativeLib = neko.Lib;
+private typedef NativeWeb = neko.Web;
+#end
+
+import haquery.common.HaqDefines;
+import haxe.Serializer;
+import sys.io.File;
+import sys.io.FileSeek;
+import sys.io.Process;
+import sys.net.Host;
+import sys.net.Socket;
+import sys.net.WebSocket;
+import haquery.Std;
 using haquery.StringTools;
 
-class HaqSystem
+class HaqSystem 
 {
-    public function new(route:HaqRoute, isPostback:Bool) : Void
-    {
-        trace(null);
+	#if neko
+	public static var listener(default, null) : HaqListener;
+	#end
+	
+	var config : HaqConfig;
+	
+	function new(config:HaqConfig)
+	{
+		this.config = config;
+	}
+	
+	public static function run(command:String, config:HaqConfig)
+	{
+		var system = new HaqSystem(config);
 		
-        Lib.profiler.begin("system");
-
-            trace("HAQUERY SYSTEM Start route.pagePath = " + route.path + ", HTTP_HOST = " + Web.getHttpHost() + ", clientIP = " + Web.getClientIP() + ", pageID = " + route.pageID);
-            
-            Lib.profiler.begin('templates');
-                var templates = new HaqTemplates(HaqConfig.getComponentsFolders("", Lib.config.componentsPackage));
-            Lib.profiler.end();
-
-            var params = php.Web.getParams();
-            if (route.pageID != null)
-            {
-                params.set('pageID', route.pageID);
-            }
-
-            var manager : HaqComponentManager = new HaqComponentManager(templates);
-            
-            Lib.profiler.begin('createPage');
-                var page = manager.createPage(route.path, params);
-            Lib.profiler.end();
-
-            var html : String;
-            if (!isPostback)
-            {
-                html = renderPage(page, templates, manager, route.path);
-            }
-            else
-            {
-                html = processPostback(page);
-            }
-            
-            trace("HAQUERY SYSTEM Finish");
-
-        Lib.profiler.end();
-        
-        Lib.print(html);
-    }
-    
-    function renderPage(page:HaqPage, templates:HaqTemplates, manager:HaqComponentManager, path:String) : String
-    {
-        Lib.profiler.begin('renderPage');
-            page.forEachComponent('preRender');
-            
-            if (!Lib.config.disablePageMetaData)
-            {
-                page.insertStyles(templates.getStyleFilePaths().concat(manager.getRegisteredStyles()));
-                page.insertScripts([ 'haquery/client/jquery.js', 'haquery/client/haquery.js' ].concat(manager.getRegisteredScripts()));
-                page.insertInitInnerBlock(
-                      "<script>\n"
-                    + "    if(typeof haquery=='undefined') alert('haquery.js must be loaded!');\n"
-                    + "    " + templates.getInternalDataForPageHtml().replace('\n','\n    ') + '\n'
-                    + "    " + manager.getInternalDataForPageHtml(page, path).replace('\n', '\n    ') + '\n'
-                    + "    haquery.client.Lib.run();\n"
-                    + "</script>"
-                );
-            }
-            
-            var html : String = page.render();
-        Lib.profiler.end();
-
-        php.Web.setHeader('Content-Type', page.contentType);
-        
-        return html;
-    }
-    
-    function processPostback(page : HaqPage)
-    {
-        page.forEachComponent('preEventHandlers');
-
-        var componentID = php.Web.getParams().get('HAQUERY_COMPONENT');
-        var method = php.Web.getParams().get('HAQUERY_METHOD');
-        
-        var component : HaqComponent = page.findComponent(componentID);
-        
-		var result = null;
-		
-		if (component != null)
+		switch (command)
 		{
-			if (Reflect.hasField(component, method))
+			case "haquery-flush":
+				system.doFlushCommnd();
+				
+			#if neko
+			case "haquery-listener":
+				system.doListenerCommand();
+			#end
+			
+			case "haquery-status":
+				system.doStatusCommand();
+			
+			case "haquery-status-log":
+				system.doStatusLogCommand();
+			
+			#if neko
+			case "haquery-status-listeners":
+				system.doStatusListenersCommand();
+			#end
+			
+			case "haquery-upload":
+				system.doUploadCommand();
+			
+			default:
+				NativeLib.println("Unknow system command '" + command + "'.");
+		}
+	}
+	
+	function doFlushCommnd()
+	{
+		NativeLib.println("<b>HAQUERY FLUSH</b><br /><br />");
+		var path = HaqDefines.folders.temp;
+		
+		NativeLib.println("delete '" + path + "/haquery.log" + "'<br />");
+		FileSystem.deleteFile(path + "/haquery.log");
+		
+		NativeLib.println("delete '" + path + "/cache" + "'<br />");
+		FileSystem.deleteDirectory(path + "/cache");
+		
+		NativeLib.println("delete '" + path + "/templates" + "'<br />");
+		FileSystem.deleteDirectory(path + "/templates");
+	}
+	
+	#if neko
+	function doListenerCommand()
+	{
+		if (Lib.isCli())
+		{
+			var args = Sys.args();
+			if (args.length >= 2)
 			{
-				var r = callElemEventHandler(component, method);
-				if (!r.success)
+				switch (args[1])
 				{
-					r = callSharedMethod(component, method, Unserializer.run(php.Web.getParams().get('HAQUERY_PARAMS')));
-				}
-				if (r.success)
-				{
-					result = r.result;
-				}
-				else
-				{
-					throw "Method " + method + "() of the " + component.tag + " component's server class must exists and marked @shared to be callable from the client.";
+					case "run":
+						if (args.length >= 3)
+						{
+							var name = args[2];
+							listener = config.listeners.get(name);
+							if (listener == null) throw "Unknow listener '" + name + "'.";
+							listener.run();
+						}
+
+					case "start":
+						if (args.length >= 3)
+						{
+							var name = args[2];
+							if (!config.listeners.exists(name)) throw "Unknow listener '" + name + "'.";
+							var p = config.listeners.get(name).start();
+							NativeLib.println("Listener '" + name + "' PID: " + p.getPid());
+						}
+						else
+						{
+							for (listener in config.listeners)
+							{
+								var p = listener.start();
+								NativeLib.println("Listener '" + listener.name + "' PID: " + p.getPid());
+							}
+						}
+					
+					case "stop":
+						if (args.length >= 3)
+						{
+							var name = args[2];
+							var listener = config.listeners.get(name);
+							if (listener == null) throw "Unknow listener '" + name + "'.";
+							listener.stop();
+						}
+					
+					default:
+						NativeLib.println("Unknow <listener_command>. Supported: 'run', 'start' and 'stop'.");
 				}
 			}
 			else
 			{
-				throw "Method '" + componentID + "#" + method + "' not found.";
+				NativeLib.println("Need arguments: <listener_command> [listener_name].");
 			}
 		}
 		else
-        {
-            throw "Component id = '" + componentID + "' not found.";
-        }
-        
-        php.Web.setHeader('Content-Type', 'text/plain; charset=utf-8');
-        
-        return 'HAQUERY_OK' + Serializer.run(result) + "\n" + HaqInternals.getAjaxResponse();
-    }
-	
-	function callElemEventHandler(component:HaqComponent, method:String) : { success:Bool, result:Dynamic }
-	{
-		var n = method.lastIndexOf("_");
-		if (n >= 0)
 		{
-			var event = method.substr(n + 1);
-			if (Lambda.has(HaqDefines.elemEventNames, event))
+			NativeLib.println("This command allowed from the command-line only.");
+		}
+	}
+	#end
+	
+	function isAdmin() : Bool
+	{
+		return config.secret != null 
+			&& config.secret != "" 
+			&& NativeWeb.getCookies().get("haquery_secret") == config.secret.urlEncode();
+	}
+	
+	function doStatusCommand()
+	{
+		var html = new HaqSystemHtml();
+		
+		if (isAdmin())
+		{
+			html.bold("HaQuery")
+				.content(" | <input type='button' value='Logout' onclick='setCookie(\"haquery_secret\", \"\", 0); window.location.reload(true);' /><br />\n")
+				.js("updateLogTimeout = 1000;")
+				.js("updateListenersTimeout = 5000;")
+				.js("function updateLog() { $('#log').load('/haquery-status-log/', function() { setTimeout(updateLog, updateLogTimeout); });  }")
+				.js("function updateListeners() { $('#listeners').load('/haquery-status-listeners/', function() { setTimeout(updateListeners, updateListenersTimeout); });  }")
+				.js("setTimeout(updateLog, updateLogTimeout);")
+				.js("setTimeout(updateListeners, updateListenersTimeout);")
+				.begin("table", "width='100%' border='0' style='border-collapse:collapse; margin-top:5px'")
+					.begin("tbody")
+						.begin("tr valign='top'")
+							.begin("td")
+								.begin("pre", "id='log' style='overflow-x:scroll'").end()
+							.end()
+							.begin("td width='200px'")
+								.begin("div", "id='listeners'").end()
+							.end()
+						.end()
+					.end()
+				.end();
+		}
+		else
+		{
+			html.begin("form", "id='form' method='post'")
+				.content("To access HaQuery status and control enter the secret:")
+				.content("<input type='text' id='secret' />")
+				.content('<input type="button" value="OK" onclick="setCookie(\'haquery_secret\', $(\'#secret\').val(), 1000); $(\'#form\')[0].submit();" />')
+				.end;
+		}
+		
+		NativeLib.println(html);
+	}
+	
+	function doStatusLogCommand()
+	{
+		var html = "";
+		if (isAdmin())
+		{
+			var f = File.read(HaqDefines.folders.temp + "/haquery.log");
+			f.seek(0, FileSeek.SeekEnd);
+			var size = f.tell();
+			f.seek(Std.max(0, size - 65536), FileSeek.SeekBegin);
+			var logLines = f.readAll().toString().split("\n");
+			f.close();
+			for (i in Std.max(0, logLines.length - 50)...logLines.length)
 			{
-				return { success:true, result:component.callElemEventHandler(method.substr(0, n), event) };
+				html += StringTools.htmlEscape(logLines[i]) + "\n";
 			}
 		}
-		return { success:false, result:null };
+		else
+		{
+			html += "Access denided, please reload a page.";
+		}
+		NativeLib.println(html);
 	}
 	
-	function callSharedMethod(component:HaqComponent, method:String, params:Array<Dynamic>) : { success:Bool, result:Dynamic }
+	#if neko
+	function doStatusListenersCommand()
 	{
-		var haxeClass = Type.getClass(component);
-		var meta = haxe.rtti.Meta.getFields(haxeClass);
-		var m = Reflect.field(meta, method);
-		if (Reflect.hasField(m, "shared"))
+		var html = "";
+		
+		if (isAdmin())
 		{
-			return { success:true, result:Reflect.callMethod(component, Reflect.field(component, method), params) };
+			var listeners = Lambda.array(config.listeners);
+			listeners.sort(function(a, b) return a.name < b.name ? -1 : (a.name > b.name ? 1 : 0));
+			for (listener in listeners)
+			{
+				var status = listener.status();
+				html += "<fieldset style='background:#eee; margin-bottom:5px'>"
+							+ "<legend>" + listener.name + "</legend>"
+							+ (status != null ? status.replace("\n", "<br/>") : "not run")
+					  + "</fieldset>";
+			}
 		}
-		return { success:false, result:null };
+		else
+		{
+			html += "Access denided, please reload a page.";
+		}
+	
+		NativeLib.println(html);
+	}
+	#end
+	
+	function doUploadCommand()
+	{
+		if (!Lib.isCli())
+		{
+			var uploadsDir = NativeWeb.getCwd().rtrim("/") + "/" + HaqDefines.folders.temp + "/uploads";
+			FileSystem.createDirectory(uploadsDir);
+			NativeWeb.setHeader("Content-Type", "text/plain; charset=utf-8");
+			var files = Lib.uploads.upload();
+			NativeLib.println(Serializer.run(files));
+		}
+		else
+		{
+			NativeLib.println("This command allowed from the web request only.");
+		}
 	}
 }
+
+#end

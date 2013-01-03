@@ -1,6 +1,30 @@
 package haquery.server;
 
-interface HaqBootstrap 
+#if server
+
+class HaqBootstrap
 {
-	function init(config:HaqConfig) : Void;
+	var config(default, null) : HaqConfig;
+	
+	public function new(config:HaqConfig)
+	{
+		this.config = config;
+	}
+	
+	public function init(request:haquery.server.HaqRequest) : Void
+	{
+		// nothing to do
+	}
+	
+	public function start(db:haquery.server.db.HaqDb) : Void
+	{
+		// nothing to do
+	}
+	
+	public function finish(page:models.server.Page) : Void
+	{
+		// nothing to do
+	}
 }
+
+#end

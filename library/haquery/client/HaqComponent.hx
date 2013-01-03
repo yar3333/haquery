@@ -1,71 +1,134 @@
 package haquery.client;
 
-import js.Lib;
-import haquery.client.HaqQuery;
+#if !macro
 
-class HaqComponent extends haquery.base.HaqComponent
+import haquery.common.HaqComponentTools;
+import models.client.Page;
+import haquery.Exception;
+import js.JQuery;
+using haquery.StringTools;
+
+#end
+
+@:autoBuild(haquery.macro.HaqComponentTools.build()) @:keepSub class HaqComponent extends haquery.base.HaqComponent
 {
-    var manager : HaqComponentManager;
+#if !macro
+
+	public var page(default,null) : Page;
 	
-	var serverHandlers(default,null) : Hash<Array<String>>;
-    
-	public function construct(manager:HaqComponentManager, parent:HaqComponent, tag:String,  id:String, serverHandlers:Hash<Array<String>>, factoryInitParams:Array<Dynamic>=null) : Void
+	var isDynamic : Bool;
+	
+	public function construct(manager:HaqTemplateManager, fullTag:String, parent:HaqComponent, id:String, isDynamic:Bool, dynamicParams:Dynamic) : Void
 	{
-		super.commonConstruct(parent, tag, id);
+		super.commonConstruct(manager, fullTag, parent, id);
 		
-		this.manager = manager;
-        this.serverHandlers = serverHandlers;
-        
+		this.page = parent != null ? parent.page : cast(this, Page);
+		this.isDynamic = isDynamic;
+		
 		connectElemEventHandlers();
         createEvents();
 		createChildComponents();
-		
-		if (factoryInitParams != null)
-		{
-			if (Reflect.isFunction(Reflect.field(this, 'factoryInit')))
-			{
-				Reflect.callMethod(this, Reflect.field(this, 'factoryInit'), factoryInitParams);
-			}
-			else
-			{
-				throw "Client class of the " + tag + " component must contain method factoryInit() to be instanceable on the client via factory component.";
-			}
-		}
-		
-		if (Reflect.isFunction(Reflect.field(this, 'init')))
-        {
-            Reflect.callMethod(this, Reflect.field(this, 'init'), []);
-        }
 	}
 	
 	public function createChildComponents() : Void
 	{
-		var childComponentsData = manager.getChildComponents(this);
-		for (component in childComponentsData)
+		for (component in manager.getChildComponents(this))
 		{
-			manager.createComponent(this, component.tag, component.id);
+			manager.createComponent(this, component.fullTag, component.id, isDynamic);
 		}
 	}
 	
-	public function q(selector:String, ?base:Dynamic) : HaqQuery
+	public function q(?arg:Dynamic, ?base:Dynamic) : HaqQuery
 	{
-		if (selector != null && prefixID != '')
+		var cssGlobalizer = new HaqCssGlobalizer(fullTag);
+		
+		if (arg != null && arg != "" && Type.getClass(arg) == String)
 		{
-			selector = StringTools.replace(selector, '#', '#' + prefixID);
+			var selector : String = arg;
+			if (selector != null && prefixID != '')
+			{
+				selector = selector.replace('#', '#' + prefixID);
+			}
+			arg = cssGlobalizer.selector(selector);
 		}
-		return new HaqQuery(selector, base);
+		
+		var jq = new HaqQuery(arg, base);
+		
+		untyped 
+		{
+			jq.haquery_addClass = jq.addClass;
+			jq.addClass = function(name) { return jq.haquery_addClass(cssGlobalizer.className(name)); };
+			
+			jq.haquery_removeClass = jq.removeClass;
+			jq.removeClass = function(name) { return jq.haquery_removeClass(cssGlobalizer.className(name)); };
+
+			jq.haquery_hasClass = jq.hasClass;
+			jq.hasClass = function(name) { return jq.haquery_hasClass(cssGlobalizer.className(name)); };
+			
+			jq.haquery_find = jq.find;
+			jq.find = function(arg) { return jq.haquery_find(__js__("typeof arg")=='string' ? cssGlobalizer.selector(arg) : arg); };
+			
+			jq.haquery_filter = jq.filter;
+			jq.filter = function(arg) { return jq.haquery_filter(__js__("typeof arg")=='string' ? cssGlobalizer.selector(arg) : arg); };
+			
+			jq.haquery_has = jq.has;
+			jq.has = function(arg) { return jq.haquery_has(__js__("typeof arg")=='string' ? cssGlobalizer.selector(arg) : arg); };
+			
+			jq.haquery_is = jq.is;
+			jq.is = function(arg) { return jq.haquery_is(__js__("typeof arg")=='string' ? cssGlobalizer.selector(arg) : arg); };
+			
+			jq.haquery_not = jq.not;
+			jq.not = function(arg) { return jq.haquery_not(__js__("typeof arg")=='string' ? cssGlobalizer.selector(arg) : arg); };
+			
+			jq.haquery_parent = jq.parent;
+			jq.parent = function(arg) { return jq.haquery_parent(__js__("typeof arg")=='string' ? cssGlobalizer.selector(arg) : arg); };
+		}
+		
+		return jq;
 	}
     
-    private function connectElemEventHandlers() : Void
+    function connectElemEventHandlers() : Void
     {
-		HaqElemEventManager.connect(this, this, manager.templates);
+		HaqElemEventManager.connect(this, this, manager);
     }
 	
 	/**
 	 * Call server method, marked as @shared.
 	 */
-	function callSharedMethod(method:String, ?params:Array<Dynamic>, ?callbackFunc:Dynamic->Void) : Void
+	public function callSharedServerMethod(method:String, params:Array<Dynamic>, success:Dynamic->Void, fail:Exception->Void) : Void
 	{
-		HaqElemEventManager.callServerMethod(fullID, method, params, callbackFunc);
+		if (Lib.websocket != null)
+		{
+			Lib.websocket.callSharedServerMethod(fullID, method, params, success, fail);
+		}
+		else
+		{
+			Lib.ajax.callSharedMethod(fullID, method, params, success);
+		}
+	}
+	
+	/**
+	 * Call client method, marked with meta.
+	 */
+	public function callClientMethod(method:String, params:Array<Dynamic>, ?meta:String) : Dynamic
+	{
+		return HaqComponentTools.callMethod(this, method, params, meta);
+	}
+
+#end
+	
+	@:macro public function template(ethis:haxe.macro.Expr)
+	{
+		return haquery.macro.HaqComponentTools.template(ethis);
+	}
+	
+	@:macro public function server(ethis:haxe.macro.Expr, ?pageKey:haxe.macro.Expr.ExprOf<String>)
+	{
+		return haquery.macro.HaqTools.isNull(pageKey) ? haquery.macro.HaqComponentTools.shared(ethis) : haquery.macro.HaqComponentTools.anotherServer(ethis, pageKey);
+	}
+	
+	@:macro public function client(ethis:haxe.macro.Expr, pageKey:haxe.macro.Expr.ExprOf<String>)
+	{
+		return haquery.macro.HaqComponentTools.anotherClient(ethis, pageKey);
 	}
 }

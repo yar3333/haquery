@@ -1,0 +1,3 @@
+<config>
+    <extends component="components.haquery.factoryitem" />
+</config>

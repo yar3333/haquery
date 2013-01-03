@@ -1,0 +1,6 @@
+<config>
+	<imports>
+		<components package="components.dynamiclists" />
+		<components package="components.haquery" />
+	</imports>
+</config>

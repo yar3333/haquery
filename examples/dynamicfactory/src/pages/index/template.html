@@ -1,0 +1,42 @@
+<html>
+    <head>
+        <title>HaQuery Lists</title>
+        <style>
+            h3, h4 { margin-bottom: 0 }
+        </style>
+    </head>
+
+    <body>
+        <h3>PAGE</h3>
+        <table>
+            <tr>
+                <td><haq:button id="pagebt" text="compButton" /></td>
+                <td><input type="button" id="pagesbt" value="simpButton" /></td>
+            </tr>
+        </table>
+            
+        <h3>DYNAMIC FACTORY</h3>
+        <table id="table">
+            <haq:dynamicfactory id="users">
+                <tr>
+                    <td>{login}</td>
+                    <td><haq:button id="bt" text="compButton" /></td>
+                    <td><input type="button" id="sbt" value="simpButton" /></td>
+                </tr>
+            </haq:dynamicfactory>
+        </table>
+        
+        <h3>DYNAMIC FACTORY with COMPLEX ITEM</h3>
+        <table id="table2">
+            <haq:dynamicfactory id="users2">
+                <tr>
+                    <td><haq:item /></td>
+                    <td><haq:item /></td>
+                </tr>
+            </haq:dynamicfactory>
+        </table>
+        
+		<h4>Status</h4>
+        <span id="status"></span>
+    </body>
+</html>

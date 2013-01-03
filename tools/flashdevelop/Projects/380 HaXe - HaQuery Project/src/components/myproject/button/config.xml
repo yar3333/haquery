@@ -1,0 +1,5 @@
+<config>
+    <extend>
+        <component package="components.haquery.button" />
+    </extend>
+</config>

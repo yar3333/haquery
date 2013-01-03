@@ -1,7 +1,7 @@
 package haquery.server.db;
 
-import php.db.Connection;
-import php.db.ResultSet;
+import sys.db.Connection;
+import sys.db.ResultSet;
 
 typedef HaqDbTableFieldData = {
 	var name : String;
@@ -22,12 +22,10 @@ typedef HaqDbTableForeignKey = {
 
 interface HaqDbDriver 
 {
-    public var connection(default, null) : Connection;
-    
 	function query(sql:String) : ResultSet;
     function quote(s:Dynamic) : String;
     function lastInsertId() : Int;
-    function affectedRows() : Int;
+	function close() : Void;
     
 	function getTables() : Array<String>;
     function getFields(table:String) : Array<HaqDbTableFieldData>;
