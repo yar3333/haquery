@@ -1,16 +1,11 @@
-#if js
-
 package $(Package);
 
 import haquery.client.Lib;
-import haquery.client.HaqComponent;
 
-class $(FileName) extends HaqComponent
+class Client extends BaseClient
 {
     function init()
     {
         $(EntryPoint)
     }
 }
-
-#end

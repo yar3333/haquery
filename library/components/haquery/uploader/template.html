@@ -1,0 +1,25 @@
+<haq:placeholder id="styles">
+	<style>
+		.~form
+		{
+			position: absolute;
+			visibility: hidden;
+			overflow: hidden;
+			width: 0;
+			height: 0;
+		}
+		
+		.~container
+		{
+			cursor: pointer;
+		}
+	</style>
+</haq:placeholder>
+
+<haq:placeholder id="html">
+	<iframe id="frame" src="about:blank" style="display:none"></iframe>
+	<form id="form" action="/haquery-upload/" method="post" enctype="multipart/form-data" class="~form"><input type="file" id="file" class="~file" /></form>
+	<div id="container" class="~container">
+		<haq:placeholder id="content"><innercontent /></haq:placeholder>
+	</div>
+</haq:placeholder>

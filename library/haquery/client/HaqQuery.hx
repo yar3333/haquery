@@ -1,3 +1,7 @@
 package haquery.client;
 
-typedef HaqQuery = js.jQuery.JQuery;
+#if client
+
+typedef HaqQuery = js.JQuery;
+
+#end

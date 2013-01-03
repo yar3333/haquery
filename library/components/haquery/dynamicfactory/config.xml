@@ -1,0 +1,4 @@
+<config>
+    <extends component="components.haquery.factory" />
+	<import component="components.haquery.dynamicfactoryitem" required="true" /> 
+</config>

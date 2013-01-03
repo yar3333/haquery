@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>shared</title>
+    </head>
+    <body>
+        <h3>Shared methods test</h3>
+        
+        <table>
+            <tr>
+                <td>
+                    <div style="border:solid 1px gray; padding: 0 0 20px 20px">
+                        <h4>Page</h4>
+                        
+                        Simple html button: 
+                        <input type="button" id="simpleButton" value="simpleButton" />
+                        
+                        <br /><br />
+                        
+                        HaQuery.components.button: 
+                        <div style="width: 370px">
+                            <haq:button id="componentButton" text="componentButton" />
+                        </div>
+                        
+                        <br />
+                        
+                        <div id="status">&nbsp;</div>
+                    </div>
+                </td>
+                <td>
+                    <haq:comp />
+                </td>
+            </tr>
+        </table>
+		
+		<br />
+		
+		pageKey = <span id="pageKey"></span>
+		
+		<br /><br />
+		
+		<input type="button" id="callSharedServerMethodA" value="call shared server method A, which call client method A" />
+		
+		<br /><br />
+		
+		anotherPageKey = <input type="text" id="anotherPageKey" style="width:300px" /><br />
+		<input type="button" id="callSharedServerMethodB" value="call shared server method B, which call another server method C" /><br />
+		<input type="button" id="callSharedServerMethodD" value="call shared server method D, which call another client method D" /><br />
+		<input type="button" id="callAnotherServerMethodE" value="call another server method E" /><br />
+		<input type="button" id="callAnotherClientMethodF" value="call another client method F" /><br />
+    </body>
+</html>

@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<project version="2">
+  <!-- Output SWF options -->
+  <output>
+    <movie outputType="Application" />
+    <movie input="" />
+    <movie path="bin\index.n" />
+    <movie fps="0" />
+    <movie width="0" />
+    <movie height="0" />
+    <movie version="1" />
+    <movie minorVersion="0" />
+    <movie platform="Neko" />
+    <movie background="#FFFFFF" />
+  </output>
+  <!-- Other classes to be compiled into your SWF -->
+  <classpaths>
+    <class path="gen" />
+    <class path="library" />
+    <class path="tests" />
+  </classpaths>
+  <!-- Build options -->
+  <build>
+    <option directives="server" />
+    <option flashStrict="False" />
+    <option mainClass="Main" />
+    <option enabledebug="True" />
+    <option additional="" />
+  </build>
+  <!-- haxelib libraries -->
+  <haxelib>
+    <library name="HtmlParser" />
+    <library name="WebSocket" />
+  </haxelib>
+  <!-- Class files to compile (other referenced classes will automatically be included) -->
+  <compileTargets>
+    <compile path="tests\Main.hx" />
+  </compileTargets>
+  <!-- Paths to exclude from the Project Explorer tree -->
+  <hiddenPaths>
+    <hidden path="bin" />
+    <hidden path="gen" />
+    <hidden path="library.zip" />
+    <hidden path="library\copyfolder.exe" />
+    <hidden path="library\copyfolder.exe.config" />
+    <hidden path="library\copyfolder.pdb" />
+    <hidden path="library\restorefiletime.exe" />
+    <hidden path="library\run.n" />
+    <hidden path="library\runwaiter.exe" />
+    <hidden path="library\runwaiter.exe.config" />
+    <hidden path="library\runwaiter.pdb" />
+  </hiddenPaths>
+  <!-- Executed before build -->
+  <preBuildCommand>haxelib run HaQuery build</preBuildCommand>
+  <!-- Executed after build -->
+  <postBuildCommand alwaysRun="False" />
+  <!-- Other project options -->
+  <options>
+    <option showHiddenPaths="False" />
+    <option testMovie="OpenDocument" />
+    <option testMovieCommand="http://haquerylib/" />
+  </options>
+  <!-- Plugin storage -->
+  <storage />
+</project>
