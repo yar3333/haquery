@@ -22,6 +22,8 @@ class FlashDevelopProject
 	public var platform(default, null) : String;
 	public var additionalCompilerOptions(default, null) : Array<String>;
 	
+	var directives : Array<String>;
+	
 	public function new(log:Log, dir:String) 
 	{
 		this.log = log;
@@ -42,6 +44,8 @@ class FlashDevelopProject
 		srcPath = getSrcPath(xml);
 		platform = getPlatform(xml);
 		additionalCompilerOptions = getAdditionalCompilerOptions(xml);
+		
+		directives = getDirectives(xml);
 	}
 	
 	function findProjectFile(dir:String) : String
@@ -259,7 +263,7 @@ class FlashDevelopProject
 			params.push("-debug");
 		}
 		
-		for (d in defines)
+		for (d in directives.concat(defines))
 		{
 			params = params.concat([ "-D", d ]);
 		}
@@ -267,5 +271,29 @@ class FlashDevelopProject
 		params = params.concat(additionalCompilerOptions);
 		
 		return params;
+	}
+	
+	function getDirectives(xml:Xml) : Array<String>
+	{
+		var fast = new haxe.xml.Fast(xml.firstElement());
+		
+		if (fast.hasNode.build)
+		{
+			for (elem in fast.node.build.elements)
+			{
+				if (elem.name == "option" && elem.has.directives)
+				{
+					var s = elem.att.directives.replace("&#xA;", "\n").trim();
+					return s != "" ? ~/\s+/g.split(s) : [];
+				}
+			}
+		}
+		
+		return [];
+	}
+	
+	public function defined(directive:String)
+	{
+		return Lambda.has(directives, directive);
 	}
 }

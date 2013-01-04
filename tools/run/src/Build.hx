@@ -5,6 +5,7 @@ import hant.FileSystemTools;
 import hant.PathTools;
 import hant.Process;
 import haquery.Exception;
+import haxe.htmlparser.HtmlNodeElement;
 import haxe.Serializer;
 import neko.Lib;
 import sys.io.File;
@@ -58,9 +59,12 @@ class Build
 			buildServer(outputDir);
 			buildClient(outputDir, jsModern, isDeadCodeElimination);
 			
-			log.start("Generate style file");
-				generateComponentsCssFile(manager, outputDir);
-			log.finishOk();
+			generateComponentsCssFile(manager, outputDir);
+			
+			if (project.defined("mobile"))
+			{
+				generateMobilePages(manager, outputDir);
+			}
 			
 			var publisher = new Publisher(log, fs, project.platform);
 			
@@ -344,6 +348,8 @@ class Build
 	
 	function generateComponentsCssFile(manager:HaqTemplateManager, binDir:String)
 	{
+		log.start("Generate style file");
+		
 		var dir = binDir + "/haquery/client";
 		FileSystem.createDirectory(dir);
 		
@@ -358,5 +364,82 @@ class Build
 		}
 		
 		File.saveContent(dir + "/haquery.css", text);
+		
+		log.finishOk();
+	}
+	
+	function generateMobilePages(manager:HaqTemplateManager, outputDir:String)
+	{
+		log.start("Generate mobile pages");
+		
+		try
+		{
+			for (fullTag in manager.fullTags)
+			{
+				if (fullTag.startsWith(HaqDefines.folders.pages + "."))
+				{
+					var path = outputDir + "/" + fullTag.replace(".", "/") + "/index.html";
+					FileSystem.createDirectory(Path.directory(path));
+					
+					var template = manager.get(fullTag);
+					var doc = template.getDocCopy();
+					renderComponents("", template, doc, manager, { nextAnonimID:0 });
+					
+					File.saveContent(path, doc.toString());
+				}
+			}
+		}
+		catch (e:Dynamic)
+		{
+			log.trace(e);
+			log.trace(haxe.Stack.toString(haxe.Stack.exceptionStack()));
+			log.finishFail(e);
+		}
+		
+		log.finishOk();
+	}
+	
+	function renderComponents(prefixID:String, parent:HaqTemplate, doc:HtmlNodeElement, manager:HaqTemplateManager, nextAnonimID:{ nextAnonimID:Int })
+	{
+		for (node in doc.children)
+		{
+			if (node.name.startsWith("haq:"))
+			{
+				var tag = node.name.substr("haq:".length).replace("-", ".");
+				var id = node.getAttribute("id");
+				if (id == null || id == "")
+				{
+					nextAnonimID.nextAnonimID++;
+					id = "haqc_" + Std.string(nextAnonimID.nextAnonimID);
+				}
+				var childPrefixID = prefixID != "" ? prefixID + id + HaqDefines.DELIMITER : id + HaqDefines.DELIMITER;
+				var childTemplate = manager.resolveComponentTag(parent, tag);
+				if (childTemplate == null)
+				{
+					throw "Component '" + tag + "' used in '" + parent.fullTag + "' can not be resolved.";
+				}
+				var childDoc = childTemplate.getDocCopy();
+				renderComponents(childPrefixID, childTemplate, childDoc, manager, { nextAnonimID:0 });
+				doc.replaceChildWithInner(node, childDoc);
+			}
+			else
+			{
+                var nodeID = node.getAttribute('id');
+                if (nodeID != null && nodeID != '')
+				{
+					node.setAttribute('id', prefixID + nodeID);
+				}
+                if (node.name == 'label')
+                {
+                    var nodeFor = node.getAttribute('for');
+                    if (nodeFor != null && nodeFor != '')
+					{
+						node.setAttribute('for', prefixID + nodeFor);
+					}
+                }
+				
+				renderComponents(prefixID, parent, node, manager, nextAnonimID);
+			}
+		}
 	}
 }
