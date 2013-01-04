@@ -201,7 +201,7 @@ class HaqTemplateManager
 		}
 	}
 	
-	function resolveComponentTag(parent:HaqTemplate, tag:String) : HaqTemplate
+	public function resolveComponentTag(parent:HaqTemplate, tag:String) : HaqTemplate
 	{
 		if (tag.indexOf(".") >= 0)
 		{

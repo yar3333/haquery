@@ -3,6 +3,7 @@ package ;
 import hant.Log;
 import haxe.htmlparser.HtmlDocument;
 import haxe.Serializer;
+import haxe.Unserializer;
 
 class HaqTemplate extends haquery.base.HaqTemplate
 {
@@ -56,5 +57,10 @@ class HaqTemplate extends haquery.base.HaqTemplate
 		extend = parser.getExtend();
 		imports = parser.getImports();
 		requires = parser.getRequires();
+	}
+	
+	public function getDocCopy()
+	{
+		return Unserializer.run(Serializer.run(doc));
 	}
 }
