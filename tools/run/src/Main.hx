@@ -68,11 +68,25 @@ class Main
 						options.add("noGenCode", false, [ "--no-gen-code" ]);
 						options.add("jsModern", false, [ "--js-modern" ]);
 						options.add("deadCodeElimination", false, [ "--dead-code-elimination" ]);
+						options.add("noServer", false, [ "--no-server" ]);
+						options.add("noClient", false, [ "--no-client" ]);
+						options.add("mobile", false, [ "--mobile" ]);
 						options.parse(args);
-						new Build(log, fs, exeDir).build(options.get("output"), options.get("noGenCode"), options.get("jsModern"), options.get("deadCodeElimination"));
+						new Build(log, fs, exeDir).build(
+							  options.get("output")
+							, options.get("noGenCode")
+							, options.get("jsModern")
+							, options.get("deadCodeElimination")
+							, options.get("noServer")
+							, options.get("noClient")
+							, options.get("mobile")
+						);
 					
 					case 'gen-code': 
-						new Build(log, fs, exeDir).genCode();
+						var options = new CmdOptions();
+						options.add("mobile", false, [ "--mobile" ]);
+						options.parse(args);
+						new Build(log, fs, exeDir).genCode(options.get("mobile"));
 						
 					case 'install':
 						new Setup(log, fs, exeDir).install();
@@ -111,11 +125,16 @@ class Main
 			Lib.println("            [--no-gen-code]            Do not generate shared and another classes.");
 			Lib.println("            [--js-modern]              Generate js code in modern style.");
 			Lib.println("            [--dead-code-elimination]  For a while is not supported.");
+			Lib.println("            [--no-server]              Skip server compilation.");
+			Lib.println("            [--no-client]              Skip client compilation.");
+			Lib.println("            [--mobile]                 Generate html pages for using with Cordova.");
+			Lib.println("                                       Definition 'mobile' will be defined too.");
 			Lib.println("");
 			Lib.println("        gen-orm                        Generate object-related classes.");
 			Lib.println("            [databaseConnectionString] Like 'mysql://user:pass@host/dbname'.");
 			Lib.println("");
 			Lib.println("        gen-code                       Generate shared and another classes.");
+			Lib.println("            [--mobile]                 Define 'mobile' while preprocessing.");
 		}
         
         Sys.exit(0);

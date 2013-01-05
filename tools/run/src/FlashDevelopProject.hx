@@ -265,7 +265,10 @@ class FlashDevelopProject
 		
 		for (d in directives.concat(defines))
 		{
-			params = params.concat([ "-D", d ]);
+			if (d != null && d != "")
+			{
+				params = params.concat([ "-D", d ]);
+			}
 		}
 		
 		params = params.concat(additionalCompilerOptions);
@@ -292,8 +295,9 @@ class FlashDevelopProject
 		return [];
 	}
 	
+	/*
 	public function defined(directive:String)
 	{
 		return Lambda.has(directives, directive);
-	}
+	}*/
 }
