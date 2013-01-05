@@ -35,7 +35,7 @@ class Build
 		project = new FlashDevelopProject(log, "");
 	}
 	
-	public function build(outputDir:String, noGenCode:Bool, jsModern:Bool, isDeadCodeElimination:Bool)
+	public function build(outputDir:String, noGenCode:Bool, jsModern:Bool, isDeadCodeElimination:Bool, noServer:Bool, noClient:Bool, mobile:Bool)
     {
         log.start("Build");
         
@@ -44,24 +44,24 @@ class Build
 			var manager = new HaqTemplateManager(log, project.allClassPaths);
 			
 			genTrm(manager);
-			generateConfigClasses(manager);
+			generateConfigClasses(manager, noServer, noClient);
 			generateImports(manager, project.srcPath);
 			generateManagers(project);
 			
 			if (!noGenCode)
 			{
-				genCodeFromClient(project);
-				genCodeFromServer(project);
+				if (!noClient) genCodeFromClient(project, mobile);
+				if (!noServer) genCodeFromServer(project, mobile);
 			}
 			
-			try { saveLibFolderFileTimes(outputDir); } catch (e:Dynamic) { }
+			try { saveLibFolderFileTimes(outputDir); } catch (e:Dynamic) {}
 			
-			buildServer(outputDir);
-			buildClient(outputDir, jsModern, isDeadCodeElimination);
+			buildServer(outputDir, mobile);
+			buildClient(outputDir, jsModern, isDeadCodeElimination, mobile);
 			
 			generateComponentsCssFile(manager, outputDir);
 			
-			if (project.defined("mobile"))
+			if (mobile)
 			{
 				generateMobilePages(manager, outputDir);
 			}
@@ -161,7 +161,7 @@ class Build
 		return r;
 	}
 	
-	function buildClient(outputDir:String, isJsModern:Bool, isDeadCodeElimination:Bool)
+	function buildClient(outputDir:String, isJsModern:Bool, isDeadCodeElimination:Bool, mobile:Bool)
     {
 		var clientPath = outputDir + '/haquery/client';
 		
@@ -174,7 +174,7 @@ class Build
 		
 		fs.createDirectory(clientPath);
         
-        var params = project.getBuildParams("js", clientPath + "/haquery.js", [ "noEmbedJS", "client" ]);
+        var params = project.getBuildParams("js", clientPath + "/haquery.js", [ "noEmbedJS", "client", mobile ? "mobile" : null ]);
 		if (isJsModern) params.push("--js-modern");
 		if (isDeadCodeElimination) params.push("--dead-code-elimination");
 		var r = Process.run(log, fs.getHaxePath() + "haxe.exe", params);
@@ -205,10 +205,10 @@ class Build
 		}
     }
 	
-	function buildServer(outputDir:String)
+	function buildServer(outputDir:String, mobile:Bool)
 	{
 		log.start("Build server to '" + outputDir + "'");
-        var params = project.getBuildParams(project.platform, project.platform != "neko" ? outputDir : outputDir + "/index.n", [ "server" ]);
+        var params = project.getBuildParams(project.platform, project.platform != "neko" ? outputDir : outputDir + "/index.n", [ "server", mobile ? "mobile" : null ]);
 		var r = Process.run(log, fs.getHaxePath() + "haxe.exe", params);
 		Lib.print(r.stdOut);
 		Lib.print(r.stdErr);
@@ -232,13 +232,13 @@ class Build
         log.finishOk();
     }
 	
-	function genCodeFromClient(project:FlashDevelopProject)
+	function genCodeFromClient(project:FlashDevelopProject, mobile:Bool)
 	{
         var tempPath = "gen/temp-haquery-gen-code.js";
 		
 		log.start("Generate code from client");
 		fs.createDirectory(Path.directory(tempPath));
-		var params = project.getBuildParams("js", tempPath, [ "noEmbedJS", "client", "haqueryGenCode" ]);
+		var params = project.getBuildParams("js", tempPath, [ "noEmbedJS", "client", "haqueryGenCode", mobile ? "mobile" : null ]);
 		var r = Process.run(log, fs.getHaxePath() + "haxe.exe", params);
 		fs.deleteFile(tempPath);
 		fs.deleteFile(tempPath + ".map");
@@ -248,13 +248,13 @@ class Build
 		else                 log.finishFail(new CompilationFailException("Client compilation errors."));
 	}
 	
-	function genCodeFromServer(project:FlashDevelopProject)
+	function genCodeFromServer(project:FlashDevelopProject, mobile:Bool)
 	{
         var tempPath = project.platform == "neko" ?  "gen/temp-haquery-gen-code.n" : "gen/temp-haquery-gen-code";
 		
 		log.start("Generate code from server");
 		fs.createDirectory(project.platform == "neko" ? Path.directory(tempPath) : tempPath);
-		var params = project.getBuildParams(project.platform, tempPath, [ "server", "haqueryGenCode" ]);
+		var params = project.getBuildParams(project.platform, tempPath, [ "server", "haqueryGenCode", mobile ? "mobile" : null ]);
 		var r = Process.run(log, fs.getHaxePath() + "haxe.exe", params);
 		fs.deleteAny(tempPath);
 		if (r.stdOut.trim() != "") Lib.print(r.stdOut);
@@ -285,7 +285,7 @@ class Build
 		}
 	}
 	
-	public function genCode()
+	public function genCode(mobile:Bool)
 	{
         log.start("Generate shared and another methods");
 		
@@ -294,12 +294,12 @@ class Build
 			var manager = new HaqTemplateManager(log, project.allClassPaths);
 			
 			genTrm(manager);
-			generateConfigClasses(manager);
+			generateConfigClasses(manager, false, false);
 			generateImports(manager, project.srcPath);
 			generateManagers(project);
-
-			genCodeFromServer(project);
-			genCodeFromClient(project);
+			
+			genCodeFromServer(project, mobile);
+			genCodeFromClient(project, mobile);
 			
 			log.finishOk();
 		}
@@ -310,7 +310,7 @@ class Build
 		}
 	}
 	
-	function generateConfigClasses(manager:HaqTemplateManager)
+	function generateConfigClasses(manager:HaqTemplateManager, noServer:Bool, noClient:Bool)
 	{
 		log.start("Generate config classes");
 		
@@ -319,28 +319,35 @@ class Build
 			var template = manager.get(fullTag);
 			var dir = "gen/" + fullTag.replace(".", "/");
 			FileSystem.createDirectory(dir);
-			File.saveContent(dir + "/ConfigServer.hx"
-				, "// This is autogenerated file. Do not edit!\n\n"
-				+ "package " + fullTag + ";\n\n"
-				+ "import " + template.serverClassName + ";\n\n"
-				+ "@:keep class ConfigServer\n"
-				+ "{\n"
-				+ "\tpublic static var extend = '" + template.extend + "';\n"
-				+ "\tpublic static var serverClassName = '" + template.serverClassName + "';\n"
-				+ "\tpublic static var serializedDoc = '" + Serializer.run(template.doc) + "';\n"
-				+ "}\n"
-			);
 			
-			File.saveContent(dir + "/ConfigClient.hx"
-				, "// This is autogenerated file. Do not edit!\n\n"
-				+ "package " + fullTag + ";\n\n"
-				+ "import " + template.clientClassName + ";\n\n"
-				+ "@:keep class ConfigClient\n"
-				+ "{\n"
-				+ "\tpublic static var clientClassName = '" + template.clientClassName + "';\n"
-				+ "\t// SERVER_HANDLERS\n"
-				+ "}\n"
-			);
+			if (!noServer)
+			{
+				File.saveContent(dir + "/ConfigServer.hx"
+					, "// This is autogenerated file. Do not edit!\n\n"
+					+ "package " + fullTag + ";\n\n"
+					+ "import " + template.serverClassName + ";\n\n"
+					+ "@:keep class ConfigServer\n"
+					+ "{\n"
+					+ "\tpublic static var extend = '" + template.extend + "';\n"
+					+ "\tpublic static var serverClassName = '" + template.serverClassName + "';\n"
+					+ "\tpublic static var serializedDoc = '" + Serializer.run(template.doc) + "';\n"
+					+ "}\n"
+				);
+			}
+			
+			if (!noClient)
+			{
+				File.saveContent(dir + "/ConfigClient.hx"
+					, "// This is autogenerated file. Do not edit!\n\n"
+					+ "package " + fullTag + ";\n\n"
+					+ "import " + template.clientClassName + ";\n\n"
+					+ "@:keep class ConfigClient\n"
+					+ "{\n"
+					+ "\tpublic static var clientClassName = '" + template.clientClassName + "';\n"
+					+ "\t// SERVER_HANDLERS\n"
+					+ "}\n"
+				);
+			}
 		}
 		
 		log.finishOk();
