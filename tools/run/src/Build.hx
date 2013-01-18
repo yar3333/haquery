@@ -56,8 +56,8 @@ class Build
 			
 			try { saveLibFolderFileTimes(outputDir); } catch (e:Dynamic) {}
 			
-			buildServer(outputDir, mobile);
-			buildClient(outputDir, jsModern, isDeadCodeElimination, mobile);
+			if (!noServer) buildServer(outputDir, mobile);
+			if (!noClient) buildClient(outputDir, jsModern, isDeadCodeElimination, mobile);
 			
 			generateComponentsCssFile(manager, outputDir);
 			

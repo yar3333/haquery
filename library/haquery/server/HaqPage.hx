@@ -85,11 +85,14 @@ class HaqPage extends HaqComponent
 	 */
 	public var pageSecret(default, null) : String;
 	
+	public var session(default, null) : HaqSession;
+	
 	public function new()
 	{
 		super();
 		ajaxResponse = "";
 		responseHeaders = new HaqResponseHeaders();
+		session = new HaqSession(this);
 	}
 	
 	public function generateResponseOnRender() : HaqResponse
