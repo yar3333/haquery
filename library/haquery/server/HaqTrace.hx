@@ -101,7 +101,7 @@ class HaqTrace
         {
 			if (text != "")
 			{
-				text = "[" + #if neko 
+				text = DateTools.format(Date.now(), "%Y-%m-%d %H:%M:%S") + " [" + #if neko 
 								(HaqSystem.listener == null ? " " : HaqSystem.listener.name)
 							 #else 
 								" "
