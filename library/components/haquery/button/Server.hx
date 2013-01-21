@@ -12,9 +12,8 @@ class Server extends Base
 	
 	function preRender()
 	{
-        template().container
-			.html(text)
-			.addClass(cssClass);
+        template().container.html(text);
+		template().container.addClass(cssClass);
 	}
 	
 	function container_click(t, e)
