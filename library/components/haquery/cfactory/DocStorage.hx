@@ -1,4 +1,4 @@
-package components.haqteam.cfactory;
+package components.haquery.cfactory;
 
 import haxe.htmlparser.HtmlDocument;
 import haxe.htmlparser.HtmlNodeElement;
