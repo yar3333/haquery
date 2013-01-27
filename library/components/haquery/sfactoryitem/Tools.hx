@@ -1,4 +1,4 @@
-package components.haquery.factoryitem;
+package components.haquery.sfactoryitem;
 
 import haxe.htmlparser.HtmlDocument;
 

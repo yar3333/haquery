@@ -1,4 +1,4 @@
 <config>
-    <extends component="components.haquery.factory" />
-	<import component="components.haquery.dynamicfactoryitem" required="true" /> 
+    <extends component="components.haquery.sfactory" />
+	<import component="components.haqteam.cfactoryitem" required="true" /> 
 </config>

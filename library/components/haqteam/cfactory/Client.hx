@@ -1,4 +1,4 @@
-package components.haquery.dynamicfactory;
+package components.haqteam.cfactory;
 
 import haquery.client.HaqComponent;
 import haquery.common.HaqEvent;
@@ -18,7 +18,7 @@ class Client extends BaseClient
 	public function create(parentElem:JQuery, params:Dynamic) : HaqComponent
 	{
 		var n = length;
-		var r = manager.createComponent(this, "components.haquery.dynamicfactoryitem", Std.string(n), true, { parentElem:parentElem, html:html, params:params } );
+		var r = manager.createComponent(this, "components.haqteam.cfactoryitem", Std.string(n), true, { parentElem:parentElem, html:html, params:params } );
 		q('#length').val(n + 1);
 		return r;
 	}

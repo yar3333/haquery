@@ -1,4 +1,4 @@
-package components.haquery.factory;
+package components.haquery.sfactory;
 
 import haquery.Exception;
 import haquery.server.HaqComponent;
@@ -19,7 +19,7 @@ class Server extends Base
         {
 			components = new LazyItems(length, function(id:String)
 			{
-				return manager.createComponent(this, "components.haquery.factoryitem", id, null, innerNode, false);
+				return manager.createComponent(this, "components.haquery.sfactoryitem", id, null, innerNode, false);
 			});
         }
 	}
@@ -29,7 +29,7 @@ class Server extends Base
         Lib.assert(!page.isPostback, "Component creating on the postback is not supported.");
 		
 		var n = length;
-		var r = manager.createComponent(this, "components.haquery.factoryitem", Std.string(n), Std.hash(params), getItemInnerNode(), true);
+		var r = manager.createComponent(this, "components.haquery.sfactoryitem", Std.string(n), Std.hash(params), getItemInnerNode(), true);
 		q('#length').val(n + 1);
 		return r;
 	}
