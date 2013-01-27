@@ -1,4 +1,4 @@
-package components.haqteam.cfactoryitem;
+package components.haquery.cfactoryitem;
 
 import haquery.common.HaqComponentTools;
 import haquery.Exception;
@@ -75,7 +75,7 @@ class Client extends BaseClient
 				{
 					throw new Exception("Component template '" + tag + "' not found for parent component '" + fullTag + "'.");
 				}
-				var doc = new components.haqteam.cfactory.DocStorage(manager).get(t.fullTag);
+				var doc = new components.haquery.cfactory.DocStorage(manager).get(t.fullTag);
 				r.push( { 
 					 fullTag: t.fullTag
 					,prefixID: prefixID
