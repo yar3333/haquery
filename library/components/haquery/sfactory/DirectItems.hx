@@ -1,4 +1,4 @@
-package components.haquery.factory;
+package components.haquery.sfactory;
 
 import haquery.server.Lib;
 import haquery.server.HaqComponent;

@@ -1,4 +1,4 @@
-package components.haquery.factory;
+package components.haquery.sfactory;
 
 class Base extends #if !client BaseServer #else BaseClient #end
 {

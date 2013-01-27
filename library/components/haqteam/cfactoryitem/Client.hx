@@ -1,4 +1,4 @@
-package components.haquery.dynamicfactoryitem;
+package components.haqteam.cfactoryitem;
 
 import haquery.common.HaqComponentTools;
 import haquery.Exception;
@@ -13,7 +13,7 @@ import haquery.client.HaqElemEventManager;
 import haquery.Std;
 using haquery.StringTools;
 
-typedef Tools = components.haquery.factoryitem.Tools;
+typedef Tools = components.haquery.sfactoryitem.Tools;
 
 private typedef ComponentData =
 {
@@ -75,7 +75,7 @@ class Client extends BaseClient
 				{
 					throw new Exception("Component template '" + tag + "' not found for parent component '" + fullTag + "'.");
 				}
-				var doc = new components.haquery.dynamicfactory.DocStorage(manager).get(t.fullTag);
+				var doc = new components.haqteam.cfactory.DocStorage(manager).get(t.fullTag);
 				r.push( { 
 					 fullTag: t.fullTag
 					,prefixID: prefixID
