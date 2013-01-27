@@ -11,9 +11,21 @@ class HaqBuild
 	{
 		if (Context.defined("display"))
 		{
-			//if (Compiler.getDisplayPos().indexOf("client"))
-			Compiler.define("server");
-			Compiler.define("client");
+			var displayPos = "";// Compiler.getDisplayPos();
+			if (~/\bserver\b/.match(displayPos))
+			{
+				Compiler.define("server");
+			}
+			else
+			if (~/\bclient\b/.match(displayPos))
+			{
+				Compiler.define("client");
+			}
+			else
+			{
+				Compiler.define("server");
+				Compiler.define("client");
+			}
 		}
 		else
 		{
