@@ -1,9 +1,6 @@
 package pages.index;
 
-import haquery.client.HaqComponent;
-import haquery.client.HaqPage;
-
-class Client extends HaqPage
+class Client extends BaseClient
 {
     function fu_select(t, e)
     {
@@ -11,12 +8,6 @@ class Client extends HaqPage
         trace("select");
     }
     
-    function fu_filterNotMatch(t, e)
-    {
-        q('#status').html("filterNotMatch");
-        trace("filterNotMatch");
-    }
-
     function fu_uploading(t, e)
     {
         q('#status').html("uploading");
@@ -26,11 +17,18 @@ class Client extends HaqPage
     function fu_complete(t, e)
     {
         var text = "";
-		for (id in e.keys())
+		for (inputID in e.uploads.keys())
 		{
-			var f = e.get(id);
-			text += "file uploaded: fileID = " + f.fileID + ", error = " + f.error + "<br />";
+			var f = e.uploads.get(inputID);
+			text += "file uploaded: inputID = " + inputID + ", fileID = " + f.fileID + ", error = " + f.error + "<br />";
 		}
 		q('#status').html(text);
+		
+		q('#status').html(q('#status').html() + "Now move file(s) to uploads folder...");
+		var fileIDs = Lambda.map( { iterator:e.uploads.keys }, function(inputID) return e.uploads.get(inputID).fileID);
+		server().saveFiles(fileIDs, function()
+		{
+			q('#status').html(q('#status').html() + " OK");
+		});
     }
 }
