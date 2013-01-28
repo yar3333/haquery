@@ -38,12 +38,16 @@ class HaqUploads
 		var nativeFiles : Hash<php.NativeArray> = php.Lib.hashOfAssociativeArray(untyped __var__("_FILES"));
 		for (id in nativeFiles.keys())
 		{
-			var file : php.NativeArray = nativeFiles.iterator().next();
-			saveUploadedFile(files, uploadsDir, id, newUploadFileID(), new HaqUploadedFile(
-				  file[untyped "tmp_name"]
-				, file[untyped "name"]
-				, file[untyped "size"]
-				, Type.createEnumIndex(HaqUploadError, file[untyped "error"])
+			var nativeFile : php.NativeArray = nativeFiles.get(id);
+			
+			var fileID = newUploadFileID();
+			var filePath = uploadsDir + "/" + fileID;
+			untyped __call__("move_uploaded_file", nativeFile[untyped "tmp_name"], filePath);
+			saveUploadedFile(files, uploadsDir, id, fileID, new HaqUploadedFile(
+				  filePath
+				, nativeFile[untyped "name"]
+				, nativeFile[untyped "size"]
+				, Type.createEnumIndex(HaqUploadError, nativeFile[untyped "error"])
 			));
 		}
 		
@@ -54,7 +58,7 @@ class HaqUploads
 		var lastPartName : String = null;
 		var lastFileName : String = null;
 		var lastFileID : String = null;
-		var lastTempFileName : String = null;
+		var lastFilePath : String = null;
 		var error : HaqUploadError = null;
 		
 		NativeWeb.parseMultipart(
@@ -67,9 +71,9 @@ class HaqUploads
 						if (lastFileName != null)
 						{
 							saveUploadedFile(files, uploadsDir, lastPartName, lastFileID, new HaqUploadedFile(
-								  lastTempFileName
+								  lastFilePath
 								, lastFileName
-								, FileSystem.stat(lastTempFileName).size
+								, FileSystem.stat(lastFilePath).size
 								, error
 							));
 						}
@@ -78,7 +82,7 @@ class HaqUploads
 					lastPartName = partName;
 					lastFileName = fileName;
 					lastFileID = newUploadFileID();
-					lastTempFileName = uploadsDir + "/" + lastFileID;
+					lastFilePath = uploadsDir + "/" + lastFileID;
 					error = HaqUploadError.OK;
 				}
 			}
@@ -89,16 +93,16 @@ class HaqUploads
 					dataSizeCanBeUploaded -= length;
 					if (dataSizeCanBeUploaded >= 0)
 					{
-						var h = File.append(lastTempFileName);
+						var h = File.append(lastFilePath);
 						h.writeBytes(data, 0, length);
 						h.close();
 					}
 					else
 					{
 						error = HaqUploadError.INI_SIZE;
-						if (FileSystem.exists(lastTempFileName))
+						if (FileSystem.exists(lastFilePath))
 						{
-							FileSystem.deleteFile(lastTempFileName);
+							FileSystem.deleteFile(lastFilePath);
 						}
 					}
 				}
@@ -110,9 +114,9 @@ class HaqUploads
 			if (lastFileName != null)
 			{
 				saveUploadedFile(files, uploadsDir, lastPartName, lastFileID, new HaqUploadedFile(
-					  lastTempFileName
+					  lastFilePath
 					, lastFileName
-					, FileSystem.stat(lastTempFileName).size
+					, FileSystem.stat(lastFilePath).size
 					, error
 				));
 			}

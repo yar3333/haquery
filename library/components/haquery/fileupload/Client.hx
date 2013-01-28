@@ -12,10 +12,14 @@ using haquery.StringTools;
 
 class Client extends Base
 {
-    var event_select : HaqEvent<{ fileName:String }>;
-    var event_filterNotMatch : HaqEvent<{ fileName:String }>;
-    var event_uploading : HaqEvent<Dynamic>;
-    var event_complete : HaqEvent<HaqUploadResult>;
+    /**
+     * Fires when user select file to upload. You can return false from the handler if you want to disable uploading.
+     */
+	var event_select : HaqEvent<{ fileName:String }>;
+    
+	var event_uploading : HaqEvent<Dynamic>;
+    
+	var event_complete : HaqEvent<{ uploads:HaqUploadResult }>;
 
     function init()
     {
@@ -36,17 +40,6 @@ class Client extends Base
             fileName = fileName.substr(fileName.lastIndexOf('/') + 1);
         }
         
-        var filter = template().frame.data("filter");
-        if (filter != "")
-        {
-            var re = new EReg(filter, "i");
-            if (!re.match(fileName))
-            {
-                event_filterNotMatch.call({ fileName:fileName });
-                return false;
-            }
-        }
-
         if (!event_select.call({ fileName:fileName })) return false;
 
         event_uploading.call(null);
@@ -57,7 +50,7 @@ class Client extends Base
 		{
             var text = frame.contentWindow.document.body.firstChild.innerHTML;
 			enabled = true;
-			event_complete.call(Unserializer.run(text));
+			event_complete.call({ uploads:Unserializer.run(text) });
         });
         
         cast(template().form[0]).submit();
