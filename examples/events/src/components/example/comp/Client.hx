@@ -10,6 +10,8 @@ class Client extends BaseClient
 	function innerComponentButton_click(t, e)
 	{
 		q('#status').html("innerComponentButton pressed on client");
-		//return false; // false to disable server handler call
+		
+		// uncomment to disable server handler call
+		//return false; 
 	}    
 }

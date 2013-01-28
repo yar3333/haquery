@@ -1,3 +1,4 @@
 <config>
 	<import component="components.haquery.*" />
+	<import component="components.example.*" />
 </config>
