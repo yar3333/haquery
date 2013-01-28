@@ -1,6 +1,6 @@
-package components.haquery.uploader;
+package components.haquery.fileupload;
 
-class Base extends #if !client BaseServer #else BaseClient #end
+class Base extends #if server BaseServer #else BaseClient #end
 {
     public var enabled(enabled_getter, enabled_setter) : Bool;
     

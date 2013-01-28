@@ -1,4 +1,4 @@
-package components.haquery.uploader;
+package components.haquery.fileupload;
 
 import haquery.client.HaqElemEventManager;
 import haquery.common.HaqEvent;

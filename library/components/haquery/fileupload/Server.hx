@@ -1,4 +1,4 @@
-package components.haquery.uploader;
+package components.haquery.fileupload;
 
 class Server extends Base
 {
