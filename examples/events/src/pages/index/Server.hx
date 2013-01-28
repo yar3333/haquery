@@ -1,8 +1,6 @@
 package pages.index;
 
-import haquery.server.HaqPage;
-
-class Server extends HaqPage
+class Server extends BaseServer
 {
     function init()
 	{

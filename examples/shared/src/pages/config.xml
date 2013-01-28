@@ -1,4 +1,4 @@
 <config>
 	<import component="components.haquery.*" />
-	<import component="components.shared.*" />
+	<import component="components.example.*" />
 </config>
