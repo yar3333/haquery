@@ -1,9 +1,6 @@
 package pages.index;
 
-import haquery.client.Lib;
-import haquery.client.HaqPage;
-
-class Client extends HaqPage
+class Client extends BaseClient
 {
 	function init()
 	{
