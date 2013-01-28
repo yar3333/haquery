@@ -2,7 +2,7 @@
 <project version="2">
   <!-- Output SWF options -->
   <output>
-    <movie outputType="Application" />
+    <movie outputType="CustomBuild" />
     <movie input="" />
     <movie path="bin" />
     <movie fps="0" />
@@ -25,7 +25,7 @@
     <option flashStrict="False" />
     <option mainClass="Main" />
     <option enabledebug="True" />
-    <option additional="" />
+    <option additional="--macro haquery.macro.HaqBuild.startup()" />
   </build>
   <!-- haxelib libraries -->
   <haxelib>
@@ -42,14 +42,14 @@
     <hidden path="gen" />
   </hiddenPaths>
   <!-- Executed before build -->
-  <preBuildCommand>haxelib run HaQuery pre-build</preBuildCommand>
+  <preBuildCommand>haxelib run HaQuery build</preBuildCommand>
   <!-- Executed after build -->
-  <postBuildCommand alwaysRun="False">haxelib run HaQuery post-build</postBuildCommand>
+  <postBuildCommand alwaysRun="False" />
   <!-- Other project options -->
   <options>
     <option showHiddenPaths="False" />
     <option testMovie="OpenDocument" />
-    <option testMovieCommand="http://dynamicfactory.haquery/" />
+    <option testMovieCommand="http://factory.haquery/" />
   </options>
   <!-- Plugin storage -->
   <storage />

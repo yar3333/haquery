@@ -4,11 +4,11 @@ class Client extends BaseClient
 {
     function init()
 	{
-		trace("client item.fullID = " + fullID);
+		page.q("#status").html("client item.fullID = " + fullID);
 	}
 	
 	function test_click(t, e)
     {
-        trace("test_click on client " + fullID);
+        page.q("#status").html("test_click on client " + fullID);
     }
 }
