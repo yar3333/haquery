@@ -138,10 +138,10 @@ class HaqConfig
 		if (cache == null) cache = new Hash<{ lastModTime:Float, config:HaqConfig }>();
 		
 		var item = cache.get(path);
-		if (item == null || item.lastModTime != FileSystem.stat(path).mtime.getTime())
+		if (item == null || FileSystem.exists(path) && item.lastModTime != FileSystem.stat(path).mtime.getTime())
 		{
 			var config = new HaqConfig(path);
-			cache.set(path, { lastModTime:FileSystem.stat(path).mtime.getTime(), config:config });
+			cache.set(path, { lastModTime:FileSystem.exists(path) ? FileSystem.stat(path).mtime.getTime() : 0, config:config });
 			return config;
 		}
 		return item.config;

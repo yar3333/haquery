@@ -2,15 +2,15 @@
 <project version="2">
   <!-- Output SWF options -->
   <output>
-    <movie outputType="Application" />
+    <movie outputType="CustomBuild" />
     <movie input="" />
-    <movie path="bin\index.n" />
+    <movie path="bin" />
     <movie fps="0" />
     <movie width="0" />
     <movie height="0" />
     <movie version="1" />
     <movie minorVersion="0" />
-    <movie platform="Neko" />
+    <movie platform="PHP" />
     <movie background="#FFFFFF" />
   </output>
   <!-- Other classes to be compiled into your SWF -->
@@ -25,7 +25,7 @@
     <option flashStrict="False" />
     <option mainClass="Main" />
     <option enabledebug="True" />
-    <option additional="" />
+    <option additional="--macro haquery.macro.HaqBuild.startup()" />
   </build>
   <!-- haxelib libraries -->
   <haxelib>
@@ -42,9 +42,9 @@
     <hidden path="gen" />
   </hiddenPaths>
   <!-- Executed before build -->
-  <preBuildCommand>haxelib run HaQuery pre-build</preBuildCommand>
+  <preBuildCommand>haxelib run HaQuery build</preBuildCommand>
   <!-- Executed after build -->
-  <postBuildCommand alwaysRun="False">haxelib run HaQuery post-build</postBuildCommand>
+  <postBuildCommand alwaysRun="False" />
   <!-- Other project options -->
   <options>
     <option showHiddenPaths="False" />

@@ -26,8 +26,6 @@ class HaqTrace
 		{
 			NativeLib.println(text);
 		}
-		#else
-		NativeLib.println(text);
 		#end
 		
 		writeToFile(text);
