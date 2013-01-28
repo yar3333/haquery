@@ -1,34 +1,17 @@
 package pages.index;
 
-typedef User = 
-{
-    var login : String;
-}
-
 class Server extends BaseServer
 {
 	public function init()
 	{
-		if (!Lib.isPostback)
+		if (!page.isPostback)
         {
-            var users : Array<User> = [
+            template().users.bind([
                  { login : "admin" }
                 ,{ login : "user" }
-            ];
-            trace("Users count = " + users.length);
-            template().users.bind(users);
+            ]);
         }
 	}
-    
-    function pagebt_click(t, e)
-    {
-        q('#status').html("pagebt_click server " + t.fullID);
-    }
-    
-    function pagesbt_click(t, e)
-    {
-        q('#status').html("pagesbt_click server " + t.fullID);
-    }
     
     function bt_click(t, e)
     {
