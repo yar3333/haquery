@@ -4,11 +4,11 @@ class Server extends BaseServer
 {
     function init()
 	{
-		trace("server item.fullID = " + fullID);
+		page.q("#status").html("server item.fullID = " + fullID);
 	}
     
 	function test_click(t, e)
     {
-        trace("test_click on server " + fullID);
+        page.q("#status").html("test_click on server " + fullID);
     }
 }

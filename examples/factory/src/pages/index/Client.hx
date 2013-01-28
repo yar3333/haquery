@@ -1,10 +1,5 @@
 package pages.index;
 
-typedef User = 
-{
-    var login : String;
-}
-
 class Client extends BaseClient
 {
 	function init()
