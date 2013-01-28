@@ -1,0 +1,7 @@
+<config>
+	<param name="secret" value="abc" />
+	
+	<listeners>
+		<websocket name="a" host="another.haquery" port="20001" autorun="true" />
+	</listeners>
+</config>
