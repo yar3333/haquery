@@ -191,7 +191,7 @@ class TrmGenerator
 			var template = manager.get(tag);
 			while (template != null)
 			{
-				if (template.fullTag == "components.haquery.sfactory")
+				if (template.fullTag == "components.haquery.list")
 				{
 					return true;
 				}
