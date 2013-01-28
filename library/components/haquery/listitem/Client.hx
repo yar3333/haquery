@@ -1,4 +1,4 @@
-package components.haquery.sfactoryitem;
+package components.haquery.listitem;
 
 import haquery.client.HaqElemEventManager;
 

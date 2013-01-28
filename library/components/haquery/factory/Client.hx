@@ -1,8 +1,6 @@
-package components.haquery.cfactory;
+package components.haquery.factory;
 
 import haquery.client.HaqComponent;
-import haquery.common.HaqEvent;
-import haxe.htmlparser.HtmlNodeElement;
 import haxe.Unserializer; 
 import js.JQuery;
 
@@ -18,7 +16,7 @@ class Client extends BaseClient
 	public function create(parentElem:JQuery, params:Dynamic) : HaqComponent
 	{
 		var n = length;
-		var r = manager.createComponent(this, "components.haquery.cfactoryitem", Std.string(n), true, { parentElem:parentElem, html:html, params:params } );
+		var r = manager.createComponent(this, "components.haquery.factoryitem", Std.string(n), true, { parentElem:parentElem, html:html, params:params } );
 		q('#length').val(n + 1);
 		return r;
 	}
