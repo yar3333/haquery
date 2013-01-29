@@ -1,7 +1,5 @@
 package $(Package);
 
-import haquery.client.Lib;
-
 class Client extends BaseClient
 {
     function init()
