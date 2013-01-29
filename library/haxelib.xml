@@ -6,7 +6,7 @@
     <tag v='haquery' />
     <tag v='web' />
     <description>Web framework with php/neko and js target.</description>
-    <version name='5.0'>Server daemon mode and interaction through websocket. Avoid many global static's. Avoid FirePHP dependency.</version>
+    <version name='5.0'>Many fixes and improvements. See HaQuery site for details.</version>
     <depends name="HtmlParser" />
     <depends name="WebSocket" />
 </project>

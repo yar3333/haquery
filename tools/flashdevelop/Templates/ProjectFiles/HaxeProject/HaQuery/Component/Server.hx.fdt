@@ -1,12 +1,10 @@
 package $(Package);
 
-import haquery.server.Lib;
-
 class Server extends BaseServer
 {
 	function init()
     {
-        if (!Lib.isPostback)
+        if (!page.isPostback)
         {
             $(EntryPoint)
         }

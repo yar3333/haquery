@@ -1,14 +1,11 @@
 package pages;
 
-import haquery.server.Lib;
-import haquery.server.HaqRequest;
-
 class Bootstrap extends haquery.server.HaqBootstrap
 {
-	override function init(request:HaqRequest)
+	override function init(request:haquery.server.HaqRequest)
 	{
-		// Here db is not yet connected. Tune Lib.config if need.
-		// Lib.config.databaseConnectionString = "mySpecialConnection";
+		// Here db is not yet connected. Tune config if need.
+		// config.databaseConnectionString = "mySpecialConnection";
 	}
     
 	override function start()

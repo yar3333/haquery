@@ -5,6 +5,6 @@
         <title>HaQuerySite</title>
     </head>
     <body>
-        
+        $(EntryPoint)
     </body>
 </html>
