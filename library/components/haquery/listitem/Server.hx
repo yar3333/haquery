@@ -19,6 +19,9 @@ class Server extends Base
 		{
 			manager.createDocComponents(this, doc, false);
 		}
+		
+		forEachComponent("preInit", true);
+		forEachComponent("init", false);		
 	}
 	
 	override function callElemEventHandler(elemID:String, eventName:String) : Dynamic
