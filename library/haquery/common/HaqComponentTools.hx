@@ -137,7 +137,7 @@ class HaqComponentTools
             if (!node.name.startsWith('haq:'))
             {
                 var nodeID = node.getAttribute('id');
-                if (nodeID != null && nodeID != '')
+                if (nodeID != null && nodeID != '' && nodeID.indexOf(":") == -1)
 				{
 					node.setAttribute('id', prefixID + nodeID);
 				}
