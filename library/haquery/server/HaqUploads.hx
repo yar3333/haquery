@@ -148,7 +148,7 @@ class HaqUploads
 	{
 		trace("Save uploaded file " + inputID + " = { inputID:" + inputID + ", name = " + uploadedFile.name + ", fileID:" + fileID + " }");
 		File.saveContent(uploadsDir + "/" + fileID + ".uploaded", Serializer.run(uploadedFile));
-		files.set(inputID, { fileID:fileID, size:uploadedFile.size, error:uploadedFile.error });
+		files.set(inputID, { fileID:fileID, name:uploadedFile.name, size:uploadedFile.size, error:uploadedFile.error });
 	}
 }
 
