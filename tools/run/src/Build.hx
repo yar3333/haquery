@@ -234,7 +234,7 @@ class Build
 	
 	function genCodeFromClient(project:FlashDevelopProject, mobile:Bool)
 	{
-        var tempPath = "gen/temp-haquery-gen-code.js";
+        var tempPath = "gen-temp/code.js";
 		
 		log.start("Generate code from client");
 		fs.createDirectory(Path.directory(tempPath));
@@ -242,6 +242,7 @@ class Build
 		var r = Process.run(log, fs.getHaxePath() + "haxe.exe", params);
 		fs.deleteFile(tempPath);
 		fs.deleteFile(tempPath + ".map");
+		fs.deleteDirectory(Path.directory(tempPath));
 		Lib.print(r.stdOut);
 		Lib.print(r.stdErr);
 		if (r.exitCode == 0) log.finishOk();
@@ -250,13 +251,14 @@ class Build
 	
 	function genCodeFromServer(project:FlashDevelopProject, mobile:Bool)
 	{
-        var tempPath = project.platform == "neko" ?  "gen/temp-haquery-gen-code.n" : "gen/temp-haquery-gen-code";
+        var tempPath = project.platform == "neko" ?  "gen-temp/code.n" : "gen-temp/code";
 		
 		log.start("Generate code from server");
 		fs.createDirectory(project.platform == "neko" ? Path.directory(tempPath) : tempPath);
 		var params = project.getBuildParams(project.platform, tempPath, [ "server", "haqueryGenCode", mobile ? "mobile" : null ]);
 		var r = Process.run(log, fs.getHaxePath() + "haxe.exe", params);
 		fs.deleteAny(tempPath);
+		fs.deleteDirectory(Path.directory(tempPath));
 		if (r.stdOut.trim() != "") Lib.print(r.stdOut);
 		if (r.stdErr.trim() != "") Lib.print(r.stdErr);
 		if (r.exitCode == 0) log.finishOk();
