@@ -156,7 +156,7 @@ using haquery.StringTools;
 		var text = doc.innerHTML;
 		if (innerNode != null)
 		{
-			var reInnerContent = new EReg("<innercontent\\s*[/]?>", "i");
+			var reInnerContent = new EReg("<innercontent\\s*[/]>|<innercontent></innercontent>", "i");
 			text = reInnerContent.replace(text, innerNode.innerHTML);
 		}
 		
