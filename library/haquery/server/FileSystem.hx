@@ -49,10 +49,14 @@ class FileSystem
 				var dir = dirs.slice(0, i + 1).join('/');
 				if (dir != "" && dir.substr(-1) != ':')
 				{
-					if (!exists(dir))
+					try
 					{
-						sys.FileSystem.createDirectory(dir);
+						if (!exists(dir))
+						{
+							sys.FileSystem.createDirectory(dir);
+						}
 					}
+					catch (e:Dynamic) {}
 				}
 			}
 		}
