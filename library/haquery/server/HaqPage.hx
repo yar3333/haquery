@@ -297,18 +297,6 @@ class HaqPage extends HaqComponent
 	{
 		ajaxResponse += jsCode + "\n";
 	}
-	
-	/**
-	 * Overload to specify code on client to server websocket connection.
-	 * Use to security checks or something else.
-	 * You can return false to force disconnect.
-	 */
-	public function onConnect() : Bool return true
-	
-	/**
-	 * Overload to specify code on client to server websocket closing.
-	 */
-	public function onDisconnect() { }
 }
 
 #end
