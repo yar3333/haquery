@@ -4,12 +4,12 @@ import hant.Log;
 import hant.FileSystemTools;
 import hant.PathTools;
 import hant.Process;
-import haquery.server.FileSystem;
+import stdlib.FileSystem;
 import sys.io.File;
 import haxe.io.Path;
 import haxe.htmlparser.HtmlDocument;
 import haxe.htmlparser.HtmlNodeElement;
-using haquery.StringTools;
+using stdlib.StringTools;
 
 class Publisher 
 {

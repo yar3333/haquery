@@ -2,7 +2,7 @@ package haquery.server;
 
 #if server
 
-import haquery.Exception;
+import stdlib.Exception;
 import haxe.Serializer;
 import haxe.Unserializer;
 import haquery.common.HaqDefines;

@@ -2,12 +2,13 @@ package haquery.server;
 
 #if server
 
-import haquery.Exception;
+import stdlib.Std;
+import stdlib.Exception;
+import stdlib.FileSystem;
 import haxe.htmlparser.HtmlDocument;
 import haxe.htmlparser.HtmlNodeElement;
-import haquery.Std;
 import sys.io.File;
-using haquery.StringTools;
+using stdlib.StringTools;
 
 class HaqConfig
 {

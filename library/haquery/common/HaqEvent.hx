@@ -1,7 +1,8 @@
 package haquery.common;
 
-#if !client
-import haquery.Exception;
+import stdlib.Exception;
+
+#if server
 import haquery.server.HaqComponent;
 import haquery.server.Lib;
 import haquery.server.HaqQuery;

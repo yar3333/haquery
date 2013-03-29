@@ -17,6 +17,7 @@ import haxe.io.Bytes;
 import haxe.Serializer;
 import haxe.Unserializer;
 import sys.io.File;
+import stdlib.FileSystem;
 
 class HaqUploads 
 {

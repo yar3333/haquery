@@ -1,7 +1,7 @@
 package components.haquery.factoryitem;
 
 import haquery.common.HaqComponentTools;
-import haquery.Exception;
+import stdlib.Exception;
 import js.JQuery;
 import haxe.htmlparser.HtmlDocument;
 import haxe.htmlparser.HtmlNodeElement;
@@ -10,8 +10,8 @@ import haquery.client.HaqInternals;
 import haquery.client.HaqTemplateManager;
 import haquery.client.HaqComponent;
 import haquery.client.HaqElemEventManager;
-import haquery.Std;
-using haquery.StringTools;
+import stdlib.Std;
+using stdlib.StringTools;
 
 typedef Tools = components.haquery.listitem.Tools;
 

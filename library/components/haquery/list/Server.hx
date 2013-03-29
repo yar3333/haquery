@@ -1,11 +1,11 @@
 package components.haquery.list;
 
 import haxe.htmlparser.HtmlNodeElement;
-import haquery.Std;
-import haquery.Exception;
+import stdlib.Std;
+import stdlib.Exception;
 import haquery.server.Lib;
 import haquery.server.HaqComponent;
-using haquery.StringTools;
+using stdlib.StringTools;
 
 class Server extends Base
 {

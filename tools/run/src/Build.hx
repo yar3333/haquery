@@ -1,18 +1,19 @@
 package ;
 
+import hant.FlashDevelopProject;
 import hant.Log;
 import hant.FileSystemTools;
 import hant.PathTools;
 import hant.Process;
-import haquery.Exception;
+import stdlib.Exception;
 import haxe.htmlparser.HtmlNodeElement;
 import haxe.Serializer;
 import neko.Lib;
 import sys.io.File;
 import haxe.io.Path;
 import haquery.common.HaqDefines;
-import haquery.server.FileSystem;
-using haquery.StringTools;
+import stdlib.FileSystem;
+using stdlib.StringTools;
 
 class CompilationFailException extends Exception
 {
@@ -32,7 +33,7 @@ class Build
 		this.log = log;
 		this.fs = fs;
 		this.exeDir = PathTools.path2normal(exeDir) + "/";
-		project = new FlashDevelopProject(log, "");
+		project = new FlashDevelopProject("");
 	}
 	
 	public function build(outputDir:String, noGenCode:Bool, jsModern:Bool, isDeadCodeElimination:Bool, noServer:Bool, noClient:Bool, mobile:Bool)

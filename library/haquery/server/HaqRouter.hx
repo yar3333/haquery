@@ -2,10 +2,10 @@ package haquery.server;
 
 #if server
 
-import haquery.Exception;
-import haquery.server.FileSystem;
+import stdlib.Exception;
+import stdlib.FileSystem;
 import haquery.common.HaqTemplateExceptions;
-using haquery.StringTools;
+using stdlib.StringTools;
 
 class HaqRouterException extends Exception
 {

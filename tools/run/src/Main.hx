@@ -1,15 +1,15 @@
 package ;
 
 import hant.CmdOptions;
+import hant.FlashDevelopProject;
 import hant.PathTools;
 import hant.FileSystemTools;
-import haquery.Exception;
+import hant.Process;
+import stdlib.Exception;
 import neko.Lib;
 import neko.Sys;
 import hant.Log;
 import haquery.server.HaqConfig;
-import haquery.server.db.HaqDb;
-import orm.OrmGenerator;
 import haquery.common.HaqTemplateExceptions;
 using StringTools;
 
@@ -41,13 +41,12 @@ class Main
 				switch (command)
 				{
 					case 'gen-orm': 
-						var project = new FlashDevelopProject(log, "");
+						var project = new FlashDevelopProject("");
+						
 						var databaseConnectionString = args.length > 0 ? args[0] : HaqConfig.load(project.srcPath + "config.xml").databaseConnectionString;
 						if (databaseConnectionString != null && databaseConnectionString != "")
 						{
-							log.start("Generate object related mapping classes");
-								new OrmGenerator(log, project).generate(new HaqDb(databaseConnectionString));
-							log.finishOk();
+							Process.run(log, "haxelib", [ "run", "orm", databaseConnectionString ], true);
 						}
 						else
 						{

@@ -1,6 +1,6 @@
 package ;
 
-using haquery.StringTools;
+using stdlib.StringTools;
 
 typedef HaxeVar = {
 	var haxeName : String;

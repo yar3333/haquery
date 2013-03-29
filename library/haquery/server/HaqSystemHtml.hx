@@ -2,7 +2,7 @@ package haquery.server;
 
 #if server
 
-using haquery.StringTools;
+using stdlib.StringTools;
 
 class HaqSystemHtml 
 {

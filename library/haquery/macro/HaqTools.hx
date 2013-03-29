@@ -8,7 +8,7 @@ import sys.io.File;
 
 import haxe.macro.Expr;
 import haxe.macro.Type;
-using haquery.StringTools;
+using stdlib.StringTools;
 using haquery.macro.internal.macro.tools.MacroTools;
 
 class HaqTools

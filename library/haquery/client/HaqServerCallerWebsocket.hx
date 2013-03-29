@@ -5,7 +5,7 @@ package haquery.client;
 import haquery.common.HaqComponentTools;
 import haquery.common.HaqMessageListenerAnswer;
 import haquery.common.HaqMessageToListener;
-import haquery.Exception;
+import stdlib.Exception;
 import haxe.Serializer;
 import haxe.Unserializer;
 import js.WebSocket;

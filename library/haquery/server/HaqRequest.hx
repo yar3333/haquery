@@ -38,7 +38,7 @@ typedef HaqRequest =
 	
 	var config : HaqConfig;
 	
-	var db : haquery.server.db.HaqDb;
+	var db : orm.Db;
 }
 
 #end

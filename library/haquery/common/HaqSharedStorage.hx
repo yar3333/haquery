@@ -1,7 +1,7 @@
 package haquery.common;
 
 import haquery.base.HaqComponent;
-using haquery.StringTools;
+using stdlib.StringTools;
 
 @:keep class HaqSharedStorage
 {

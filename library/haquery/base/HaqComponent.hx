@@ -4,8 +4,8 @@ package haquery.base;
 
 import haquery.common.HaqDefines;
 import haquery.common.HaqEvent;
-import haquery.Exception;
-using haquery.StringTools;
+import stdlib.Exception;
+using stdlib.StringTools;
 
 #if server
 import haquery.server.HaqTemplateManager;

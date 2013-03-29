@@ -6,7 +6,8 @@ import haxe.Serializer;
 import haxe.Unserializer;
 import haxe.htmlparser.HtmlDocument;
 import haquery.common.HaqDefines;
-using haquery.StringTools;
+import stdlib.FileSystem;
+using stdlib.StringTools;
 
 class HaqTemplate extends haquery.base.HaqTemplate
 {

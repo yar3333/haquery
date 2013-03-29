@@ -9,7 +9,7 @@ import js.Dom;
 import js.JQuery;
 import haquery.client.Lib;
 import haquery.common.HaqDefines;
-using haquery.StringTools;
+using stdlib.StringTools;
 
 class HaqServerCallerAjax
 {

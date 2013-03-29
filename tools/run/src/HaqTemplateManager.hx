@@ -4,10 +4,10 @@ import hant.Log;
 import haquery.common.HaqComponentTools;
 import haquery.common.HaqDefines;
 import haquery.common.HaqTemplateExceptions;
-import haquery.Exception;
-import haquery.server.FileSystem;
+import stdlib.Exception;
+import stdlib.FileSystem;
 import haxe.htmlparser.HtmlNodeElement;
-using haquery.StringTools;
+using stdlib.StringTools;
 
 class PathNotFoundException extends Exception {}
 

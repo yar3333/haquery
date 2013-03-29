@@ -2,11 +2,11 @@ package haquery.server;
 
 #if server
 
-import haquery.Std;
+import stdlib.Std;
 import haxe.htmlparser.HtmlNodeElement;
 import haquery.base.HaqCssGlobalizer;
 import models.server.Page;
-using haquery.StringTools;
+using stdlib.StringTools;
 
 /**
  * Like $ in jQuery.

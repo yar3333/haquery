@@ -8,7 +8,7 @@ import sys.FileSystem;
 import hant.Log;
 import hant.FileSystemTools;
 import hant.PathTools;
-using haquery.StringTools;
+using stdlib.StringTools;
 
 class Setup 
 {
