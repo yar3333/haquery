@@ -10,7 +10,6 @@ private typedef NativeLib = neko.Lib;
 typedef Web = neko.Web;
 #end
 
-import haquery.common.HaqMessageListenerAnswer;
 import stdlib.Exception;
 import haxe.io.Path;
 import haxe.Serializer;
@@ -24,6 +23,7 @@ import stdlib.Std;
 import stdlib.Profiler;
 import stdlib.FileSystem;
 import stdlib.Uuid;
+import haquery.common.HaqMessageListenerAnswer;
 using stdlib.StringTools;
 
 class Lib
@@ -53,7 +53,7 @@ class Lib
 					manager = new HaqTemplateManager();
 				}
 				
-				var route = new HaqRouter(HaqDefines.folders.pages, manager).getRoute(!isCli() ? Web.getParams().get("route") : HaqCli.getURI());
+				var route = new HaqRouter(HaqDefines.folders.pages, manager).getRoute(Web.getParams().get("route"));
 				var bootstraps = loadBootstraps(route.path, config);
 				
 				if (route.pageID != null && route.pageID.startsWith("haquery-"))
@@ -63,15 +63,7 @@ class Lib
 				else
 				{
 					var request = getRequest(route, config);
-					
-					#if neko
-					var listener = getListenerToDispatchRequest(config);
-					var response = listener != null
-								 ? listener.makeRequest(request)
-								 : runPage(request, route, bootstraps).response;
-					#else
 					var response = runPage(request, route, bootstraps).response;
-					#end
 					
 					if (db != null)
 					{
@@ -110,34 +102,20 @@ class Lib
         }
     }
 	
-	#if neko
-	static function getListenerToDispatchRequest(config:HaqConfig) : HaqListener
-	{
-		if (config.listeners.iterator().hasNext())
-		{
-			var names = Lambda.array( { iterator:config.listeners.keys } );
-			return config.listeners.get(names[Std.random(names.length)]);
-		}
-		return null;
-	}
-	#end
-	
 	static function getRequest(route:HaqRoute, config:HaqConfig) : HaqRequest
 	{
-		var params = !isCli() ? Web.getParams() : HaqCli.getParams();
+		var params = Web.getParams();
 		return {
 			  pageFullTag: route.fullTag
-			, uri: !isCli() ? Web.getURI() : HaqCli.getURI()
+			, uri: Web.getURI()
 			, pageID: route.pageID
-			, isPostback: !isCli() && params.get('HAQUERY_POSTBACK') != null
+			, isPostback: params.get("HAQUERY_POSTBACK") != null
 			, params: params
 			, cookie: new HaqCookie()
 			, requestHeaders: new HaqRequestHeaders()
 			, clientIP: getClientIP()
 			, host: getHttpHost()
 			, queryString: getParamsString()
-			, pageKey: !isCli() && params.get('HAQUERY_PAGE_KEY') != null ? params.get('HAQUERY_PAGE_KEY') : Uuid.newUuid()
-			, pageSecret: !isCli() && params.get('HAQUERY_PAGE_SECRET') != null ? params.get('HAQUERY_PAGE_SECRET') : newPageSecret()
 			, config: config
 			, db: null
 			, orm: null
@@ -170,7 +148,7 @@ class Lib
 			}
 			
 			profiler.begin("page");
-				trace("HAQUERY START " + (isCli() ? "CLI" : "WEB") + " pageFullTag = " + route.fullTag +  ", HTTP_HOST = " + getHttpHost() + ", clientIP = " + getClientIP() + ", pageID = " + route.pageID);
+				trace("HAQUERY START page = " + route.fullTag +  ", HTTP_HOST = " + getHttpHost() + ", clientIP = " + getClientIP() + ", pageID = " + route.pageID);
 				
 				page = manager.createPage(route.fullTag, Std.hash(request));
 				
@@ -294,6 +272,7 @@ class Lib
         return stdlib.StringTools.trim(s, '&');
     }
 	
+	/*
 	public static function isCli() : Bool
 	{
 		#if php
@@ -301,7 +280,7 @@ class Lib
 		#elseif neko
 		return !neko.Web.isModNeko && !neko.Web.isTora;
 		#end
-	}
+	}*/
 	
 	static function getCwd() { return Web.getCwd().replace("\\", "/").rtrim("/"); }
 }

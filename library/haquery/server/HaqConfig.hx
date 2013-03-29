@@ -50,10 +50,6 @@ class HaqConfig
 	 */
 	public var maxPostSize(default, null) : Int;
 	
-	#if neko
-	public var listeners(default, null) : Hash<HaqListener>;
-	#end
-	
 	public var secret : String;
 	
 	function new(path:String)
@@ -113,24 +109,6 @@ class HaqConfig
 					customs.set(node.getAttribute("name"), Std.parseValue(node.getAttribute("value")));
 				}
 			}
-			
-			#if neko
-			listeners = new Hash<HaqListener>();
-			for (node in xml.find(">config>listeners>websocket"))
-			{
-				if (node.hasAttribute("name") && node.hasAttribute("host") && node.hasAttribute("internalPort") && node.hasAttribute("externalPort"))
-				{
-					var name = node.getAttribute("name");
-					listeners.set(name, new HaqListener(
-						  name
-						, node.getAttribute("host")
-						, Std.parseInt(node.getAttribute("internalPort"), 20000)
-						, Std.parseInt(node.getAttribute("externalPort"), 30000)
-						, Std.bool(node.getAttribute("autorun"))
-					));
-				}
-			}
-			#end
 		}
 	}
 	

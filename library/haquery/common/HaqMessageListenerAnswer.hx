@@ -10,11 +10,11 @@ enum CallbackResult
 
 enum HaqMessageListenerAnswer
 {
-	CallAnotherClientMethod(componentFullID:String, method:String, params:Array<Dynamic>);
-	CallAnotherClientMethodAnswer(result:CallbackResult);
+	//CallAnotherClientMethod(componentFullID:String, method:String, params:Array<Dynamic>);
+	//CallAnotherClientMethodAnswer(result:CallbackResult);
 	CallSharedServerMethodAnswer(ajaxResponse:String, result:CallbackResult);
-	CallAnotherServerMethodAnswer(result:CallbackResult);
-	ProcessUncalledServerMethodAnswer(ajaxResponse:String);
+	//CallAnotherServerMethodAnswer(result:CallbackResult);
+	//ProcessUncalledServerMethodAnswer(ajaxResponse:String);
 	
 	#if !client
 	

@@ -97,14 +97,7 @@ using stdlib.StringTools;
 	 */
 	public function callSharedServerMethod(method:String, params:Array<Dynamic>, success:Dynamic->Void, fail:Exception->Void) : Void
 	{
-		if (Lib.websocket != null)
-		{
-			Lib.websocket.callSharedServerMethod(fullID, method, params, success, fail);
-		}
-		else
-		{
-			Lib.ajax.callSharedMethod(fullID, method, params, success);
-		}
+		Lib.ajax.callSharedMethod(fullID, method, params, success);
 	}
 	
 	/**

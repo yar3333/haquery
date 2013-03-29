@@ -32,10 +32,6 @@ typedef HaqRequest =
 	
 	var queryString : String;
 	
-	var pageKey : String;
-	
-	var pageSecret : String;
-	
 	var config : HaqConfig;
 	
 	var db : orm.Db;

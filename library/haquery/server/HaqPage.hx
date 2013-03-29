@@ -2,7 +2,6 @@ package haquery.server;
 
 #if server
 
-import haquery.common.HaqMessageListenerAnswer;
 import orm.Db;
 import haxe.htmlparser.HtmlNodeElement;
 import haxe.htmlparser.HtmlNodeText;
@@ -60,11 +59,6 @@ class HaqPage extends HaqComponent
      * Disable system CSS and JS inserts to your HTML pages.
      */
 	public var disableSystemHtmlInserts = false;
-	
-    /**
-     * Disable waiting websocket connection from client. Use for optimization on special pages.
-     */
-	public var disableListener = false;
 	
 	/**
 	 * Js code to response.
@@ -168,11 +162,6 @@ class HaqPage extends HaqComponent
 					+ Lambda.map({ iterator:tagIDs.keys }, function(tag) return "'" + tag + "':" + Json.stringify(tagIDs.get(tag))).join(",\n")
 					+ "\n};\n"
 					+ "haquery.client.HaqInternals.sharedStorage = haquery.client.HaqInternals.unserialize('" + Serializer.run(manager.sharedStorage) + "');\n"
-					#if neko
-					+ "haquery.client.HaqInternals.listener = " + (!disableListener && HaqSystem.listener != null ? "'" + HaqSystem.listener.getUri() + "'" : "null") + ";\n"
-					+ "haquery.client.HaqInternals.pageKey = '" + pageKey + "';\n"
-					+ "haquery.client.HaqInternals.pageSecret = '" + pageSecret + "';\n"
-					#end
 					+ "haquery.client.Lib.run('" + fullTag + "');\n"
 					+ ajaxResponse
 					+ "</script>"

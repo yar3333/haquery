@@ -14,20 +14,12 @@ import haquery.common.HaqDefines;
 import haxe.Serializer;
 import sys.io.File;
 import sys.io.FileSeek;
-import sys.io.Process;
-import sys.net.Host;
-import sys.net.Socket;
-import sys.net.WebSocket;
 import stdlib.Std;
 import stdlib.FileSystem;
 using stdlib.StringTools;
 
 class HaqSystem 
 {
-	#if neko
-	public static var listener(default, null) : HaqListener;
-	#end
-	
 	var config : HaqConfig;
 	
 	function new(config:HaqConfig)
@@ -41,24 +33,11 @@ class HaqSystem
 		
 		switch (command)
 		{
-			case "haquery-flush":
-				system.doFlushCommnd();
-				
-			#if neko
-			case "haquery-listener":
-				system.doListenerCommand();
-			#end
-			
 			case "haquery-status":
 				system.doStatusCommand();
 			
 			case "haquery-status-log":
 				system.doStatusLogCommand();
-			
-			#if neko
-			case "haquery-status-listeners":
-				system.doStatusListenersCommand();
-			#end
 			
 			case "haquery-upload":
 				system.doUploadCommand();
@@ -67,82 +46,6 @@ class HaqSystem
 				NativeLib.println("Unknow system command '" + command + "'.");
 		}
 	}
-	
-	function doFlushCommnd()
-	{
-		NativeLib.println("<b>HAQUERY FLUSH</b><br /><br />");
-		var path = HaqDefines.folders.temp;
-		
-		NativeLib.println("delete '" + path + "/haquery.log" + "'<br />");
-		FileSystem.deleteFile(path + "/haquery.log");
-		
-		NativeLib.println("delete '" + path + "/cache" + "'<br />");
-		FileSystem.deleteDirectory(path + "/cache");
-		
-		NativeLib.println("delete '" + path + "/templates" + "'<br />");
-		FileSystem.deleteDirectory(path + "/templates");
-	}
-	
-	#if neko
-	function doListenerCommand()
-	{
-		if (Lib.isCli())
-		{
-			var args = Sys.args();
-			if (args.length >= 2)
-			{
-				switch (args[1])
-				{
-					case "run":
-						if (args.length >= 3)
-						{
-							var name = args[2];
-							listener = config.listeners.get(name);
-							if (listener == null) throw "Unknow listener '" + name + "'.";
-							listener.run();
-						}
-
-					case "start":
-						if (args.length >= 3)
-						{
-							var name = args[2];
-							if (!config.listeners.exists(name)) throw "Unknow listener '" + name + "'.";
-							var p = config.listeners.get(name).start();
-							NativeLib.println("Listener '" + name + "' PID: " + p.getPid());
-						}
-						else
-						{
-							for (listener in config.listeners)
-							{
-								var p = listener.start();
-								NativeLib.println("Listener '" + listener.name + "' PID: " + p.getPid());
-							}
-						}
-					
-					case "stop":
-						if (args.length >= 3)
-						{
-							var name = args[2];
-							var listener = config.listeners.get(name);
-							if (listener == null) throw "Unknow listener '" + name + "'.";
-							listener.stop();
-						}
-					
-					default:
-						NativeLib.println("Unknow <listener_command>. Supported: 'run', 'start' and 'stop'.");
-				}
-			}
-			else
-			{
-				NativeLib.println("Need arguments: <listener_command> [listener_name].");
-			}
-		}
-		else
-		{
-			NativeLib.println("This command allowed from the command-line only.");
-		}
-	}
-	#end
 	
 	function isAdmin() : Bool
 	{
@@ -162,17 +65,12 @@ class HaqSystem
 				.js("updateLogTimeout = 1000;")
 				.js("updateListenersTimeout = 5000;")
 				.js("function updateLog() { $('#log').load('/haquery-status-log/', function() { setTimeout(updateLog, updateLogTimeout); });  }")
-				.js("function updateListeners() { $('#listeners').load('/haquery-status-listeners/', function() { setTimeout(updateListeners, updateListenersTimeout); });  }")
 				.js("setTimeout(updateLog, updateLogTimeout);")
-				.js("setTimeout(updateListeners, updateListenersTimeout);")
 				.begin("table", "width='100%' border='0' style='border-collapse:collapse; margin-top:5px'")
 					.begin("tbody")
 						.begin("tr valign='top'")
 							.begin("td")
 								.begin("pre", "id='log' style='overflow-x:scroll'").end()
-							.end()
-							.begin("td width='200px'")
-								.begin("div", "id='listeners'").end()
 							.end()
 						.end()
 					.end()
@@ -213,47 +111,13 @@ class HaqSystem
 		NativeLib.println(html);
 	}
 	
-	#if neko
-	function doStatusListenersCommand()
-	{
-		var html = "";
-		
-		if (isAdmin())
-		{
-			var listeners = Lambda.array(config.listeners);
-			listeners.sort(function(a, b) return a.name < b.name ? -1 : (a.name > b.name ? 1 : 0));
-			for (listener in listeners)
-			{
-				var status = listener.status();
-				html += "<fieldset style='background:#eee; margin-bottom:5px'>"
-							+ "<legend>" + listener.name + "</legend>"
-							+ (status != null ? status.replace("\n", "<br/>") : "not run")
-					  + "</fieldset>";
-			}
-		}
-		else
-		{
-			html += "Access denided, please reload a page.";
-		}
-	
-		NativeLib.println(html);
-	}
-	#end
-	
 	function doUploadCommand()
 	{
-		if (!Lib.isCli())
-		{
-			var uploadsDir = NativeWeb.getCwd().rtrim("/") + "/" + HaqDefines.folders.temp + "/uploads";
-			FileSystem.createDirectory(uploadsDir);
-			NativeWeb.setHeader("Content-Type", "text/plain; charset=utf-8");
-			var files = Lib.uploads.upload();
-			NativeLib.println(Serializer.run(files));
-		}
-		else
-		{
-			NativeLib.println("This command allowed from the web request only.");
-		}
+		var uploadsDir = NativeWeb.getCwd().rtrim("/") + "/" + HaqDefines.folders.temp + "/uploads";
+		FileSystem.createDirectory(uploadsDir);
+		NativeWeb.setHeader("Content-Type", "text/plain; charset=utf-8");
+		var files = Lib.uploads.upload();
+		NativeLib.println(Serializer.run(files));
 	}
 }
 
