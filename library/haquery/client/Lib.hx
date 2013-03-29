@@ -11,7 +11,6 @@ using stdlib.StringTools;
 @:keep @:expose class Lib
 {
 	public static var ajax(default, null) : HaqServerCallerAjax;
-	public static var websocket(default, null) : HaqServerCallerWebsocket;
 	
 	public static var page(default, null) : Page;
 	
@@ -19,27 +18,11 @@ using stdlib.StringTools;
     {
 		haxe.Log.trace = haquery.client.Lib.trace;
         
-		ajax = new HaqServerCallerAjax(HaqInternals.pageKey, HaqInternals.pageSecret);
-		websocket = HaqInternals.listener != null ? new HaqServerCallerWebsocket(HaqInternals.listener, HaqInternals.pageKey, HaqInternals.pageSecret) : null;
+		ajax = new HaqServerCallerAjax();
 		
 		var manager = new HaqTemplateManager();
 		page = manager.createPage(pageFullTag);
     }
-	
-	#if debug
-		static public function assert(e:Bool, errorMessage:String=null, ?pos : haxe.PosInfos) : Void
-		{
-			if (!e) 
-			{
-				if (errorMessage == null) errorMessage = "";
-				throw new Exception("HAQUERY ASSERT " + errorMessage + " in " + pos.fileName + " at line " + pos.lineNumber + ".");
-			}
-		}
-	#else
-		static public inline function assert(e:Bool, errorMessage:String=null, ?pos : haxe.PosInfos) : Void
-		{
-		}
-	#end
 	
     static function trace(v:Dynamic, ?pos : haxe.PosInfos) : Void
     {

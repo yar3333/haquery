@@ -14,11 +14,6 @@ import haxe.Unserializer;
 	
 	public static var sharedStorage(default, null) : HaqSharedStorage;
 	
-	public static var listener(default, null) : String;
-	
-	public static var pageKey(default, null) : String;
-	public static var pageSecret(default, null) : String;
-	
 	/**
 	 * @return componentID => fullTag
 	 */

@@ -21,14 +21,6 @@ class HaqTrace
 	public static function global(v:Dynamic, pos:PosInfos)
     {
 		var text = object2string(v, pos);
-		
-		#if neko
-		if (HaqSystem.listener != null)
-		{
-			NativeLib.println(text);
-		}
-		#end
-		
 		writeToFile(text);
     }
 	
@@ -100,13 +92,9 @@ class HaqTrace
         {
 			if (text != "")
 			{
-				text = DateTools.format(Date.now(), "%Y-%m-%d %H:%M:%S") + " [" + #if neko 
-								(HaqSystem.listener == null ? " " : HaqSystem.listener.name)
-							 #else 
-								" "
-							 #end + "] " 
-				     + StringTools.replace(text, "\n", "\r\n\t") 
-					 + "\r\n";
+				text = DateTools.format(Date.now(), "%Y-%m-%d %H:%M:%S ")
+				    + StringTools.replace(text, "\n", "\r\n\t") 
+					+ "\r\n";
 			}
 			else
 			{

@@ -8,5 +8,6 @@
     <description>Web framework with php/neko and js target.</description>
     <version name='5.0'>Many fixes and improvements. See HaQuery site for details.</version>
     <depends name="HtmlParser" />
-    <depends name="WebSocket" />
+    <depends name="stdlib" />
+    <depends name="orm" />
 </project>

@@ -36,7 +36,7 @@ class HaqBuild
 					switch (type)
 					{
 						case Type.TInst(t, params):
-								HaqSharedAndAnotherGenerator.generate(t.get());
+								HaqSharedGenerator.generate(t.get());
 						default:
 					}
 				}

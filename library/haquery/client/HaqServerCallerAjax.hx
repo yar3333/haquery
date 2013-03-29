@@ -13,13 +13,8 @@ using stdlib.StringTools;
 
 class HaqServerCallerAjax
 {
-	var pageKey : String;
-	var pageSecret : String;
-	
-	public function new(pageKey:String, pageSecret:String)
+	public function new()
 	{
-		this.pageKey = pageKey;
-		this.pageSecret = pageSecret;
 	}
 	
 	public function callSharedMethod(componentID:String, method:String, ?params:Array<Dynamic>, ?callb:Dynamic->Void) : Void
@@ -48,8 +43,6 @@ class HaqServerCallerAjax
     {
         var sendData : Dynamic = {
 			 HAQUERY_POSTBACK : 1
-			,HAQUERY_PAGE_KEY : pageKey
-			,HAQUERY_PAGE_SECRET : pageSecret
 			,HAQUERY_COMPONENT : componentID
 			,HAQUERY_METHOD : method
 			,HAQUERY_PARAMS : Serializer.run(params)
