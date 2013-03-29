@@ -3,7 +3,7 @@ package ;
 import haxe.htmlparser.HtmlDocument;
 import haquery.common.HaqTemplateExceptions;
 import haquery.server.HaqTemplateTools;
-import haquery.Std;
+import stdlib.Std;
 
 class HaqTemplateConfig
 {

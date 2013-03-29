@@ -16,7 +16,7 @@ class HaqBootstrap
 		// nothing to do
 	}
 	
-	public function start(db:haquery.server.db.HaqDb) : Void
+	public function start(db:orm.Db) : Void
 	{
 		// nothing to do
 	}

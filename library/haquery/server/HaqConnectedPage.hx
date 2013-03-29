@@ -3,7 +3,7 @@ package haquery.server;
 #if server
 
 import haquery.common.HaqMessageListenerAnswer;
-import haquery.Exception;
+import stdlib.Exception;
 import haxe.Serializer;
 import models.server.Page;
 import neko.vm.Mutex;

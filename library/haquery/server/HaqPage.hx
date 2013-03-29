@@ -3,18 +3,19 @@ package haquery.server;
 #if server
 
 import haquery.common.HaqMessageListenerAnswer;
-import haquery.server.db.HaqDb;
+import orm.Db;
 import haxe.htmlparser.HtmlNodeElement;
 import haxe.htmlparser.HtmlNodeText;
 import haquery.common.HaqDefines;
 import haquery.common.HaqComponentTools;
 import haquery.server.HaqComponent;
 import haquery.server.HaqCookie;
-import haquery.server.FileSystem;
+import stdlib.FileSystem;
+import stdlib.Exception;
 import haquery.server.Lib;
 import haxe.Json;
 import haxe.Serializer;
-using haquery.StringTools;
+using stdlib.StringTools;
 
 class HaqPage extends HaqComponent
 {
@@ -46,7 +47,7 @@ class HaqPage extends HaqComponent
 	
 	public var config(default, null) : HaqConfig;
 	
-	public var db(default, null) : HaqDb;
+	public var db(default, null) : Db;
 	
 	/**
 	 * Default value is "text/html; charset=utf-8".

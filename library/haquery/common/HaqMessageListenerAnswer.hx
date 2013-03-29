@@ -1,6 +1,6 @@
 package haquery.common;
 
-import haquery.Exception;
+import stdlib.Exception;
 
 enum CallbackResult
 {

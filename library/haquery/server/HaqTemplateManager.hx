@@ -4,14 +4,14 @@ package haquery.server;
 
 import haquery.common.HaqComponentTools;
 import haquery.common.HaqSharedStorage;
-import haquery.Exception;
+import stdlib.Exception;
 import haquery.server.HaqComponent;
 import haquery.server.HaqTemplate;
 import haquery.server.Lib;
 import haxe.htmlparser.HtmlNodeElement;
 import haquery.common.HaqTemplateExceptions;
 import models.server.Page;
-using haquery.StringTools;
+using stdlib.StringTools;
 
 class HaqTemplateManager
 {

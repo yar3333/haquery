@@ -8,7 +8,7 @@ import haxe.Unserializer;
 import js.JQuery;
 import js.Dom;
 
-using haquery.StringTools;
+using stdlib.StringTools;
 
 class Client extends Base
 {

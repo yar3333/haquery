@@ -2,7 +2,7 @@ package haquery.server;
 
 import haxe.Serializer;
 import haxe.Unserializer;
-import haquery.server.FileSystem;
+import stdlib.FileSystem;
 import sys.io.File;
 using StringTools;
 

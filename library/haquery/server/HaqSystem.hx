@@ -18,8 +18,9 @@ import sys.io.Process;
 import sys.net.Host;
 import sys.net.Socket;
 import sys.net.WebSocket;
-import haquery.Std;
-using haquery.StringTools;
+import stdlib.Std;
+import stdlib.FileSystem;
+using stdlib.StringTools;
 
 class HaqSystem 
 {

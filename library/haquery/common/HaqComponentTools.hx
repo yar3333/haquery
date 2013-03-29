@@ -1,8 +1,8 @@
 package haquery.common;
 
 import haxe.htmlparser.HtmlNodeElement;
-import haquery.Exception;
-using haquery.StringTools;
+import stdlib.Exception;
+using stdlib.StringTools;
 
 #if !client
 import haquery.server.HaqComponent;

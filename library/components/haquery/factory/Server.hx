@@ -3,8 +3,8 @@ package components.haquery.factory;
 import haquery.common.HaqComponentTools;
 import haxe.htmlparser.HtmlNodeElement;
 import haxe.Serializer;
-import haquery.Exception;
-using haquery.StringTools;
+import stdlib.Exception;
+using stdlib.StringTools;
 
 class Server extends BaseServer
 {

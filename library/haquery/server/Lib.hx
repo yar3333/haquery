@@ -11,20 +11,24 @@ typedef Web = neko.Web;
 #end
 
 import haquery.common.HaqMessageListenerAnswer;
-import haquery.Exception;
+import stdlib.Exception;
 import haxe.io.Path;
 import haxe.Serializer;
 import haxe.Unserializer;
 import haxe.PosInfos;
 import haquery.common.HaqDefines;
-import haquery.server.db.HaqDb;
+import orm.Db;
 import haquery.server.HaqRouter;
 import models.server.Page;
-using haquery.StringTools;
+import stdlib.Std;
+import stdlib.Profiler;
+import stdlib.FileSystem;
+import stdlib.Uuid;
+using stdlib.StringTools;
 
 class Lib
 {
-    public static var profiler(default, null) : HaqProfiler;
+    public static var profiler(default, null) : Profiler;
 	public static var manager(default, null) : HaqTemplateManager;
 	public static var uploads(default, null) : HaqUploads;
     
@@ -34,7 +38,7 @@ class Lib
 		Sys.setCwd(getCwd());
 		#end
 		
-		var db : HaqDb = null;
+		var db : Db = null;
 		var config = HaqConfig.load("config.xml");
 		uploads = new HaqUploads(HaqDefines.folders.temp + "/uploads", config.maxPostSize);
 		
@@ -141,7 +145,7 @@ class Lib
 	
 	public static function runPage(request:HaqRequest, route:HaqRoute, bootstraps:Array<HaqBootstrap>) : { page:Page, response:HaqResponse }
 	{
-		profiler = new HaqProfiler(request.config.enableProfiling);
+		profiler = new Profiler(request.config.enableProfiling);
 		
 		var page : Page;
 		var response : HaqResponse;
@@ -155,7 +159,7 @@ class Lib
 		
 			if (request.config.databaseConnectionString != null && request.config.databaseConnectionString != "")
 			{
-				request.db = new HaqDb(request.config.databaseConnectionString, request.config.sqlLogLevel, profiler);
+				request.db = new Db(request.config.databaseConnectionString, request.config.sqlLogLevel, profiler);
 			}
 			
 			for (bootstrap in bootstraps)
@@ -285,7 +289,7 @@ class Lib
         var s = Web.getParamsString();
         var re = ~/route=[^&]*/g;
         s = re.replace(s, '');
-        return haquery.StringTools.trim(s, '&');
+        return stdlib.StringTools.trim(s, '&');
     }
 	
 	public static function isCli() : Bool

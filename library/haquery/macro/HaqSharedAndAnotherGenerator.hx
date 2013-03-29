@@ -2,7 +2,7 @@ package haquery.macro;
 
 #if macro
 
-import haquery.server.FileSystem;
+import stdlib.FileSystem;
 import sys.io.File;
 import haxe.io.Path;
 import haxe.macro.Context;
@@ -54,7 +54,7 @@ class HaqSharedAndAnotherGenerator
 					{
 						var args2 : Array<FunctionArg> = Reflect.copy(args);
 						args2.push("success".toArg(macro : $ret->Void, true));
-						args2.push("fail".toArg(macro : haquery.Exception->Void, true));
+						args2.push("fail".toArg(macro : stdlib.Exception->Void, true));
 						var callParams = [ 
 							  name.toExpr()
 							, Lambda.map(args, function(a) return Context.parse(a.name, pos)).toArray()
@@ -155,7 +155,7 @@ class HaqSharedAndAnotherGenerator
 					{
 						var args2 : Array<FunctionArg> = Reflect.copy(args);
 						args2.push("success".toArg(macro : $ret->Void, true));
-						args2.push("fail".toArg(macro : haquery.Exception->Void, true));
+						args2.push("fail".toArg(macro : stdlib.Exception->Void, true));
 						var callParams = [
 							  macro this.pageKey
 							, macro this.component.fullID
@@ -227,7 +227,7 @@ class HaqSharedAndAnotherGenerator
 					{
 						var args2 : Array<FunctionArg> = Reflect.copy(args);
 						args2.push("success".toArg(macro : Void->Void, true));
-						args2.push("fail".toArg(macro : haquery.Exception->Void, true));
+						args2.push("fail".toArg(macro : stdlib.Exception->Void, true));
 						var callParams = [ 
 							  macro this.pageKey
 							, macro this.component.fullID

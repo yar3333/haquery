@@ -8,12 +8,13 @@ private typedef NativeLib = php.Lib;
 private typedef NativeLib = neko.Lib;
 #end
 
+import stdlib.FileSystem;
 import haxe.PosInfos;
 import haquery.common.HaqDefines;
 import haquery.common.HaqDumper;
 import models.server.Page;
 import sys.io.File;
-using haquery.StringTools;
+using stdlib.StringTools;
 
 class HaqTrace 
 {

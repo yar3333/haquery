@@ -4,9 +4,9 @@ package haquery.client;
 
 import haquery.common.HaqComponentTools;
 import models.client.Page;
-import haquery.Exception;
+import stdlib.Exception;
 import js.JQuery;
-using haquery.StringTools;
+using stdlib.StringTools;
 
 #end
 

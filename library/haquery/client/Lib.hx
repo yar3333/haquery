@@ -3,10 +3,10 @@ package haquery.client;
 #if client
 
 import haquery.common.HaqDumper;
-import haquery.Exception;
+import stdlib.Exception;
 import haquery.client.HaqInternals;
 import models.client.Page;
-using haquery.StringTools;
+using stdlib.StringTools;
 
 @:keep @:expose class Lib
 {
