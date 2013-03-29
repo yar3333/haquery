@@ -16,7 +16,7 @@ class HaqBootstrap
 		// nothing to do
 	}
 	
-	public function start(db:orm.Db) : Void
+	public function start(orm:models.server.Orm) : Void
 	{
 		// nothing to do
 	}

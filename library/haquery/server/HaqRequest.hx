@@ -39,6 +39,8 @@ typedef HaqRequest =
 	var config : HaqConfig;
 	
 	var db : orm.Db;
+	
+	var orm : models.server.Orm;
 }
 
 #end

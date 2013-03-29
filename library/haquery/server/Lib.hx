@@ -140,6 +140,7 @@ class Lib
 			, pageSecret: !isCli() && params.get('HAQUERY_PAGE_SECRET') != null ? params.get('HAQUERY_PAGE_SECRET') : newPageSecret()
 			, config: config
 			, db: null
+			, orm: null
 		};
 	}
 	
@@ -160,11 +161,12 @@ class Lib
 			if (request.config.databaseConnectionString != null && request.config.databaseConnectionString != "")
 			{
 				request.db = new Db(request.config.databaseConnectionString, request.config.sqlLogLevel, profiler);
+				request.orm = new models.server.Orm(request.db);
 			}
 			
 			for (bootstrap in bootstraps)
 			{
-				bootstrap.start(request.db);
+				bootstrap.start(request.orm);
 			}
 			
 			profiler.begin("page");

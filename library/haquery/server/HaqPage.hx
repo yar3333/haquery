@@ -49,6 +49,8 @@ class HaqPage extends HaqComponent
 	
 	public var db(default, null) : Db;
 	
+	public var orm(default, null) : models.server.Orm;
+	
 	/**
 	 * Default value is "text/html; charset=utf-8".
 	 */
@@ -317,7 +319,7 @@ class HaqPage extends HaqComponent
 	/**
 	 * Overload to specify code on client to server websocket closing.
 	 */
-	public function onDisconnect() {}
+	public function onDisconnect() { }
 }
 
 #end
