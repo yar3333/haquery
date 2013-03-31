@@ -36,7 +36,7 @@ class Build
 		project = new FlashDevelopProject("");
 	}
 	
-	public function build(outputDir:String, noGenCode:Bool, jsModern:Bool, isDeadCodeElimination:Bool, noServer:Bool, noClient:Bool, mobile:Bool)
+	public function build(outputDir:String, jsModern:Bool, isDeadCodeElimination:Bool, noServer:Bool, noClient:Bool)
     {
         log.start("Build");
         
@@ -49,23 +49,14 @@ class Build
 			generateImports(manager, project.srcPath);
 			generateManagers(project);
 			
-			if (!noGenCode)
-			{
-				if (!noClient) genCodeFromClient(project, mobile);
-				if (!noServer) genCodeFromServer(project, mobile);
-			}
+			if (!noServer) genCodeFromServer(project);
 			
 			try { saveLibFolderFileTimes(outputDir); } catch (e:Dynamic) {}
 			
-			if (!noServer) buildServer(outputDir, mobile);
-			if (!noClient) buildClient(outputDir, jsModern, isDeadCodeElimination, mobile);
+			if (!noClient) buildClient(outputDir, jsModern, isDeadCodeElimination);
+			if (!noServer) buildServer(outputDir);
 			
 			generateComponentsCssFile(manager, outputDir);
-			
-			if (mobile)
-			{
-				generateMobilePages(manager, outputDir);
-			}
 			
 			var publisher = new Publisher(log, fs, project.platform);
 			
@@ -162,7 +153,7 @@ class Build
 		return r;
 	}
 	
-	function buildClient(outputDir:String, isJsModern:Bool, isDeadCodeElimination:Bool, mobile:Bool)
+	function buildClient(outputDir:String, isJsModern:Bool, isDeadCodeElimination:Bool)
     {
 		var clientPath = outputDir + '/haquery/client';
 		
@@ -175,7 +166,7 @@ class Build
 		
 		fs.createDirectory(clientPath);
         
-        var params = project.getBuildParams("js", clientPath + "/haquery.js", [ "noEmbedJS", "client", mobile ? "mobile" : null ]);
+        var params = project.getBuildParams("js", clientPath + "/haquery.js", [ "noEmbedJS", "client" ]);
 		if (isJsModern) params.push("--js-modern");
 		if (isDeadCodeElimination) params.push("--dead-code-elimination");
 		var r = Process.run(log, fs.getHaxePath() + "haxe.exe", params);
@@ -206,10 +197,10 @@ class Build
 		}
     }
 	
-	function buildServer(outputDir:String, mobile:Bool)
+	function buildServer(outputDir:String)
 	{
 		log.start("Build server to '" + outputDir + "'");
-        var params = project.getBuildParams(project.platform, project.platform != "neko" ? outputDir : outputDir + "/index.n", [ "server", mobile ? "mobile" : null ]);
+        var params = project.getBuildParams(project.platform, project.platform != "neko" ? outputDir : outputDir + "/index.n", [ "server" ]);
 		var r = Process.run(log, fs.getHaxePath() + "haxe.exe", params);
 		Lib.print(r.stdOut);
 		Lib.print(r.stdErr);
@@ -233,30 +224,13 @@ class Build
         log.finishOk();
     }
 	
-	function genCodeFromClient(project:FlashDevelopProject, mobile:Bool)
-	{
-        var tempPath = "gen-temp/code.js";
-		
-		log.start("Generate code from client");
-		fs.createDirectory(Path.directory(tempPath));
-		var params = project.getBuildParams("js", tempPath, [ "noEmbedJS", "client", "haqueryGenCode", mobile ? "mobile" : null ]);
-		var r = Process.run(log, fs.getHaxePath() + "haxe.exe", params);
-		fs.deleteFile(tempPath);
-		fs.deleteFile(tempPath + ".map");
-		fs.deleteDirectory(Path.directory(tempPath));
-		Lib.print(r.stdOut);
-		Lib.print(r.stdErr);
-		if (r.exitCode == 0) log.finishOk();
-		else                 log.finishFail(new CompilationFailException("Client compilation errors."));
-	}
-	
-	function genCodeFromServer(project:FlashDevelopProject, mobile:Bool)
+	function genCodeFromServer(project:FlashDevelopProject)
 	{
         var tempPath = project.platform == "neko" ?  "gen-temp/code.n" : "gen-temp/code";
 		
 		log.start("Generate code from server");
 		fs.createDirectory(project.platform == "neko" ? Path.directory(tempPath) : tempPath);
-		var params = project.getBuildParams(project.platform, tempPath, [ "server", "haqueryGenCode", mobile ? "mobile" : null ]);
+		var params = project.getBuildParams(project.platform, tempPath, [ "server", "haqueryGenCode" ]);
 		var r = Process.run(log, fs.getHaxePath() + "haxe.exe", params);
 		fs.deleteAny(tempPath);
 		fs.deleteDirectory(Path.directory(tempPath));
@@ -285,31 +259,6 @@ class Build
 			fs.restoreFileTimes(outputDir + "/lib.old", outputDir + "/lib", ~/[.](?:php|js)/i);
 			fs.deleteDirectory(outputDir + "/lib.old");
 			log.finishOk();
-		}
-	}
-	
-	public function genCode(mobile:Bool)
-	{
-        log.start("Generate shared and another methods");
-		
-		try
-		{
-			var manager = new HaqTemplateManager(log, project.allClassPaths);
-			
-			genTrm(manager);
-			generateConfigClasses(manager, false, false);
-			generateImports(manager, project.srcPath);
-			generateManagers(project);
-			
-			genCodeFromServer(project, mobile);
-			genCodeFromClient(project, mobile);
-			
-			log.finishOk();
-		}
-		catch (e:Dynamic)
-		{
-			log.finishFail();
-			throw e;
 		}
 	}
 	
@@ -378,37 +327,7 @@ class Build
 		log.finishOk();
 	}
 	
-	function generateMobilePages(manager:HaqTemplateManager, outputDir:String)
-	{
-		log.start("Generate mobile pages");
-		
-		try
-		{
-			for (fullTag in manager.fullTags)
-			{
-				if (fullTag.startsWith(HaqDefines.folders.pages + "."))
-				{
-					var path = outputDir + "/" + fullTag.replace(".", "/") + "/index.html";
-					FileSystem.createDirectory(Path.directory(path));
-					
-					var template = manager.get(fullTag);
-					var doc = template.getDocCopy();
-					renderComponents("", template, doc, manager, { nextAnonimID:0 });
-					
-					File.saveContent(path, doc.toString());
-				}
-			}
-		}
-		catch (e:Dynamic)
-		{
-			log.trace(e);
-			log.trace(haxe.Stack.toString(haxe.Stack.exceptionStack()));
-			log.finishFail(e);
-		}
-		
-		log.finishOk();
-	}
-	
+	/*
 	function renderComponents(prefixID:String, parent:HaqTemplate, doc:HtmlNodeElement, manager:HaqTemplateManager, nextAnonimID:{ nextAnonimID:Int })
 	{
 		for (node in doc.children)
@@ -451,5 +370,5 @@ class Build
 				renderComponents(prefixID, parent, node, manager, nextAnonimID);
 			}
 		}
-	}
+	}*/
 }
