@@ -4,19 +4,9 @@ package haquery.server;
 
 class HaqBootstrap
 {
-	var config(default, null) : HaqConfig;
+	public function new() {}
 	
-	public function new(config:HaqConfig)
-	{
-		this.config = config;
-	}
-	
-	public function init(request:haquery.server.HaqRequest) : Void
-	{
-		// nothing to do
-	}
-	
-	public function start(orm:models.server.Orm) : Void
+	public function start(request:HaqRequest) : Void
 	{
 		// nothing to do
 	}

@@ -2,7 +2,6 @@ package haquery.server;
 
 #if server
 
-import orm.Db;
 import haxe.htmlparser.HtmlNodeElement;
 import haxe.htmlparser.HtmlNodeText;
 import haquery.common.HaqDefines;
@@ -45,10 +44,6 @@ class HaqPage extends HaqComponent
 	public var queryString(default, null) : String;
 	
 	public var config(default, null) : HaqConfig;
-	
-	public var db(default, null) : Db;
-	
-	public var orm(default, null) : models.server.Orm;
 	
 	/**
 	 * Default value is "text/html; charset=utf-8".

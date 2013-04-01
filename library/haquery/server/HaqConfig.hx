@@ -19,20 +19,6 @@ class HaqConfig
      */
     public static var filterTracesByIP(default, null) : String;
 	
-	/**
-     * Database connection string in TYPE://USER:PASS@HOST/DBNAME form.
-	 * For example: mysql://root:123456@localhost/mytestdb 
-     */
-	public var databaseConnectionString : String = null;
-	
-    /**
-     * Level of tracing SQL:
-	 * 0 - show errors only;
-	 * 1 - show queries;
-	 * 2 - show queries and durations.
-     */
-    public var sqlLogLevel = 0;
-
     public var enableProfiling = false;
 	
 	/**
@@ -71,14 +57,8 @@ class HaqConfig
 					
 					switch (name)
 					{
-						case "databaseConnectionString":
-							databaseConnectionString = value;
-						
 						case "maxPostSize":
 							maxPostSize = Std.parseInt(value);
-						
-						case "sqlLogLevel":
-							sqlLogLevel = Std.parseInt(value);
 						
 						case "enableProfiling":
 							enableProfiling = Std.bool(value);
