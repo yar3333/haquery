@@ -9,5 +9,4 @@
     <version name='5.0'>Many fixes and improvements. See HaQuery site for details.</version>
     <depends name="HtmlParser" />
     <depends name="stdlib" />
-    <depends name="orm" />
 </project>
