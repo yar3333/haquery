@@ -2,41 +2,63 @@ package haquery.server;
 
 #if server
 
-typedef HaqRequest =
+class HaqRequest implements Dynamic
 {
-	var pageFullTag : String;
+	public var pageFullTag : String;
 	
     /**
      * Last unexist URL part will be placed to this var. 
      * For example, if your request "http://site.com/news/123"
      * then pageID will be "123".
      */
-    var pageID : String;
+    public var pageID : String;
     
 	/**
      * false => rendering html, true => calling server event handler.
      */
-    var isPostback : Bool;
+    public var isPostback : Bool;
 
-	var params : Hash<String>;
+	public var params : Hash<String>;
 	
-	var cookie : HaqCookie;
+	public var cookie : HaqCookie;
 	
-	var requestHeaders : HaqRequestHeaders;
+	public var requestHeaders : HaqRequestHeaders;
 	
-	var clientIP : String;
+	public var clientIP : String;
 	
-	var uri : String;
+	public var uri : String;
 	
-	var host : String;
+	public var host : String;
 	
-	var queryString : String;
+	public var queryString : String;
 	
-	var config : HaqConfig;
+	public var config : HaqConfig;
 	
-	var db : orm.Db;
-	
-	var orm : models.server.Orm;
+	public function new(
+		  pageFullTag : String
+		, pageID : String
+		, isPostback : Bool
+		, params : Hash<String>
+		, cookie : HaqCookie
+		, requestHeaders : HaqRequestHeaders
+		, clientIP : String
+		, uri : String
+		, host : String
+		, queryString : String
+		, config : HaqConfig
+	) {
+		this.pageFullTag = pageFullTag;
+		this.pageID = pageID;
+		this.isPostback = isPostback;
+		this.params = params;
+		this.cookie = cookie;
+		this.requestHeaders = requestHeaders;
+		this.clientIP = clientIP;
+		this.uri = uri;
+		this.host = host;
+		this.queryString = queryString;
+		this.config = config;
+	}
 }
 
 #end

@@ -16,7 +16,6 @@ import haxe.Serializer;
 import haxe.Unserializer;
 import haxe.PosInfos;
 import haquery.common.HaqDefines;
-import orm.Db;
 import haquery.server.HaqRouter;
 import models.server.Page;
 import stdlib.Std;
@@ -38,7 +37,6 @@ class Lib
 		Sys.setCwd(getCwd());
 		#end
 		
-		var db : Db = null;
 		var config = HaqConfig.load("config.xml");
 		uploads = new HaqUploads(HaqDefines.folders.temp + "/uploads", config.maxPostSize);
 		
@@ -65,11 +63,6 @@ class Lib
 					var request = getRequest(route, config);
 					var response = runPage(request, route, bootstraps).response;
 					
-					if (db != null)
-					{
-						db.close();
-					}
-								 
 					if (response != null)
 					{
 						Web.setReturnCode(response.statusCode);
@@ -92,12 +85,6 @@ class Lib
 		catch (e:Dynamic)
         {
 			Exception.trace(e);
-			
-			if (db != null)
-			{
-				db.close();
-			}
-			
 			Exception.rethrow(e);
         }
     }
@@ -105,57 +92,41 @@ class Lib
 	static function getRequest(route:HaqRoute, config:HaqConfig) : HaqRequest
 	{
 		var params = Web.getParams();
-		return {
-			  pageFullTag: route.fullTag
-			, uri: Web.getURI()
-			, pageID: route.pageID
-			, isPostback: params.get("HAQUERY_POSTBACK") != null
-			, params: params
-			, cookie: new HaqCookie()
-			, requestHeaders: new HaqRequestHeaders()
-			, clientIP: getClientIP()
-			, host: getHttpHost()
-			, queryString: getParamsString()
-			, config: config
-			, db: null
-			, orm: null
-		};
+		return new HaqRequest(
+			  route.fullTag
+			, route.pageID
+			, params.get("HAQUERY_POSTBACK") != null
+			, params
+			, new HaqCookie()
+			, new HaqRequestHeaders()
+			, getClientIP()
+			, Web.getURI()
+			, getHttpHost()
+			, getParamsString()
+			, config
+		);
 	}
 	
 	public static function runPage(request:HaqRequest, route:HaqRoute, bootstraps:Array<HaqBootstrap>) : { page:Page, response:HaqResponse }
 	{
 		profiler = new Profiler(request.config.enableProfiling);
 		
-		var page : Page;
-		var response : HaqResponse;
-		
 		profiler.begin("HAQUERY");
-		
-			for (bootstrap in bootstraps)
-			{
-				bootstrap.init(request);
-			}
-		
-			if (request.config.databaseConnectionString != null && request.config.databaseConnectionString != "")
-			{
-				request.db = new Db(request.config.databaseConnectionString, request.config.sqlLogLevel, profiler);
-				request.orm = new models.server.Orm(request.db);
-			}
 			
 			for (bootstrap in bootstraps)
 			{
-				bootstrap.start(request.orm);
+				bootstrap.start(request);
 			}
 			
 			profiler.begin("page");
 				trace("HAQUERY START page = " + route.fullTag +  ", HTTP_HOST = " + getHttpHost() + ", clientIP = " + getClientIP() + ", pageID = " + route.pageID);
 				
-				page = manager.createPage(route.fullTag, Std.hash(request));
+				var page = manager.createPage(route.fullTag, Std.hash(request));
 				
 				page.forEachComponent("preInit", true);
 				page.forEachComponent("init", false);
 				
-				response = !request.isPostback
+				var response = !request.isPostback
 						 ? page.generateResponseOnRender()
 						 : page.generateResponseOnPostback(
 								  request.params.get('HAQUERY_COMPONENT')
@@ -209,7 +180,7 @@ class Lib
             {
 				try
 				{
-					var bootstrap = cast(Type.createInstance(clas, [ config ]), HaqBootstrap);
+					var bootstrap = cast(Type.createInstance(clas, []), HaqBootstrap);
 					bootstraps.push(bootstrap);
 				}
 				catch (e:Dynamic)

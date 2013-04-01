@@ -43,7 +43,7 @@ class Main
 					case 'gen-orm': 
 						var project = new FlashDevelopProject("");
 						
-						var databaseConnectionString = args.length > 0 ? args[0] : HaqConfig.load(project.srcPath + "config.xml").databaseConnectionString;
+						var databaseConnectionString = args.length > 0 ? args[0] : HaqConfig.load(project.srcPath + "config.xml").customs.get("databaseConnectionString");
 						if (databaseConnectionString != null && databaseConnectionString != "")
 						{
 							Process.run(log, "haxelib", [ "run", "orm", databaseConnectionString ], true);
@@ -54,7 +54,7 @@ class Main
 								  "databaseConnectionString not found.\n"
 								+ "You may specify it in the 'src/config.xml' file:\n"
 								+ "\t<config>\n"
-								+ "\t\t<param name=\"databaseConnectionString\" value=\"mysql://USER:PASSWORD@HOST/DATABASE\" />\n"
+								+ "\t\t<custom name=\"databaseConnectionString\" value=\"mysql://USER:PASSWORD@HOST/DATABASE\" />\n"
 								+ "\t</config>\n"
 								+ "or in the command line:\n"
 								+ "\thaxelib run HaQuery gen-orm mysql://USER:PASSWORD@HOST/DATABASE"
