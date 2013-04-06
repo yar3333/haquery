@@ -2,9 +2,9 @@ package haquery.common;
 
 class HaqDumper 
 {
-	public static function getDump(v:Dynamic, limit=3, level=0) : String
+	public static function getDump(v:Dynamic, limit=10, level=0) : String
 	{
-		if (level >= limit) return "...";
+		if (level >= limit) return "...\n";
 		
 		var prefix = ""; for (i in 0...level) prefix += "\t";
 		
@@ -12,7 +12,7 @@ class HaqDumper
 		switch (Type.typeof(v))
 		{
 			case ValueType.TBool:
-				s = "BOOL" + (v ? "true" : "false") + ")";
+				s = "BOOL(" + (v ? "true" : "false") + ")";
 			
 			case ValueType.TNull:
 				s = "NULL";
@@ -63,7 +63,7 @@ class HaqDumper
 		return s != "" ? s + "\n" : "";
 	}
 	
-	static function getObjectDump(obj:Dynamic, limit, level:Int) : String
+	static function getObjectDump(obj:Dynamic, limit:Int, level:Int) : String
 	{
 		var prefix = ""; for (i in 0...level) prefix += "\t";
 		var s = "";
