@@ -148,22 +148,6 @@ class Lib
 		return { page:page, response:response };
 	}
 	
-	#if debug
-		public static function assert(e:Bool, errorMessage:String=null, ?pos:haxe.PosInfos) : Void
-		{
-			if (!e) 
-			{
-				if (errorMessage == null) errorMessage = "";
-				throw "HAQUERY ASSERT " + errorMessage + " in " + pos.fileName + " at line " + pos.lineNumber;
-			}
-		}
-	#else
-		public static inline function assert(e:Bool, errorMessage:String=null, ?pos:haxe.PosInfos) : Void
-		{
-		}
-	#end
-	
-    
     /**
      * Load bootstrap files from current folder to relativePath.
      */

@@ -1,6 +1,6 @@
 package components.haquery.list;
 
-import haquery.server.Lib;
+import stdlib.Std;
 import haquery.server.HaqComponent;
 
 class DirectItems 
@@ -21,7 +21,7 @@ class DirectItems
 	
 	public function set(id:String, com:HaqComponent) : Void
 	{
-		Lib.assert(!hash.exists(id), "factory item '" + id + "' already set.");
+		Std.assert(!hash.exists(id), "factory item '" + id + "' already set.");
 		
 		hash.set(id, com);
 		list.push(com);
