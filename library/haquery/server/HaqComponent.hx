@@ -147,9 +147,9 @@ using stdlib.StringTools;
 		{
 			if (!child.isInnerComponent)
 			{
-				Lib.assert(child != null);
-				Lib.assert(child.innerNode != null);
-				Lib.assert(child.innerNode.parent != null);
+				Std.assert(child != null);
+				Std.assert(child.innerNode != null);
+				Std.assert(child.innerNode.parent != null);
 				child.innerNode.parent.replaceChild(child.innerNode, new HtmlNodeText(child.render()));
 			}
 		}
@@ -185,13 +185,13 @@ using stdlib.StringTools;
 		
 		if (Type.getClass(query) == HtmlNodeElement)
 		{
-			Lib.assert(!page.isPostback, "Calling of the HaqComponent.q() with HtmlNodeElement parameter do not possible on the postback.");
+			Std.assert(!page.isPostback, "Calling of the HaqComponent.q() with HtmlNodeElement parameter do not possible on the postback.");
 			return new HaqQuery(this, cssGlobalizer, "", [ query ]);
 		}
 		
 		if (Type.getClass(query) == Array)
 		{
-			Lib.assert(!page.isPostback, "Calling of the HaqComponent.q() with Array parameter do not possible on the postback.");
+			Std.assert(!page.isPostback, "Calling of the HaqComponent.q() with Array parameter do not possible on the postback.");
 			return new HaqQuery(this, cssGlobalizer, "", query);
 		}
         
@@ -210,7 +210,7 @@ using stdlib.StringTools;
 	 */
 	public function callSharedClientMethodDelayed(method:String, params:Array<Dynamic>) : Void
 	{
-		Lib.assert(page.isPostback, "HaqComponent.callSharedMethod() allowed on the postback only.");
+		Std.assert(page.isPostback, "HaqComponent.callSharedMethod() allowed on the postback only.");
         
         page.addAjaxResponse(
 			  "haquery.client.Lib.page." + (fullID != "" ? "findComponent('" + fullID + "')." : "") + method

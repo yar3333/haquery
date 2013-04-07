@@ -5,6 +5,7 @@ package haquery.server;
 import haquery.common.HaqComponentTools;
 import haquery.common.HaqSharedStorage;
 import stdlib.Exception;
+import stdlib.Std;
 import haquery.server.HaqComponent;
 import haquery.server.HaqTemplate;
 import haquery.server.Lib;
@@ -41,7 +42,7 @@ class HaqTemplateManager
 	public function createPage(pageFullTag:String, attr:Hash<Dynamic>) : Page
 	{
         var template = get(pageFullTag);
-		Lib.assert(template != null, "HAQUERY ERROR could't find page '" + pageFullTag + "'.");
+		Std.assert(template != null, "HAQUERY ERROR could't find page '" + pageFullTag + "'.");
 		var component = newComponent(template, null, '', attr, null, false);
 		
 		var page : Page;
@@ -73,10 +74,10 @@ class HaqTemplateManager
 	function newComponent(template:HaqTemplate, parent:HaqComponent, id:String, attr:Hash<Dynamic>, parentNode:HtmlNodeElement, isCustomRender:Bool) : HaqComponent
 	{
         Lib.profiler.begin('newComponent');
-			Lib.assert(template != null, "Template for id = '" + id + "' not found.");
+			Std.assert(template != null, "Template for id = '" + id + "' not found.");
 			
 			var clas = Type.resolveClass(template.serverClassName);
-			Lib.assert(clas != null, "Server class '" + template.serverClassName + "' for component '" + template.fullTag + "' not found.");
+			Std.assert(clas != null, "Server class '" + template.serverClassName + "' for component '" + template.fullTag + "' not found.");
 			
 			var r : HaqComponent = null;
 			try
@@ -85,7 +86,7 @@ class HaqTemplateManager
 			}
 			catch (e:Dynamic)
 			{
-				Lib.assert(false, "Can't cast server class '" + template.serverClassName + "' to HaqComponent. Check class extends.");
+				Std.assert(false, "Can't cast server class '" + template.serverClassName + "' to HaqComponent. Check class extends.");
 			}
 			
 			r.construct(this, template.fullTag, parent, id, template.getDocCopy(), attr, parentNode, isCustomRender);
@@ -103,7 +104,7 @@ class HaqTemplateManager
 		if (fullTag != null && !url.startsWith("http://") && !url.startsWith("/") && !url.startsWith("<"))
 		{
 			var template = get(fullTag);
-			Lib.assert(template != null, "Template '" + fullTag + "' not found.");
+			Std.assert(template != null, "Template '" + fullTag + "' not found.");
 			url = template.getSupportFilePath(url);
 		}
 		
@@ -154,8 +155,8 @@ class HaqTemplateManager
 		
 		for (node in baseNode.children)
         {
-			Lib.assert(node.name != 'haq:placeholder');
-			Lib.assert(node.name != 'haq:content');
+			Std.assert(node.name != 'haq:placeholder');
+			Std.assert(node.name != 'haq:content');
             
             if (node.name.startsWith('haq:'))
             {
