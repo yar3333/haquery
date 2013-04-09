@@ -2,12 +2,6 @@ package haquery.server;
 
 #if server
 
-#if php
-private typedef NativeLib = php.Lib;
-#elseif neko
-private typedef NativeLib = neko.Lib;
-#end
-
 import stdlib.FileSystem;
 import haxe.PosInfos;
 import haquery.common.HaqDefines;
@@ -17,9 +11,9 @@ using stdlib.StringTools;
 
 class HaqTrace 
 {
-	public static function log(v:Dynamic, ?clientIP:String, ?page:HaqPage, ?pos:PosInfos)
+	public static function log(v:Dynamic, clientIP:String, filterTracesByIP:String, ?page:HaqPage, ?pos:PosInfos)
 	{
-		if (clientIP == null || HaqConfig.filterTracesByIP == null || HaqConfig.filterTracesByIP == "" || HaqConfig.filterTracesByIP == clientIP)
+		if (clientIP == null || filterTracesByIP == null || filterTracesByIP == "" || filterTracesByIP == clientIP)
 		{
 			var text = object2string(v, pos);
 			
