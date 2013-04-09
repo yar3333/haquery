@@ -17,7 +17,7 @@ class HaqConfig
     /**
      * Log only if access from specified IP.
      */
-    public static var filterTracesByIP(default, null) : String;
+    public var filterTracesByIP(default, null) : String;
 	
     public var enableProfiling = false;
 	

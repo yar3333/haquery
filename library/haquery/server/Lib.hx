@@ -36,13 +36,15 @@ class Lib
 		#if neko
 		Sys.setCwd(getCwd());
 		#end
+
+		haxe.Log.trace = callback(HaqTrace.log, _, getClientIP(), null, null, _);
 		
 		var config = HaqConfig.load("config.xml");
 		uploads = new HaqUploads(HaqDefines.folders.temp + "/uploads", config.maxPostSize);
 		
 		try
         {
-			haxe.Log.trace = callback(HaqTrace.log, _, getClientIP(), null, _);
+			haxe.Log.trace = callback(HaqTrace.log, _, getClientIP(), config.filterTracesByIP, null, _);
 			
 			try
 			{
@@ -53,6 +55,8 @@ class Lib
 				
 				var route = new HaqRouter(HaqDefines.folders.pages, manager).getRoute(Web.getParams().get("route"));
 				var bootstraps = loadBootstraps(route.path, config);
+				
+				haxe.Log.trace = callback(HaqTrace.log, _, getClientIP(), config.filterTracesByIP, null, _);
 				
 				if (route.pageID != null && route.pageID.startsWith("haquery-"))
 				{
@@ -123,7 +127,7 @@ class Lib
 				
 				var page = manager.createPage(route.fullTag, Std.hash(request));
 				
-				haxe.Log.trace = callback(HaqTrace.log, _, page.clientIP, page, _);
+				haxe.Log.trace = callback(HaqTrace.log, _, page.clientIP, page.config.filterTracesByIP, page, _);
 				
 				page.forEachComponent("preInit", true);
 				page.forEachComponent("init", false);
