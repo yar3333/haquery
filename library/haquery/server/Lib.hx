@@ -31,7 +31,7 @@ class Lib
 	public static var manager(default, null) : HaqTemplateManager;
 	public static var uploads(default, null) : HaqUploads;
     
-    public static function run() : Void
+	public static function run() : Void
     {
 		#if neko
 		Sys.setCwd(getCwd());
@@ -42,7 +42,7 @@ class Lib
 		
 		try
         {
-			haxe.Log.trace = function(v:Dynamic, ?pos:PosInfos) HaqTrace.global(v, pos);
+			haxe.Log.trace = callback(HaqTrace.log, _, getClientIP(), null, _);
 			
 			try
 			{
@@ -119,9 +119,11 @@ class Lib
 			}
 			
 			profiler.begin("page");
-				trace("HAQUERY START page = " + route.fullTag +  ", HTTP_HOST = " + getHttpHost() + ", clientIP = " + getClientIP() + ", pageID = " + route.pageID);
+				trace("HAQUERY START page = " + route.fullTag +  ", HTTP_HOST = " + request.host + ", clientIP = " + request.clientIP + ", pageID = " + route.pageID);
 				
 				var page = manager.createPage(route.fullTag, Std.hash(request));
+				
+				haxe.Log.trace = callback(HaqTrace.log, _, page.clientIP, page, _);
 				
 				page.forEachComponent("preInit", true);
 				page.forEachComponent("init", false);

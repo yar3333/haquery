@@ -12,25 +12,18 @@ import stdlib.FileSystem;
 import haxe.PosInfos;
 import haquery.common.HaqDefines;
 import haquery.common.HaqDumper;
-import models.server.Page;
 import sys.io.File;
 using stdlib.StringTools;
 
 class HaqTrace 
 {
-	public static function global(v:Dynamic, pos:PosInfos)
-    {
-		var text = object2string(v, pos);
-		writeToFile(text);
-    }
-	
-	public static function page(page:Page, v:Dynamic, pos:PosInfos)
+	public static function log(v:Dynamic, ?clientIP:String, ?page:HaqPage, ?pos:PosInfos)
 	{
-		if (HaqConfig.filterTracesByIP == null || HaqConfig.filterTracesByIP == "" || HaqConfig.filterTracesByIP == page.clientIP)
+		if (clientIP == null || HaqConfig.filterTracesByIP == null || HaqConfig.filterTracesByIP == "" || HaqConfig.filterTracesByIP == clientIP)
 		{
 			var text = object2string(v, pos);
 			
-			if (text != '')
+			if (page != null && text != '')
 			{
 				if (text.startsWith("EXCEPTION") || text.startsWith("ERROR"))
 				{
@@ -72,7 +65,7 @@ class HaqTrace
 	/**
 	 * type: log, debug, info, warn, error
 	 */
-	static function writeToConsole(page:Page, type:String, text:String)
+	static function writeToConsole(page:HaqPage, type:String, text:String)
 	{
 		if (page != null)
 		{

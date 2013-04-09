@@ -270,11 +270,6 @@ using stdlib.StringTools;
 		}
 		return relpath;
 	}
-	
-	public function trace(v:Dynamic, ?pos:PosInfos)
-	{
-		HaqTrace.page(page, v, pos);
-	}
 
 #end
 	
