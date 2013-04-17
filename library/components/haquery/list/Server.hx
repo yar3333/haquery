@@ -6,9 +6,16 @@ import stdlib.Exception;
 import haquery.server.HaqComponent;
 using stdlib.StringTools;
 
-class Server extends Base
+class Server extends BaseServer
 {
-    override function createChildComponents():Void 
+	public var length(get_length, null) : Int;
+    
+    function get_length() : Int
+    {
+        return Std.parseInt(q('#length').val());
+    }
+    
+	override function createChildComponents():Void 
 	{
         if (!page.isPostback)
 		{
