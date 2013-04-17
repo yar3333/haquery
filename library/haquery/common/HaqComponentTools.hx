@@ -2,9 +2,10 @@ package haquery.common;
 
 import haxe.htmlparser.HtmlNodeElement;
 import stdlib.Exception;
+import stdlib.Std;
 using stdlib.StringTools;
 
-#if !client
+#if server
 import haquery.server.HaqComponent;
 #else
 import haquery.client.HaqComponent;
@@ -104,7 +105,7 @@ class HaqComponentTools
 	}
 	
 	
-	#if !client
+	#if server
 	
     static var baseComponentFields : Array<String> = null;
 	
@@ -172,6 +173,23 @@ class HaqComponentTools
 		}
 		
 		return destTagIDs;
+	}
+	
+	public static function getFullUrl(fullTag:String, url:String) : String
+	{
+		if (url.startsWith("~/"))
+		{
+			url = url.substr(2);
+		}
+		
+		if (fullTag != null && !url.startsWith("http://") && !url.startsWith("/") && !url.startsWith("<"))
+		{
+			var template = haquery.server.Lib.manager.get(fullTag);
+			Std.assert(template != null, "Template '" + fullTag + "' not found.");
+			url = template.getSupportFilePath(url);
+		}
+		
+		return url;
 	}
 	
 	#end

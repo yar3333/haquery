@@ -34,6 +34,8 @@ class HaqRequest implements Dynamic
 	
 	public var config : HaqConfig;
 	
+	public var storage : haquery.common.HaqStorage;
+	
 	public function new(
 		  pageFullTag : String
 		, pageID : String
@@ -46,6 +48,7 @@ class HaqRequest implements Dynamic
 		, host : String
 		, queryString : String
 		, config : HaqConfig
+		, storage : haquery.common.HaqStorage
 	) {
 		this.pageFullTag = pageFullTag;
 		this.pageID = pageID;
@@ -58,6 +61,7 @@ class HaqRequest implements Dynamic
 		this.host = host;
 		this.queryString = queryString;
 		this.config = config;
+		this.storage = storage;
 	}
 }
 

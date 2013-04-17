@@ -2,7 +2,7 @@ package haquery.client;
 
 #if client
 
-import haquery.common.HaqSharedStorage;
+import haquery.common.HaqStorage;
 import haquery.common.HaqTemplateExceptions;
 import haxe.Unserializer;
 
@@ -12,7 +12,7 @@ import haxe.Unserializer;
 
 	static var componentIDs_cached : Hash<String>;
 	
-	public static var sharedStorage(default, null) : HaqSharedStorage;
+	public static var storage(default, null) : HaqStorage;
 	
 	/**
 	 * @return componentID => fullTag

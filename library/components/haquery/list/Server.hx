@@ -1,5 +1,6 @@
 package components.haquery.list;
 
+import haquery.server.Lib;
 import haxe.htmlparser.HtmlNodeElement;
 import stdlib.Std;
 import stdlib.Exception;
@@ -12,7 +13,9 @@ class Server extends BaseServer
     
     function get_length() : Int
     {
-        return Std.parseInt(q('#length').val());
+        trace("length = ");
+        trace(q('#length').val());
+		return Std.parseInt(q('#length').val());
     }
     
 	override function createChildComponents():Void 
@@ -25,7 +28,7 @@ class Server extends BaseServer
         {
 			components = new LazyItems(length, function(id:String)
 			{
-				return manager.createComponent(this, "components.haquery.listitem", id, null, innerNode, false);
+				return Lib.manager.createComponent(this, "components.haquery.listitem", id, null, innerNode, false);
 			});
         }
 	}
@@ -35,7 +38,7 @@ class Server extends BaseServer
         Std.assert(!page.isPostback, "Component creating on the postback is not supported.");
 		
 		var n = length;
-		var r = manager.createComponent(this, "components.haquery.listitem", Std.string(n), Std.hash(params), getItemInnerNode(), true);
+		var r = Lib.manager.createComponent(this, "components.haquery.listitem", Std.string(n), Std.hash(params), getItemInnerNode(), true);
 		q('#length').val(n + 1);
 		return r;
 	}

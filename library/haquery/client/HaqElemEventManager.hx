@@ -9,7 +9,7 @@ import haquery.common.HaqDefines;
 
 class HaqElemEventManager 
 {
-    public static function connect(componentWithHandlers:HaqComponent, componentWithEvents:HaqComponent, manager:HaqTemplateManager)
+    public static function connect(componentWithHandlers:HaqComponent, componentWithEvents:HaqComponent)
     {
         var elems:Array<HtmlDom> = getComponentElems(componentWithEvents);
         
@@ -22,13 +22,13 @@ class HaqElemEventManager
                 var needHandler = Reflect.isFunction(Reflect.field(componentWithHandlers, elemID + "_" + eventName));
                 if (!needHandler)
                 {
-                    var serverHandlers = manager.get(componentWithHandlers.fullTag).serverHandlers;
+                    var serverHandlers = Lib.manager.get(componentWithHandlers.fullTag).serverHandlers;
                     needHandler = serverHandlers != null && Lambda.has(serverHandlers, elemID + "_" + eventName);
                 }
                 if (needHandler)
                 {
                     new JQuery(elem).bind(eventName, function(e:JqEvent) {
-                        elemEventHandler(componentWithHandlers, componentWithEvents, elem, manager, e); 
+                        elemEventHandler(componentWithHandlers, componentWithEvents, elem, e); 
                     });
                 }
             }
@@ -51,11 +51,11 @@ class HaqElemEventManager
         return r;
     }
 	
-	static function elemEventHandler(componentWithHandlers:HaqComponent, componentWithEvents:HaqComponent, elem:HtmlDom, manager:HaqTemplateManager, e:JqEvent)
+	static function elemEventHandler(componentWithHandlers:HaqComponent, componentWithEvents:HaqComponent, elem:HtmlDom, e:JqEvent)
     {
 		if (callClientElemEventHandlers(componentWithHandlers, componentWithEvents, elem, e))
 		{
-			var serverHandlers = manager.get(componentWithHandlers.fullTag).serverHandlers;
+			var serverHandlers = Lib.manager.get(componentWithHandlers.fullTag).serverHandlers;
 			callServerElemEventHandlers(elem.id, e.type, serverHandlers);
 		}
     }

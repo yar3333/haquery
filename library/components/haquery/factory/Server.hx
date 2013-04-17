@@ -1,8 +1,8 @@
 package components.haquery.factory;
 
+import haquery.server.Lib;
 import haquery.common.HaqComponentTools;
 import haxe.htmlparser.HtmlNodeElement;
-import haxe.Serializer;
 import stdlib.Exception;
 using stdlib.StringTools;
 
@@ -10,32 +10,31 @@ class Server extends BaseServer
 {
     function preRender()
     {
-		var storage = new DocStorage(manager);
-		storeDocs(parent.fullTag, innerNode, storage);
-		q("#html").val(Serializer.run(innerNode.innerHTML));
+		storeDocs(parent.fullTag, innerNode);
+		page.storage.setInstanceVar(this, "html", innerNode.innerHTML);
     }
 	
-	function storeDocs(parentFullTag:String, parentDoc:HtmlNodeElement, storage:DocStorage)
+	function storeDocs(parentFullTag:String, parentDoc:HtmlNodeElement)
 	{
 		for (child in parentDoc.children)
 		{
 			if (child.name.startsWith("haq:"))
 			{
 				var tag = HaqComponentTools.htmlTagToFullTag(child.name.substr("haq:".length));
-				var t = manager.get(tag);
+				var t = Lib.manager.get(tag);
 				if (t == null)
 				{
 					throw new Exception("Could not find template for the '" + tag + "' component for the '" + parentFullTag + "' parent component.");
 				}
 				
-				if (storage.get(t.fullTag) == null)
+				if (!page.storage.existsStaticVar(Server, t.fullTag))
 				{
 					var doc = t.getDocCopy();
-					storage.set(t.fullTag, doc);
-					storeDocs(t.fullTag, doc, storage);
+					page.storage.setStaticVar(Server, t.fullTag, doc);
+					storeDocs(t.fullTag, doc);
 				}
 			}
-			storeDocs(parentFullTag, child, storage);
+			storeDocs(parentFullTag, child);
 		}
 	}
 }

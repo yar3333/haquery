@@ -3,6 +3,7 @@ package haquery.client;
 #if client
 
 import haquery.common.HaqMessageListenerAnswer;
+import haquery.common.HaqStorage;
 import haxe.Serializer;
 import haxe.Unserializer;
 import js.Dom;
@@ -42,10 +43,11 @@ class HaqServerCallerAjax
     function getDataObjectForSendToServer(componentID:String, method:String, ?params:Array<Dynamic>) : Dynamic
     {
         var sendData : Dynamic = {
-			 HAQUERY_POSTBACK : 1
-			,HAQUERY_COMPONENT : componentID
-			,HAQUERY_METHOD : method
-			,HAQUERY_PARAMS : Serializer.run(params)
+			 HAQUERY_POSTBACK: 1
+			,HAQUERY_COMPONENT: componentID
+			,HAQUERY_METHOD: method
+			,HAQUERY_PARAMS: Serializer.run(params)
+			,HAQUERY_STORAGE: Serializer.run(Lib.page.storage)
 		};
 
         var sendedElements = getElemsForSendToServer();

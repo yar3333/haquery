@@ -3,7 +3,7 @@ package haquery.server;
 #if server
 
 import haquery.common.HaqComponentTools;
-import haquery.common.HaqSharedStorage;
+import haquery.common.HaqStorage;
 import stdlib.Exception;
 import stdlib.Std;
 import haquery.server.HaqComponent;
@@ -16,23 +16,7 @@ using stdlib.StringTools;
 
 class HaqTemplateManager
 {
-	static inline var MIN_DATE = new Date(2000, 0, 0, 0, 0, 0);
-	
-	/**
-	 * Vars to be sended to the client.
-	 */
-	public var sharedStorage(default, null) : HaqSharedStorage;
-	
-	var registeredScripts : Array<String>;
-	var registeredStyles : Array<String>;
-	
-	public function new()
-	{
-		sharedStorage = new HaqSharedStorage();
-		
-		registeredScripts = [ "haquery/client/jquery.js", "haquery/client/haquery.js" ];
-		registeredStyles = [ "haquery/client/haquery.css" ];
-	}
+	public function new() {}
 	
 	public function get(fullTag:String) : HaqTemplate
 	{
@@ -79,74 +63,19 @@ class HaqTemplateManager
 			var clas = Type.resolveClass(template.serverClassName);
 			Std.assert(clas != null, "Server class '" + template.serverClassName + "' for component '" + template.fullTag + "' not found.");
 			
-			var r : HaqComponent = null;
+			var component : HaqComponent = null;
 			try
 			{
-				r = cast(Type.createInstance(clas, []), HaqComponent);
+				component = cast(Type.createInstance(clas, []), HaqComponent);
 			}
 			catch (e:Dynamic)
 			{
 				Std.assert(false, "Can't cast server class '" + template.serverClassName + "' to HaqComponent. Check class extends.");
 			}
 			
-			r.construct(this, template.fullTag, parent, id, template.getDocCopy(), attr, parentNode, isCustomRender);
+			component.construct(template.fullTag, parent, id, template.getDocCopy(), attr, parentNode, isCustomRender);
 		Lib.profiler.end();
-		return r;
-	}
-	
-	function getFullUrl(fullTag:String, url:String) : String
-	{
-		if (url.startsWith("~/"))
-		{
-			url = url.substr(2);
-		}
-		
-		if (fullTag != null && !url.startsWith("http://") && !url.startsWith("/") && !url.startsWith("<"))
-		{
-			var template = get(fullTag);
-			Std.assert(template != null, "Template '" + fullTag + "' not found.");
-			url = template.getSupportFilePath(url);
-		}
-		
-		return url;
-	}
-	
-	/**
-	 * Tells HaQuery to load JS file from support component folder.
-	 * @param	fullTag Component package name.
-	 * @param	url Url to js file (global or related to support component folder).
-	 */
-    public function registerScript(fullTag:String, url:String) : Void
-	{
-		url = getFullUrl(fullTag, url);
-		if (!Lambda.has(registeredScripts, url))
-		{
-			registeredScripts.push(url);
-		}
-	}
-	
-	/**
-	 * Tells HaQuery to load CSS file from support component folder.
-	 * @param	fullTag Component package name.
-	 * @param	url Url to css file (global or related to support component folder).
-	 */
-	public function registerStyle(fullTag:String, url:String) : Void
-	{
-		url = getFullUrl(fullTag, url);
-		if (!Lambda.has(registeredStyles, url))
-		{
-			registeredStyles.push(url);
-		}
-	}
-	
-	public function getRegisteredStyles() : Array<String>
-	{
-		return registeredStyles;
-	}
-	
-	public function getRegisteredScripts() : Array<String>
-	{
-		return registeredScripts;
+		return component;
 	}
 	
 	public function createDocComponents(parent:HaqComponent, baseNode:HtmlNodeElement, isCustomRender:Bool) : Array<HaqComponent>

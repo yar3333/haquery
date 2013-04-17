@@ -1,5 +1,6 @@
 package components.haquery.listitem;
 
+import haquery.server.Lib;
 import haquery.server.HaqComponent;
 import haquery.server.HaqTemplateManager;
 import haxe.htmlparser.HtmlDocument;
@@ -7,17 +8,17 @@ import haxe.htmlparser.HtmlNodeElement;
 
 class Server extends Base
 {
-	override public function construct(manager:HaqTemplateManager, fullTag:String, parent:HaqComponent, id:String, doc:HtmlDocument, params:Hash<Dynamic>, innerNode:HtmlNodeElement, isInnerComponent:Bool):Void 
+	override public function construct(fullTag:String, parent:HaqComponent, id:String, doc:HtmlDocument, params:Hash<Dynamic>, innerNode:HtmlNodeElement, isInnerComponent:Bool):Void 
 	{
         var xml = Tools.applyHtmlParams(innerNode.innerHTML, params);
-        super.construct(manager, fullTag, parent, id, xml, params, null, isInnerComponent);
+        super.construct(fullTag, parent, id, xml, params, null, isInnerComponent);
 	}
     
 	override function createChildComponents()
 	{
 		if (doc != null)
 		{
-			manager.createDocComponents(this, doc, false);
+			Lib.manager.createDocComponents(this, doc, false);
 		}
 		
 		forEachComponent("preInit", true);

@@ -2,6 +2,7 @@ package haquery.server;
 
 #if server
 
+import haquery.common.HaqStorage;
 import haxe.htmlparser.HtmlNodeElement;
 import haxe.htmlparser.HtmlNodeText;
 import haquery.common.HaqDefines;
@@ -67,17 +68,12 @@ class HaqPage extends HaqComponent
 	
 	public var responseHeaders(default, null) : HaqResponseHeaders;
 	
-	/**
-	 * Page's unique id for server pages list.
-	 */
-	public var pageKey(default, null) : String;
-	
-	/**
-	 * Page's secret keyword for security when connectiong to server.
-	 */
-	public var pageSecret(default, null) : String;
-	
 	public var session(default, null) : HaqSession;
+	
+    public var storage(default, null) : HaqStorage;
+	
+	public var registeredScripts(default, null) : Array<String>;
+	public var registeredStyles(default, null) : Array<String>;
 	
 	public function new()
 	{
@@ -85,17 +81,19 @@ class HaqPage extends HaqComponent
 		ajaxResponse = "";
 		responseHeaders = new HaqResponseHeaders();
 		session = new HaqSession(this);
+		registeredScripts = [ "haquery/client/jquery.js", "haquery/client/haquery.js" ];
+		registeredStyles = [ "haquery/client/haquery.css" ];
 	}
 	
 	public function generateResponseOnRender() : HaqResponse
 	{
 		return {
-			responseHeaders:responseHeaders, 
-			statusCode:statusCode, 
-			cookie:cookie.response, 
-			content:render(), 
-			ajaxResponse:null, 
-			result:null
+			responseHeaders: responseHeaders, 
+			statusCode: statusCode, 
+			cookie: cookie.response, 
+			content: render(), 
+			ajaxResponse: null, 
+			result: null
 		};
 	}
 
@@ -148,15 +146,15 @@ class HaqPage extends HaqComponent
 			{
 				var tagIDs = HaqComponentTools.fillTagIDs(this, new Hash<Array<String>>());
 				
-				insertStyles(manager.getRegisteredStyles());
-				insertScripts(manager.getRegisteredScripts());
+				insertStyles(registeredStyles);
+				insertScripts(registeredScripts);
 				insertInitBlock(
 					  "<script>\n"
 					+ "if(typeof haquery=='undefined') alert('haquery.js must be loaded!');\n"
 					+ "haquery.client.HaqInternals.tagIDs = {\n"
 					+ Lambda.map({ iterator:tagIDs.keys }, function(tag) return "'" + tag + "':" + Json.stringify(tagIDs.get(tag))).join(",\n")
 					+ "\n};\n"
-					+ "haquery.client.HaqInternals.sharedStorage = haquery.client.HaqInternals.unserialize('" + Serializer.run(manager.sharedStorage) + "');\n"
+					+ "haquery.client.HaqInternals.storage = haquery.client.HaqInternals.unserialize('" + Serializer.run(storage) + "');\n"
 					+ "haquery.client.Lib.run('" + fullTag + "');\n"
 					+ ajaxResponse
 					+ "</script>"

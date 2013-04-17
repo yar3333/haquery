@@ -2,7 +2,7 @@ package components.haquery.factory;
 
 import haxe.htmlparser.HtmlDocument;
 import haxe.htmlparser.HtmlNodeElement;
-import haquery.common.HaqSharedStorage;
+import haquery.common.HaqStorage;
 
 #if !client
 typedef Manager = haquery.server.HaqTemplateManager
@@ -23,12 +23,12 @@ class DocStorage
 	
 	public function set(fullTag:String, doc:HtmlNodeElement)
 	{
-		manager.sharedStorage.setStaticVar(StoreType, "doc:" + fullTag, doc.toString());
+		manager.storage.setStaticVar(StoreType, "doc:" + fullTag, doc.toString());
 	}
 	
 	public function get(fullTag:String) : HtmlNodeElement
 	{
-		var html = manager.sharedStorage.getStaticVar(StoreType, "doc:" + fullTag);
+		var html = manager.storage.getStaticVar(StoreType, "doc:" + fullTag);
 		if (html == null)
 		{
 			return null;
