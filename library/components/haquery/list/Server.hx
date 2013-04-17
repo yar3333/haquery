@@ -3,7 +3,6 @@ package components.haquery.list;
 import haquery.server.Lib;
 import haxe.htmlparser.HtmlNodeElement;
 import stdlib.Std;
-import stdlib.Exception;
 import haquery.server.HaqComponent;
 using stdlib.StringTools;
 
@@ -13,11 +12,11 @@ class Server extends BaseServer
     
     function get_length() : Int
     {
-        trace("length = ");
-        trace(q('#length').val());
-		return Std.parseInt(q('#length').val());
+		return page.storage.existsInstanceVar(this, "length")
+			? page.storage.getInstanceVar(this, "length")
+			: 0;
     }
-    
+	
 	override function createChildComponents():Void 
 	{
         if (!page.isPostback)
@@ -39,7 +38,7 @@ class Server extends BaseServer
 		
 		var n = length;
 		var r = Lib.manager.createComponent(this, "components.haquery.listitem", Std.string(n), Std.hash(params), getItemInnerNode(), true);
-		q('#length').val(n + 1);
+		page.storage.setInstanceVar(this, "length", n + 1);
 		return r;
 	}
 	

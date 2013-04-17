@@ -6,6 +6,8 @@ class Client extends BaseClient
     
     function get_length() : Int
     {
-        return Std.parseInt(q('#length').val());
+		return page.storage.existsInstanceVar(this, "length")
+			? page.storage.getInstanceVar(this, "length")
+			: 0;
     }
 }
