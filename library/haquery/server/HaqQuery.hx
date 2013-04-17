@@ -296,7 +296,7 @@ class HaqQuery
             
             if (node.name == 'textarea')
             {
-                node.innerHTML = val;
+                node.innerHTML = Std.string(val);
             }
             else 
 			if (node.name=='select')
@@ -304,7 +304,7 @@ class HaqQuery
                 var options = node.find('>option');
                 for (option in options)
                 {
-                    if (option.getAttribute('value') == val)
+                    if (option.getAttribute('value') == Std.string(val))
 					{
                         option.setAttribute('selected', 'selected');
 					}
@@ -328,7 +328,7 @@ class HaqQuery
             }
             else
             {
-                node.setAttribute('value', val);
+                node.setAttribute('value', Std.string(val));
             }
         }
         

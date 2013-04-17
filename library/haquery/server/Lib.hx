@@ -10,6 +10,7 @@ private typedef NativeLib = neko.Lib;
 typedef Web = neko.Web;
 #end
 
+import haquery.common.HaqStorage;
 import stdlib.Exception;
 import haxe.io.Path;
 import haxe.Serializer;
@@ -96,10 +97,11 @@ class Lib
 	static function getRequest(route:HaqRoute, config:HaqConfig) : HaqRequest
 	{
 		var params = Web.getParams();
+		var isPostback = params.get("HAQUERY_POSTBACK") != null;
 		return new HaqRequest(
 			  route.fullTag
 			, route.pageID
-			, params.get("HAQUERY_POSTBACK") != null
+			, isPostback
 			, params
 			, new HaqCookie()
 			, new HaqRequestHeaders()
@@ -108,6 +110,7 @@ class Lib
 			, getHttpHost()
 			, getParamsString()
 			, config
+			, isPostback ? Unserializer.run(params.get("HAQUERY_STORAGE")) : new HaqStorage()
 		);
 	}
 	

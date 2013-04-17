@@ -5,31 +5,21 @@ package haquery.client;
 import haquery.client.HaqComponent;
 import haquery.client.HaqTemplate;
 import haquery.common.HaqDefines;
-import haquery.common.HaqSharedStorage;
+import haquery.common.HaqStorage;
 import models.client.Page;
 
 class HaqTemplateManager
 {
-	/**
-	 * Vars sended from the server.
-	 */
-	public var sharedStorage(default, null) : HaqSharedStorage;
-	
-	public function new()
-	{
-		this.sharedStorage = HaqInternals.sharedStorage;
-	}
+	public function new() {}
 	
 	public function get(fullTag:String) : HaqTemplate
 	{
 		return new HaqTemplate(fullTag);
 	}
 	
-	public function createPage(pageFullTag:String) : Page
+	public function createPage(fullTag:String) : Page
     {
-		var component = newComponent(get(pageFullTag), null, "", null);
-		
-		var page = cast(component, Page);
+		var page = cast(newComponent(get(fullTag), null, "", false), Page);
 		
 		page.forEachComponent("preInit", true);
 		page.forEachComponent("init", false);
@@ -44,9 +34,9 @@ class HaqTemplateManager
 	
 	function newComponent(template:HaqTemplate, parent:HaqComponent, id:String, isDynamic:Bool, dynamicParams:Dynamic=null) : HaqComponent
 	{
-        var r : HaqComponent = Type.createInstance(Type.resolveClass(template.clientClassName), []);
-		r.construct(this, template.fullTag, parent, id, isDynamic, dynamicParams);
-		return r;
+        var component : HaqComponent = Type.createInstance(Type.resolveClass(template.clientClassName), []);
+		component.construct(template.fullTag, parent, id, isDynamic, dynamicParams);
+		return component;
 	}	
 	
 	public function getChildComponents(parent:HaqComponent) : Array<{ id:String, fullTag:String }>
@@ -57,7 +47,7 @@ class HaqTemplateManager
 		{
 			if (re.match(fullID))
 			{
-				r.push({ id: fullID.substr(parent.prefixID.length), fullTag: HaqInternals.getComponentIDs().get(fullID) });
+				r.push({ id:fullID.substr(parent.prefixID.length), fullTag:HaqInternals.getComponentIDs().get(fullID) });
 			}
 		}
 		return r;

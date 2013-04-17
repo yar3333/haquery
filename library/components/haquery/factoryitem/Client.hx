@@ -1,5 +1,6 @@
 package components.haquery.factoryitem;
 
+import haquery.client.Lib;
 import haquery.common.HaqComponentTools;
 import stdlib.Exception;
 import js.JQuery;
@@ -34,20 +35,20 @@ class Client extends BaseClient
 		componentAnonimIDs = new Hash<Int>();
 	}
 	
-	override function construct(manager:HaqTemplateManager, fullTag:String, parent:HaqComponent, id:String, isDynamic:Bool, dynamicParams:Dynamic)
+	override function construct(fullTag:String, parent:HaqComponent, id:String, isDynamic:Bool, dynamicParams:Dynamic)
 	{
 		var parentElem:JQuery = dynamicParams.parentElem;
 		var html:String = dynamicParams.html;
 		var params:Dynamic = dynamicParams.params;
 		
 		var doc = Tools.applyHtmlParams(html, Std.hash(params));
-		childComponents = prepareDoc(manager, parent.parent.fullTag, parent.prefixID + id + HaqDefines.DELIMITER, doc);
+		childComponents = prepareDoc(parent.parent.fullTag, parent.prefixID + id + HaqDefines.DELIMITER, doc);
 		parentElem.append(doc.innerHTML);
 		
-		super.construct(manager, fullTag, parent, id, isDynamic, dynamicParams);
+		super.construct(fullTag, parent, id, isDynamic, dynamicParams);
 	}
 	
-	function prepareDoc(manager:HaqTemplateManager, fullTag:String, prefixID:String, node:HtmlNodeElement) : Array<ComponentData>
+	function prepareDoc(fullTag:String, prefixID:String, node:HtmlNodeElement) : Array<ComponentData>
 	{
 		var r = new Array<ComponentData>();
 		
@@ -64,23 +65,23 @@ class Client extends BaseClient
 		{
 			if (!child.name.startsWith("haq:"))
 			{
-				r = r.concat(prepareDoc(manager, fullTag, prefixID, child));
+				r = r.concat(prepareDoc(fullTag, prefixID, child));
 			}
 			else
 			{
 				var id = getComponentID(prefixID, child);
 				var tag = HaqComponentTools.htmlTagToFullTag(child.name.substr("haq:".length));
-				var t = manager.get(tag);
+				var t = Lib.manager.get(tag);
 				if (t == null)
 				{
 					throw new Exception("Component template '" + tag + "' not found for parent component '" + fullTag + "'.");
 				}
-				var doc = new components.haquery.factory.DocStorage(manager).get(t.fullTag);
+				var doc = page.storage.getStaticVar(Client, t.fullTag);
 				r.push( { 
 					 fullTag: t.fullTag
 					,prefixID: prefixID
 					,id: id
-					,chilren: prepareDoc(manager, t.fullTag, prefixID + id + HaqDefines.DELIMITER, doc)
+					,chilren: prepareDoc(t.fullTag, prefixID + id + HaqDefines.DELIMITER, doc)
 				} );
 				HaqInternals.addComponent(t.fullTag, prefixID + id);
 				child.parent.replaceChildWithInner(child, doc);
@@ -124,7 +125,7 @@ class Client extends BaseClient
 	{
 		for (c in childComponents)
 		{
-			manager.createComponent(this, c.fullTag, c.id, true);
+			Lib.manager.createComponent(this, c.fullTag, c.id, true);
 		}
 	}
 }

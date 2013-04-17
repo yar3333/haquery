@@ -18,9 +18,9 @@ using stdlib.StringTools;
 	
 	var isDynamic : Bool;
 	
-	public function construct(manager:HaqTemplateManager, fullTag:String, parent:HaqComponent, id:String, isDynamic:Bool, dynamicParams:Dynamic) : Void
+	public function construct(fullTag:String, parent:HaqComponent, id:String, isDynamic:Bool, dynamicParams:Dynamic) : Void
 	{
-		super.commonConstruct(manager, fullTag, parent, id);
+		super.commonConstruct(fullTag, parent, id);
 		
 		this.page = parent != null ? parent.page : cast(this, Page);
 		this.isDynamic = isDynamic;
@@ -32,9 +32,9 @@ using stdlib.StringTools;
 	
 	public function createChildComponents() : Void
 	{
-		for (component in manager.getChildComponents(this))
+		for (component in Lib.manager.getChildComponents(this))
 		{
-			manager.createComponent(this, component.fullTag, component.id, isDynamic);
+			Lib.manager.createComponent(this, component.fullTag, component.id, isDynamic);
 		}
 	}
 	
@@ -89,7 +89,7 @@ using stdlib.StringTools;
     
     function connectElemEventHandlers() : Void
     {
-		HaqElemEventManager.connect(this, this, manager);
+		HaqElemEventManager.connect(this, this);
     }
 	
 	/**

@@ -4,6 +4,7 @@ package haquery.base;
 
 import haquery.common.HaqDefines;
 import haquery.common.HaqEvent;
+import haquery.common.HaqComponentTools;
 import stdlib.Exception;
 using stdlib.StringTools;
 
@@ -20,8 +21,6 @@ private typedef Component = haquery.client.HaqComponent;
 @:keepSub class HaqComponent
 {
 #if !macro
-
-    public var manager(default,null) : HaqTemplateManager;
 	
 	public var parent(default,null) : Component;
 
@@ -57,18 +56,17 @@ private typedef Component = haquery.client.HaqComponent;
 		components = new Hash<Component>();
 		nextAnonimID = 0;
 		
-		var templateClass = haquery.common.HaqComponentTools.getTemplateClass(Type.getClass(this));
+		var templateClass = HaqComponentTools.getTemplateClass(Type.getClass(this));
 		if (templateClass != null)
 		{
 			Reflect.setField(this, "_template", Type.createInstance(templateClass, [ this ]));
 		}
 	}
 	
-	function commonConstruct(manager:HaqTemplateManager, fullTag:String, parent:Component, id:String) 
+	function commonConstruct(fullTag:String, parent:Component, id:String) 
 	{
 		if (id == null || id == '') id = parent != null ? parent.getNextAnonimID() : '';
 		
-		this.manager = manager;
 		this.fullTag = fullTag;
 		this.parent = parent;
 		this.id = id;
@@ -175,6 +173,5 @@ private typedef Component = haquery.client.HaqComponent;
 			return null;
 		}
     }
-
 #end
 }

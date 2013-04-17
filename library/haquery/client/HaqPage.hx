@@ -4,15 +4,19 @@ package haquery.client;
 
 import haquery.client.HaqComponent;
 import haquery.client.HaqCookie;
+import haquery.common.HaqStorage;
 
 class HaqPage extends HaqComponent
 {
     public var cookie(default, null) : HaqCookie;
+
+    public var storage(default, null) : HaqStorage;
     
 	public function new()
     {
 		super();
 		cookie = new HaqCookie();
+		storage = HaqInternals.storage;
     }
     
     public function redirect(url:String) : Void

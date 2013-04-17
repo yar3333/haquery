@@ -13,6 +13,7 @@ using stdlib.StringTools;
 	public static var ajax(default, null) : HaqServerCallerAjax;
 	
 	public static var page(default, null) : Page;
+	public static var manager(default, null) : HaqTemplateManager;
 	
 	static public function run(pageFullTag:String)
     {
@@ -20,7 +21,7 @@ using stdlib.StringTools;
         
 		ajax = new HaqServerCallerAjax();
 		
-		var manager = new HaqTemplateManager();
+		manager = new HaqTemplateManager();
 		page = manager.createPage(pageFullTag);
     }
 	

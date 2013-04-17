@@ -57,9 +57,9 @@ using stdlib.StringTools;
 		visible = true;
 	}
     
-    public function construct(manager:HaqTemplateManager, fullTag:String, parent:HaqComponent, id:String, doc:HtmlDocument, params:Hash<Dynamic>, innerNode:HtmlNodeElement, isInnerComponent:Bool) : Void
+    public function construct(fullTag:String, parent:HaqComponent, id:String, doc:HtmlDocument, params:Hash<Dynamic>, innerNode:HtmlNodeElement, isInnerComponent:Bool) : Void
     {
-		super.commonConstruct(manager, fullTag, parent, id);
+		super.commonConstruct(fullTag, parent, id);
 		
 		this.page = parent != null ? parent.page : cast(this, Page);
         this.doc = doc;
@@ -109,12 +109,12 @@ using stdlib.StringTools;
 	{
 		if (innerNode != null)
 		{
-			innerComponents = manager.createDocComponents(parent, innerNode, true);
+			innerComponents = Lib.manager.createDocComponents(parent, innerNode, true);
 		}
 		
 		if (doc != null)
 		{
-			manager.createDocComponents(this, doc, false);
+			Lib.manager.createDocComponents(this, doc, false);
 		}
 	}
 
@@ -233,7 +233,11 @@ using stdlib.StringTools;
 	 */
 	function registerScript(url:String)
 	{
-		manager.registerScript(fullTag, url);
+		url = HaqComponentTools.getFullUrl(fullTag, url);
+		if (!Lambda.has(page.registeredScripts, url))
+		{
+			page.registeredScripts.push(url);
+		}
 	}
 	
 	/**
@@ -242,12 +246,16 @@ using stdlib.StringTools;
 	 */
 	function registerStyle(url:String)
 	{
-		manager.registerStyle(fullTag, url);
+		url = HaqComponentTools.getFullUrl(fullTag, url);
+		if (!Lambda.has(page.registeredStyles, url))
+		{
+			page.registeredStyles.push(url);
+		}
 	}
 	
 	function getSupportPath() : String
 	{
-		return manager.get(fullTag).getSupportFilePath("");
+		return Lib.manager.get(fullTag).getSupportFilePath("");
 	}
 	
 	/**
@@ -259,7 +267,7 @@ using stdlib.StringTools;
 	{
 		if (relpath.startsWith("~/"))
 		{
-			relpath = manager.get(fullTag).getSupportFilePath(relpath.substr(2));
+			relpath = Lib.manager.get(fullTag).getSupportFilePath(relpath.substr(2));
 		}
 		else
 		{
