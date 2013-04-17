@@ -47,7 +47,7 @@ class HaqServerCallerAjax
 			,HAQUERY_COMPONENT: componentID
 			,HAQUERY_METHOD: method
 			,HAQUERY_PARAMS: Serializer.run(params)
-			,HAQUERY_STORAGE: Serializer.run(Lib.page.storage)
+			,HAQUERY_STORAGE: Serializer.run(Lib.page.storage.getStorageToSend())
 		};
 
         var sendedElements = getElemsForSendToServer();

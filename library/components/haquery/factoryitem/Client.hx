@@ -2,6 +2,8 @@ package components.haquery.factoryitem;
 
 import haquery.client.Lib;
 import haquery.common.HaqComponentTools;
+import haquery.common.HaqStorage;
+import haxe.Unserializer;
 import stdlib.Exception;
 import js.JQuery;
 import haxe.htmlparser.HtmlDocument;
@@ -15,6 +17,7 @@ import stdlib.Std;
 using stdlib.StringTools;
 
 typedef Tools = components.haquery.listitem.Tools;
+typedef Factory = components.haquery.factory.Client;
 
 private typedef ComponentData =
 {
@@ -42,13 +45,13 @@ class Client extends BaseClient
 		var params:Dynamic = dynamicParams.params;
 		
 		var doc = Tools.applyHtmlParams(html, Std.hash(params));
-		childComponents = prepareDoc(parent.parent.fullTag, parent.prefixID + id + HaqDefines.DELIMITER, doc);
+		childComponents = prepareDoc(parent.page.storage, parent.parent.fullTag, parent.prefixID + id + HaqDefines.DELIMITER, doc);
 		parentElem.append(doc.innerHTML);
 		
 		super.construct(fullTag, parent, id, isDynamic, dynamicParams);
 	}
 	
-	function prepareDoc(fullTag:String, prefixID:String, node:HtmlNodeElement) : Array<ComponentData>
+	function prepareDoc(storage:HaqStorage, fullTag:String, prefixID:String, node:HtmlNodeElement) : Array<ComponentData>
 	{
 		var r = new Array<ComponentData>();
 		
@@ -65,7 +68,7 @@ class Client extends BaseClient
 		{
 			if (!child.name.startsWith("haq:"))
 			{
-				r = r.concat(prepareDoc(fullTag, prefixID, child));
+				r = r.concat(prepareDoc(storage, fullTag, prefixID, child));
 			}
 			else
 			{
@@ -76,12 +79,12 @@ class Client extends BaseClient
 				{
 					throw new Exception("Component template '" + tag + "' not found for parent component '" + fullTag + "'.");
 				}
-				var doc = page.storage.getStaticVar(Client, t.fullTag);
+				var doc = Unserializer.run(storage.getStaticVar(Factory, t.fullTag));
 				r.push( { 
 					 fullTag: t.fullTag
 					,prefixID: prefixID
 					,id: id
-					,chilren: prepareDoc(t.fullTag, prefixID + id + HaqDefines.DELIMITER, doc)
+					,chilren: prepareDoc(storage, t.fullTag, prefixID + id + HaqDefines.DELIMITER, doc)
 				} );
 				HaqInternals.addComponent(t.fullTag, prefixID + id);
 				child.parent.replaceChildWithInner(child, doc);

@@ -11,7 +11,7 @@ class Server extends BaseServer
     function preRender()
     {
 		storeDocs(parent.fullTag, innerNode);
-		page.storage.setInstanceVar(this, "html", innerNode.innerHTML);
+		page.storage.setInstanceVar(this, "html", innerNode.innerHTML, true);
     }
 	
 	function storeDocs(parentFullTag:String, parentDoc:HtmlNodeElement)
@@ -29,9 +29,8 @@ class Server extends BaseServer
 				
 				if (!page.storage.existsStaticVar(Server, t.fullTag))
 				{
-					var doc = t.getDocCopy();
-					page.storage.setStaticVar(Server, t.fullTag, doc);
-					storeDocs(t.fullTag, doc);
+					page.storage.setStaticVar(Server, t.fullTag, t.serializedDoc, true);
+					storeDocs(t.fullTag, t.getDocCopy());
 				}
 			}
 			storeDocs(parentFullTag, child);
