@@ -76,8 +76,9 @@ class Main
 						options.add("deadCodeElimination", false, [ "--dead-code-elimination" ]);
 						options.add("noServer", false, [ "--no-server" ]);
 						options.add("noClient", false, [ "--no-client" ]);
+						options.add("project", "");
 						options.parse(args);
-						new Build(log, fs, exeDir).build(
+						new Build(log, fs, exeDir, options.get("project")).build(
 							  options.get("output")
 							, options.get("jsModern")
 							, options.get("deadCodeElimination")
@@ -124,6 +125,8 @@ class Main
 			Lib.println("            [--no-server]              Skip server compilation.");
 			Lib.println("            [--no-client]              Skip client compilation.");
 			Lib.println("                                       Definition 'mobile' will be defined too.");
+			Lib.println("            [<projectfile>]            FlashDevelop project file to read.");
+			Lib.println("                                       (Default: find *.hxproj in the current directory.)");
 			Lib.println("");
 			Lib.println("        gen-orm                        Generate object-related classes.");
 			Lib.println("            [databaseConnectionString] Like 'mysql://user:pass@host/dbname'.");
