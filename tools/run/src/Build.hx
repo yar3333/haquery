@@ -28,12 +28,12 @@ class Build
     
 	var project : FlashDevelopProject;
 
-	public function new(log:Log, fs:FileSystemTools, exeDir:String) 
+	public function new(log:Log, fs:FileSystemTools, exeDir:String, projectFilePath:String) 
 	{
 		this.log = log;
 		this.fs = fs;
 		this.exeDir = PathTools.path2normal(exeDir) + "/";
-		project = new FlashDevelopProject("");
+		project = new FlashDevelopProject(projectFilePath);
 	}
 	
 	public function build(outputDir:String, jsModern:Bool, isDeadCodeElimination:Bool, noServer:Bool, noClient:Bool)
@@ -51,7 +51,7 @@ class Build
 			
 			if (!noServer) genCodeFromServer(project);
 			
-			try { saveLibFolderFileTimes(outputDir); } catch (e:Dynamic) {}
+			try saveLibFolderFileTimes(outputDir) catch (e:Dynamic) {}
 			
 			if (!noClient) buildClient(outputDir, jsModern, isDeadCodeElimination);
 			if (!noServer) buildServer(outputDir);
@@ -169,7 +169,7 @@ class Build
         var params = project.getBuildParams("js", clientPath + "/haquery.js", [ "noEmbedJS", "client" ]);
 		if (isJsModern) params.push("--js-modern");
 		if (isDeadCodeElimination) params.push("--dead-code-elimination");
-		var r = Process.run(log, fs.getHaxePath() + "haxe.exe", params);
+		var r = Process.run(log, fs.getHaxePath(), params);
 		Lib.print(r.stdOut);
 		Lib.print(r.stdErr);
         
@@ -201,7 +201,7 @@ class Build
 	{
 		log.start("Build server to '" + outputDir + "'");
         var params = project.getBuildParams(project.platform, project.platform != "neko" ? outputDir : outputDir + "/index.n", [ "server" ]);
-		var r = Process.run(log, fs.getHaxePath() + "haxe.exe", params);
+		var r = Process.run(log, fs.getHaxePath(), params);
 		Lib.print(r.stdOut);
 		Lib.print(r.stdErr);
 		
@@ -231,7 +231,7 @@ class Build
 		log.start("Generate code from server");
 		fs.createDirectory(project.platform == "neko" ? Path.directory(tempPath) : tempPath);
 		var params = project.getBuildParams(project.platform, tempPath, [ "server", "haqueryGenCode" ]);
-		var r = Process.run(log, fs.getHaxePath() + "haxe.exe", params);
+		var r = Process.run(log, fs.getHaxePath(), params);
 		fs.deleteAny(tempPath);
 		fs.deleteDirectory(Path.directory(tempPath));
 		if (r.stdOut.trim() != "") Lib.print(r.stdOut);
