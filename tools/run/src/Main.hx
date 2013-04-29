@@ -29,8 +29,11 @@ class Main
 			fail("run this program via haxelib utility.");
 		}
 		
+		var k64Index = Lambda.indexOf(args, "-64");
+		if (k64Index >= 0) args.remove("-64");
+		
 		var log = new Log(2);
-		var fs = new FileSystemTools(log, exeDir + "/" + "hant-" + Sys.systemName().toLowerCase());
+		var fs = new FileSystemTools(log, exeDir + "/hant-" + Sys.systemName().toLowerCase() + (k64Index >=0 ? "64" : ""));
 		
         if (args.length > 0)
 		{
@@ -78,7 +81,7 @@ class Main
 						options.add("noClient", false, [ "--no-client" ]);
 						options.add("project", "");
 						options.parse(args);
-						new Build(log, fs, exeDir, options.get("project")).build(
+						new Build(log, fs, exeDir, k64Index>=0, options.get("project")).build(
 							  options.get("output")
 							, options.get("jsModern")
 							, options.get("deadCodeElimination")
@@ -127,6 +130,7 @@ class Main
 			Lib.println("                                       Definition 'mobile' will be defined too.");
 			Lib.println("            [<projectfile>]            FlashDevelop project file to read.");
 			Lib.println("                                       (Default: find *.hxproj in the current directory.)");
+			Lib.println("            [-64]                      Use 64-bit ndll files.");
 			Lib.println("");
 			Lib.println("        gen-orm                        Generate object-related classes.");
 			Lib.println("            [databaseConnectionString] Like 'mysql://user:pass@host/dbname'.");

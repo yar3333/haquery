@@ -25,14 +25,16 @@ class Build
 	var log : Log;
     var fs : FileSystemTools;
 	var exeDir : String;
+	var is64 : Bool;
     
 	var project : FlashDevelopProject;
 
-	public function new(log:Log, fs:FileSystemTools, exeDir:String, projectFilePath:String) 
+	public function new(log:Log, fs:FileSystemTools, exeDir:String, is64:Bool, projectFilePath:String) 
 	{
 		this.log = log;
 		this.fs = fs;
 		this.exeDir = PathTools.path2normal(exeDir) + "/";
+		this.is64 = is64;
 		project = new FlashDevelopProject(projectFilePath);
 	}
 	
@@ -58,7 +60,7 @@ class Build
 			
 			generateComponentsCssFile(manager, outputDir);
 			
-			var publisher = new Publisher(log, fs, project.platform);
+			var publisher = new Publisher(log, fs, project.platform, is64);
 			
 			log.start("Publish to '" + outputDir + "'");
 				for (path in project.allClassPaths)

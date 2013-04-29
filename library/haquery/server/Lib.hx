@@ -54,7 +54,12 @@ class Lib
 					manager = new HaqTemplateManager();
 				}
 				
+				#if !HXFCGI
 				var route = new HaqRouter(HaqDefines.folders.pages, manager).getRoute(Web.getParams().get("route"));
+				#else
+				var route = new HaqRouter(HaqDefines.folders.pages, manager).getRoute(Sys.getEnv("DOCUMENT_URI").ltrim("/"));
+				#end
+				
 				var bootstraps = loadBootstraps(route.path, config);
 				
 				haxe.Log.trace = callback(HaqTrace.log, _, getClientIP(), config.filterTracesByIP, null, _);
