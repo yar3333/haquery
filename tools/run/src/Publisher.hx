@@ -1,5 +1,6 @@
 package ;
 
+import hant.Haxelib;
 import hant.Log;
 import hant.FileSystemTools;
 import hant.PathTools;
@@ -15,20 +16,21 @@ class Publisher
 {
 	var log : Log;
     var fs : FileSystemTools;
-	var exeDir : String;
-	
 	var platform : String;
+	var is64 : Bool;
+	var exeDir : String;
 	
 	/**
 	 * dest => src
 	 */
 	var files : Hash<String>;
 	
-	public function new(log:Log, fs:FileSystemTools, platform:String)
+	public function new(log:Log, fs:FileSystemTools, platform:String, is64:Bool)
 	{
 		this.log = log;
 		this.fs = fs;
 		this.platform = platform;
+		this.is64 = is64;
 		this.files = new Hash<String>();
 	}
 	
@@ -43,8 +45,6 @@ class Publisher
 		}
 		
 		prepareFile(src + "/config.xml", "config.xml");
-		
-		prepareFolder(src + "/ndll", "ndll", "", null, null);
 		
 		var configFile = src + "/publish.xml";
 		if (FileSystem.exists(configFile))
@@ -81,6 +81,22 @@ class Publisher
 							if (srcAttr == null || srcAttr == "") throw "Tag 'dir' must have not empty 'src' attribute in file '" + configFile + "'.";
 							var destAttr = node.hasAttribute("dest") ? node.getAttribute("dest") : srcAttr;
 							prepareFile(src + "/" + srcAttr, destAttr);
+						}
+					
+					case "ndll":
+						var platformAttr = node.getAttribute("platform");
+						if (platformAttr == null || platformAttr == "" || platformAttr == platform)
+						{
+							var library = node.getAttribute("library");
+							if (library == null || library == "") throw "Tag 'ndll' must have not empty 'library' attribute in file '" + configFile + "'.";
+							var basePath = Haxelib.getPaths([library]).get(library);
+							if (basePath != null)
+							{
+								var src = basePath + "ndll/" + Sys.systemName() + (is64 ? "64" : "") + "/" + library + ".ndll";
+								var dest = node.hasAttribute("dest") ? node.getAttribute("dest") : library + ".ndll";
+								trace(src + " => " + dest);
+								prepareFile(src, dest);
+							}
 						}
 					
 					default:
