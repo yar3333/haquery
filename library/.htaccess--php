@@ -4,7 +4,7 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^[^.]*[^/]$ /$0/ [L,R=301]
 
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^[^.]*$ index.php?route=$0 [L,QSA]
+RewriteRule ^[^.]*$ index.php [L,QSA]
 
 Order Deny,Allow
 <FilesMatch "^temp/haquery.log$|^temp/templates/|(^|/)config.xml$">
