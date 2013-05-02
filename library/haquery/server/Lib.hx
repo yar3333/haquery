@@ -22,7 +22,6 @@ import models.server.Page;
 import stdlib.Std;
 import stdlib.Profiler;
 import stdlib.FileSystem;
-import stdlib.Uuid;
 import haquery.common.HaqMessageListenerAnswer;
 using stdlib.StringTools;
 
@@ -54,11 +53,7 @@ class Lib
 					manager = new HaqTemplateManager();
 				}
 				
-				#if !HXFCGI
-				var route = new HaqRouter(HaqDefines.folders.pages, manager).getRoute(Web.getParams().get("route"));
-				#else
-				var route = new HaqRouter(HaqDefines.folders.pages, manager).getRoute(Sys.getEnv("DOCUMENT_URI").ltrim("/"));
-				#end
+				var route = new HaqRouter(HaqDefines.folders.pages, manager).getRoute(Web.getURI());
 				
 				var bootstraps = loadBootstraps(route.path, config);
 				
@@ -232,24 +227,6 @@ class Lib
 		}
 		return s;
 	}
-	
-    static function getParamsString()
-    {
-        var s = Web.getParamsString();
-        var re = ~/route=[^&]*/g;
-        s = re.replace(s, '');
-        return stdlib.StringTools.trim(s, '&');
-    }
-	
-	/*
-	public static function isCli() : Bool
-	{
-		#if php
-		return untyped __php__("PHP_SAPI == 'cli'");
-		#elseif neko
-		return !neko.Web.isModNeko && !neko.Web.isTora;
-		#end
-	}*/
 	
 	static function getCwd() { return Web.getCwd().replace("\\", "/").rtrim("/"); }
 }
