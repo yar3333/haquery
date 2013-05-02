@@ -13,9 +13,7 @@ class Main
 			#elseif neko
 			
                 neko.Web.cacheModule(haquery.server.Lib.run);
-                #if !HXFCGI
-                    haquery.server.Lib.run();
-                #end
+                haquery.server.Lib.run();
             
 			#end
 			
