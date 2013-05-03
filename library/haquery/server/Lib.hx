@@ -108,7 +108,7 @@ class Lib
 			, getClientIP()
 			, Web.getURI()
 			, getHttpHost()
-			, getParamsString()
+			, Web.getParamsString()
 			, config
 			, isPostback ? Unserializer.run(params.get("HAQUERY_STORAGE")) : new HaqStorage()
 		);
