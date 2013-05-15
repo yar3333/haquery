@@ -20,10 +20,11 @@ class HaqTemplateParser
 	var classPaths : Array<String>;
 	var fullTag : String;
 	var childFullTags : Array<String>;
+	var staticUrlPrefix : String;
 	
 	var config : HaqTemplateConfig;
 	
-	public function new(log:Log, classPaths:Array<String>, fullTag:String, childFullTags:Array<String>)
+	public function new(log:Log, classPaths:Array<String>, fullTag:String, childFullTags:Array<String>, staticUrlPrefix:String)
 	{
 		if (Lambda.has(childFullTags, fullTag))
 		{
@@ -34,6 +35,7 @@ class HaqTemplateParser
 		this.classPaths = classPaths;
 		this.fullTag = fullTag;
 		this.childFullTags = childFullTags;
+		this.staticUrlPrefix = staticUrlPrefix;
 		
 		var folder = fullTag.replace(".", "/") + "/";
 		if (getFullPath(folder + "template.html") == null && getFullPath(folder + "Server.hx") == null && getFullPath(folder + "Client.hx") == null)
@@ -49,7 +51,7 @@ class HaqTemplateParser
 		if (config.extend == "") return null; 
 		try 
 		{
-			return new HaqTemplateParser(log, classPaths, config.extend, childFullTags.concat([fullTag]));
+			return new HaqTemplateParser(log, classPaths, config.extend, childFullTags.concat([fullTag]), staticUrlPrefix);
 		}
 		catch (e:HaqTemplateNotFoundException)
 		{
@@ -278,7 +280,7 @@ class HaqTemplateParser
 					value = reSupportUrl.customReplace(value, function(re)
 					{
 						var f = getSupportFilePath(re.matched(1));
-						return f != null ? "/" + f : re.matched(0);
+						return f != null ? staticUrlPrefix + "/" + f : re.matched(0);
 					});
 					node.setAttribute(name, value);
 				}
@@ -289,7 +291,7 @@ class HaqTemplateParser
 				node.setInnerText(reSupportUrl.customReplace(node.innerHTML, function(re)
 				{
 					var f = getSupportFilePath(re.matched(1));
-					return f != null ? "/" + f : re.matched(0);
+					return f != null ? staticUrlPrefix + "/" + f : re.matched(0);
 				}));
 			}
 			else

@@ -2,6 +2,7 @@ package haquery.server;
 
 #if server
 
+import haquery.common.Generated;
 import haquery.common.HaqStorage;
 import haxe.htmlparser.HtmlNodeElement;
 import haxe.htmlparser.HtmlNodeText;
@@ -240,7 +241,7 @@ class HaqPage extends HaqComponent
 		if (!url.startsWith("http://") && !url.startsWith("/"))
 		{
 			url += "?" + FileSystem.stat(url).mtime.getTime() / 1000;
-			url = "/" + url;
+			url = Generated.staticUrlPrefix + "/" + url;
 		}
 		
 		return "<script src='" + url + "'></script>";
@@ -255,7 +256,7 @@ class HaqPage extends HaqComponent
 		if (!url.startsWith("http://") && !url.startsWith("/"))
 		{
 			url += "?" + FileSystem.stat(url).mtime.getTime() / 1000;
-			url = '/' + url;
+			url = Generated.staticUrlPrefix + "/" + url;
 		}
 		
         return "<link rel='stylesheet' type='text/css' href='" + url + "' />";
