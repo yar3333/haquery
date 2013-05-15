@@ -53,18 +53,20 @@ class Lib
 					manager = new HaqTemplateManager();
 				}
 				
-				var route = new HaqRouter(HaqDefines.folders.pages, manager).getRoute(Web.getURI());
-				
-				var bootstraps = loadBootstraps(route.path, config);
-				
-				haxe.Log.trace = callback(HaqTrace.log, _, getClientIP(), config.filterTracesByIP, null, _);
-				
-				if (route.pageID != null && route.pageID.startsWith("haquery-"))
+				var uri = Web.getURI();
+				trace(uri);
+				if (uri.startsWith("/haquery-"))
 				{
-					HaqSystem.run(route.pageID, config);
+					HaqSystem.run(uri.trim("/"), config);
 				}
 				else
 				{
+					var route = new HaqRouter(HaqDefines.folders.pages, manager).getRoute(uri);
+					
+					var bootstraps = loadBootstraps(route.path, config);
+					
+					haxe.Log.trace = callback(HaqTrace.log, _, getClientIP(), config.filterTracesByIP, null, _);
+					
 					var request = getRequest(route, config);
 					var response = runPage(request, route, bootstraps).response;
 					

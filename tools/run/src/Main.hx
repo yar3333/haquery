@@ -77,6 +77,7 @@ class Main
 						options.add("output", "bin", [ "--output" ]);
 						options.add("jsModern", false, [ "--js-modern" ]);
 						options.add("deadCodeElimination", false, [ "--dead-code-elimination" ]);
+						options.add("staticUrlPrefix", "", [ "--static-url-prefix" ]);
 						options.add("noServer", false, [ "--no-server" ]);
 						options.add("noClient", false, [ "--no-client" ]);
 						options.add("project", "");
@@ -85,6 +86,7 @@ class Main
 							  options.get("output")
 							, options.get("jsModern")
 							, options.get("deadCodeElimination")
+							, options.get("staticUrlPrefix")
 							, options.get("noServer")
 							, options.get("noClient")
 						);
@@ -125,6 +127,11 @@ class Main
 			Lib.println("            [--output=<dir>]           Output folder (by default is 'bin').");
 			Lib.println("            [--js-modern]              Generate js code in modern style.");
 			Lib.println("            [--dead-code-elimination]  For a while is not supported.");
+			Lib.println("            [--static-url-prefix=<p>]  Prefix for URLs started with '~',");
+			Lib.println("                                       links to system the system files");
+			Lib.println("                                       and registered js/css files.");
+			Lib.println("                                       Affected to HTML and CSS output only,");
+			Lib.println("                                       not to physical folders structure.");
 			Lib.println("            [--no-server]              Skip server compilation.");
 			Lib.println("            [--no-client]              Skip client compilation.");
 			Lib.println("                                       Definition 'mobile' will be defined too.");

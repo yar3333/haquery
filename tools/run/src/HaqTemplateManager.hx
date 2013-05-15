@@ -15,15 +15,16 @@ class HaqTemplateManager
 {
 	var log : Log;
 	var classPaths : Array<String>;
+	var staticUrlPrefix : String;
 	var templates(default, null) : Hash<HaqTemplate>;
 	
 	public var fullTags(default, null) : Array<String>;
 	
-	public function new(log:Log, classPaths:Array<String>)
+	public function new(log:Log, classPaths:Array<String>, staticUrlPrefix:String)
 	{
 		this.log = log;
-		
 		this.classPaths = classPaths;
+		this.staticUrlPrefix = staticUrlPrefix;
 		
 		this.templates = new Hash<HaqTemplate>();
 		fillTemplates(HaqDefines.folders.pages);
@@ -79,7 +80,7 @@ class HaqTemplateManager
 		{
 			try
 			{
-				var template = new HaqTemplate(log, classPaths, fullTag);
+				var template = new HaqTemplate(log, classPaths, fullTag, staticUrlPrefix);
 				templates.set(fullTag, template);
 				
 				addTemplate(template.extend);
@@ -245,7 +246,7 @@ class HaqTemplateManager
 			var r = templates.get(fullTag);
 			if (r == null)
 			{
-				r = new HaqTemplate(log, classPaths, fullTag);
+				r = new HaqTemplate(log, classPaths, fullTag, staticUrlPrefix);
 				templates.set(fullTag, r);
 			}
 			return r;

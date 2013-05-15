@@ -38,13 +38,16 @@ class Build
 		project = new FlashDevelopProject(projectFilePath);
 	}
 	
-	public function build(outputDir:String, jsModern:Bool, isDeadCodeElimination:Bool, noServer:Bool, noClient:Bool)
+	public function build(outputDir:String, jsModern:Bool, isDeadCodeElimination:Bool, staticUrlPrefix:String, noServer:Bool, noClient:Bool)
     {
         log.start("Build");
         
 		try
 		{
-			var manager = new HaqTemplateManager(log, project.allClassPaths);
+			var manager = new HaqTemplateManager(log, project.allClassPaths, staticUrlPrefix);
+			
+			fs.createDirectory("gen/haquery/common");
+			File.saveContent("gen/haquery/common/Generated.hx", "package haquery.common;\n\nclass Generated\n{\n\tpublic static inline var staticUrlPrefix = \"" + staticUrlPrefix + "\";\n}");
 			
 			genTrm(manager);
 			generateConfigClasses(manager, noServer, noClient);
@@ -217,11 +220,11 @@ class Build
 		}
 	}
 	
-    public function genTrm(?manager:HaqTemplateManager)
+    public function genTrm(manager:HaqTemplateManager)
     {
         log.start("Generate template classes");
         
-        TrmGenerator.run(manager != null ? manager : new HaqTemplateManager(log, project.allClassPaths), fs);
+        TrmGenerator.run(manager, fs);
         
         log.finishOk();
     }
