@@ -2,6 +2,7 @@ package haquery.server;
 
 #if server
 
+import haquery.common.Generated;
 using stdlib.StringTools;
 
 class HaqSystemHtml 
@@ -13,7 +14,7 @@ class HaqSystemHtml
 		<style>
 {rawStyle}
 		</style>
-		<script src="/haquery/client/jquery.js"></script>
+		<script src="{staticUrlPrefix}/haquery/client/jquery.js"></script>
 		<script>
 			function setCookie(c_name, value, exdays)
 			{
@@ -97,7 +98,11 @@ class HaqSystemHtml
 	
 	public function toString() : String
 	{
-		return template.replace("{rawStyle}", rawStyle).replace("{rawJs}", rawJs).replace("{rawContent}", rawContent);
+		return template
+			.replace("{staticUrlPrefix}", Generated.staticUrlPrefix)
+			.replace("{rawStyle}", rawStyle)
+			.replace("{rawJs}", rawJs)
+			.replace("{rawContent}", rawContent);
 	}
 }
 

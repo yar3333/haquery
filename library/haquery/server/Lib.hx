@@ -54,7 +54,6 @@ class Lib
 				}
 				
 				var uri = Web.getURI();
-				trace(uri);
 				if (uri.startsWith("/haquery-"))
 				{
 					HaqSystem.run(uri.trim("/"), config);

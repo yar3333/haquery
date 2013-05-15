@@ -10,6 +10,7 @@ private typedef NativeLib = neko.Lib;
 private typedef NativeWeb = neko.Web;
 #end
 
+import haquery.common.Generated;
 import haquery.common.HaqDefines;
 import haxe.Serializer;
 import sys.io.File;
@@ -64,7 +65,7 @@ class HaqSystem
 				.content(" | <input type='button' value='Logout' onclick='setCookie(\"haquery_secret\", \"\", 0); window.location.reload(true);' /><br />\n")
 				.js("updateLogTimeout = 1000;")
 				.js("updateListenersTimeout = 5000;")
-				.js("function updateLog() { $('#log').load('/haquery-status-log/', function() { setTimeout(updateLog, updateLogTimeout); });  }")
+				.js("function updateLog() { $('#log').load('" + Generated.staticUrlPrefix + "/haquery-status-log/', function() { setTimeout(updateLog, updateLogTimeout); });  }")
 				.js("setTimeout(updateLog, updateLogTimeout);")
 				.begin("table", "width='100%' border='0' style='border-collapse:collapse; margin-top:5px'")
 					.begin("tbody")
