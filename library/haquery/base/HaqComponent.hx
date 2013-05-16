@@ -11,9 +11,11 @@ using stdlib.StringTools;
 #if server
 import haquery.server.HaqTemplateManager;
 private typedef Component = haquery.server.HaqComponent;
+private typedef Page = models.server.Page;
 #else
 import haquery.client.HaqTemplateManager;
 private typedef Component = haquery.client.HaqComponent;
+private typedef Page = models.client.Page;
 #end
 
 #end
@@ -21,6 +23,8 @@ private typedef Component = haquery.client.HaqComponent;
 @:keepSub class HaqComponent
 {
 #if !macro
+	
+	public var page(default,null) : Page;
 	
 	public var parent(default,null) : Component;
 
@@ -115,6 +119,10 @@ private typedef Component = haquery.client.HaqComponent;
 	
     public function forEachComponent(f:String, isFromTopToBottom=true) : Void
     {
+		#if server
+		if (page.statusCode == 302 || page.statusCode == 301) return; 
+		#end
+		
 		if (isFromTopToBottom && Reflect.isFunction(Reflect.field(this, f)))
         {
 			Reflect.callMethod(this, Reflect.field(this, f), []);

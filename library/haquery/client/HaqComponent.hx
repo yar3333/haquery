@@ -14,8 +14,6 @@ using stdlib.StringTools;
 {
 #if !macro
 
-	public var page(default,null) : Page;
-	
 	var isDynamic : Bool;
 	
 	public function construct(fullTag:String, parent:HaqComponent, id:String, isDynamic:Bool, dynamicParams:Dynamic) : Void

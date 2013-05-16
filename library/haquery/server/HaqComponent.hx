@@ -21,8 +21,6 @@ using stdlib.StringTools;
 @:autoBuild(haquery.macro.HaqComponentTools.build()) class HaqComponent extends haquery.base.HaqComponent
 {
 #if !macro
-
-	public var page(default,null) : Page;
     
 	/**
      * template.html as DOM tree.
