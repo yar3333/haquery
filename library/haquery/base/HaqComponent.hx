@@ -12,9 +12,11 @@ using stdlib.StringTools;
 #if server
 import haquery.server.HaqTemplateManager;
 private typedef Component = haquery.server.HaqComponent;
+private typedef BasePage = haquery.server.BasePage;
 #else
 import haquery.client.HaqTemplateManager;
 private typedef Component = haquery.client.HaqComponent;
+private typedef BasePage = haquery.client.BasePage;
 #end
 
 #end

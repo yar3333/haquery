@@ -7,7 +7,7 @@ import stdlib.Std;
 
 class HaqTemplateConfig
 {
-	public var extend(default, null) : String;
+	public var extend : String;
 	public var imports(default, null) : Array<{ component:String, asTag:String }>;
 	public var requires(default, null) : Array<String>;
 	
@@ -78,10 +78,5 @@ class HaqTemplateConfig
 		{
 			imports = imports.concat(base.imports);
 		}
-	}
-	
-	public function noExtend()
-	{
-		extend = "";
 	}
 }
