@@ -165,6 +165,11 @@ class HaqTemplateParser
 			}
 		}
 		
+		if (r.extend == fullTag && fullTag == basePage)
+		{
+			r.extend = "";
+		}
+		
 		return r;
 	}
 	
