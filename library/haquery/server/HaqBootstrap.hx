@@ -11,7 +11,7 @@ class HaqBootstrap
 		// nothing to do
 	}
 	
-	public function finish(page:models.server.Page) : Void
+	public function finish(page:haquery.common.Generated.BasePage) : Void
 	{
 		// nothing to do
 	}

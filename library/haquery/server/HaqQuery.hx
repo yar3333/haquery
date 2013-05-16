@@ -5,7 +5,6 @@ package haquery.server;
 import stdlib.Std;
 import haxe.htmlparser.HtmlNodeElement;
 import haquery.base.HaqCssGlobalizer;
-import models.server.Page;
 using stdlib.StringTools;
 
 /**
@@ -13,15 +12,15 @@ using stdlib.StringTools;
  */
 class HaqQuery
 {
-    public var page(default, null) : Page;
-    public var prefixID(default, null) : String;
+    var page(default, null) : HaqPage;
+    var prefixID(default, null) : String;
    
-	public var cssGlobalizer(default, null) : HaqCssGlobalizer;
+	var cssGlobalizer(default, null) : HaqCssGlobalizer;
 	
 	/**
      * Original CSS-selector.
      */
-    public var query : String;
+    public var query(default, null) : String;
     
     /**
      * Selected XML DOM nodes (elements).

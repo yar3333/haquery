@@ -11,7 +11,7 @@ import haquery.server.HaqTemplate;
 import haquery.server.Lib;
 import haxe.htmlparser.HtmlNodeElement;
 import haquery.common.HaqTemplateExceptions;
-import models.server.Page;
+import haquery.common.Generated;
 using stdlib.StringTools;
 
 class HaqTemplateManager
@@ -23,20 +23,20 @@ class HaqTemplateManager
 		return new HaqTemplate(fullTag);
 	}
 	
-	public function createPage(pageFullTag:String, attr:Hash<Dynamic>) : Page
+	public function createPage(pageFullTag:String, attr:Hash<Dynamic>) : HaqPage
 	{
         var template = get(pageFullTag);
 		Std.assert(template != null, "HAQUERY ERROR could't find page '" + pageFullTag + "'.");
 		var component = newComponent(template, null, '', attr, null, false);
 		
-		var page : Page;
+		var page : HaqPage;
 		try 
 		{
-			page = cast(component, Page);
+			page = cast(component, HaqPage);
 		}
 		catch (e:Dynamic)
 		{
-			throw new Exception("Class cast error: '" + template.serverClassName + "' must be extends from models.server.Page.");
+			throw new Exception("Class cast error: '" + template.serverClassName + "' must be extends from haquery.server.HaqPage.");
 		}
 		
 		return page;

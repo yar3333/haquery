@@ -29,11 +29,11 @@ class HaqTemplate extends haquery.base.HaqTemplate
 	public var imports(default, null) : Array<{ component:String, asTag:String }>;
 	public var requires(default, null) : Array<String>;
 	
-	public function new(log:Log, classPaths:Array<String>, fullTag:String, staticUrlPrefix:String) 
+	public function new(log:Log, classPaths:Array<String>, fullTag:String, basePage:String, staticUrlPrefix:String) 
 	{
 		super(fullTag);
 
-		var parser = new HaqTemplateParser(log, classPaths, fullTag, [], staticUrlPrefix);
+		var parser = new HaqTemplateParser(log, classPaths, fullTag, [], basePage, staticUrlPrefix);
 		
 		var docAndCss = parser.getDocAndCss();
 		doc = docAndCss.doc;

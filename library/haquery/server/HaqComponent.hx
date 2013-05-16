@@ -13,7 +13,7 @@ import haxe.htmlparser.HtmlNodeText;
 import haquery.common.HaqComponentTools;
 import haxe.PosInfos;
 import haxe.Serializer;
-import models.server.Page;
+import haquery.common.Generated;
 using stdlib.StringTools;
 
 #end
@@ -59,7 +59,7 @@ using stdlib.StringTools;
     {
 		super.commonConstruct(fullTag, parent, id);
 		
-		this.page = parent != null ? parent.page : cast(this, Page);
+		this.page = parent != null ? parent.page : cast(this, BasePage);
         this.doc = doc;
         this.innerNode = innerNode;
 		this.isInnerComponent = isInnerComponent;

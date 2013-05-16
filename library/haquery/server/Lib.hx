@@ -18,7 +18,7 @@ import haxe.Unserializer;
 import haxe.PosInfos;
 import haquery.common.HaqDefines;
 import haquery.server.HaqRouter;
-import models.server.Page;
+import haquery.server.HaqPage;
 import stdlib.Std;
 import stdlib.Profiler;
 import stdlib.FileSystem;
@@ -115,7 +115,7 @@ class Lib
 		);
 	}
 	
-	public static function runPage(request:HaqRequest, route:HaqRoute, bootstraps:Array<HaqBootstrap>) : { page:Page, response:HaqResponse }
+	public static function runPage(request:HaqRequest, route:HaqRoute, bootstraps:Array<HaqBootstrap>) : { page:HaqPage, response:HaqResponse }
 	{
 		profiler = new Profiler(request.config.enableProfiling);
 		
@@ -149,7 +149,7 @@ class Lib
 			bootstraps.reverse();
 			for (i in 0...bootstraps.length)
 			{
-				bootstraps[bootstraps.length - i - 1].finish(page);
+				bootstraps[bootstraps.length - i - 1].finish(cast page);
 			}
 		
 		profiler.end();

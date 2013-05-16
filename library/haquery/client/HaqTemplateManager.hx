@@ -6,7 +6,6 @@ import haquery.client.HaqComponent;
 import haquery.client.HaqTemplate;
 import haquery.common.HaqDefines;
 import haquery.common.HaqStorage;
-import models.client.Page;
 
 class HaqTemplateManager
 {
@@ -17,9 +16,9 @@ class HaqTemplateManager
 		return new HaqTemplate(fullTag);
 	}
 	
-	public function createPage(fullTag:String) : Page
+	public function createPage(fullTag:String) : HaqPage
     {
-		var page = cast(newComponent(get(fullTag), null, "", false), Page);
+		var page = cast(newComponent(get(fullTag), null, "", false), HaqPage);
 		
 		page.forEachComponent("preInit", true);
 		page.forEachComponent("init", false);

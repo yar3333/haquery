@@ -3,16 +3,16 @@ package haquery.client;
 #if client
 
 import haquery.common.HaqDumper;
+import haquery.common.Generated;
 import stdlib.Exception;
 import haquery.client.HaqInternals;
-import models.client.Page;
 using stdlib.StringTools;
 
 @:keep @:expose class Lib
 {
 	public static var ajax(default, null) : HaqServerCallerAjax;
 	
-	public static var page(default, null) : Page;
+	public static var page(default, null) : BasePage;
 	public static var manager(default, null) : HaqTemplateManager;
 	
 	static public function run(pageFullTag:String)
@@ -22,7 +22,7 @@ using stdlib.StringTools;
 		ajax = new HaqServerCallerAjax();
 		
 		manager = new HaqTemplateManager();
-		page = manager.createPage(pageFullTag);
+		page = cast manager.createPage(pageFullTag);
     }
 	
     static function trace(v:Dynamic, ?pos : haxe.PosInfos) : Void

@@ -5,17 +5,16 @@ package haquery.base;
 import haquery.common.HaqDefines;
 import haquery.common.HaqEvent;
 import haquery.common.HaqComponentTools;
+import haquery.common.Generated;
 import stdlib.Exception;
 using stdlib.StringTools;
 
 #if server
 import haquery.server.HaqTemplateManager;
 private typedef Component = haquery.server.HaqComponent;
-private typedef Page = models.server.Page;
 #else
 import haquery.client.HaqTemplateManager;
 private typedef Component = haquery.client.HaqComponent;
-private typedef Page = models.client.Page;
 #end
 
 #end
@@ -24,7 +23,7 @@ private typedef Page = models.client.Page;
 {
 #if !macro
 	
-	public var page(default,null) : Page;
+	public var page(default,null) : BasePage;
 	
 	public var parent(default,null) : Component;
 

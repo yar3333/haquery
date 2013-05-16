@@ -77,6 +77,7 @@ class Main
 						options.add("output", "bin", [ "--output" ]);
 						options.add("jsModern", false, [ "--js-modern" ]);
 						options.add("deadCodeElimination", false, [ "--dead-code-elimination" ]);
+						options.add("basePage", "", [ "--base-page" ]);
 						options.add("staticUrlPrefix", "", [ "--static-url-prefix" ]);
 						options.add("noServer", false, [ "--no-server" ]);
 						options.add("noClient", false, [ "--no-client" ]);
@@ -86,6 +87,7 @@ class Main
 							  options.get("output")
 							, options.get("jsModern")
 							, options.get("deadCodeElimination")
+							, options.get("basePage")
 							, options.get("staticUrlPrefix")
 							, options.get("noServer")
 							, options.get("noClient")
@@ -127,6 +129,7 @@ class Main
 			Lib.println("            [--output=<dir>]           Output folder (by default is 'bin').");
 			Lib.println("            [--js-modern]              Generate js code in modern style.");
 			Lib.println("            [--dead-code-elimination]  For a while is not supported.");
+			Lib.println("            [--base-page=<package>]    Default base page. For example: 'pages.layout'.");
 			Lib.println("            [--static-url-prefix=<p>]  Prefix for URLs started with '~',");
 			Lib.println("                                       links to system the system files");
 			Lib.println("                                       and registered js/css files.");

@@ -3,9 +3,10 @@ package haquery.client;
 #if !macro
 
 import haquery.common.HaqComponentTools;
-import models.client.Page;
+import haquery.common.Generated;
 import stdlib.Exception;
 import js.JQuery;
+
 using stdlib.StringTools;
 
 #end
@@ -20,7 +21,7 @@ using stdlib.StringTools;
 	{
 		super.commonConstruct(fullTag, parent, id);
 		
-		this.page = parent != null ? parent.page : cast(this, Page);
+		this.page = parent != null ? parent.page : cast(this, BasePage);
 		this.isDynamic = isDynamic;
 		
 		connectElemEventHandlers();
