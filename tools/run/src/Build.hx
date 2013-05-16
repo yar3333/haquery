@@ -47,19 +47,13 @@ class Build
 			var manager = new HaqTemplateManager(log, project.allClassPaths, basePage, staticUrlPrefix);
 			
 			fs.createDirectory("gen/haquery/common");
-			File.saveContent("gen/haquery/common/Generated.hx", 
-"package haquery.common;
-
-#if server
-typedef BasePage = " + (basePage != "" ? basePage + ".Server" : "haquery.server.HaqPage") + ";
-#else
-typedef BasePage = " + (basePage != "" ? basePage + ".Client" : "haquery.client.HaqPage") + ";
-#end
-
-class Generated
-{
-	public static inline var staticUrlPrefix = \"" + staticUrlPrefix + "\";
-}");
+			File.saveContent("gen/haquery/common/Generated.hx", "package haquery.common;\n\nclass Generated\n{\npublic static inline var staticUrlPrefix = \"" + staticUrlPrefix + "\";\n}");
+			
+			fs.createDirectory("gen/haquery/server");
+			File.saveContent("gen/haquery/server/BasePage.hx", "package haquery.server;\n\ntypedef BasePage = " + (basePage != "" ? basePage + ".Server" : "haquery.server.HaqPage") + ";\n");
+			
+			fs.createDirectory("gen/haquery/client");
+			File.saveContent("gen/haquery/client/BasePage.hx", "package haquery.client;\n\ntypedef BasePage = " + (basePage != "" ? basePage + ".Client" : "haquery.client.HaqPage") + ";\n");
 			
 			genTrm(manager);
 			generateConfigClasses(manager, noServer, noClient);

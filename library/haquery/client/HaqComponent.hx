@@ -21,7 +21,7 @@ using stdlib.StringTools;
 	{
 		super.commonConstruct(fullTag, parent, id);
 		
-		this.page = parent != null ? parent.page : cast(this, BasePage);
+		this.page = parent != null ? parent.page : cast this;
 		this.isDynamic = isDynamic;
 		
 		connectElemEventHandlers();
