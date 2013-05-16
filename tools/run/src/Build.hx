@@ -38,16 +38,28 @@ class Build
 		project = new FlashDevelopProject(projectFilePath);
 	}
 	
-	public function build(outputDir:String, jsModern:Bool, isDeadCodeElimination:Bool, staticUrlPrefix:String, noServer:Bool, noClient:Bool)
+	public function build(outputDir:String, jsModern:Bool, isDeadCodeElimination:Bool, basePage:String, staticUrlPrefix:String, noServer:Bool, noClient:Bool)
     {
         log.start("Build");
         
 		try
 		{
-			var manager = new HaqTemplateManager(log, project.allClassPaths, staticUrlPrefix);
+			var manager = new HaqTemplateManager(log, project.allClassPaths, basePage, staticUrlPrefix);
 			
 			fs.createDirectory("gen/haquery/common");
-			File.saveContent("gen/haquery/common/Generated.hx", "package haquery.common;\n\nclass Generated\n{\n\tpublic static inline var staticUrlPrefix = \"" + staticUrlPrefix + "\";\n}");
+			File.saveContent("gen/haquery/common/Generated.hx", 
+"package haquery.common;
+
+#if server
+typedef BasePage = " + (basePage != "" ? basePage + ".Server" : "haquery.server.HaqPage") + ";
+#else
+typedef BasePage = " + (basePage != "" ? basePage + ".Client" : "haquery.client.HaqPage") + ";
+#end
+
+class Generated
+{
+	public static inline var staticUrlPrefix = \"" + staticUrlPrefix + "\";
+}");
 			
 			genTrm(manager);
 			generateConfigClasses(manager, noServer, noClient);
