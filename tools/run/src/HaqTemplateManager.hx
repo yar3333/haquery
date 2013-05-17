@@ -179,6 +179,11 @@ class HaqTemplateManager
 			{
 				var tag = node.name.substr("haq:".length).replace("-", ".");
 				
+				if (node.getAttribute("__parent") == null)
+				{
+					throw new HaqTemplateNotFoundCriticalException("__parent not defined for tag 'haq:" + tag + "' in '" + parent.fullTag + "'.");
+				}
+				
 				var baseTemplate = resolveComponentTag(get(node.getAttribute("__parent")), tag);
 				if (baseTemplate == null)
 				{
