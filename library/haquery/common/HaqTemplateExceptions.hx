@@ -4,5 +4,5 @@ private class Exception extends stdlib.Exception { override function toString() 
 
 class HaqTemplateNotFoundException extends Exception {}
 class HaqTemplateNotFoundCriticalException extends Exception {}
-class HaqTemplateRecursiveExtendsException extends Exception { }
-class HaqTemplateConfigParseException extends Exception { }
+class HaqTemplateRecursiveExtendsException extends Exception {}
+class HaqTemplateConfigParseException extends Exception {}

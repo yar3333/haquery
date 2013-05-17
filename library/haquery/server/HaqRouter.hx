@@ -2,21 +2,7 @@ package haquery.server;
 
 #if server
 
-import stdlib.Exception;
-import stdlib.FileSystem;
-import haquery.common.HaqTemplateExceptions;
 using stdlib.StringTools;
-
-class HaqRouterException extends Exception
-{
-	public var code(default, null) : Int;
-	
-	public function new(code:Int)
-	{
-		super();
-		this.code = code;
-	}
-}
 
 typedef HaqRoute = 
 {
@@ -40,19 +26,16 @@ class HaqRouter
 	{
 		if (url == null) url = "";
 		
-		url = url.trim('/');
+		url = url.trim("/");
 		
-		if (url == 'index.php' 
-		 || url == 'index.n' 
-		 || url == 'index' 
-		 || url.endsWith('/index')
-		) {
-			throw new HaqRouterException(403);
+		if (url.startsWith("index.") || url == "index" || url.endsWith("/index"))
+		{
+			throw new HaqPageNotFoundException();
 		}
 		
 		if (url.indexOf(".") >= 0)
 		{
-			throw new HaqRouterException(404);
+			throw new HaqPageNotFoundException();
 		}
 		
 		var path = pagesFolderPath + "/" + (url != "" ? url : "index");
@@ -78,7 +61,7 @@ class HaqRouter
 		
 		if (!isPageExist(path))
 		{
-			throw new HaqRouterException(404);
+			throw new HaqPageNotFoundException();
 		}
 		
 		return { path:path, fullTag:path.replace("/", "."), pageID:pageID };
@@ -91,7 +74,7 @@ class HaqRouter
 			var template = manager.get(path.replace("/", "."));
 			return template != null;
 		}
-		catch (e:HaqTemplateNotFoundException)
+		catch (e:haquery.common.HaqTemplateExceptions.HaqTemplateNotFoundException)
 		{
 			return false;
 		}
