@@ -33,6 +33,11 @@ class Lib
     
 	public static function run() : Void
     {
+		runPage(Web.getURI());
+    }
+	
+	public static function runPage(uri:String)
+	{
 		#if neko
 		Sys.setCwd(getCwd());
 		#end
@@ -46,76 +51,47 @@ class Lib
         {
 			haxe.Log.trace = callback(HaqTrace.log, _, getClientIP(), config.filterTracesByIP, null, _);
 			
-			try
+			if (manager == null)
 			{
-				if (manager == null)
-				{
-					manager = new HaqTemplateManager();
-				}
-				
-				var uri = Web.getURI();
-				if (uri.startsWith("/haquery-"))
-				{
-					HaqSystem.run(uri.trim("/"), config);
-				}
-				else
-				{
-					var route = new HaqRouter(HaqDefines.folders.pages, manager).getRoute(uri);
-					
-					var bootstraps = loadBootstraps(route.path, config);
-					
-					haxe.Log.trace = callback(HaqTrace.log, _, getClientIP(), config.filterTracesByIP, null, _);
-					
-					var request = getRequest(route, config);
-					var response = runPage(request, route, bootstraps).response;
-					
-					if (response != null)
-					{
-						Web.setReturnCode(response.statusCode);
-						response.responseHeaders.send();
-						response.cookie.send();
-						NativeLib.print(
-							!request.isPostback 
-								? response.content 
-								: Serializer.run(HaqMessageListenerAnswer.CallSharedServerMethodAnswer(response.ajaxResponse, response.result))
-						);
-					}
-				}
+				manager = new HaqTemplateManager();
 			}
-			catch (e:HaqRouterException)
+			
+			if (uri.startsWith("/haquery-"))
 			{
-				Web.setReturnCode(e.code);
-				NativeLib.println("<h1>Error " + e.code + "</h1>");
+				HaqSystem.run(uri.trim("/"), config);
+			}
+			else
+			{
+				var route = new HaqRouter(HaqDefines.folders.pages, manager).getRoute(uri);
+				
+				var bootstraps = loadBootstraps(route.path, config);
+				
+				haxe.Log.trace = callback(HaqTrace.log, _, getClientIP(), config.filterTracesByIP, null, _);
+				
+				var request = getRequest(route, config);
+				var response = getResponse(request, route, bootstraps);
+				
+				if (response != null)
+				{
+					Web.setReturnCode(response.statusCode);
+					response.responseHeaders.send();
+					response.cookie.send();
+					NativeLib.print(
+						!request.isPostback 
+							? response.content 
+							: Serializer.run(HaqMessageListenerAnswer.CallSharedServerMethodAnswer(response.ajaxResponse, response.result))
+					);
+				}
 			}
         }
 		catch (e:Dynamic)
         {
-			Exception.trace(e);
+			trace(Exception.toText(e));
 			Exception.rethrow(e);
         }
-    }
-	
-	static function getRequest(route:HaqRoute, config:HaqConfig) : HaqRequest
-	{
-		var params = Web.getParams();
-		var isPostback = params.get("HAQUERY_POSTBACK") != null;
-		return new HaqRequest(
-			  route.fullTag
-			, route.pageID
-			, isPostback
-			, params
-			, new HaqCookie()
-			, new HaqRequestHeaders()
-			, getClientIP()
-			, Web.getURI()
-			, getHttpHost()
-			, Web.getParamsString()
-			, config
-			, isPostback ? Unserializer.run(params.get("HAQUERY_STORAGE")) : new HaqStorage()
-		);
 	}
 	
-	public static function runPage(request:HaqRequest, route:HaqRoute, bootstraps:Array<HaqBootstrap>) : { page:HaqPage, response:HaqResponse }
+	static function getResponse(request:HaqRequest, route:HaqRoute, bootstraps:Array<HaqBootstrap>) : HaqResponse
 	{
 		profiler = new Profiler(request.config.enableProfiling);
 		
@@ -155,7 +131,7 @@ class Lib
 		profiler.end();
 		profiler.traceResults();	
 			
-		return { page:page, response:response };
+		return response;
 	}
 	
     /**
@@ -187,20 +163,24 @@ class Lib
 		return bootstraps;
     }
 	
-	public static function getCompilationDate() : Date
+	static function getRequest(route:HaqRoute, config:HaqConfig) : HaqRequest
 	{
-		#if php
-		var path = getCwd() + "/index.php";
-		#elseif neko
-		var path = getCwd() + "/index.n";
-		#end
-		
-		if (FileSystem.exists(path))
-		{
-			return FileSystem.stat(path).mtime;
-		}
-		
-		throw "File '" + Path.withoutDirectory(path) + "' not found.";
+		var params = Web.getParams();
+		var isPostback = params.get("HAQUERY_POSTBACK") != null;
+		return new HaqRequest(
+			  route.fullTag
+			, route.pageID
+			, isPostback
+			, params
+			, new HaqCookie()
+			, new HaqRequestHeaders()
+			, getClientIP()
+			, Web.getURI()
+			, getHttpHost()
+			, Web.getParamsString()
+			, config
+			, isPostback ? Unserializer.run(params.get("HAQUERY_STORAGE")) : new HaqStorage()
+		);
 	}
 	
 	static function getClientIP() : String
