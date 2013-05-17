@@ -2,7 +2,7 @@ package haquery.server;
 
 #if server
 
-class HaqRequest implements Dynamic
+class HaqRequest
 {
 	public var pageFullTag : String;
 	
