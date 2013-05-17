@@ -165,7 +165,7 @@ class HaqTemplateParser
 			}
 		}
 		
-		if (r.extend == fullTag && fullTag == basePage)
+		if (r.extend == fullTag)
 		{
 			r.extend = "";
 		}
