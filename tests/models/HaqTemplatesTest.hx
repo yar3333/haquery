@@ -6,8 +6,7 @@ import haquery.server.HaqComponent;
 import haquery.server.HaqTemplateManager;
 import haquery.server.Lib;
 import haquery.common.HaqDefines;
-
-using haquery.StringTools;
+using stdlib.StringTools;
 
 class HaqTemplatesTest extends TestCase
 {
