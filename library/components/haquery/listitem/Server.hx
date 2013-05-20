@@ -2,7 +2,6 @@ package components.haquery.listitem;
 
 import haquery.server.Lib;
 import haquery.server.HaqComponent;
-import haquery.server.HaqTemplateManager;
 import haxe.htmlparser.HtmlDocument;
 import haxe.htmlparser.HtmlNodeElement;
 

@@ -6,13 +6,10 @@ import haquery.common.HaqStorage;
 import haxe.Unserializer;
 import stdlib.Exception;
 import js.JQuery;
-import haxe.htmlparser.HtmlDocument;
 import haxe.htmlparser.HtmlNodeElement;
 import haquery.common.HaqDefines;
 import haquery.client.HaqInternals;
-import haquery.client.HaqTemplateManager;
 import haquery.client.HaqComponent;
-import haquery.client.HaqElemEventManager;
 import stdlib.Std;
 using stdlib.StringTools;
 
@@ -43,10 +40,18 @@ class Client extends BaseClient
 		var parentElem:JQuery = dynamicParams.parentElem;
 		var html:String = dynamicParams.html;
 		var params:Dynamic = dynamicParams.params;
+		var append:Bool = dynamicParams.append;
 		
 		var doc = Tools.applyHtmlParams(html, Std.hash(params));
 		childComponents = prepareDoc(parent.page.storage, parent.parent.fullTag, parent.prefixID + id + HaqDefines.DELIMITER, doc);
-		parentElem.append(doc.innerHTML);
+		if (append)
+		{
+			parentElem.append(doc.innerHTML);
+		}
+		else
+		{
+			parentElem.prepend(doc.innerHTML);
+		}
 		
 		super.construct(fullTag, parent, id, isDynamic, dynamicParams);
 	}
