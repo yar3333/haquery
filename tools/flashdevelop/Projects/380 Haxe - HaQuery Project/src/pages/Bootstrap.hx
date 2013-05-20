@@ -2,18 +2,13 @@ package pages;
 
 class Bootstrap extends haquery.server.HaqBootstrap
 {
-	override function init(request:haquery.server.HaqRequest)
+	override function start(request:haquery.server.HaqRequest)
 	{
-		// Here db is not yet connected. Tune config if need.
-		// config.databaseConnectionString = "mySpecialConnection";
+		// here you can tune configuration
+		// config.customs.set("myKey", "myValue");
 	}
     
-	override function start()
-    {
-		// code to run before page processing
-    }
-    
-    override function finish()
+    override function finish(page:haquery.server.BasePage)
     {
 		// code to run after page processing
     }
