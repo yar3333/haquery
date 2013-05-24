@@ -27,6 +27,8 @@ using stdlib.StringTools;
 	
     static function trace(v:Dynamic, ?pos : haxe.PosInfos) : Void
     {
+		#if debug
+		
 		var s = (pos != null ? pos.fileName + ":" + pos.lineNumber + ": " : "") + (Std.is(v, String) ? cast(v, String) : HaqDumper.getDump(v));
 		
 		untyped __js__("
@@ -34,7 +36,49 @@ using stdlib.StringTools;
 			{
 				console.log(s);
 			}
+			else
+			{
+				var ie = (function(){
+
+					var undef,
+						v = 3,
+						div = document.createElement('div'),
+						all = div.getElementsByTagName('i');
+					
+					while (
+						div.innerHTML = '<!--[if gt IE ' + (++v) + ']><i></i><![endif]-->',
+						all[0]
+					);
+					
+					return v > 4 ? v : undef;
+					
+				}());
+				
+				if (ie < 9)
+				{
+					if (jQuery('#console').length == 0)
+					{
+						
+						jQuery('body').append('<pre id=\"console\" style=\"position:absolute; top:0; left:0; width:500px; height:500px; overflow:scroll; background-color:white; font:12px monospace; z-index:99999; display:none\"></pre>');
+						jQuery(document).keydown(function(e)
+						{
+							if (e.ctrlKey && e.which == 192)
+							{
+								if (jQuery('#console').is(':visible'))
+									jQuery('#console').hide();
+								else
+									jQuery('#console').show();
+							}
+						});
+					}
+					var needScrollDown = jQuery('#console').scrollTop() < jQuery('#console')[0].scrollHeight;
+					jQuery('#console').append(StringTools.htmlEscape(s) + '<br/>');
+					if (needScrollDown) jQuery('#console').scrollTop(jQuery('#console')[0].scrollHeight);
+				}
+			}
 		");
+		
+		#end
     }
 
 	public static inline function confirm( v : Dynamic ) : Bool
