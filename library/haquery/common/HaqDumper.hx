@@ -32,6 +32,15 @@ class HaqDumper
 					}
 				}
 				else
+				if (c == List)
+				{
+					s = "LIST(" + Lambda.count(v) + ")\n";
+					for (item in cast(v, List<Dynamic>))
+					{
+						s += prefix + getDump(item, limit, level + 1, prefix);
+					}
+				}
+				else
 				if (c == Hash)
 				{
 					s = "HASH\n";
