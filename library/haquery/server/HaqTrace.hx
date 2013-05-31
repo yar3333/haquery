@@ -17,7 +17,7 @@ class HaqTrace
 		{
 			var text = object2string(v, pos);
 			
-			if (page != null && text != '')
+			if (page != null && text != '' && (page.contentType.startsWith("text/html;") || page.contentType == "text/html"))
 			{
 				if (text.startsWith("EXCEPTION") || text.startsWith("ERROR"))
 				{
