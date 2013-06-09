@@ -11,7 +11,7 @@ using stdlib.StringTools;
 
 class HaqTrace 
 {
-	public static function log(v:Dynamic, clientIP:String, filterTracesByIP:String, ?page:HaqPage, ?pos:PosInfos)
+	public static function log(v:Dynamic, ?clientIP:String, ?filterTracesByIP:String, ?page:HaqPage, ?pos:PosInfos)
 	{
 		if (clientIP == null || filterTracesByIP == null || filterTracesByIP == "" || filterTracesByIP == clientIP)
 		{
