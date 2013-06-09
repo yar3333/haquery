@@ -47,7 +47,7 @@ class Build
 			var manager = new HaqTemplateManager(log, project.allClassPaths, basePage, staticUrlPrefix);
 			
 			fs.createDirectory("gen/haquery/common");
-			File.saveContent("gen/haquery/common/Generated.hx", "package haquery.common;\n\nclass Generated\n{\npublic static inline var staticUrlPrefix = \"" + staticUrlPrefix + "\";\n}");
+			File.saveContent("gen/haquery/common/Generated.hx", "package haquery.common;\n\nclass Generated\n{\n\tpublic static inline var staticUrlPrefix = \"" + staticUrlPrefix + "\";\n}");
 			
 			fs.createDirectory("gen/haquery/server");
 			File.saveContent("gen/haquery/server/BasePage.hx", "package haquery.server;\n\ntypedef BasePage = " + (basePage != "" ? basePage + ".Server" : "haquery.server.HaqPage") + ";\n");
