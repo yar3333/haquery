@@ -58,6 +58,11 @@ class HaqPage extends HaqComponent
 	public var disableSystemHtmlInserts = false;
 	
 	/**
+	 * Disable inserting "<script src='.../jquery.js'></script>" to your HTML pages.
+	 */
+	public var disableJqueryRegistering = false;
+	
+	/**
 	 * Js code to response.
 	 */
 	var ajaxResponse(default, null) : String;
@@ -82,7 +87,7 @@ class HaqPage extends HaqComponent
 		ajaxResponse = "";
 		responseHeaders = new HaqResponseHeaders();
 		session = new HaqSession(this);
-		registeredScripts = [ "haquery/client/jquery.js", "haquery/client/haquery.js" ];
+		registeredScripts = [ "haquery/client/haquery.js" ];
 		registeredStyles = [ "haquery/client/haquery.css" ];
 	}
 	
@@ -148,7 +153,7 @@ class HaqPage extends HaqComponent
 				var tagIDs = HaqComponentTools.fillTagIDs(this, new Hash<Array<String>>());
 				
 				insertStyles(registeredStyles);
-				insertScripts(registeredScripts);
+				insertScripts(!disableJqueryRegistering ? [ "haquery/client/jquery.js" ].concat(registeredScripts) : registeredScripts);
 				insertInitBlock(
 					  "<script>\n"
 					+ "if(typeof haquery=='undefined') alert('haquery.js must be loaded!');\n"
@@ -181,7 +186,7 @@ class HaqPage extends HaqComponent
             if (head.children.length > 0)
             {
                 child = head.children[0];
-                while (child != null && child.name != "link" && (child.getAttribute("rel") != "stylesheet" || child.getAttribute("type") != "text/css"))
+                while (child != null && !(child.name == "link" && (child.getAttribute("rel") == "stylesheet" || child.getAttribute("type") == "text/css")))
                 {
                     child = child.getNextSiblingElement();
                 }
@@ -190,7 +195,7 @@ class HaqPage extends HaqComponent
         }
         else
         {
-            doc.addChild(new HtmlNodeText(text + "\n"));
+            doc.addChild(new HtmlNodeText(text + "\n"), doc.nodes.length > 0 ? doc.nodes[0] : null);
         }
     }
     
@@ -214,7 +219,16 @@ class HaqPage extends HaqComponent
         }
         else
         {
-            doc.addChild(new HtmlNodeText(text + "\n"));
+            var child : HtmlNodeElement = null;
+            if (doc.children.length > 0)
+            {
+                child = doc.children[0];
+                while (child != null && child.name == "link"  && (child.getAttribute("rel") == "stylesheet" || child.getAttribute("type") == "text/css"))
+                {
+                    child = child.getNextSiblingElement();
+                }
+            }
+            doc.addChild(new HtmlNodeText(text + "\n"), child);
         }
     }
     
