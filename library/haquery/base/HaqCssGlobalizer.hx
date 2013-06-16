@@ -14,19 +14,17 @@ class HaqCssGlobalizer
 	
 	public function className(name:String) : String
 	{
-        if (name == null)
-		{
-			return "";
-		}
+		#if client
+		if (!Std.is(name, String)) return name;
+		#end
 		return ~/[~]/g.replace(name, prefix);
 	}
 
 	public function selector(selector:String) : String
 	{
-        if (selector == null)
-		{
-			return "";
-		}
+		#if client
+        if (!Std.is(selector, String)) return selector;
+		#end
 		return ~/[.][~]/g.replace(selector, "." + prefix);
 	}
 }
