@@ -179,7 +179,6 @@ using stdlib.StringTools;
 		{
 			return new HaqQuery(this, cssGlobalizer, '', null);
 		}
-        
 		
 		if (Type.getClass(query) == HtmlNodeElement)
 		{
@@ -187,13 +186,13 @@ using stdlib.StringTools;
 			return new HaqQuery(this, cssGlobalizer, "", [ query ]);
 		}
 		
-		if (Type.getClass(query) == Array)
+		if (Std.is(query, Array))
 		{
 			Std.assert(!page.isPostback, "Calling of the HaqComponent.q() with Array parameter do not possible on the postback.");
 			return new HaqQuery(this, cssGlobalizer, "", query);
 		}
         
-		if (Type.getClass(query) == String)
+		if (Std.is(query, String))
 		{
 			
 			var nodes = doc.find(cssGlobalizer.selector(query));
