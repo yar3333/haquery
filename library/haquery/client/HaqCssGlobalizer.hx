@@ -18,7 +18,7 @@ class HaqCssGlobalizer extends haquery.base.HaqCssGlobalizer
 			jq.has			= function(arg) return            jQuery.fn.has.call(jq, self.selector(arg));
 			jq.is			= function(arg) return            jQuery.fn.is.call(jq, self.selector(arg));
 			jq.not			= function(arg) return self.fixJq(jQuery.fn.not.call(jq, self.selector(arg)));
-			jq.parent		= function(arg) return self.fixJq(jQuery.fn.parent.call(jq, self.selector(arg)));
+			jq.parent		= function()    return self.fixJq(jQuery.fn.parent.call(jq));
 		}
 		
 		return jq;
