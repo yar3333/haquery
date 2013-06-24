@@ -30,7 +30,7 @@
   <!-- haxelib libraries -->
   <haxelib>
     <library name="HtmlParser" />
-    <library name="WebSocket" />
+    <library name="stdlib" />
   </haxelib>
   <!-- Class files to compile (other referenced classes will automatically be included) -->
   <compileTargets>
