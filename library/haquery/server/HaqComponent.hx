@@ -210,7 +210,7 @@ using stdlib.StringTools;
 		Std.assert(page.isPostback, "HaqComponent.callSharedMethod() allowed on the postback only.");
         
         page.addAjaxResponse(
-			  "haquery.client.Lib.page." + (fullID != "" ? "findComponent('" + fullID + "')." : "") + method
+			  "page." + (fullID != "" ? "findComponent('" + fullID + "')." : "") + method
 			+ "(" + Lambda.map(params != null ? params : [], function(p) return "haquery.client.HaqInternals.unserialize('" + Serializer.run(p) + "')").join(",") + ');'
 		);
 	}

@@ -10,19 +10,13 @@ using stdlib.StringTools;
 
 @:keep @:expose class Lib
 {
-	public static var ajax(default, null) : HaqServerCallerAjax;
-	
-	public static var page(default, null) : BasePage;
 	public static var manager(default, null) : HaqTemplateManager;
 	
 	static public function run(pageFullTag:String)
     {
 		haxe.Log.trace = haquery.client.Lib.trace;
-        
-		ajax = new HaqServerCallerAjax();
-		
 		manager = new HaqTemplateManager();
-		page = cast manager.createPage(pageFullTag);
+		manager.createPage(pageFullTag);
     }
 	
     static function trace(v:Dynamic, ?pos : haxe.PosInfos) : Void

@@ -280,7 +280,7 @@ class HaqPage extends HaqComponent
     {
         if (isPostback)
 		{
-			addAjaxResponse("haquery.client.Lib.page.redirect('" + url.addcslashes() + "');");
+			addAjaxResponse("page.redirect('" + url.addcslashes() + "');");
 		}
         else
 		{
