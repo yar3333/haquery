@@ -14,8 +14,11 @@ using stdlib.StringTools;
 
 class HaqServerCallerAjax
 {
-	public function new()
+	var page : HaqPage;
+	
+	public function new(page:HaqPage)
 	{
+		this.page = page;
 	}
 	
 	public function callSharedMethod(componentID:String, method:String, ?params:Array<Dynamic>, ?callb:Dynamic->Void) : Void
@@ -27,6 +30,7 @@ class HaqServerCallerAjax
 			switch (message)
 			{
 				case HaqMessageListenerAnswer.CallSharedServerMethodAnswer(ajaxResponse, result):
+					var page = this.page;
 					Lib.eval(ajaxResponse);
 					if (callb != null)
 					{
@@ -47,7 +51,7 @@ class HaqServerCallerAjax
 			,HAQUERY_COMPONENT: componentID
 			,HAQUERY_METHOD: method
 			,HAQUERY_PARAMS: Serializer.run(params)
-			,HAQUERY_STORAGE: Serializer.run(Lib.page.storage.getStorageToSend())
+			,HAQUERY_STORAGE: Serializer.run(page.storage.getStorageToSend())
 		};
 
         var sendedElements = getElemsForSendToServer();

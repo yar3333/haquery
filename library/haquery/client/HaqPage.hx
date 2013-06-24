@@ -12,11 +12,14 @@ class HaqPage extends HaqComponent
 
     public var storage(default, null) : HaqStorage;
     
+	public var ajax(default, null) : HaqServerCallerAjax;
+	
 	public function new()
     {
 		super();
 		cookie = new HaqCookie();
 		storage = HaqInternals.storage;
+		ajax = new HaqServerCallerAjax(this);
     }
     
     public function redirect(url:String) : Void

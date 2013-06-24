@@ -64,7 +64,7 @@ using stdlib.StringTools;
 	 */
 	public function callSharedServerMethod(method:String, params:Array<Dynamic>, success:Dynamic->Void, fail:Exception->Void) : Void
 	{
-		Lib.ajax.callSharedMethod(fullID, method, params, success);
+		page.ajax.callSharedMethod(fullID, method, params, success);
 	}
 	
 	/**
