@@ -350,29 +350,32 @@ class HaqQuery
             {
                 if (nodes[0].hasAttribute("style"))
 				{
-					var re = new EReg("\\b(" + name + ")\\b\\s*:\\s*(.*?)\\s*;", '');
+					var re = new EReg("(?:^|;)\\s*(?:" + name + ")\\s*:\\s*(.*?)\\s*(?:$|;)", "");
 					if (re.match(nodes[0].getAttribute("style"))) return re.matched(1);
 				}
             }
             return null;
         }
 
-        var re = new EReg("\\b(" + name + ")\\b\\s*:\\s*(.*?)\\s*(;|$)", '');
 		for (node in nodes)
         {
-			var sStyles = node.hasAttribute("style") ? node.getAttribute("style") : "";
-			if (re.match(sStyles))
+			var style = node.hasAttribute("style") ? node.getAttribute("style") : "";
+			var arr = style.split(";");
+			var found = false;
+			for (i in 0...arr.length)
 			{
-				sStyles = re.replace((val != '' && val != null) ? name + ": " + val + ";" : '', sStyles);
-			}
-			else
-			{
-				if (val != null && val != '')
+				var kv = arr[i].split(":");
+				if (kv[0].trim() == name && kv.length > 1)
 				{
-					sStyles =  name + ": " + val + "; " + sStyles;
+					arr[i] = kv[0] + ":" + val;
+					found = true;
+					break;
 				}
 			}
-            node.setAttribute("style", sStyles);
+			
+			if (!found) arr.push(name + ":" + val);
+			
+            node.setAttribute("style", arr.join(";"));
         }
 
         if (page.isPostback)
