@@ -43,12 +43,7 @@ using stdlib.StringTools;
 		
 		if (arg != null && arg != "" && Std.is(arg, String))
 		{
-			var selector : String = arg;
-			if (selector != null && prefixID != '')
-			{
-				selector = selector.replace('#', '#' + prefixID);
-			}
-			arg = cssGlobalizer.selector(selector);
+			arg = cssGlobalizer.selector(arg.replace('#', '#' + prefixID));
 		}
 		
 		return cssGlobalizer.fixJq(new HaqQuery(arg, base));
