@@ -128,7 +128,7 @@ using stdlib.StringTools;
 			return "";
 		}
         
-		if (page.config.isTraceComponent) trace("render " + fullID);
+		if (page.config.logLevel >= 3) trace("HAQUERY render [" + fullID + "/" + fullTag + "]");
 		
 		HaqComponentTools.expandDocElemIDs(prefixID, doc);
 		if (parent != null && innerNode != null)

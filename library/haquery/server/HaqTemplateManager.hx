@@ -57,6 +57,8 @@ class HaqTemplateManager
 	
 	function newComponent(template:HaqTemplate, parent:HaqComponent, id:String, attr:Hash<Dynamic>, parentNode:HtmlNodeElement, isCustomRender:Bool) : HaqComponent
 	{
+		if (parent != null && parent.page.config.logLevel >= 3) trace("HAQUERY newComponent [" + parent.prefixID + id + "/" + template.fullTag + "]");
+		
         Lib.profiler.begin('newComponent');
 			Std.assert(template != null, "Template for id = '" + id + "' not found.");
 			
