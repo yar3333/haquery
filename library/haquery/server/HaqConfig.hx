@@ -21,11 +21,15 @@ class HaqConfig
 	
     public var enableProfiling = false;
 	
-	/**
-     * Trace when components renders.
+    /**
+     * 0 - no output;
+	 * 1 - log user traces (server traces don't send to the client);
+	 * 2 - also send server traces to browser console;
+	 * 3 - also log system traces.
+	 * Default is 2.
      */
-    public var isTraceComponent = false;
-
+	public var logLevel = 2;
+	
 	/**
      * User-defined data.
      */
@@ -63,8 +67,8 @@ class HaqConfig
 						case "enableProfiling":
 							enableProfiling = Std.bool(value);
 						
-						case "isTraceComponent":
-							isTraceComponent = Std.bool(value);
+						case "logLevel":
+							logLevel = Std.parseInt(value);
 						
 						case "filterTracesByIP":
 							filterTracesByIP = value;
