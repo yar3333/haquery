@@ -174,6 +174,10 @@ class Build
 		{
 			fs.rename(clientPath + "/haquery.js", clientPath + "/haquery.js.old");
 		}
+		if (FileSystem.exists(clientPath + "/haquery.js.map"))
+		{
+			fs.rename(clientPath + "/haquery.js.map", clientPath + "/haquery.js.map.old");
+		}
 		
 		fs.createDirectory(clientPath);
         
@@ -198,8 +202,12 @@ class Build
 			fs.restoreFileTimes(clientPath + "/haquery.js.old", clientPath + "/haquery.js");
 			fs.deleteFile(clientPath + "/haquery.js.old");
 		}
-		
-		fs.deleteFile(clientPath + "/haquery.js.map");
+		if (FileSystem.exists(clientPath + "/haquery.js.map")
+		 && FileSystem.exists(clientPath + "/haquery.js.map.old"))
+		{
+			fs.restoreFileTimes(clientPath + "/haquery.js.map.old", clientPath + "/haquery.js.map");
+			fs.deleteFile(clientPath + "/haquery.js.map.old");
+		}
 		
 		if (r.exitCode == 0)
 		{
