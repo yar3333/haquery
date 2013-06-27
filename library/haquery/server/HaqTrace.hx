@@ -63,7 +63,7 @@ class HaqTrace
 	{
 		if (page != null)
 		{
-			page.addAjaxResponse("if (console) console." + type + "(decodeURIComponent('" + StringTools.urlEncode(text) + "'));");
+			page.addAjaxResponse("if (typeof console !== 'undefined') console." + type + "(decodeURIComponent('" + StringTools.urlEncode(text) + "'));");
 		}
 	}
 	

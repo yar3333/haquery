@@ -25,7 +25,7 @@ using stdlib.StringTools;
 		
 		var s = (pos != null ? pos.fileName + ":" + pos.lineNumber + ": " : "") + (Std.is(v, String) ? cast(v, String) : HaqDumper.getDump(v));
 		
-		untyped __js__("if (console) console.log(s)");
+		untyped __js__("if (typeof console !== 'undefined') console.log(s)");
 		
 		#end
     }
