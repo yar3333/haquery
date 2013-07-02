@@ -88,9 +88,9 @@ using stdlib.StringTools;
 		{
 			var v : Dynamic = params.get(k);
 			k = k.toLowerCase();
-			if (fields.exists(k) || fields.exists(k + "_"))
+			if (fields.exists(k))
 			{
-				var field = fields.exists(k) ? fields.get(k) : fields.get(k + "_");
+				var field = fields.get(k);
 				switch (Type.typeof(Reflect.field(this, field)))
 				{
 					case ValueType.TInt:    v = Std.is(v, Int) ? v : Std.parseInt(v);
