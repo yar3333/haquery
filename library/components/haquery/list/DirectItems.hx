@@ -36,4 +36,21 @@ class DirectItems
 	{
 		return list.iterator();
 	}
+	
+	public function remove(id:String) : Bool
+	{
+		if (hash.remove(id))
+		{
+			for (i in 0...list.length)
+			{
+				if (list[i].id == id)
+				{
+					list.splice(i, 1);
+					break;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
 }

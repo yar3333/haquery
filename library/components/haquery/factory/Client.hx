@@ -13,4 +13,12 @@ class Client extends BaseClient
 		page.storage.setInstanceVar(this, "length", n + 1);
 		return r;
 	}
+	
+	public function clear()
+	{
+		while (components.iterator().hasNext())
+		{
+			components.remove(components.iterator().next().id);
+		}
+	}
 }
