@@ -136,4 +136,9 @@ class Client extends BaseClient
 			Lib.manager.createComponent(this, c.fullTag, c.id, true);
 		}
 	}
+	
+	public function remove()
+	{
+		parent.components.remove(id);
+	}
 }

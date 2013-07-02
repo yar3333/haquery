@@ -65,4 +65,14 @@ class LazyItems
 	{
 		return new LazyItemsIterator(length, this);
 	}
+	
+	public function remove(id:String) : Bool
+	{
+		if (hash.remove(id))
+		{
+			length--;
+			return true;
+		}
+		return false;
+	}
 }
