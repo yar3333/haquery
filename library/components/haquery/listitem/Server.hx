@@ -9,8 +9,7 @@ class Server extends Base
 {
 	override public function construct(fullTag:String, parent:HaqComponent, id:String, doc:HtmlDocument, params:Hash<Dynamic>, innerNode:HtmlNodeElement, isInnerComponent:Bool):Void 
 	{
-        var xml = Tools.applyHtmlParams(innerNode.innerHTML, params);
-        super.construct(fullTag, parent, id, xml, params, null, isInnerComponent);
+        super.construct(fullTag, parent, id, new HtmlDocument(Tools.applyHtmlParams(innerNode.innerHTML, params)), params, null, isInnerComponent);
 	}
     
 	override function createChildComponents()

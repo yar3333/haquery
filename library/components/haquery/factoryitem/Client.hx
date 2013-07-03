@@ -3,6 +3,7 @@ package components.haquery.factoryitem;
 import haquery.client.Lib;
 import haquery.common.HaqComponentTools;
 import haquery.common.HaqStorage;
+import haxe.htmlparser.HtmlDocument;
 import haxe.Unserializer;
 import stdlib.Exception;
 import js.JQuery;
@@ -42,7 +43,7 @@ class Client extends BaseClient
 		var params:Dynamic = dynamicParams.params;
 		var append:Bool = dynamicParams.append;
 		
-		var doc = Tools.applyHtmlParams(html, Std.hash(params));
+		var doc = new HtmlDocument(Tools.applyHtmlParams(html, params));
 		childComponents = prepareDoc(parent.page.storage, parent.parent.fullTag, parent.prefixID + id + HaqDefines.DELIMITER, doc);
 		if (append)
 		{

@@ -23,7 +23,7 @@ class HaqTemplateManager
 		return new HaqTemplate(fullTag);
 	}
 	
-	public function createPage(pageFullTag:String, attr:Hash<Dynamic>) : HaqPage
+	public function createPage(pageFullTag:String, attr:Dynamic) : HaqPage
 	{
         var template = get(pageFullTag);
 		Std.assert(template != null, "HAQUERY ERROR could't find page '" + pageFullTag + "'.");
@@ -42,7 +42,7 @@ class HaqTemplateManager
 		return page;
 	}
 	
-	public function createComponent(parent:HaqComponent, tag:String, id:String, attr:Hash<Dynamic>, parentNode:HtmlNodeElement, isCustomRender:Bool) : HaqComponent
+	public function createComponent(parent:HaqComponent, tag:String, id:String, attr:Dynamic, parentNode:HtmlNodeElement, isCustomRender:Bool) : HaqComponent
 	{
         try
 		{
@@ -55,8 +55,10 @@ class HaqTemplateManager
 		}
 	}
 	
-	function newComponent(template:HaqTemplate, parent:HaqComponent, id:String, attr:Hash<Dynamic>, parentNode:HtmlNodeElement, isCustomRender:Bool) : HaqComponent
+	function newComponent(template:HaqTemplate, parent:HaqComponent, id:String, attr:Dynamic, parentNode:HtmlNodeElement, isCustomRender:Bool) : HaqComponent
 	{
+		Std.assert(attr == null || !Std.is(attr, Hash));
+		
 		if (parent != null && parent.page.config.logLevel >= 3) trace("HAQUERY newComponent [" + parent.prefixID + id + "/" + template.fullTag + "]");
 		
         Lib.profiler.begin('newComponent');
@@ -91,7 +93,7 @@ class HaqTemplateManager
             
             if (node.name.startsWith('haq:'))
             {
-				r.push(createComponent(parent, HaqComponentTools.htmlTagToFullTag(node.name.substr('haq:'.length)), node.getAttribute('id'), node.getAttributesAssoc(), node, isCustomRender));
+				r.push(createComponent(parent, HaqComponentTools.htmlTagToFullTag(node.name.substr('haq:'.length)), node.getAttribute('id'), node.getAttributesObject(), node, isCustomRender));
             }
 			else
 			{
