@@ -7,7 +7,7 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^[^.]*$ index.php [L,QSA]
 
 Order Deny,Allow
-<FilesMatch "^temp/haquery.log$|^temp/templates/|(^|/)config.xml$">
+<FilesMatch "^temp/haquery.log$|(^|/)config.xml$">
     Deny from all
 </FilesMatch>
 Allow from all
