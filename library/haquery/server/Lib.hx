@@ -105,7 +105,7 @@ class Lib
 			profiler.begin("page");
 				trace("HAQUERY START page = " + route.fullTag +  ", HTTP_HOST = " + request.host + ", clientIP = " + request.clientIP + ", pageID = " + route.pageID);
 				
-				var page = manager.createPage(route.fullTag, Std.hash(request));
+				var page = manager.createPage(route.fullTag, request);
 				
 				haxe.Log.trace = callback(HaqTrace.log, _, page.clientIP, page.config.filterTracesByIP, page, _);
 				

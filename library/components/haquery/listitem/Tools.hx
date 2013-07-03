@@ -4,34 +4,35 @@ import haxe.htmlparser.HtmlDocument;
 
 class Tools
 {
-    static public function applyHtmlParams(html:String, params:Hash<Dynamic>) : HtmlDocument
+    @:isVar static var reHtmlParam(get_reHtmlParam, null) : EReg;
+	static function get_reHtmlParam()
+	{
+		if (reHtmlParam == null)
+		{
+			reHtmlParam = new EReg("[{]([_a-z][_a-z0-9]*)[}]", "i");
+		}
+		return reHtmlParam;
+	}
+	
+	static public function applyHtmlParams(html:String, params:Dynamic) : String
     {
         if (params != null)
 		{
-            var reConsts = new EReg("[{]([_a-zA-Z][_a-zA-Z0-9]*)[}]", "");
-            
-            html = reConsts.customReplace(html, function(re) 
+            html = reHtmlParam.customReplace(html, function(re) 
             {
-                var const = re.matched(1);
-                if (params.exists(const))
+                var param = re.matched(1);
+                if (Reflect.isFunction(Reflect.field(params, "get_" + param)))
                 {
-					return Std.string(params.get(const));
+					return Std.string(Reflect.callMethod(params, Reflect.field(params, "get_" + param), []));
+				}
+				else
+                if (Reflect.hasField(params, param))
+                {
+					return Std.string(Reflect.field(params, param));
                 }
                 return re.matched(0);
             });
         }
-        
-        var xml = null;
-        try
-        {
-            xml = new HtmlDocument(html);
-        }
-        catch (e:Dynamic)
-        {
-            trace("XML parse error:\n" + html);
-            xml = new HtmlDocument("XML parse error.");
-        }
-        
-        return xml;
+        return html;
     }
 }

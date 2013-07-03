@@ -37,7 +37,7 @@ class Server extends BaseServer
         Std.assert(!page.isPostback, "Component creating on the postback is not supported.");
 		
 		var n = length;
-		var r = Lib.manager.createComponent(this, "components.haquery.listitem", Std.string(n), Std.hash(params), getItemInnerNode(), true);
+		var r = Lib.manager.createComponent(this, "components.haquery.listitem", Std.string(n), params, getItemInnerNode(), true);
 		page.storage.setInstanceVar(this, "length", n + 1);
 		return r;
 	}

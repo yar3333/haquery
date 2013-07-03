@@ -55,7 +55,7 @@ using stdlib.StringTools;
 		visible = true;
 	}
     
-    public function construct(fullTag:String, parent:HaqComponent, id:String, doc:HtmlDocument, params:Hash<Dynamic>, innerNode:HtmlNodeElement, isInnerComponent:Bool) : Void
+    public function construct(fullTag:String, parent:HaqComponent, id:String, doc:HtmlDocument, params:Dynamic, innerNode:HtmlNodeElement, isInnerComponent:Bool) : Void
     {
 		super.commonConstruct(fullTag, parent, id);
 		
@@ -80,25 +80,39 @@ using stdlib.StringTools;
 		Lib.profiler.end();
     }
 	
-	function loadFieldValues(params:Hash<Dynamic>) : Void
+	function loadFieldValues(params:Dynamic) : Void
 	{
-		var fields = HaqComponentTools.getFieldsToLoadParams(this);
+		var fieldNames = HaqComponentTools.getFieldNamesToLoadParams(this);
+		var paramNames = HaqComponentTools.getParamNames(params);
 		
-		for (k in params.keys())
+		for (fieldNameLC in fieldNames.keys())
 		{
-			var v : Dynamic = params.get(k);
-			k = k.toLowerCase();
-			if (fields.exists(k))
+			var fieldName : String = null;
+			var rawValue : Dynamic = null;
+			
+			if (paramNames.exists("get_" + fieldNameLC))
 			{
-				var field = fields.get(k);
-				switch (Type.typeof(Reflect.field(this, field)))
+				fieldName = fieldNames.get(fieldNameLC);
+				rawValue = Reflect.callMethod(params, paramNames.get("get_" + fieldNameLC), []);
+			}
+			else
+			if (paramNames.exists(fieldNameLC))
+			{
+				fieldName = fieldNames.get(fieldNameLC);
+				rawValue = Reflect.field(params, paramNames.get(fieldNameLC));
+			}
+			
+			if (fieldName != null)
+			{
+				var v : Dynamic;
+				switch (Type.typeof(Reflect.field(this, fieldName)))
 				{
-					case ValueType.TInt:    v = Std.is(v, Int) ? v : Std.parseInt(v);
-					case ValueType.TFloat:  v = Std.is(v, Float) ? v : Std.parseFloat(v);
-					case ValueType.TBool:   v = Std.bool(v);
-					default:                // nothing to do
+					case ValueType.TInt:    v = Std.is(rawValue, Int) ? rawValue : Std.parseInt(rawValue);
+					case ValueType.TFloat:  v = Std.is(rawValue, Float) ? rawValue : Std.parseFloat(rawValue);
+					case ValueType.TBool:   v = Std.bool(rawValue);
+					default:				v = rawValue;
 				}
-				Reflect.setField(this, field, v);
+				Reflect.setField(this, fieldName, v);
 			}
 		}
 	}

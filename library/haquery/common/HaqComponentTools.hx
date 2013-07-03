@@ -109,7 +109,7 @@ class HaqComponentTools
 	
     static var baseComponentFields : Array<String> = null;
 	
-	public static function getFieldsToLoadParams(component:HaqComponent) : Hash<String>
+	public static function getFieldNamesToLoadParams(component:HaqComponent) : Hash<String>
     {
 		if (baseComponentFields == null)
 		{
@@ -117,7 +117,7 @@ class HaqComponentTools
 			baseComponentFields.push('template');
 		}
 		
-		var r : Hash<String> = new Hash<String>(); // fieldname => FieldName
+		var r = new Hash<String>(); // fieldname => FieldName
         for (field in Type.getInstanceFields(Type.getClass(component)))
         {
             if (!Reflect.isFunction(Reflect.field(component, field))
@@ -130,6 +130,19 @@ class HaqComponentTools
 		
 		return r;
     }
+	
+	public static function getParamNames(params:Dynamic) : Hash<String>
+	{
+		var r = new Hash<String>(); // fieldname => FieldName
+        
+		var cls = Type.getClass(params);
+		for (param in (cls != null ? Type.getInstanceFields(cls) : Reflect.fields(params)))
+        {
+			r.set(param.toLowerCase(), param);
+        }
+		
+		return r;
+	}
 	
 	public static function expandDocElemIDs(prefixID:String, baseNode:HtmlNodeElement) : Void
     {
