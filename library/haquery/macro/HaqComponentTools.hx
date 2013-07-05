@@ -37,51 +37,51 @@ class HaqComponentTools
 	
 	public static function template(ethis:Expr)
 	{
-		var pos = Context.currentPos();
-		
-		switch (Context.typeof(ethis))
+		switch (Context.follow(Context.typeof(ethis)))
 		{
 			case Type.TInst(t, params):
 				var clas = t.get();
 				if (HaqTools.isExtendsFrom(clas, "haquery.base.HaqComponent"))
 				{
 					var typePath = { sub:null, params:[], pack:clas.pack, name:"Template" + clas.name };
-					return { expr:ExprDef.ENew(typePath, [ ethis ]), pos:pos };
+					return { expr:ExprDef.ENew(typePath, [ ethis ]), pos:ethis.pos };
+				}
+				else
+				{
+					Context.error("Error: call template() macro with a bad class not extends from haquery.base.HaqComponent ('" + Std.string(clas) + "').", ethis.pos);
 				}
 			default:
 		}
-		
-		return Context.makeExpr(null, pos);
+		Context.error("Error: call template() macro with a bad type '" + Std.string(Context.typeof(ethis)) + "'.", ethis.pos);
+		return null;
 	}
 	
 	public static function shared(ethis:Expr) : Expr
 	{
-		var pos = Context.currentPos();
-		
 		if (!Context.defined("haqueryGenCode"))
 		{
-			switch (Context.typeof(ethis))
+			switch (Context.follow(Context.typeof(ethis)))
 			{
 				case Type.TInst(t, params):
 					var clas = t.get();
 					if (HaqTools.isExtendsFrom(clas, "haquery.client.HaqComponent"))
 					{
-						return { expr:ExprDef.ENew(HaqTools.makeTypePath(clas.pack, "SharedServer"), [ ethis ]), pos:pos };
+						return { expr:ExprDef.ENew(HaqTools.makeTypePath(clas.pack, "SharedServer"), [ ethis ]), pos:ethis.pos };
 					}
 					else
 					if (HaqTools.isExtendsFrom(clas, "haquery.server.HaqComponent"))
 					{
-						return { expr:ExprDef.ENew(HaqTools.makeTypePath(clas.pack, "SharedClient"), [ ethis ]), pos:pos };
+						return { expr:ExprDef.ENew(HaqTools.makeTypePath(clas.pack, "SharedClient"), [ ethis ]), pos:ethis.pos };
 					}
 				default:
 			}
 			
-			Context.error("Shared class not found.", pos);
+			Context.error("Shared class not found.", Context.currentPos());
 			return null;
 		}
 		else
 		{
-			return ExprDef.EUntyped(ExprDef.EObjectDecl([]).at(pos)).at(pos);
+			return ExprDef.EUntyped(ExprDef.EObjectDecl([]).at(ethis.pos)).at(ethis.pos);
 		}
 	}
 	
