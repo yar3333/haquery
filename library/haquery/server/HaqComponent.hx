@@ -191,26 +191,26 @@ using stdlib.StringTools;
 		
 		if (query == null)
 		{
-			return new HaqQuery(this, cssGlobalizer, '', null);
+			return new HaqQuery(page, prefixID, cssGlobalizer, '', null);
 		}
 		
 		if (Type.getClass(query) == HtmlNodeElement)
 		{
 			Std.assert(!page.isPostback, "Calling of the HaqComponent.q() with HtmlNodeElement parameter do not possible on the postback.");
-			return new HaqQuery(this, cssGlobalizer, "", [ query ]);
+			return new HaqQuery(page, prefixID, cssGlobalizer, "", [ query ]);
 		}
 		
 		if (Std.is(query, Array))
 		{
 			Std.assert(!page.isPostback, "Calling of the HaqComponent.q() with Array parameter do not possible on the postback.");
-			return new HaqQuery(this, cssGlobalizer, "", query);
+			return new HaqQuery(page, prefixID, cssGlobalizer, "", query);
 		}
         
 		if (Std.is(query, String))
 		{
 			
 			var nodes = doc.find(cssGlobalizer.selector(query));
-			return new HaqQuery(this, cssGlobalizer, query, nodes);
+			return new HaqQuery(page, prefixID, cssGlobalizer, query, nodes);
 		}
         
 		throw new Exception("HaqComponent.q() error - 'query' parameter must be a String, HaqQuery or HtmlNodeElement.");
