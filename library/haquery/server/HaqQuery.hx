@@ -7,12 +7,19 @@ import haxe.htmlparser.HtmlNodeElement;
 import haquery.base.HaqCssGlobalizer;
 using stdlib.StringTools;
 
+typedef Page =
+{
+	var isPostback(default, null) : Bool;
+	var params(default, null) : Hash<String>;
+	function addAjaxResponse(js:String) : Void;
+};
+
 /**
  * Like $ in jQuery.
  */
 class HaqQuery
 {
-    var page(default, null) : HaqPage;
+    var page(default, null) : Page;
     var prefixID(default, null) : String;
    
 	var cssGlobalizer(default, null) : HaqCssGlobalizer;
@@ -32,10 +39,10 @@ class HaqQuery
         page.addAjaxResponse("$('" + query.replace('#', '#' + prefixID) + "')." + method + ";");
     }
     
-	public function new(component:HaqComponent, cssGlobalizer:HaqCssGlobalizer, query:String, nodes:Array<HtmlNodeElement>)
+	public function new(page:Page, prefixID:String, cssGlobalizer:HaqCssGlobalizer, query:String, nodes:Array<HtmlNodeElement>)
     {
-        this.page = component.page;
-		this.prefixID = component.prefixID;
+        this.page = page;
+		this.prefixID = prefixID;
 		
 		this.cssGlobalizer = cssGlobalizer;
         this.query = query;
@@ -426,6 +433,11 @@ class HaqQuery
 		{
 			return Std.parseValue(attr("data-" + name));
 		}
+	}
+	
+	public inline function iterator() : Iterator<HaqQuery>
+	{
+		return Lambda.map(nodes, function(node) return new HaqQuery(page, prefixID, cssGlobalizer, query, [node])).iterator();
 	}
 }
 
