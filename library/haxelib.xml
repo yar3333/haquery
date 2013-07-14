@@ -3,8 +3,8 @@
     <tag v='js' />
     <tag v='php' />
     <tag v='neko' />
-    <tag v='haquery' />
     <tag v='web' />
+    <tag v='framework' />
     <description>Web framework with php/neko and js target.</description>
     <version name='6.0'>Simplifications. Project does not depend on database anymore.</version>
     <depends name="HtmlParser" />

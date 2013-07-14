@@ -184,7 +184,7 @@ private typedef BasePage = haquery.client.BasePage;
 		{
 			if (e == "Invalid call")
 			{
-				throw new Exception("Invalid call: " + Type.getClassName(Type.getClass(this)) + "." + handler + "(t, e).", e);
+				throw new Exception("Invalid call: " + Type.getClassName(Type.getClass(this)) + "." + handler + "(t, e).");
 			}
 			Exception.rethrow(e);
 			return null;

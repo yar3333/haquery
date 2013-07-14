@@ -59,7 +59,7 @@ class HaqEvent<EventArgs:Dynamic>
 			{
 				if (e == "Invalid call")
 				{
-					throw new Exception("Invalid call: " + Type.getClassName(Type.getClass(obj)) + "." + func + "(t, e)", e);
+					throw new Exception("Invalid call: " + Type.getClassName(Type.getClass(obj)) + "." + func + "(t, e).");
 				}
 				Exception.rethrow(e);
 			}

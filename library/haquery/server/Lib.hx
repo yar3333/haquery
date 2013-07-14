@@ -86,7 +86,7 @@ class Lib
         }
 		catch (e:Dynamic)
         {
-			trace(Exception.toText(e));
+			trace("EXCEPTION: " + e);
 			Exception.rethrow(e);
         }
 	}
@@ -155,7 +155,7 @@ class Lib
 				}
 				catch (e:Dynamic)
 				{
-					throw new Exception("Bootstrap '" + className + "' problem.", e);
+					throw new Exception("Bootstrap '" + className + "' problem.");
 				}
             }
         }
