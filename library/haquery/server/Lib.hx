@@ -86,6 +86,7 @@ class Lib
         }
 		catch (e:Dynamic)
         {
+			if (Std.is(e, String)) e = new Exception(e);
 			trace("EXCEPTION: " + e);
 			Exception.rethrow(e);
         }
