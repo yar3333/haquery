@@ -127,7 +127,7 @@ private typedef BasePage = haquery.client.BasePage;
 		if (isFromTopToBottom && Reflect.isFunction(Reflect.field(this, f)))
         {
 			#if server
-			if (page.config.logLevel >= 3) trace("HAQUERY forEachComponent [" + fullID + "/" + fullTag + "]." + f + "()");
+			if (page.config.logSystemCalls) trace("HAQUERY forEachComponent [" + fullID + "/" + fullTag + "]." + f + "()");
 			#end
 			
 			Reflect.callMethod(this, Reflect.field(this, f), []);
@@ -138,7 +138,7 @@ private typedef BasePage = haquery.client.BasePage;
         if (!isFromTopToBottom && Reflect.isFunction(Reflect.field(this, f)))
         {
 			#if server
-			if (page.config.logLevel >= 3) trace("HAQUERY forEachComponent [" + fullID + "/" + fullTag + "]." + f + "()");
+			if (page.config.logSystemCalls) trace("HAQUERY forEachComponent [" + fullID + "/" + fullTag + "]." + f + "()");
 			#end
 			
             Reflect.callMethod(this, Reflect.field(this, f), []);

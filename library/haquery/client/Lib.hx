@@ -21,13 +21,8 @@ using stdlib.StringTools;
 	
     static function trace(v:Dynamic, ?pos : haxe.PosInfos) : Void
     {
-		#if debug
-		
 		var s = (pos != null ? pos.fileName + ":" + pos.lineNumber + ": " : "") + (Std.is(v, String) ? cast(v, String) : HaqDumper.getDump(v));
-		
 		untyped __js__("if (typeof console !== 'undefined') console.log(s)");
-		
-		#end
     }
 
 	public static inline function confirm( v : Dynamic ) : Bool

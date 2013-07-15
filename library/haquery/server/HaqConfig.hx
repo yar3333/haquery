@@ -21,14 +21,7 @@ class HaqConfig
 	
     public var enableProfiling = false;
 	
-    /**
-     * 0 - no output;
-	 * 1 - log user traces (server traces don't send to the client);
-	 * 2 - also send server traces to browser console;
-	 * 3 - also log system traces.
-	 * Default is 2.
-     */
-	public var logLevel = 2;
+	public var logSystemCalls = false;
 	
 	/**
      * User-defined data.
@@ -67,8 +60,8 @@ class HaqConfig
 						case "enableProfiling":
 							enableProfiling = Std.bool(value);
 						
-						case "logLevel":
-							logLevel = Std.parseInt(value);
+						case "logSystemCalls":
+							logSystemCalls = Std.bool(value);
 						
 						case "filterTracesByIP":
 							filterTracesByIP = value;
@@ -112,7 +105,7 @@ class HaqConfig
 	
 	function throwBadConfigFileRecord(path:String, node:HtmlNodeElement) : Void
 	{
-		throw new Exception("HAQUERY ERROR: Bad config file ('" + path + "') record ('" + node + "').");
+		throw new Exception("HAQUERY ERROR: Bad config file ('" + path + "') record ('" + node.toString() + "').");
 	}
 }
 
