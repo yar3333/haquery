@@ -61,10 +61,12 @@ class HaqTrace
 	 */
 	static function writeToConsole(page:HaqPage, type:String, text:String)
 	{
+		#if debug
 		if (page != null)
 		{
 			page.addAjaxResponse("if (typeof console !== 'undefined') console." + type + "(decodeURIComponent('" + StringTools.urlEncode(text) + "'));");
 		}
+		#end
 	}
 	
 	static function writeToFile(text:String)

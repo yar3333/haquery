@@ -142,7 +142,7 @@ using stdlib.StringTools;
 			return "";
 		}
         
-		if (page.config.logLevel >= 3) trace("HAQUERY render [" + fullID + "/" + fullTag + "]");
+		if (page.config.logSystemCalls) trace("HAQUERY render [" + fullID + "/" + fullTag + "]");
 		
 		HaqComponentTools.expandDocElemIDs(prefixID, doc);
 		if (parent != null && innerNode != null)

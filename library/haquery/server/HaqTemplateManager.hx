@@ -59,7 +59,7 @@ class HaqTemplateManager
 	{
 		Std.assert(attr == null || !Std.is(attr, Hash));
 		
-		if (parent != null && parent.page.config.logLevel >= 3) trace("HAQUERY newComponent [" + parent.prefixID + id + "/" + template.fullTag + "]");
+		if (parent != null && parent.page.config.logSystemCalls) trace("HAQUERY newComponent [" + parent.prefixID + id + "/" + template.fullTag + "]");
 		
         Lib.profiler.begin('newComponent');
 			Std.assert(template != null, "Template for id = '" + id + "' not found.");
