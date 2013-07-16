@@ -15,16 +15,18 @@ using stdlib.StringTools;
 class HaqServerCallerAjax
 {
 	var page : HaqPage;
+	var url : String;
 	
-	public function new(page:HaqPage)
+	public function new(page:HaqPage, url:String)
 	{
 		this.page = page;
+		this.url = url;
 	}
 	
 	public function callSharedMethod(componentID:String, method:String, ?params:Array<Dynamic>, ?callb:Dynamic->Void) : Void
 	{
 		var sendData = getDataObjectForSendToServer(componentID, method, params);
-		JQuery.postAjax(Lib.window.location.href, sendData, function(data:String) : Void
+		JQuery.postAjax(url, sendData, function(data:String) : Void
 		{ 
 			var message : HaqMessageListenerAnswer = Unserializer.run(data);
 			switch (message)
