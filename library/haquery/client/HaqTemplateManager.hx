@@ -9,21 +9,21 @@ import haquery.common.HaqStorage;
 
 class HaqTemplateManager
 {
-	public function new() {}
+	public var page(default, null) : BasePage;
+	
+	public function new() { }
 	
 	public function get(fullTag:String) : HaqTemplate
 	{
 		return new HaqTemplate(fullTag);
 	}
 	
-	public function createPage(fullTag:String) : HaqPage
+	public function createPage(fullTag:String)
     {
-		var page = cast(newComponent(get(fullTag), null, "", false), HaqPage);
+		page = cast(newComponent(get(fullTag), null, "", false), BasePage);
 		
 		page.forEachComponent("preInit", true);
 		page.forEachComponent("init", false);
-
-		return page;
     }
 	
 	public function createComponent(parent:HaqComponent, fullTag:String, id:String, isDynamic:Bool, dynamicParams:Dynamic=null) : HaqComponent
