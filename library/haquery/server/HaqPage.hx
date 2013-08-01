@@ -58,9 +58,9 @@ class HaqPage extends HaqComponent
 	public var disableSystemHtmlInserts = false;
 	
 	/**
-	 * Disable inserting "<script src='.../jquery.js'></script>" to your HTML pages.
+	 * Disable inserting "<script src='jquery.js'>", "<script src='haquery.js'>" and "<link href='haquery.css'>" tags into your page's html.
 	 */
-	public var disableJqueryRegistering = false;
+	public var disableSystemScriptsAndStylesRegistering = false;
 	
 	/**
 	 * Js code to response.
@@ -78,8 +78,8 @@ class HaqPage extends HaqComponent
 	
     public var storage(default, null) : HaqStorage;
 	
-	public var registeredScripts(default, null) : Array<String>;
 	public var registeredStyles(default, null) : Array<String>;
+	public var registeredScripts(default, null) : Array<String>;
 	
 	public function new()
 	{
@@ -87,8 +87,8 @@ class HaqPage extends HaqComponent
 		ajaxResponse = "";
 		responseHeaders = new HaqResponseHeaders();
 		session = new HaqSession(this);
-		registeredScripts = [ "haquery/client/haquery.js" ];
-		registeredStyles = [ "haquery/client/haquery.css" ];
+		registeredStyles = [];
+		registeredScripts = [];
 	}
 	
 	public function generateResponseOnRender() : HaqResponse
@@ -152,8 +152,21 @@ class HaqPage extends HaqComponent
 			{
 				var tagIDs = HaqComponentTools.fillTagIDs(this, new Hash<Array<String>>());
 				
-				insertStyles(registeredStyles);
-				insertScripts(!disableJqueryRegistering ? [ "haquery/client/jquery.js" ].concat(registeredScripts) : registeredScripts);
+				var systemStyles = [];
+				if (!disableSystemScriptsAndStylesRegistering)
+				{
+					systemStyles.push("haquery/client/haquery.css");
+				}
+				insertStyles(systemStyles.concat(registeredStyles));
+				
+				var systemScripts = [];
+				if (!disableSystemScriptsAndStylesRegistering)
+				{
+					systemStyles.push("haquery/client/jquery.js");
+					systemStyles.push("haquery/client/haquery.js");
+				}
+				insertScripts(systemScripts.concat(registeredScripts));
+				
 				insertInitBlock(
 					  "<script>\n"
 					+ "if(typeof haquery=='undefined') alert('haquery.js must be loaded!');\n"
