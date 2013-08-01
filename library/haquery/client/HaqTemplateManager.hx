@@ -20,7 +20,7 @@ class HaqTemplateManager
 	
 	public function createPage(fullTag:String)
     {
-		page = cast(newComponent(get(fullTag), null, "", false), BasePage);
+		page = cast cast(newComponent(get(fullTag), null, "", false), HaqPage);
 		
 		page.forEachComponent("preInit", true);
 		page.forEachComponent("init", false);
