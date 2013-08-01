@@ -162,8 +162,8 @@ class HaqPage extends HaqComponent
 				var systemScripts = [];
 				if (!disableSystemScriptsAndStylesRegistering)
 				{
-					systemStyles.push("haquery/client/jquery.js");
-					systemStyles.push("haquery/client/haquery.js");
+					systemScripts.push("haquery/client/jquery.js");
+					systemScripts.push("haquery/client/haquery.js");
 				}
 				insertScripts(systemScripts.concat(registeredScripts));
 				
