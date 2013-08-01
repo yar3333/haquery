@@ -42,11 +42,11 @@ class HaqTemplateManager
 	{
 		var r = new Array<{ id:String, fullTag:String }>();
 		var re = new EReg('^' + parent.prefixID + '[^' + HaqDefines.DELIMITER + ']+$', '');
-		for (fullID in HaqInternals.getComponentIDs().keys())
+		for (fullID in HaqInternals.componentIDs.keys())
 		{
 			if (re.match(fullID))
 			{
-				r.push({ id:fullID.substr(parent.prefixID.length), fullTag:HaqInternals.getComponentIDs().get(fullID) });
+				r.push({ id:fullID.substr(parent.prefixID.length), fullTag:HaqInternals.componentIDs.get(fullID) });
 			}
 		}
 		return r;
