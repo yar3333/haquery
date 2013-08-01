@@ -174,6 +174,7 @@ class HaqPage extends HaqComponent
 					+ Lambda.map({ iterator:tagIDs.keys }, function(tag) return "'" + tag + "':" + Json.stringify(tagIDs.get(tag))).join(",\n")
 					+ "\n};\n"
 					+ "haquery.client.HaqInternals.storage = haquery.client.HaqInternals.unserialize('" + Serializer.run(storage.getStorageToSend()) + "');\n"
+					+ "haquery.client.HaqInternals.componentIDs_cached = null;\n"
 					+ "haquery.client.Lib.run('" + fullTag + "');\n"
 					+ ajaxResponse
 					+ "</script>"
