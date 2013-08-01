@@ -170,11 +170,10 @@ class HaqPage extends HaqComponent
 				insertInitBlock(
 					  "<script>\n"
 					+ "if(typeof haquery=='undefined') alert('haquery.js must be loaded!');\n"
-					+ "haquery.client.HaqInternals.tagIDs = {\n"
+					+ "haquery.client.HaqInternals.setTagIDs({\n"
 					+ Lambda.map({ iterator:tagIDs.keys }, function(tag) return "'" + tag + "':" + Json.stringify(tagIDs.get(tag))).join(",\n")
-					+ "\n};\n"
+					+ "\n});\n"
 					+ "haquery.client.HaqInternals.storage = haquery.client.HaqInternals.unserialize('" + Serializer.run(storage.getStorageToSend()) + "');\n"
-					+ "haquery.client.HaqInternals.componentIDs_cached = null;\n"
 					+ "haquery.client.Lib.run('" + fullTag + "');\n"
 					+ ajaxResponse
 					+ "</script>"
