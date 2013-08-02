@@ -6,6 +6,7 @@ package haquery.server;
 
 import stdlib.Exception;
 import stdlib.Std;
+import stdlib.Debug;
 import stdlib.FileSystem;
 import haxe.htmlparser.HtmlDocument;
 import haxe.htmlparser.HtmlNodeElement;
@@ -159,9 +160,9 @@ using stdlib.StringTools;
 		{
 			if (!child.isInnerComponent)
 			{
-				Std.assert(child != null);
-				Std.assert(child.innerNode != null);
-				Std.assert(child.innerNode.parent != null);
+				Debug.assert(child != null);
+				Debug.assert(child.innerNode != null);
+				Debug.assert(child.innerNode.parent != null);
 				child.innerNode.parent.replaceChild(child.innerNode, new HtmlNodeText(child.render()));
 			}
 		}
@@ -196,13 +197,13 @@ using stdlib.StringTools;
 		
 		if (Type.getClass(query) == HtmlNodeElement)
 		{
-			Std.assert(!page.isPostback, "Calling of the HaqComponent.q() with HtmlNodeElement parameter do not possible on the postback.");
+			Debug.assert(!page.isPostback, "Calling of the HaqComponent.q() with HtmlNodeElement parameter do not possible on the postback.");
 			return new HaqQuery(page, prefixID, cssGlobalizer, "", [ query ]);
 		}
 		
 		if (Std.is(query, Array))
 		{
-			Std.assert(!page.isPostback, "Calling of the HaqComponent.q() with Array parameter do not possible on the postback.");
+			Debug.assert(!page.isPostback, "Calling of the HaqComponent.q() with Array parameter do not possible on the postback.");
 			return new HaqQuery(page, prefixID, cssGlobalizer, "", query);
 		}
         
@@ -221,7 +222,7 @@ using stdlib.StringTools;
 	 */
 	public function callSharedClientMethodDelayed(method:String, params:Array<Dynamic>) : Void
 	{
-		Std.assert(page.isPostback, "HaqComponent.callSharedMethod() allowed on the postback only.");
+		Debug.assert(page.isPostback, "HaqComponent.callSharedMethod() allowed on the postback only.");
         
         page.addAjaxResponse(
 			  "page." + (fullID != "" ? "findComponent('" + fullID + "')." : "") + method

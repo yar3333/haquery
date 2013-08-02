@@ -2,7 +2,7 @@ package haquery.common;
 
 import haxe.htmlparser.HtmlNodeElement;
 import stdlib.Exception;
-import stdlib.Std;
+import stdlib.Debug;
 using stdlib.StringTools;
 
 #if server
@@ -198,7 +198,7 @@ class HaqComponentTools
 		if (fullTag != null && !url.startsWith("http://") && !url.startsWith("/") && !url.startsWith("<"))
 		{
 			var template = haquery.server.Lib.manager.get(fullTag);
-			Std.assert(template != null, "Template '" + fullTag + "' not found.");
+			Debug.assert(template != null, "Template '" + fullTag + "' not found.");
 			url = template.getSupportFilePath(url);
 		}
 		

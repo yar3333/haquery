@@ -3,6 +3,7 @@ package components.haquery.list;
 import haquery.server.Lib;
 import haxe.htmlparser.HtmlNodeElement;
 import stdlib.Std;
+import stdlib.Debug;
 import haquery.server.HaqComponent;
 using stdlib.StringTools;
 
@@ -34,7 +35,7 @@ class Server extends BaseServer
 	
 	public function create(params:Dynamic) : HaqComponent
 	{
-        Std.assert(!page.isPostback, "Component creating on the postback is not supported.");
+        Debug.assert(!page.isPostback, "Component creating on the postback is not supported.");
 		
 		var n = length;
 		var r = Lib.manager.createComponent(this, "components.haquery.listitem", Std.string(n), params, getItemInnerNode(), true);
@@ -44,7 +45,7 @@ class Server extends BaseServer
 	
 	public function bind<Data>(objects:Iterable<Data>, ?itemDataBound:HaqComponent->Data->Void)
     {
-        Std.assert(!page.isPostback, "List binding on postback is not allowed.");
+        Debug.assert(!page.isPostback, "List binding on postback is not allowed.");
 		
         for (obj in objects)
         {
