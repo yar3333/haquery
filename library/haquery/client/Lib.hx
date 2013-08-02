@@ -2,9 +2,9 @@ package haquery.client;
 
 #if client
 
-import haquery.common.HaqDumper;
-import haquery.common.Generated;
 import stdlib.Exception;
+import stdlib.Debug;
+import haquery.common.Generated;
 import haquery.client.HaqInternals;
 using stdlib.StringTools;
 
@@ -21,7 +21,7 @@ using stdlib.StringTools;
 	
     static function trace(v:Dynamic, ?pos : haxe.PosInfos) : Void
     {
-		var s = (pos != null ? pos.fileName + ":" + pos.lineNumber + ": " : "") + (Std.is(v, String) ? cast(v, String) : HaqDumper.getDump(v));
+		var s = (pos != null ? pos.fileName + ":" + pos.lineNumber + ": " : "") + (Std.is(v, String) ? cast(v, String) : Debug.getDump(v));
 		untyped __js__("if (typeof console !== 'undefined') console.log(s)");
     }
 

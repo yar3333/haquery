@@ -5,7 +5,7 @@ package haquery.server;
 import stdlib.FileSystem;
 import haxe.PosInfos;
 import haquery.common.HaqDefines;
-import haquery.common.HaqDumper;
+import stdlib.Debug;
 import sys.io.File;
 using stdlib.StringTools;
 
@@ -51,7 +51,7 @@ class HaqTrace
         else
         if (v != null)
         {
-            return "DUMP\n" + HaqDumper.getDump(v);
+            return "DUMP\n" + Debug.getDump(v);
         }
 		return "";
 	}

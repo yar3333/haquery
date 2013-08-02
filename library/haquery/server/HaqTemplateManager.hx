@@ -6,6 +6,7 @@ import haquery.common.HaqComponentTools;
 import haquery.common.HaqStorage;
 import stdlib.Exception;
 import stdlib.Std;
+import stdlib.Debug;
 import haquery.server.HaqComponent;
 import haquery.server.HaqTemplate;
 import haquery.server.Lib;
@@ -26,7 +27,7 @@ class HaqTemplateManager
 	public function createPage(pageFullTag:String, attr:Dynamic) : HaqPage
 	{
         var template = get(pageFullTag);
-		Std.assert(template != null, "HAQUERY ERROR could't find page '" + pageFullTag + "'.");
+		Debug.assert(template != null, "HAQUERY ERROR could't find page '" + pageFullTag + "'.");
 		var component = newComponent(template, null, '', attr, null, false);
 		
 		var page : HaqPage;
@@ -57,15 +58,15 @@ class HaqTemplateManager
 	
 	function newComponent(template:HaqTemplate, parent:HaqComponent, id:String, attr:Dynamic, parentNode:HtmlNodeElement, isCustomRender:Bool) : HaqComponent
 	{
-		Std.assert(attr == null || !Std.is(attr, Hash));
+		Debug.assert(attr == null || !Std.is(attr, Hash));
 		
 		if (parent != null && parent.page.config.logSystemCalls) trace("HAQUERY newComponent [" + parent.prefixID + id + "/" + template.fullTag + "]");
 		
         Lib.profiler.begin('newComponent');
-			Std.assert(template != null, "Template for id = '" + id + "' not found.");
+			Debug.assert(template != null, "Template for id = '" + id + "' not found.");
 			
 			var clas = Type.resolveClass(template.serverClassName);
-			Std.assert(clas != null, "Server class '" + template.serverClassName + "' for component '" + template.fullTag + "' not found.");
+			Debug.assert(clas != null, "Server class '" + template.serverClassName + "' for component '" + template.fullTag + "' not found.");
 			
 			var component : HaqComponent = null;
 			try
@@ -74,7 +75,7 @@ class HaqTemplateManager
 			}
 			catch (e:Dynamic)
 			{
-				Std.assert(false, "Can't cast server class '" + template.serverClassName + "' to HaqComponent. Check class extends.");
+				Debug.assert(false, "Can't cast server class '" + template.serverClassName + "' to HaqComponent. Check class extends.");
 			}
 			
 			component.construct(template.fullTag, parent, id, template.getDocCopy(), attr, parentNode, isCustomRender);
@@ -88,8 +89,8 @@ class HaqTemplateManager
 		
 		for (node in baseNode.children)
         {
-			Std.assert(node.name != 'haq:placeholder');
-			Std.assert(node.name != 'haq:content');
+			Debug.assert(node.name != 'haq:placeholder');
+			Debug.assert(node.name != 'haq:content');
             
             if (node.name.startsWith('haq:'))
             {
