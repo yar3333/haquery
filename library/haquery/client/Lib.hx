@@ -12,6 +12,13 @@ using stdlib.StringTools;
 {
 	public static var manager(default, null) : HaqTemplateManager;
 	
+	public static var page(get_page, null) : BasePage;
+	
+	static function get_page()
+	{
+		return manager != null ? manager.page : null;
+	}
+	
 	static public function run(pageFullTag:String)
     {
 		haxe.Log.trace = haquery.client.Lib.trace;

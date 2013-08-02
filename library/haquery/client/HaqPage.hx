@@ -19,7 +19,7 @@ class HaqPage extends HaqComponent
 		super();
 		cookie = new HaqCookie();
 		storage = HaqInternals.storage;
-		ajax = new HaqServerCallerAjax(this);
+		ajax = new HaqServerCallerAjax(this, Lib.window.location.href);
     }
     
     public function redirect(url:String) : Void
