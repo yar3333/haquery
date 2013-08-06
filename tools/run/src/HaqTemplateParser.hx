@@ -211,7 +211,7 @@ class HaqTemplateParser
 		return config.imports;
 	}
 	
-	public function getDocAndCss() : { doc:HtmlDocument, css:String }
+	public function getDocAndCss() : { doc:HtmlDocument, cssBlocks:Array<String> }
 	{
 		var parsers : Array<HaqTemplateParser> = [ this ];
 		var p = this;
@@ -234,7 +234,9 @@ class HaqTemplateParser
 		resolveSupportUrls(doc);
 		resolvePlaceHolders(doc);
 		
-		var css = "";
+		var cssGlobalizer = new HaqCssGlobalizer(fullTag);
+		
+		var cssBlocks : Array<String> = [];
 		var i = 0; 
 		while (i < doc.children.length)
 		{
@@ -245,19 +247,17 @@ class HaqTemplateParser
 				{
 					throw new Exception("Less compiler is no more supported.");
 				}
-				css += node.innerHTML;
+				cssBlocks.push(cssGlobalizer.styles(node.innerHTML));
 				node.remove();
 				i--;
 			}
 			i++;
 		}
 		
-		var cssGlobalizer = new HaqCssGlobalizer(fullTag);
 		
 		cssGlobalizer.doc(doc);
-		css = cssGlobalizer.styles(css);
 		
-		return { doc:doc, css:css };
+		return { doc:doc, cssBlocks:cssBlocks };
 	}
 	
 	function getRawDoc() : HtmlDocument
