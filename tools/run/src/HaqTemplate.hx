@@ -7,8 +7,8 @@ import haxe.Unserializer;
 
 class HaqTemplate extends haquery.base.HaqTemplate
 {
-	public var doc(default, null) : HtmlDocument; 
-	public var css(default, null) : String; 
+	public var doc(default, null) : HtmlDocument;
+	public var cssBlocks(default, null) : Array<String>;
 	
 	public var serverClassName(default, null) : String;
 	public var clientClassName(default, null) : String;
@@ -37,7 +37,7 @@ class HaqTemplate extends haquery.base.HaqTemplate
 		
 		var docAndCss = parser.getDocAndCss();
 		doc = docAndCss.doc;
-		css = docAndCss.css;
+		cssBlocks = docAndCss.cssBlocks;
 		
 		serverClassName = parser.getServerClassName();
 		clientClassName = parser.getClientClassName();

@@ -302,13 +302,28 @@ class Build
 		var dir = binDir + "/haquery/client";
 		FileSystem.createDirectory(dir);
 		
+		var addedCssBlocks = [];
 		var text = "";
 		for (fullTag in manager.fullTags)
 		{
 			var template = manager.get(fullTag);
-			if (template.css.length > 0)
+			if (template.cssBlocks.length > 0)
 			{
-				text += "/" + "* " + fullTag + "*" + "/\n" + template.css + "\n\n";
+				var isHeaderAdded = false;
+				for (css in template.cssBlocks)
+				{
+					if (!Lambda.has(addedCssBlocks, css))
+					{
+						if (!isHeaderAdded)
+						{
+							text += "/" + "* " + fullTag + "*" + "/\n";
+							isHeaderAdded = true;
+						}
+						text += css + "\n";
+						addedCssBlocks.push(css);
+					}
+				}
+				text += "\n";
 			}
 		}
 		
