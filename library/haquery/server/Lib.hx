@@ -11,7 +11,6 @@ typedef Web = neko.Web;
 #end
 
 import haquery.common.HaqStorage;
-import stdlib.Exception;
 import haxe.io.Path;
 import haxe.Serializer;
 import haxe.Unserializer;
@@ -20,6 +19,7 @@ import haquery.common.HaqDefines;
 import haquery.server.HaqRouter;
 import haquery.server.HaqPage;
 import stdlib.Std;
+import stdlib.Exception;
 import stdlib.Profiler;
 import stdlib.FileSystem;
 import haquery.common.HaqMessageListenerAnswer;
@@ -64,12 +64,10 @@ class Lib
 			{
 				var route = new HaqRouter(HaqDefines.folders.pages, manager).getRoute(uri);
 				
-				var bootstraps = loadBootstraps(route.path, config);
-				
 				haxe.Log.trace = callback(HaqTrace.log, _, getClientIP(), config.filterTracesByIP, null, _);
 				
 				var request = getRequest(route, config);
-				var response = getResponse(request, route, bootstraps);
+				var response = getResponse(request, route);
 				
 				if (response != null)
 				{
@@ -91,77 +89,52 @@ class Lib
         }
 	}
 	
-	static function getResponse(request:HaqRequest, route:HaqRoute, bootstraps:Array<HaqBootstrap>) : HaqResponse
+	static function getResponse(request:HaqRequest, route:HaqRoute) : HaqResponse
 	{
 		profiler = new Profiler(request.config.enableProfiling);
 		
 		profiler.begin("HAQUERY");
 			
-			for (bootstrap in bootstraps)
-			{
-				bootstrap.start(request);
-			}
-			
 			profiler.begin("page");
+				
 				trace("HAQUERY START page = " + route.fullTag +  ", HTTP_HOST = " + request.host + ", clientIP = " + request.clientIP + ", pageID = " + route.pageID);
 				
 				var page = manager.createPage(route.fullTag, request);
 				
 				haxe.Log.trace = callback(HaqTrace.log, _, page.clientIP, page.config.filterTracesByIP, page, _);
 				
-				page.forEachComponent("preInit", true);
-				page.forEachComponent("init", false);
+				var response : HaqResponse = null;
+				try
+				{
+					page.forEachComponent("preInit", true);
+					
+					page.forEachComponent("init", false);
+					
+					response = !request.isPostback
+							 ? page.generateResponseOnRender()
+							 : page.generateResponseOnPostback(
+									  request.params.get('HAQUERY_COMPONENT')
+									, request.params.get('HAQUERY_METHOD')
+									, Unserializer.run(request.params.get('HAQUERY_PARAMS'))
+									, "shared"
+							   );
+				}
+				catch (e:Dynamic)
+				{
+					try page.dispose() catch (_:Dynamic) {}
+					Exception.rethrow(e);
+				}
 				
-				var response = !request.isPostback
-						 ? page.generateResponseOnRender()
-						 : page.generateResponseOnPostback(
-								  request.params.get('HAQUERY_COMPONENT')
-								, request.params.get('HAQUERY_METHOD')
-								, Unserializer.run(request.params.get('HAQUERY_PARAMS'))
-								, "shared"
-						   );
+				page.dispose();
+				
 			profiler.end();
 			
-			bootstraps.reverse();
-			for (i in 0...bootstraps.length)
-			{
-				bootstraps[bootstraps.length - i - 1].finish(cast page);
-			}
 		
 		profiler.end();
 		profiler.traceResults();	
 			
 		return response;
 	}
-	
-    /**
-     * Load bootstrap files from current folder to relativePath.
-     */
-    public static function loadBootstraps(relativePath:String, config:HaqConfig) : Array<HaqBootstrap>
-    {
-        var bootstraps = [];
-		
-		var folders = StringTools.trim(relativePath, '/').split('/');
-        for (i in 1...folders.length + 1)
-        {
-            var className = folders.slice(0, i).join('.') + '.Bootstrap';
-			var clas = Type.resolveClass(className);
-            if (clas != null)
-            {
-				try
-				{
-					var bootstrap = cast(Type.createInstance(clas, []), HaqBootstrap);
-					bootstraps.push(bootstrap);
-				}
-				catch (e:Dynamic)
-				{
-					throw new Exception("Bootstrap '" + className + "' problem.");
-				}
-            }
-        }
-		
-		return bootstraps;
-    }
 	
 	static function getRequest(route:HaqRoute, config:HaqConfig) : HaqRequest
 	{

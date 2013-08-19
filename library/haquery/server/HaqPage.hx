@@ -318,6 +318,11 @@ class HaqPage extends HaqComponent
 	{
 		ajaxResponse += jsCode + "\n";
 	}
+	
+	/**
+	 * Called by HaQuery after request. Override to clear resources.
+	 */  
+	public function dispose() : Void {}
 }
 
 #end
