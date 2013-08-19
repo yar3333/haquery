@@ -96,9 +96,6 @@ class Build
 		
 		var fo = File.write("gen/Imports.hx", false);
 		fo.writeString("#if server\n\n");
-		fo.writeString(Lambda.map(findBootstrapClassNames(src, HaqDefines.folders.pages), function(s) return "import " + s + ";").join('\n'));
-		fo.writeString("\n");
-		fo.writeString("\n");
 		fo.writeString(Lambda.map(manager.fullTags, function(s) return "import " + s + ".ConfigServer;").join('\n'));
 		fo.writeString("\n\n#elseif client\n\n");
 		fo.writeString(Lambda.map(manager.fullTags, function(s) return "import " + s + ".ConfigClient;").join('\n'));
@@ -113,19 +110,6 @@ class Build
         if (a == b) return 0;
 		return a < b ? -1 : 1;
     }
-	
-	function findBootstrapClassNames(basePath:String, relPath:String) : Array<String>
-	{
-		var r = [];
-		fs.findFiles(basePath + relPath, function(path)
-		{
-			if (path.endsWith("/Bootstrap.hx"))
-			{
-				r.push(path.substr(basePath.length, path.length - basePath.length - ".hx".length).replace("/", "."));
-			}
-		});
-		return r;
-	}
 	
 	function buildClient(outputDir:String, isJsModern:Bool, isDeadCodeElimination:Bool)
     {
