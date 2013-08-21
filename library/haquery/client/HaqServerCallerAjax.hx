@@ -60,12 +60,12 @@ class HaqServerCallerAjax
         for (sendElem in sendedElements)
         {
             var nodeName = sendElem.nodeName.toUpperCase();
-            if (nodeName == "INPUT" && sendElem.getAttribute("type").toUpperCase() == "CHECKBOX")
+            if (nodeName == "INPUT" && getInputType(sendElem) == "CHECKBOX")
             {
                 sendData[untyped sendElem.id] = Reflect.field(sendElem, "checked") ? "1" : "0";
             }
             else
-            if (nodeName == "INPUT" && sendElem.getAttribute("type").toUpperCase() == "RADIO")
+            if (nodeName == "INPUT" && getInputType(sendElem) == "RADIO")
             {
                 if (Reflect.field(sendElem, "checked"))
                 {
@@ -91,13 +91,19 @@ class HaqServerCallerAjax
 		var elems = Lambda.filter(allElemsWithID, function(elem)
         {
             var elemTag = elem.nodeName.toUpperCase();
-            var elemType = elemTag=="INPUT" ? elem.getAttribute("type").toUpperCase() : "";
-            return elemTag == "INPUT" && Lambda.has(["TEXT", "PASSWORD", "HIDDEN", "CHECKBOX", "RADIO"], elemType)
+            return elemTag == "INPUT" && getInputType(elem) != "FILE"
 				|| elemTag == "TEXTAREA"
 				|| elemTag == "SELECT";
 		});
 		
 		return elems;
+	}
+	
+	function getInputType(elem:HtmlDom) : String
+	{
+		var type = elem.getAttribute("type");
+		if (type == null || type == "") return "TEXT";
+		return type.toUpperCase();
 	}
 }
 
