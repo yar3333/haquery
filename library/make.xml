@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="HaQuery" default="make-zip">
+
+	<target name="make-zip">
+		<zip destfile="examples.zip">
+			<fileset dir="..\examples">
+				<exclude name="*\bin\**" />
+				<exclude name="*\gen\**" />
+			</fileset>
+		</zip>
+	
+		<zip destfile="flashdevelop.zip">
+			<fileset dir="..\tools\flashdevelop" />
+		</zip>
+		
+		<zip destfile="library.zip">
+			<fileset dir=".">
+				<exclude name="library.zip" />
+				<exclude name="make.*" />
+			</fileset>
+		</zip>
+	</target>
+
+</project>
