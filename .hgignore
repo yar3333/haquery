@@ -1,9 +1,6 @@
 syntax: glob
+library/library.zip
 bin
 gen
-library.zip
-library/*.ilk
-tools/run/library/src/neko/Debug
-tools/run/library/src/neko/*.suo
-tools/run/library/src/neko/*.ncb
-tools/run/library/src/neko/*.user
+library/examples.zip
+library/flashdevelop.zip
