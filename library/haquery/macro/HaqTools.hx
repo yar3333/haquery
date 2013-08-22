@@ -9,7 +9,7 @@ import sys.io.File;
 import haxe.macro.Expr;
 import haxe.macro.Type;
 using stdlib.StringTools;
-using haquery.macro.internal.macro.tools.MacroTools;
+using haquery.macro.internal.macro.Tools;
 
 class HaqTools
 {
@@ -169,7 +169,7 @@ class HaqTools
 			switch (t)
 			{
 				case ComplexType.TPath(p):
-					return p.pack.length == 0 && p.name == "Void";
+					return p.name == "StdTypes" && p.pack.length == 0 && p.sub == "Void";
 				default:
 			}
 		}

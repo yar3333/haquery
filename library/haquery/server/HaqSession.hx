@@ -29,7 +29,7 @@ class HaqSession
 	
 	public var id(default, null) : String;
 	
-	var sessionData : Hash<Dynamic>;
+	var sessionData : Map<String,Dynamic>;
 	var needSave = false;
 
 	public function new(page:HaqPage)
@@ -75,7 +75,7 @@ class HaqSession
 
 	public function clear()
 	{
-		sessionData = new Hash<Dynamic>();
+		sessionData = new Map<String,Dynamic>();
 		started = true;
 		needSave = true;
 		commit();
@@ -131,11 +131,11 @@ class HaqSession
 		
 		if (id == null)
 		{
-			sessionData = new Hash<Dynamic>();
+			sessionData = new Map<String,Dynamic>();
 			
 			while (true)
 			{
-				id = haxe.Md5.encode(Std.string(Date.now().getTime()) + Std.string(Std.random(10000)) + Std.string(Std.random(10000)));
+				id = haxe.crypto.Md5.encode(Std.string(Date.now().getTime()) + Std.string(Std.random(10000)) + Std.string(Std.random(10000)));
 				if (!FileSystem.exists(savePath + "/" + id + ".sess")) break;
 			}
 			

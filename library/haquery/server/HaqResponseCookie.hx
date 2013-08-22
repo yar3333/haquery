@@ -10,7 +10,7 @@ import neko.Web;
 
 class HaqResponseCookie
 {
-	var cookies : Hash<{ value:String, expire:Date, path:String, domain:String }>;
+	var cookies : Map<String,{ value:String, expire:Date, path:String, domain:String }>;
 	
 	public function new()
 	{
@@ -38,7 +38,7 @@ class HaqResponseCookie
 	
 	public function reset() : Void
 	{
-		cookies = new Hash<{ value:String, expire:Date, path:String, domain:String }>();
+		cookies = new Map<String,{ value:String, expire:Date, path:String, domain:String }>();
 	}
 }
 

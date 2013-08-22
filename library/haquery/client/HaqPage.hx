@@ -2,6 +2,7 @@ package haquery.client;
 
 #if client
 
+import js.Browser;
 import haquery.client.HaqComponent;
 import haquery.client.HaqCookie;
 import haquery.common.HaqStorage;
@@ -19,24 +20,24 @@ class HaqPage extends HaqComponent
 		super();
 		cookie = new HaqCookie();
 		storage = HaqInternals.storage;
-		ajax = new HaqServerCallerAjax(this, Lib.window.location.href);
+		ajax = new HaqServerCallerAjax(this, Browser.window.location.href);
     }
     
     public function redirect(url:String) : Void
     {
-        if (js.Lib.window.location.href == url)
+        if (Browser.window.location.href == url)
 		{
-			js.Lib.window.location.reload(true);
+			reload();
 		}
         else
 		{
-			js.Lib.window.location.href = url;
+			Browser.window.location.href = url;
 		}
     }
 
 	public function reload() : Void
 	{
-        js.Lib.window.location.reload(true);
+        untyped __js__("window.location.reload(true)");
 	}
 }
 

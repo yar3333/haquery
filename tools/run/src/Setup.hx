@@ -1,7 +1,7 @@
 package ;
 
 import neko.Lib;
-import neko.zip.Reader;
+import haxe.zip.Reader;
 import haxe.io.Path;
 import sys.io.File;
 import sys.FileSystem;
@@ -68,8 +68,8 @@ class Setup
 	{
 		targetPath = targetPath.rtrim("\\/");
 		
-		var fin = neko.io.File.read(zipPath, true);
-		var files = neko.zip.Reader.readZip(fin);
+		var fin = File.read(zipPath, true);
+		var files = Reader.readZip(fin);
 		fin.close();
 
 		for (file in files)

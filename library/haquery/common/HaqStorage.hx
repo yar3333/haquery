@@ -11,13 +11,13 @@ typedef Var =
 
 @:keep class HaqStorage
 {
-    var staticVars : Hash<Var>;
-    var instanceVars : Hash<Var>;
+    var staticVars : Map<String,Var>;
+    var instanceVars : Map<String,Var>;
 	
 	public function new()
 	{
-		staticVars = new Hash<Var>();
-		instanceVars = new Hash<Var>();
+		staticVars = new Map<String,Var>();
+		instanceVars = new Map<String,Var>();
 	}
 	
 	function getFullTag(clas:Class<HaqComponent>) : String

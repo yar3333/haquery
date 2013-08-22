@@ -23,7 +23,7 @@ class Publisher
 	/**
 	 * dest => src
 	 */
-	var files : Hash<String>;
+	var files : Map<String,String>;
 	
 	public function new(log:Log, fs:FileSystemTools, platform:String, is64:Bool)
 	{
@@ -31,7 +31,7 @@ class Publisher
 		this.fs = fs;
 		this.platform = platform;
 		this.is64 = is64;
-		this.files = new Hash<String>();
+		this.files = new Map<String,String>();
 	}
 	
 	public function prepare(src:String, fullTags:Array<String>) : Void

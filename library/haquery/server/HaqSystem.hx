@@ -2,14 +2,6 @@ package haquery.server;
 
 #if server
 
-#if php
-private typedef NativeLib = php.Lib;
-private typedef NativeWeb = php.Web;
-#elseif neko
-private typedef NativeLib = neko.Lib;
-private typedef NativeWeb = neko.Web;
-#end
-
 import haquery.common.Generated;
 import haquery.common.HaqDefines;
 import haxe.Serializer;
@@ -18,6 +10,14 @@ import sys.io.FileSeek;
 import stdlib.Std;
 import stdlib.FileSystem;
 using stdlib.StringTools;
+
+#if php
+private typedef NativeLib = php.Lib;
+private typedef NativeWeb = php.Web;
+#elseif neko
+private typedef NativeLib = neko.Lib;
+private typedef NativeWeb = neko.Web;
+#end
 
 class HaqSystem 
 {

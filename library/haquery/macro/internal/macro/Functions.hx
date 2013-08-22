@@ -1,15 +1,13 @@
-package haquery.macro.internal.macro.tools;
+package haquery.macro.internal.macro;
 
-/**
- * ...
- * @author back2dos
- */
 import haxe.macro.Expr;
-using haquery.macro.internal.macro.tools.ExprTools;
-class FunctionTools {
-	static public function toExpr(f:Function, ?name, ?pos) {
+
+using haquery.macro.internal.macro.Exprs;
+
+class Functions {
+	static public inline function asExpr(f:Function, ?name, ?pos) 
 		return EFunction(name, f).at(pos);
-	}
+	
 	static public inline function toArg(name:String, ?t, ?opt = false, ?value = null):FunctionArg {
 		return {
 			name: name,

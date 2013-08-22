@@ -58,7 +58,7 @@ class HaqTemplateManager
 	
 	function newComponent(template:HaqTemplate, parent:HaqComponent, id:String, attr:Dynamic, parentNode:HtmlNodeElement, isCustomRender:Bool) : HaqComponent
 	{
-		Debug.assert(attr == null || !Std.is(attr, Hash));
+		Debug.assert(attr == null || !Std.is(attr, Map));
 		
 		if (parent != null && parent.page.config.logSystemCalls) trace("HAQUERY newComponent [" + parent.prefixID + id + "/" + template.fullTag + "]");
 		

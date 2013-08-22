@@ -7,7 +7,6 @@ import hant.FileSystemTools;
 import hant.Process;
 import stdlib.Exception;
 import neko.Lib;
-import neko.Sys;
 import hant.Log;
 import haquery.server.HaqConfig;
 import haquery.common.HaqTemplateExceptions;
@@ -40,7 +39,7 @@ class Main
 		var k64Index = Lambda.indexOf(args, "-64");
 		if (k64Index >= 0) args.remove("-64");
 		
-		var log = new Log(2);
+		var log = new Log(5);
 		var fs = new FileSystemTools(log, exeDir + "/hant-" + Sys.systemName().toLowerCase() + (k64Index >=0 ? "64" : ""));
 		
 		var commands = getCommands(log, fs, exeDir, k64Index >= 0);

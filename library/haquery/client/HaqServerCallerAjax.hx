@@ -6,9 +6,8 @@ import haquery.common.HaqMessageListenerAnswer;
 import haquery.common.HaqStorage;
 import haxe.Serializer;
 import haxe.Unserializer;
-import js.Dom;
 import js.JQuery;
-import haquery.client.Lib;
+import js.Lib;
 import haquery.common.HaqDefines;
 using stdlib.StringTools;
 
@@ -38,9 +37,6 @@ class HaqServerCallerAjax
 					{
 						callb(result);
 					}
-				
-				default:
-					throw "Unexpected server answer (" + message + ").";
 			}
 		});
 	}
@@ -85,7 +81,7 @@ class HaqServerCallerAjax
         return sendData;
     }
 	
-	function getElemsForSendToServer() : Iterable<HtmlDom>
+	function getElemsForSendToServer() : Iterable<js.html.Element>
 	{
 		var allElemsWithID = new JQuery("[id]").toArray();
 		var elems = Lambda.filter(allElemsWithID, function(elem)
@@ -99,7 +95,7 @@ class HaqServerCallerAjax
 		return elems;
 	}
 	
-	function getInputType(elem:HtmlDom) : String
+	function getInputType(elem:js.html.Element) : String
 	{
 		var type = elem.getAttribute("type");
 		if (type == null || type == "") return "TEXT";

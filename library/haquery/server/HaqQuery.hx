@@ -10,7 +10,7 @@ using stdlib.StringTools;
 typedef Page =
 {
 	var isPostback(default, null) : Bool;
-	var params(default, null) : Hash<String>;
+	var params(default, null) : Map<String,String>;
 	function addAjaxResponse(js:String) : Void;
 };
 
@@ -422,7 +422,7 @@ class HaqQuery
 	
 	public function data(name:String, ?val:Dynamic) : Dynamic
 	{
-		name = ~/[A-Z]/g.customReplace(name, function(re) return "-" + re.matched(0).toLowerCase()).ltrim("-");
+		name = ~/[A-Z]/g.map(name, function(re) return "-" + re.matched(0).toLowerCase()).ltrim("-");
 		if (val != null)
 		{
 			if (val == true) val = "true";

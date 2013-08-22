@@ -4,16 +4,16 @@ package haquery.client;
 
 class HaqCookie
 {
-	var h : Hash<String>;
+	var h : Map<String,String>;
 	
 	public function new() {}
 	
-	public inline function all() : Hash<String>
+	public inline function all() : Map<String,String>
 	{
 		if (h == null)
 		{
-			h = new Hash<String>();
-			var a = js.Lib.document.cookie.split(";");
+			h = new Map<String,String>();
+			var a = js.Browser.document.cookie.split(";");
 			for (e in a)
 			{
 				e = StringTools.ltrim(e);

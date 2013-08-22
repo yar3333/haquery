@@ -2,7 +2,6 @@ package haquery.client;
 
 #if client
 
-import js.Dom;
 import js.JQuery;
 import haquery.client.Lib;
 import haquery.common.HaqDefines;
@@ -11,7 +10,7 @@ class HaqElemEventManager
 {
     public static function connect(componentWithHandlers:HaqComponent, componentWithEvents:HaqComponent)
     {
-        var elems:Array<HtmlDom> = getComponentElems(componentWithEvents);
+        var elems:Array<js.html.Element> = getComponentElems(componentWithEvents);
         
         for (elem in elems)
         {
@@ -35,11 +34,11 @@ class HaqElemEventManager
         }
     }
 
-    static function getComponentElems(component:HaqComponent) : Array<HtmlDom>
+    static function getComponentElems(component:HaqComponent) : Array<js.html.Element>
     {
 		var re = new EReg('^' + component.prefixID + '[^' + HaqDefines.DELIMITER + ']+$', '');
         
-        var r = new Array<HtmlDom>();
+        var r = new Array<js.html.Element>();
         for (elem in new JQuery("[id]").toArray())
         {
             if (re.match(elem.id))
@@ -51,7 +50,7 @@ class HaqElemEventManager
         return r;
     }
 	
-	static function elemEventHandler(componentWithHandlers:HaqComponent, componentWithEvents:HaqComponent, elem:HtmlDom, e:JqEvent)
+	static function elemEventHandler(componentWithHandlers:HaqComponent, componentWithEvents:HaqComponent, elem:js.html.Element, e:JqEvent)
     {
 		if (callClientElemEventHandlers(componentWithHandlers, componentWithEvents, elem, e))
 		{
@@ -60,7 +59,7 @@ class HaqElemEventManager
 		}
     }
 	
-	static function callClientElemEventHandlers(componentWithHandlers:HaqComponent, componentWithEvents:HaqComponent, elem:HtmlDom, e:JqEvent) : Bool
+	static function callClientElemEventHandlers(componentWithHandlers:HaqComponent, componentWithEvents:HaqComponent, elem:js.html.Element, e:JqEvent) : Bool
 	{
 		var n = elem.id.lastIndexOf(HaqDefines.DELIMITER);
 		var elemID = n > 0 ? elem.id.substr(n + 1) : elem.id;

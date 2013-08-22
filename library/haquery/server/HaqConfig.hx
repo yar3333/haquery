@@ -12,7 +12,7 @@ using stdlib.StringTools;
 
 class HaqConfig
 {
-	static var cache : Hash<{ lastModTime:Float, config:HaqConfig }>;
+	static var cache : Map<String,{ lastModTime:Float, config:HaqConfig }>;
 
     /**
      * Log only if access from specified IP.
@@ -26,7 +26,7 @@ class HaqConfig
 	/**
      * User-defined data.
      */
-    public var customs(default, null) : Hash<Dynamic>;
+    public var customs(default, null) : Map<String,Dynamic>;
 	
 	/**
 	 * Default is 16M.
@@ -39,7 +39,7 @@ class HaqConfig
 	{
 		maxPostSize = 16 * 1024 * 1024;
 		filterTracesByIP = "";
-		customs = new Hash<Dynamic>();
+		customs = new Map<String,Dynamic>();
 		
 		if (FileSystem.exists(path))
 		{
@@ -91,7 +91,7 @@ class HaqConfig
 	
     public static function load(path:String) : HaqConfig
 	{
-		if (cache == null) cache = new Hash<{ lastModTime:Float, config:HaqConfig }>();
+		if (cache == null) cache = new Map<String,{ lastModTime:Float, config:HaqConfig }>();
 		
 		var item = cache.get(path);
 		if (item == null || FileSystem.exists(path) && item.lastModTime != FileSystem.stat(path).mtime.getTime())

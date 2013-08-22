@@ -279,7 +279,7 @@ class HaqTemplateParser
 				var value = attrs.get(name);
 				if (reSupportUrl.match(value))
 				{
-					value = reSupportUrl.customReplace(value, function(re)
+					value = reSupportUrl.map(value, function(re)
 					{
 						var f = getSupportFilePath(re.matched(1));
 						return f != null ? staticUrlPrefix + "/" + f : re.matched(0);
@@ -290,7 +290,7 @@ class HaqTemplateParser
 			
 			if (node.name == "style")
 			{
-				node.setInnerText(reSupportUrl.customReplace(node.innerHTML, function(re)
+				node.setInnerText(reSupportUrl.map(node.innerHTML, function(re)
 				{
 					var f = getSupportFilePath(re.matched(1));
 					return f != null ? staticUrlPrefix + "/" + f : re.matched(0);

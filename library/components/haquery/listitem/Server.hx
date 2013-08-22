@@ -7,7 +7,7 @@ import haxe.htmlparser.HtmlNodeElement;
 
 class Server extends Base
 {
-	override public function construct(fullTag:String, parent:HaqComponent, id:String, doc:HtmlDocument, params:Hash<Dynamic>, innerNode:HtmlNodeElement, isInnerComponent:Bool):Void 
+	override public function construct(fullTag:String, parent:HaqComponent, id:String, doc:HtmlDocument, params:Map<String,Dynamic>, innerNode:HtmlNodeElement, isInnerComponent:Bool):Void 
 	{
         super.construct(fullTag, parent, id, new HtmlDocument(Tools.applyHtmlParams(innerNode.innerHTML, params)), params, null, isInnerComponent);
 	}

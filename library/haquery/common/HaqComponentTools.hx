@@ -109,7 +109,7 @@ class HaqComponentTools
 	
     static var baseComponentFields : Array<String> = null;
 	
-	public static function getFieldNamesToLoadParams(component:HaqComponent) : Hash<String>
+	public static function getFieldNamesToLoadParams(component:HaqComponent) : Map<String,String>
     {
 		if (baseComponentFields == null)
 		{
@@ -117,7 +117,7 @@ class HaqComponentTools
 			baseComponentFields.push('template');
 		}
 		
-		var r = new Hash<String>(); // fieldname => FieldName
+		var r = new Map<String,String>(); // fieldname => FieldName
         for (field in Type.getInstanceFields(Type.getClass(component)))
         {
             if (!Reflect.isFunction(Reflect.field(component, field))
@@ -131,9 +131,9 @@ class HaqComponentTools
 		return r;
     }
 	
-	public static function getParamNames(params:Dynamic) : Hash<String>
+	public static function getParamNames(params:Dynamic) : Map<String,String>
 	{
-		var r = new Hash<String>(); // fieldname => FieldName
+		var r = new Map<String,String>(); // fieldname => FieldName
         
 		var cls = Type.getClass(params);
 		for (param in (cls != null ? Type.getInstanceFields(cls) : Reflect.fields(params)))
@@ -169,7 +169,7 @@ class HaqComponentTools
         }
     }
 	
-	public static function fillTagIDs(component:HaqComponent, destTagIDs:Hash<Array<String>>) : Hash<Array<String>>
+	public static function fillTagIDs(component:HaqComponent, destTagIDs:Map<String,Array<String>>) : Map<String,Array<String>>
 	{
 		if (component.visible)
 		{

@@ -31,7 +31,7 @@ class HaqPage extends HaqComponent
      */
     public var isPostback(default, null) : Bool;
 
-	public var params(default, null) : Hash<String>;
+	public var params(default, null) : Map<String,String>;
 	
 	public var cookie(default, null) : HaqCookie;
 	
@@ -150,7 +150,7 @@ class HaqPage extends HaqComponent
 			
 			if (!disableSystemHtmlInserts)
 			{
-				var tagIDs = HaqComponentTools.fillTagIDs(this, new Hash<Array<String>>());
+				var tagIDs = HaqComponentTools.fillTagIDs(this, new Map<String,Array<String>>());
 				
 				var systemStyles = [];
 				if (!disableSystemScriptsAndStylesRegistering)

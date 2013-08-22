@@ -5,12 +5,12 @@ import haquery.server.HaqComponent;
 
 class DirectItems 
 {
-	var hash : Hash<HaqComponent>;
+	var hash : Map<String,HaqComponent>;
 	var list : Array<HaqComponent>;
 	
 	public function new() 
 	{
-		hash = new Hash<HaqComponent>();
+		hash = new Map<String,HaqComponent>();
 		list = new Array<HaqComponent>();
 	}
 	
