@@ -6,7 +6,7 @@ import sys.io.File;
 import haxe.macro.Compiler;
 import haxe.macro.Expr;
 import haxe.macro.Type;
-using haquery.macro.internal.macro.tools.MacroTools;
+using haquery.macro.internal.macro.Tools;
 
 private typedef EventHandler = { name:String, pos:Position, args:Array<FunctionArg> };
 

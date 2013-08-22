@@ -17,7 +17,7 @@ class HaqTemplateManager
 	var classPaths : Array<String>;
 	var basePage : String;
 	var staticUrlPrefix : String;
-	var templates(default, null) : Hash<HaqTemplate>;
+	var templates(default, null) : Map<String,HaqTemplate>;
 	
 	public var fullTags(default, null) : Array<String>;
 	
@@ -28,7 +28,7 @@ class HaqTemplateManager
 		this.basePage = basePage;
 		this.staticUrlPrefix = staticUrlPrefix;
 		
-		this.templates = new Hash<HaqTemplate>();
+		this.templates = new Map<String,HaqTemplate>();
 		fillTemplates(HaqDefines.folders.pages);
 		for (template in templates)
 		{

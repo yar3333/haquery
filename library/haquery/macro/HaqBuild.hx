@@ -7,7 +7,7 @@ import haxe.macro.Type;
 
 class HaqBuild
 {
-	@:macro public static function startup()
+	macro public static function startup()
 	{
 		if (Context.defined("display"))
 		{

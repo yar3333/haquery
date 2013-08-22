@@ -31,13 +31,13 @@ private class LazyItemsIterator
 
 class LazyItems 
 {
-	var hash : Hash<HaqComponent>;
+	var hash : Map<String,HaqComponent>;
 	var length : Int;
 	var create : String->HaqComponent;
 	
 	public function new(length:Int, create:String->HaqComponent) 
 	{
-		hash = new Hash<HaqComponent>();
+		hash = new Map<String,HaqComponent>();
 		this.length = length;
 		this.create = create;
 	}

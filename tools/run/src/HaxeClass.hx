@@ -54,11 +54,11 @@ class HaxeClass
 		var s = "\n\t"
 		      + (isPrivate ? "" : "public ")
 			  + (isStatic ? "static " : "")
-			  + "var " + v.haxeName + "(" + v.haxeName + "_getter, null)" + " : " + v.haxeType
+			  + "var " + v.haxeName + "(get_" + v.haxeName + ", null)" + " : " + v.haxeType
 			  + ";\n";
 		
 		s += (isInline ? "\tinline " : "\t")
-		   + "function " + v.haxeName + "_getter() : " + v.haxeType + "\n"
+		   + "function get_" + v.haxeName + "() : " + v.haxeType + "\n"
 		   + "\t{\n"
 		   + indent(v.haxeBody.trim(), "\t\t") + "\n"
 		   + "\t}";

@@ -4,6 +4,7 @@ package haquery.server;
 
 #if !macro
 
+import Type;
 import stdlib.Exception;
 import stdlib.Std;
 import stdlib.Debug;
@@ -293,12 +294,12 @@ using stdlib.StringTools;
 
 #end
 	
-	@:macro public function template(ethis:haxe.macro.Expr)
+	macro public function template(ethis:haxe.macro.Expr)
 	{
 		return haquery.macro.HaqComponentTools.template(ethis);
 	}
 	
-	@:macro public function client(ethis:haxe.macro.Expr)
+	macro public function client(ethis:haxe.macro.Expr)
 	{
 		return haquery.macro.HaqComponentTools.shared(ethis);
 	}

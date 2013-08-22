@@ -1,28 +1,23 @@
-package haquery.macro.internal.macro.tools;
+package haquery.macro.internal.macro;
 
 import haxe.macro.Context;
 import haxe.macro.Expr;
-import haquery.macro.internal.core.types.Outcome;
 
-/**
- * ...
- * @author back2dos
- */
-using haquery.macro.internal.macro.tools.PosTools;
-using haquery.macro.internal.core.types.Outcome;
+using haquery.macro.internal.macro.Positions;
+using haquery.macro.internal.core.Outcome;
 
-class PosTools {
+class Positions {
 
-	static public function getOutcome < D, F > (pos:Position, outcome:Outcome < D, F > ) {
+	static public function getOutcome<D, F>(pos:Position, outcome:Outcome<D, F>):D {
 		return 
 			switch (outcome) {
 				case Success(d): d;
 				case Failure(f): pos.error(f);
 			}
 	}
-	static public function makeBlankType(pos:Position):ComplexType {
-		return TypeTools.toComplex(Context.typeof(macro null));
-	}	
+	static public function makeBlankType(pos:Position):ComplexType 
+		return Types.toComplex(Context.typeof(macro null));
+		
 	static public inline function getPos(pos:Position) {
 		return 
 			if (pos == null) 
@@ -30,18 +25,17 @@ class PosTools {
 			else
 				pos;
 	}
-	static public function at(pos:Position, e:Expr) {
-		return ExprTools.transform(e, function (e:Expr) {
-			return e;
-		}, pos);
-	}
 	static public function errorExpr(pos:Position, error:Dynamic) {
 		return Bouncer.bounce(function ():Expr {
-			return PosTools.error(pos, error);
+			return Positions.error(pos, error);
 		}, pos);		
 	}
 	static public inline function error(pos:Position, error:Dynamic):Dynamic {
 		return Context.error(Std.string(error), pos);
+	}
+	static public inline function warning<A>(pos:Position, warning:Dynamic, ?ret:A):A {
+		Context.warning(Std.string(warning), pos);
+		return ret;
 	}
 	///used to easily construct failed outcomes
 	static public function makeFailure<A, Reason>(pos:Position, reason:Reason):Outcome<A, MacroError<Reason>> {

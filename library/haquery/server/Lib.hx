@@ -2,14 +2,6 @@ package haquery.server;
 
 #if server
 
-#if php
-private typedef NativeLib = php.Lib;
-typedef Web = php.Web;
-#elseif neko
-private typedef NativeLib = neko.Lib;
-typedef Web = neko.Web;
-#end
-
 import haquery.common.HaqStorage;
 import haxe.io.Path;
 import haxe.Serializer;
@@ -24,6 +16,14 @@ import stdlib.Profiler;
 import stdlib.FileSystem;
 import haquery.common.HaqMessageListenerAnswer;
 using stdlib.StringTools;
+
+#if php
+private typedef NativeLib = php.Lib;
+typedef Web = php.Web;
+#elseif neko
+private typedef NativeLib = neko.Lib;
+typedef Web = neko.Web;
+#end
 
 class Lib
 {
@@ -42,14 +42,14 @@ class Lib
 		Sys.setCwd(getCwd());
 		#end
 
-		haxe.Log.trace = callback(HaqTrace.log, _, getClientIP(), null, null, _);
+		haxe.Log.trace = HaqTrace.log.bind(_, getClientIP(), null, null, _);
 		
 		var config = HaqConfig.load("config.xml");
 		uploads = new HaqUploads(HaqDefines.folders.temp + "/uploads", config.maxPostSize);
 		
 		try
         {
-			haxe.Log.trace = callback(HaqTrace.log, _, getClientIP(), config.filterTracesByIP, null, _);
+			haxe.Log.trace = HaqTrace.log.bind(_, getClientIP(), config.filterTracesByIP, null, _);
 			
 			if (manager == null)
 			{
@@ -64,7 +64,7 @@ class Lib
 			{
 				var route = new HaqRouter(HaqDefines.folders.pages, manager).getRoute(uri);
 				
-				haxe.Log.trace = callback(HaqTrace.log, _, getClientIP(), config.filterTracesByIP, null, _);
+				haxe.Log.trace = HaqTrace.log.bind(_, getClientIP(), config.filterTracesByIP, null, _);
 				
 				var request = getRequest(route, config);
 				var response = getResponse(request, route);
@@ -101,7 +101,7 @@ class Lib
 				
 				var page = manager.createPage(route.fullTag, request);
 				
-				haxe.Log.trace = callback(HaqTrace.log, _, page.clientIP, page.config.filterTracesByIP, page, _);
+				haxe.Log.trace = HaqTrace.log.bind(_, page.clientIP, page.config.filterTracesByIP, page, _);
 				
 				var response : HaqResponse = null;
 				try

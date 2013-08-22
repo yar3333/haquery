@@ -17,7 +17,7 @@ using stdlib.StringTools;
 
 class CompilationFailException extends Exception
 {
-	override public function toString() return message
+	override public function toString() return message;
 }
 
 class Build 
@@ -158,11 +158,6 @@ class Build
 		
 		if (r.exitCode == 0)
 		{
-			if (!project.isDebug)
-			{
-				File.saveContent(clientPath + "/haquery.js", new JSMin(File.getContent(clientPath + "/haquery.js")).output);
-			}
-			
 			log.finishOk();
 		}
 		else
@@ -205,7 +200,7 @@ class Build
 		log.start("Generate source code files");
 		fs.createDirectory(project.platform == "neko" ? Path.directory(tempPath) : tempPath);
 		var params = project.getBuildParams(project.platform, tempPath, [ "server", "haqueryGenCode" ]);
-		var r = Process.run(log, fs.getHaxePath(), params);
+		var r = Process.run(log, fs.getHaxePath(), params, true);
 		fs.deleteAny(tempPath);
 		fs.deleteDirectory(Path.directory(tempPath));
 		if (r.stdOut.trim() != "") Lib.print(r.stdOut);

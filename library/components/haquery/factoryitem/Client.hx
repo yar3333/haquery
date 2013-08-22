@@ -27,13 +27,13 @@ private typedef ComponentData =
 
 class Client extends BaseClient
 {
-	var componentAnonimIDs : Hash<Int>;
+	var componentAnonimIDs : Map<String,Int>;
 	var childComponents : Array<ComponentData>;
 	
 	function new()
 	{
 		super();
-		componentAnonimIDs = new Hash<Int>();
+		componentAnonimIDs = new Map<String,Int>();
 	}
 	
 	override function construct(fullTag:String, parent:HaqComponent, id:String, isDynamic:Bool, dynamicParams:Dynamic)
@@ -100,7 +100,7 @@ class Client extends BaseClient
 		return r;
 	}
 	
-	function hashToObject(h:Hash<Dynamic>) : Dynamic
+	function hashToObject(h:Map<String,Dynamic>) : Dynamic
 	{
 		var r = { };
 		for (k in h.keys())

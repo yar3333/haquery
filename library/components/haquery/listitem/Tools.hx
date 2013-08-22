@@ -18,7 +18,7 @@ class Tools
     {
         if (params != null)
 		{
-            html = reHtmlParam.customReplace(html, function(re) 
+            html = reHtmlParam.map(html, function(re) 
             {
                 var param = re.matched(1);
                 if (Reflect.isFunction(Reflect.field(params, "get_" + param)))

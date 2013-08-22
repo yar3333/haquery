@@ -58,7 +58,7 @@ private typedef BasePage = haquery.client.BasePage;
 	
 	public function new() : Void
 	{
-		components = new Hash<Component>();
+		components = new Map<String,Component>();
 		nextAnonimID = 0;
 		
 		var templateClass = HaqComponentTools.getTemplateClass(Type.getClass(this));

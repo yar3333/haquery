@@ -10,7 +10,7 @@ import neko.Web;
 
 class HaqCookie
 {
-	var cookies : Hash<String>;
+	var cookies : Map<String,String>;
 	
 	public var response(default, null) : HaqResponseCookie;
 	

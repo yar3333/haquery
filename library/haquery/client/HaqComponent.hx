@@ -72,12 +72,12 @@ using stdlib.StringTools;
 
 #end
 	
-	@:macro public function template(ethis:haxe.macro.Expr)
+	macro public function template(ethis:haxe.macro.Expr)
 	{
 		return haquery.macro.HaqComponentTools.template(ethis);
 	}
 	
-	@:macro public function server(ethis:haxe.macro.Expr)
+	macro public function server(ethis:haxe.macro.Expr)
 	{
 		return haquery.macro.HaqComponentTools.shared(ethis);
 	}

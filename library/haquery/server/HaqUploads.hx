@@ -2,14 +2,6 @@ package haquery.server;
 
 #if server
 
-#if php
-private typedef NativeLib = php.Lib;
-private typedef NativeWeb = php.Web;
-#elseif neko
-private typedef NativeLib = neko.Lib;
-private typedef NativeWeb = neko.Web;
-#end
-
 import haquery.common.HaqDefines;
 import haquery.common.HaqUploadResult;
 import haquery.common.HaqUploadError;
@@ -18,6 +10,14 @@ import haxe.Serializer;
 import haxe.Unserializer;
 import sys.io.File;
 import stdlib.FileSystem;
+
+#if php
+private typedef NativeLib = php.Lib;
+private typedef NativeWeb = php.Web;
+#elseif neko
+private typedef NativeLib = neko.Lib;
+private typedef NativeWeb = neko.Web;
+#end
 
 class HaqUploads 
 {
@@ -36,7 +36,7 @@ class HaqUploads
 		
 		#if php
 		
-		var nativeFiles : Hash<php.NativeArray> = php.Lib.hashOfAssociativeArray(untyped __var__("_FILES"));
+		var nativeFiles : Map<String,php.NativeArray> = php.Lib.hashOfAssociativeArray(untyped __var__("_FILES"));
 		for (id in nativeFiles.keys())
 		{
 			var nativeFile : php.NativeArray = nativeFiles.get(id);

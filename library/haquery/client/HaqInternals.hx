@@ -10,13 +10,13 @@ import haxe.Unserializer;
 	/**
 	 * componentID => fullTag
 	 */
-	public static var componentIDs(default, null) : Hash<String>;
+	public static var componentIDs(default, null) : Map<String,String>;
 	
 	public static var storage(default, null) : HaqStorage;
 	
 	static function setTagIDs(tagIDs)
 	{
-		componentIDs = new Hash<String>();
+		componentIDs = new Map<String,String>();
 		for (fullTag in Reflect.fields(tagIDs))
 		{
 			for (id in cast(Reflect.field(tagIDs, fullTag), Array<Dynamic>))
@@ -31,7 +31,7 @@ import haxe.Unserializer;
 		componentIDs.set(fullID, fullTag);
 	}
 	
-	static function unserialize(s:String) : String return Unserializer.run(s)
+	static function unserialize(s:String) : String return Unserializer.run(s);
 }
 
 #end
