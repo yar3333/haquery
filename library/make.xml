@@ -10,7 +10,7 @@
 		</zip>
 	
 		<zip destfile="flashdevelop.zip">
-			<fileset dir="..\tools\flashdevelop" />
+			<fileset dir="..\flashdevelop" />
 		</zip>
 		
 		<zip destfile="library.zip">
