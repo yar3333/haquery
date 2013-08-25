@@ -135,14 +135,6 @@ class Build
 		Lib.print(r.stdOut);
 		Lib.print(r.stdErr);
 		
-		if (FileSystem.exists(clientPath + "/haquery.js"))
-		{
-			File.saveContent(clientPath + "/haquery.js", File.getContent(clientPath + "/haquery.js").replace(
-"function $extend(from, fields) {\n	function inherit() {}; inherit.prototype = from; var proto = new inherit();\n	for (var name in fields) proto[name] = fields[name];\n	return proto;\n}",
-"function $extend(from, fields) {\n	function inherit() {}; inherit.prototype = from; var proto = new inherit();\n	for (var name in fields) proto[name] = fields[name];\n	if (fields.toString !== Object.prototype.toString) proto.toString = fields.toString;\n	return proto;\n}"
-			));
-		}
-        
 		if (FileSystem.exists(clientPath + "/haquery.js")
 		 && FileSystem.exists(clientPath + "/haquery.js.old"))
 		{
