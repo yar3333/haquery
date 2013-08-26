@@ -9,7 +9,7 @@ import sys.io.File;
 import haxe.macro.Expr;
 import haxe.macro.Type;
 using stdlib.StringTools;
-using haquery.macro.internal.macro.Tools;
+using haquery.macro.MacroTools;
 
 class HaqTools
 {

@@ -9,7 +9,7 @@ import haxe.io.Path;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.Type;
-using haquery.macro.internal.macro.Tools;
+using haquery.macro.MacroTools;
 
 class HaqSharedGenerator
 {
