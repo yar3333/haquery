@@ -128,7 +128,7 @@ class Build
 		
 		fs.createDirectory(clientPath);
         
-        var params = project.getBuildParams("js", clientPath + "/haquery.js", [ "noEmbedJS", "client" ]);
+        var params = project.getBuildParams("js", clientPath + "/haquery.js", [ "noEmbedJS" ], [ "server" ]);
 		if (isJsModern) params.push("--js-modern");
 		if (isDeadCodeElimination) params.push("--dead-code-elimination");
 		var r = Process.run(log, fs.getHaxePath(), params);
@@ -161,7 +161,7 @@ class Build
 	function buildServer(outputDir:String)
 	{
 		log.start("Build server");
-        var params = project.getBuildParams(project.platform, project.platform != "neko" ? outputDir : outputDir + "/index.n", [ "server" ]);
+        var params = project.getBuildParams(project.platform, project.platform != "neko" ? outputDir : outputDir + "/index.n", [], [ "client" ]);
 		var r = Process.run(log, fs.getHaxePath(), params);
 		Lib.print(r.stdOut);
 		Lib.print(r.stdErr);
@@ -191,7 +191,7 @@ class Build
 		
 		log.start("Generate source code files");
 		fs.createDirectory(project.platform == "neko" ? Path.directory(tempPath) : tempPath);
-		var params = project.getBuildParams(project.platform, tempPath, [ "server", "haqueryGenCode" ]);
+		var params = project.getBuildParams(project.platform, tempPath, [ "haqueryGenCode" ], [ "client" ]);
 		var r = Process.run(log, fs.getHaxePath(), params, true);
 		fs.deleteAny(tempPath);
 		fs.deleteDirectory(Path.directory(tempPath));

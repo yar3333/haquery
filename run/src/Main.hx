@@ -39,7 +39,7 @@ class Main
 		var k64Index = Lambda.indexOf(args, "-64");
 		if (k64Index >= 0) args.remove("-64");
 		
-		var log = new Log(5);
+		var log = new Log(2);
 		var fs = new FileSystemTools(log, exeDir + "/hant-" + Sys.systemName().toLowerCase() + (k64Index >=0 ? "64" : ""));
 		
 		var commands = getCommands(log, fs, exeDir, k64Index >= 0);

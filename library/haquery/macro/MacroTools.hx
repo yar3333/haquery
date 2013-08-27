@@ -6,7 +6,7 @@ import haxe.macro.Type;
 
 class MacroTools
 {
-	static public inline function toArg(name:String, ?t, ?opt = false, ?value = null) : FunctionArg
+	static public inline function toArg(name:String, ?t, opt=false, ?value) : FunctionArg
 	{
 		return
 		{
@@ -20,26 +20,6 @@ class MacroTools
 	static public inline function toExpr(v:Dynamic, ?pos:Position)
 		return Context.makeExpr(v, pos);
 		
-	static public function toComplex(type:Type, ?pretty = false) : ComplexType
-	{
-		var ret = haxe.macro.TypeTools.toComplexType(type);
-		if (ret == null)
-		{
-			//ret = lazyComplex(function () return type);	
-		}
-		return ret;
-	}
-	
-	/*static function lazyComplex(f:Void->Type)
-	{
-		return TPath({
-			pack : ['haxe','macro'],
-			name : 'MacroType',
-			params : [TPExpr(call(resolve('haquery.macro.internal.macro.Types.getType'), [toExpr(register(f))]))],
-			sub : null,				
-		});
-	}*/
-	
 	static public inline function resolve(s:String, ?pos) 
 		return drill(s.split('.'), pos);	
 	
