@@ -60,12 +60,6 @@ private typedef BasePage = haquery.client.BasePage;
 	{
 		components = new Map<String,Component>();
 		nextAnonimID = 0;
-		
-		var templateClass = HaqComponentTools.getTemplateClass(Type.getClass(this));
-		if (templateClass != null)
-		{
-			Reflect.setField(this, "_template", Type.createInstance(templateClass, [ this ]));
-		}
 	}
 	
 	function commonConstruct(fullTag:String, parent:Component, id:String) 
