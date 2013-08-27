@@ -9,7 +9,7 @@ class Tools
 	{
 		if (reHtmlParam == null)
 		{
-			reHtmlParam = new EReg("[{]([_a-z][_a-z0-9]*)[}]", "i");
+			reHtmlParam = new EReg("[{]([_a-z][_a-z0-9]*)[}]", "ig");
 		}
 		return reHtmlParam;
 	}

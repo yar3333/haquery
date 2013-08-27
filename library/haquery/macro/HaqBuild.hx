@@ -52,7 +52,7 @@ class HaqBuild
 	{
 		if (clas.constructor == null)
 		{
-			Context.warning("Please, add the constructor to the " + clas.pack.join(".") + "." + clas.name + " class due haxe bug #2117. Use code:\nfunction new() super();", clas.pos);
+			Context.error("Please, add the constructor to the " + clas.pack.join(".") + "." + clas.name + " class due haxe bug #2117.\nInsert the next line into your code for workaround:\nfunction new() super();", clas.pos);
 		}
 	}
 	

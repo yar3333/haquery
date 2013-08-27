@@ -255,46 +255,46 @@ extern class JQuery implements ArrayAccess<Element> {
 
 	function delay( duration : Int, ?queueName : String ) : JQuery;
 
-	@:overload(function(?duration:Int,?easing:String,?call:Void->Void) : JQuery{})
 	@:overload(function(?duration:String,?easing:String,?call:Void->Void) : JQuery{})
+	@:overload(function(?duration:Int,?easing:String,?call:Void->Void) : JQuery{})
 	function hide( ?duration : Int, ?call : Void -> Void ) : JQuery;
 
-	@:overload(function(?duration:Int,?easing:String,?call:Void->Void) : JQuery{})
 	@:overload(function(?duration:String,?easing:String,?call:Void->Void) : JQuery{})
+	@:overload(function(?duration:Int,?easing:String,?call:Void->Void) : JQuery{})
 	function fadeIn( ?duration : Int, ?call : Void -> Void ) : JQuery;
 
-	@:overload(function(?duration:Int,?easing:String,?call:Void->Void) : JQuery{})
 	@:overload(function(?duration:String,?easing:String,?call:Void->Void) : JQuery{})
+	@:overload(function(?duration:Int,?easing:String,?call:Void->Void) : JQuery{})
 	function fadeOut( ?duration : Int, ?call : Void -> Void ) : JQuery;
 
-	@:overload(function(duration:Int,opacity:Float,?easing:String,?call:Void->Void) : JQuery{})
 	@:overload(function(duration:String,opacity:Float,?easing:String,?call:Void->Void) : JQuery{})
+	@:overload(function(duration:Int,opacity:Float,?easing:String,?call:Void->Void) : JQuery{})
 	function fadeTo( duration : Int, opacity : Float, ?call : Void -> Void ) : JQuery;
 
-	@:overload(function(?duration:Int,?easing:String,?call:Void->Void) : JQuery{})
 	@:overload(function(?duration:String,?easing:String,?call:Void->Void) : JQuery{})
+	@:overload(function(?duration:Int,?easing:String,?call:Void->Void) : JQuery{})
 	function fadeToggle( ?duration : Int, ?call : Void -> Void ) : JQuery;
 
-	@:overload(function(?duration:Int,?easing:String,?call:Void->Void) : JQuery{})
 	@:overload(function(?duration:String,?easing:String,?call:Void->Void) : JQuery{})
+	@:overload(function(?duration:Int,?easing:String,?call:Void->Void) : JQuery{})
 	function show( ?duration : Int, ?call : Void -> Void ) : JQuery;
 
-	@:overload(function(?duration:Int,?easing:String,?call:Void->Void) : JQuery{})
 	@:overload(function(?duration:String,?easing:String,?call:Void->Void) : JQuery{})
+	@:overload(function(?duration:Int,?easing:String,?call:Void->Void) : JQuery{})
 	function slideDown( ?duration : Int, ?call : Void -> Void ) : JQuery;
 
-	@:overload(function(?duration:Int,?easing:String,?call:Void->Void) : JQuery{})
 	@:overload(function(?duration:String,?easing:String,?call:Void->Void) : JQuery{})
+	@:overload(function(?duration:Int,?easing:String,?call:Void->Void) : JQuery{})
 	function slideToggle( ?duration : Int, ?call : Void -> Void ) : JQuery;
 
-	@:overload(function(?duration:Int,?easing:String,?call:Void->Void) : JQuery{})
 	@:overload(function(?duration:String,?easing:String,?call:Void->Void) : JQuery{})
+	@:overload(function(?duration:Int,?easing:String,?call:Void->Void) : JQuery{})
 	function slideUp( ?duration : Int, ?call : Void -> Void ) : JQuery;
 
 	function stop( ?clearQueue : Bool, ?jumpToEnd : Bool ) : JQuery;
 
-	@:overload(function(?duration:Int,?easing:String,?call:Void->Void) : JQuery{})
 	@:overload(function(?duration:String,?easing:String,?call:Void->Void) : JQuery{})
+	@:overload(function(?duration:Int,?easing:String,?call:Void->Void) : JQuery{})
 	function toggle( ?duration : Int, ?call : Void -> Void ) : JQuery;
 
 	// Events
