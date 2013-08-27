@@ -7,6 +7,7 @@ import haxe.macro.Compiler;
 import haxe.macro.Expr;
 import haxe.macro.ExprTools;
 import haxe.macro.Type;
+using haxe.macro.TypeTools;
 using haquery.macro.MacroTools;
 
 private typedef EventHandler = { name:String, pos:Position, args:Array<FunctionArg> };
@@ -90,7 +91,8 @@ class HaqComponentTools
 	{
 		if (handlers != null && handlers.length > 0)
 		{
-			var templateClass = getTemplateClass(componentClass);
+			Context.getModule(componentClass.pack.join(".") + ".Template" + componentClass.name);
+			var templateClass = Context.getType(componentClass.pack.join(".") + ".Template" + componentClass.name).getClass();
 			if (templateClass != null)
 			{
 				for (handler in handlers)
@@ -122,7 +124,7 @@ class HaqComponentTools
 						
 						if (eventParamType != null)
 						{
-							handler.args[1].type = eventParamType.toComplex();
+							handler.args[1].type = eventParamType.toComplexType();
 						}
 					}
 					else
@@ -189,8 +191,6 @@ class HaqComponentTools
 						{
 							if (params != null && params.length == 1)
 							{
-								//Context.getModule(t.get().module);
-								//Context.warning("Event's param is " + params[0] + ".", field.pos);
 								return params[0];
 							}
 							else
@@ -215,27 +215,6 @@ class HaqComponentTools
 		if (componentClass.superClass != null)
 		{
 			return getComponentClassEventClassParamType(componentClass.superClass.t.get(), eventName);
-		}
-		
-		return null;
-	}
-	
-	static function getTemplateClass(componentClass:ClassType) : ClassType
-	{
-		var templateClassTypes = Context.getModule(componentClass.pack.join(".") + ".Template" + componentClass.name);
-		for (templateClassType in templateClassTypes)
-		{
-			switch (templateClassType)
-			{
-				case Type.TInst(templateClassRef, params):
-					var templateClass = templateClassRef.get();
-					if (templateClass.name == "Template" + componentClass.name)
-					{
-						return templateClass;
-					}
-				
-				default:
-			}
 		}
 		
 		return null;

@@ -60,13 +60,10 @@ class HaqTools
 	
 	public static function getClassType(fullName:String) : ClassType
 	{
-		var type = Context.getType(fullName);
-		switch (type)
+		switch (Context.getType(fullName))
 		{
-			case Type.TInst(t, _):
-				return t.get();
-			default:
-				return null;
+			case Type.TInst(t, _):	return t.get();
+			default:				return null;
 		}
 	}
 	
