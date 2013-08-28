@@ -10,6 +10,7 @@ import haxe.macro.Expr;
 import haxe.macro.Type;
 using stdlib.StringTools;
 using haquery.macro.MacroTools;
+using haxe.macro.TypeTools;
 
 class HaqTools
 {
@@ -72,8 +73,7 @@ class HaqTools
 		var r = new Array<FunctionArg>();
 		for (param in params)
 		{
-			var type = safeToComplex(param.t);
-			r.push(param.name.toArg(type, param.opt));
+			r.push(param.name.toArg(param.t.toComplexType(), param.opt));
 		}
 		return r;
 	}
@@ -118,45 +118,9 @@ class HaqTools
 		return HaqTools.makeMethod("new", args, "Void".asComplexType(), expr);
 	}
 	
-	public static function safeToComplex(type:Type) : ComplexType
-	{
-		switch (type)
-		{
-			case Type.TMono(t):
-				return safeToComplex(t.get());
-			
-			case Type.TInst(t, params):
-				var tt = t.get();
-				return ComplexType.TPath(makeTypePath(tt.pack, tt.name, typesToTypeParams(params)));
-			
-			case Type.TEnum(t, params):
-				var tt = t.get();
-				return ComplexType.TPath(makeTypePath(tt.pack, tt.name, typesToTypeParams(params)));
-			
-			case Type.TAnonymous(a):
-				var aa = a.get();
-				return ComplexType.TAnonymous(Lambda.array(Lambda.map(aa.fields, classFieldToField)));
-			
-			default:
-				return ComplexType.TPath("Dynamic".asTypePath());
-		}
-	}
-	
 	public static function typesToTypeParams(types:Array<Type>) : Array<TypeParam>
 	{
-		return Lambda.array(Lambda.map(types, function (t) return TypeParam.TPType(safeToComplex(t))));
-	}
-	
-	public static function classFieldToField(field:ClassField) : Field
-	{
-		return {
-			  name : field.name
-			, doc : field.doc
-			, access : []
-			, kind : FieldType.FVar(safeToComplex(field.type))
-			, pos : field.pos
-			, meta : field.meta.get()
-		};
+		return Lambda.array(Lambda.map(types, function (t) return TypeParam.TPType(t.toComplexType())));
 	}
 	
 	public static function isVoid(t:Null<ComplexType>) : Bool
@@ -171,40 +135,6 @@ class HaqTools
 			}
 		}
 		return false;
-	}
-	
-	public static function isNull(t:Expr) : Bool
-	{
-		if (t != null)
-		{
-			switch (t.expr)
-			{
-				case ExprDef.EConst(c):
-					switch (c)
-					{
-						case Constant.CIdent(s):
-							return s == "null";
-						default:
-					}
-				default:
-			}
-		}
-		return false;
-	}
-	
-	public static function stringConstExpr2string(expr:Expr) : String
-	{
-		switch (expr.expr)
-		{
-			case ExprDef.EConst(c):
-				switch (c)
-				{
-					case Constant.CString(s): return s;
-					default:
-				}
-			default:
-		}
-		return null;
 	}
 	
 	#end
