@@ -9,6 +9,7 @@ import haxe.macro.Expr;
 import haxe.macro.Type;
 import haxe.macro.Printer;
 using haquery.macro.MacroTools;
+using haxe.macro.TypeTools;
 
 class HaqBuild
 {
@@ -180,7 +181,7 @@ class HaqBuild
 					switch (field.type)
 					{
 						case Type.TFun(args, ret):
-							r.push(mapFunc(field.name, HaqTools.funArgsToFunctionArgs(args), HaqTools.safeToComplex(ret), componentClass.pos));
+							r.push(mapFunc(field.name, HaqTools.funArgsToFunctionArgs(args), ret.toComplexType(), componentClass.pos));
 						
 						default:
 							Context.error("Use @shared for methods only.", field.pos);
