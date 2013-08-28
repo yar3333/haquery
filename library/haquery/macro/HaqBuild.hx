@@ -8,8 +8,8 @@ import haxe.macro.Compiler;
 import haxe.macro.Expr;
 import haxe.macro.Type;
 import haxe.macro.Printer;
-using haquery.macro.MacroTools;
 using haxe.macro.TypeTools;
+using haquery.macro.HaqMacroTools;
 
 class HaqBuild
 {
@@ -25,7 +25,7 @@ class HaqBuild
 					{
 						case Type.TInst(t, params):
 							var clas = t.get();
-							if ((clas.name == "Server" || clas.name == "Client") && HaqTools.isExtendsFrom(clas, "haquery.base.HaqComponent"))
+							if ((clas.name == "Server" || clas.name == "Client") && clas.isExtendsFrom("haquery.base.HaqComponent"))
 							{
 								checkConstructorExist(clas);
 								
@@ -62,8 +62,8 @@ class HaqBuild
 		generateModuleIfNeed("SharedServer", componentClass, function(_)
 		{
 			return [ 
-				  HaqTools.makeVar("component", macro : haquery.client.HaqComponent)
-				, HaqTools.makeMethod("new", [ "component".toArg(macro : haquery.client.HaqComponent) ], "Void".asComplexType(), macro { this.component = component; })
+				  "component".makeVar(macro : haquery.client.HaqComponent)
+				, "new".makeMethod([ "component".toArg(macro : haquery.client.HaqComponent) ], macro : Void, macro { this.component = component; })
 			].concat(
 				mapMetaMarkedMethodsToFields("shared", componentClass, 
 					function(name:String, args:Array<FunctionArg>, ret:Null<ComplexType>, pos:Position) : Field
@@ -74,11 +74,11 @@ class HaqBuild
 						var callParams = [ 
 							  name.toExpr(pos)
 							, Lambda.map(args, function(a) return Context.parse(a.name, pos)).toArray()
-							, !HaqTools.isVoid(ret) ? macro success : macro function(_) if (success != null) success()
+							, !ret.isVoid() ? macro success : macro function(_) if (success != null) success()
 							, macro fail
 						];
 						var callExpr = ExprDef.EBlock( [ ExprDef.ECall(macro component.callSharedServerMethod, callParams).at(pos) ] ).at(pos);
-						return HaqTools.makeMethod(name, args2, macro : Void, callExpr);
+						return name.makeMethod(args2, macro : Void, callExpr);
 					}
 				)
 			);
@@ -90,8 +90,8 @@ class HaqBuild
 		generateModuleIfNeed("SharedClient", componentClass, function(_)
 		{
 			return [ 
-				  HaqTools.makeVar("component", macro : haquery.server.HaqComponent)
-				, HaqTools.makeMethod("new", [ "component".toArg(macro : haquery.server.HaqComponent) ], "Void".asComplexType(), macro { this.component = component; })
+				  "component".makeVar(macro : haquery.server.HaqComponent)
+				, "new".makeMethod([ "component".toArg(macro : haquery.server.HaqComponent) ], macro : Void, macro { this.component = component; })
 			].concat(
 				mapMetaMarkedMethodsToFields("shared", componentClass, 
 					function(name:String, args:Array<FunctionArg>, ret:Null<ComplexType>, pos:Position) : Field
@@ -101,7 +101,7 @@ class HaqBuild
 							, Lambda.map(args, function(a) return Context.parse(a.name, pos)).toArray()
 						];
 						var callExpr = ExprDef.EBlock([ ExprDef.ECall(macro component.callSharedClientMethodDelayed, callParams).at(pos) ]).at(pos);
-						return HaqTools.makeMethod(name, args, macro : Void, callExpr);
+						return name.makeMethod(args, macro : Void, callExpr);
 					}
 				)
 			);
@@ -165,7 +165,7 @@ class HaqBuild
 					switch (field.type)
 					{
 						case Type.TFun(args, ret):
-							r.push(mapFunc(field.name, HaqTools.funArgsToFunctionArgs(args), ret.toComplexType(), componentClass.pos));
+							r.push(mapFunc(field.name, args.funArgsToFunctionArgs(), ret.toComplexType(), componentClass.pos));
 						
 						default:
 							Context.error("Use @shared for methods only.", field.pos);

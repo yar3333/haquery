@@ -38,7 +38,7 @@ class Build
 		project = new FlashDevelopProject(projectFilePath);
 	}
 	
-	public function build(outputDir:String, jsModern:Bool, isDeadCodeElimination:Bool, basePage:String, staticUrlPrefix:String)
+	public function build(outputDir:String, isDeadCodeElimination:Bool, basePage:String, staticUrlPrefix:String)
     {
         log.start("Build");
         
@@ -63,7 +63,7 @@ class Build
 			
 			try saveLibFolderFileTimes(outputDir) catch (e:Dynamic) {}
 			
-			buildClient(outputDir, jsModern, isDeadCodeElimination);
+			buildClient(outputDir, isDeadCodeElimination);
 			buildServer(outputDir);
 			
 			generateComponentsCssFile(manager, outputDir);
@@ -111,7 +111,7 @@ class Build
 		return a < b ? -1 : 1;
     }
 	
-	function buildClient(outputDir:String, isJsModern:Bool, isDeadCodeElimination:Bool)
+	function buildClient(outputDir:String, isDeadCodeElimination:Bool)
     {
 		var clientPath = outputDir + '/haquery/client';
 		
@@ -129,7 +129,6 @@ class Build
 		fs.createDirectory(clientPath);
         
         var params = project.getBuildParams("js", clientPath + "/haquery.js", [ "noEmbedJS" ], [ "server" ]);
-		if (isJsModern) params.push("--js-modern");
 		if (isDeadCodeElimination) params.push("--dead-code-elimination");
 		var r = Process.run(log, fs.getHaxePath(), params);
 		Lib.print(r.stdOut);

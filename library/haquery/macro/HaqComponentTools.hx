@@ -8,7 +8,7 @@ import haxe.macro.Expr;
 import haxe.macro.ExprTools;
 import haxe.macro.Type;
 using haxe.macro.TypeTools;
-using haquery.macro.MacroTools;
+using haquery.macro.HaqMacroTools;
 
 private typedef EventHandler = { name:String, pos:Position, args:Array<FunctionArg> };
 
@@ -43,7 +43,7 @@ class HaqComponentTools
 		{
 			case Type.TInst(t, params):
 				var clas = t.get();
-				if (HaqTools.isExtendsFrom(clas, "haquery.base.HaqComponent"))
+				if (clas.isExtendsFrom("haquery.base.HaqComponent"))
 				{
 					var typePath = { sub:null, params:[], pack:clas.pack, name:"Template" + clas.name };
 					return { expr:ExprDef.ENew(typePath, [ ethis ]), pos:ethis.pos };
@@ -66,14 +66,14 @@ class HaqComponentTools
 			{
 				case Type.TInst(t, params):
 					var clas = t.get();
-					if (HaqTools.isExtendsFrom(clas, "haquery.client.HaqComponent"))
+					if (clas.isExtendsFrom("haquery.client.HaqComponent"))
 					{
-						return { expr:ExprDef.ENew(HaqTools.makeTypePath(clas.pack, "SharedServer"), [ ethis ]), pos:ethis.pos };
+						return { expr:ExprDef.ENew(HaqMacroTools.makeTypePath(clas.pack, "SharedServer"), [ ethis ]), pos:ethis.pos };
 					}
 					else
-					if (HaqTools.isExtendsFrom(clas, "haquery.server.HaqComponent"))
+					if (clas.isExtendsFrom("haquery.server.HaqComponent"))
 					{
-						return { expr:ExprDef.ENew(HaqTools.makeTypePath(clas.pack, "SharedClient"), [ ethis ]), pos:ethis.pos };
+						return { expr:ExprDef.ENew(HaqMacroTools.makeTypePath(clas.pack, "SharedClient"), [ ethis ]), pos:ethis.pos };
 					}
 				default:
 			}
@@ -110,7 +110,7 @@ class HaqComponentTools
 						var typePath = templateClassFieldClass.pack.join(".") + "." + templateClassFieldClass.name;
 						if (typePath == "haquery.client.HaqQuery" || typePath == "js.JQuery")
 						{
-							eventParamType = HaqTools.getModuleType("js.JQuery", "JqEvent");
+							eventParamType = HaqMacroTools.getModuleType("js.JQuery", "JqEvent");
 						}
 						else
 						if (typePath == "haquery.server.HaqQuery")

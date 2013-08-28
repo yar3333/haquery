@@ -9,10 +9,9 @@ import sys.io.File;
 import haxe.macro.Expr;
 import haxe.macro.Type;
 using stdlib.StringTools;
-using haquery.macro.MacroTools;
 using haxe.macro.TypeTools;
 
-class HaqTools
+class HaqMacroTools
 {
 	#if (macro || display)
 	
@@ -59,12 +58,12 @@ class HaqTools
 		var r = new Array<FunctionArg>();
 		for (param in params)
 		{
-			r.push(param.name.toArg(param.t.toComplexType(), param.opt));
+			r.push(toArg(param.name, param.t.toComplexType(), param.opt));
 		}
 		return r;
 	}
 	
-	public static function makeTypePath(pack:Array<String>, name:String, ?params:Array<TypeParam>) : TypePath
+	@:noUsing public static function makeTypePath(pack:Array<String>, name:String, ?params:Array<TypeParam>) : TypePath
 	{
 		return {
 			  pack : pack
@@ -112,6 +111,32 @@ class HaqTools
 		}
 		return false;
 	}
+	
+	public static inline function toArg(name:String, ?t, opt=false, ?value) : FunctionArg
+	{
+		return
+		{
+			name: name,
+			opt: opt,
+			type: t,
+			value: value
+		};
+	}
+	
+	public static inline function toExpr(v:Dynamic, ?pos:Position)
+		return Context.makeExpr(v, pos);
+		
+	public static inline function at(e:ExprDef, ?pos:Position) 
+		return { expr:e, pos:pos };
+		
+	public static inline function field(e, field, ?pos)
+		return at(EField(e, field), pos);
+		
+	public static inline function call(e, ?params, ?pos)
+		return at(ECall(e, params == null ? [] : params), pos);
+		
+	public static inline function toArray(exprs:Iterable<Expr>, ?pos) 
+		return at(EArrayDecl(Lambda.array(exprs)), pos);
 	
 	#end
 }
