@@ -122,7 +122,6 @@ class Main
 			
 			var options = new CmdOptions();
 			options.add("output", "bin", [ "--output" ], "Output folder (by default is 'bin').");
-			options.add("jsModern", false, [ "--js-modern" ], "Generate js code in modern style.");
 			options.add("deadCodeElimination", false, [ "--dead-code-elimination" ], "For a while is not supported.");
 			options.add("basePage", "", [ "--base-page" ], "Default base page. For example: 'pages.layout'.");
 			options.add("staticUrlPrefix", "", [ "--static-url-prefix" ], "Prefix for URLs started with '~',\nlinks to system the system files\nand registered js/css files.\nAffected to HTML and CSS output only,\nnot to physical folders structure.");
@@ -132,7 +131,6 @@ class Main
 			{
 				new Build(log, fs, exeDir, k64, options.get("project")).build(
 					  options.get("output")
-					, options.get("jsModern")
 					, options.get("deadCodeElimination")
 					, options.get("basePage")
 					, options.get("staticUrlPrefix")
