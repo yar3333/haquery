@@ -20,16 +20,6 @@ class MacroTools
 	static public inline function toExpr(v:Dynamic, ?pos:Position)
 		return Context.makeExpr(v, pos);
 		
-	static public inline function resolve(s:String, ?pos) 
-		return drill(s.split('.'), pos);	
-	
-	static public function drill(parts:Array<String>, ?pos:Position, ?target:Expr)
-	{
-		if (target == null) target = at(EConst(CIdent(parts.shift())), pos);
-		for (part in parts) target = field(target, part, pos);
-		return target;		
-	}
-	
 	static public inline function at(e:ExprDef, ?pos:Position) 
 		return {
 			expr: e,
@@ -65,5 +55,5 @@ class MacroTools
 		return TPath(asTypePath(s, params));	
 	
 	static public inline function toArray(exprs:Iterable<Expr>, ?pos) 
-	return at(EArrayDecl(Lambda.array(exprs)), pos);		
+		return at(EArrayDecl(Lambda.array(exprs)), pos);		
 }

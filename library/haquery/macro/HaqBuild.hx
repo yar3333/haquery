@@ -63,15 +63,7 @@ class HaqBuild
 		{
 			return [ 
 				  HaqTools.makeVar("component", macro : haquery.client.HaqComponent)
-				, HaqTools.makeConstructor(
-					[
-						"component".toArg(macro : haquery.client.HaqComponent)
-					],
-					macro
-					{
-						this.component = component;
-					}
-				  )
+				, HaqTools.makeMethod("new", [ "component".toArg(macro : haquery.client.HaqComponent) ], "Void".asComplexType(), macro { this.component = component; })
 			].concat(
 				mapMetaMarkedMethodsToFields("shared", componentClass, 
 					function(name:String, args:Array<FunctionArg>, ret:Null<ComplexType>, pos:Position) : Field
@@ -99,15 +91,7 @@ class HaqBuild
 		{
 			return [ 
 				  HaqTools.makeVar("component", macro : haquery.server.HaqComponent)
-				, HaqTools.makeConstructor(
-					[
-						"component".toArg(macro : haquery.server.HaqComponent)
-					],
-					macro
-					{
-						this.component = component;
-					}
-				  )
+				, HaqTools.makeMethod("new", [ "component".toArg(macro : haquery.server.HaqComponent) ], "Void".asComplexType(), macro { this.component = component; })
 			].concat(
 				mapMetaMarkedMethodsToFields("shared", componentClass, 
 					function(name:String, args:Array<FunctionArg>, ret:Null<ComplexType>, pos:Position) : Field
