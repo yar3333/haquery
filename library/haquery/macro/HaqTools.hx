@@ -16,20 +16,6 @@ class HaqTools
 {
 	#if (macro || display)
 	
-	public static function log(s:String) : Void
-	{
-		if (sys.FileSystem.exists("build.log"))
-		{
-			var log = sys.io.File.append("build.log", false);
-			log.writeString(s + "\n");
-			log.close();
-		}
-		else
-		{
-			sys.io.File.saveContent("build.log", s + "\n");
-		}
-	}
-	
 	public static function isExtendsFrom(t:ClassType, parentClassPath:String) : Bool
 	{
 		while (t.superClass != null)
@@ -111,16 +97,6 @@ class HaqTools
 					  })
 			, pos : expr.pos
 		};
-	}
-	
-	public static function makeConstructor(args:Array<FunctionArg>, expr:Expr) : Field
-	{
-		return HaqTools.makeMethod("new", args, "Void".asComplexType(), expr);
-	}
-	
-	public static function typesToTypeParams(types:Array<Type>) : Array<TypeParam>
-	{
-		return Lambda.array(Lambda.map(types, function (t) return TypeParam.TPType(t.toComplexType())));
 	}
 	
 	public static function isVoid(t:Null<ComplexType>) : Bool
