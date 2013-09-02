@@ -18,7 +18,8 @@ class HaqTemplateConfig
 		}
 		
 		clientClassName = Reflect.field(clas, "clientClassName");
-		serverHandlers = Reflect.field(clas, "serverHandlers");
+		var getServerHandlers = Reflect.field(clas, "getServerHandlers");
+		serverHandlers = getServerHandlers != null ? Reflect.callMethod(clas, getServerHandlers, []) : [];
 	}
 }
 

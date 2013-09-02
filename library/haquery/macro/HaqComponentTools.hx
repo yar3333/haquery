@@ -267,7 +267,7 @@ class HaqComponentTools
 		var text = File.getContent(path);
 		text = StringTools.replace(text
 			, "// SERVER_HANDLERS"
-			, "public static var serverHandlers = [ " + Lambda.map(handlers, function(h) return "'" + h.name + "'").join(", ") + " ];"
+			, "public static function getServerHandlers() : Array<String> return [ " + Lambda.map(handlers, function(h) return "'" + h.name + "'").join(", ") + " ];"
 		);
 		File.saveContent(path, text);
 	}
