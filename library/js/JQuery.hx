@@ -363,12 +363,10 @@ extern class JQuery implements ArrayAccess<Element> {
 	function queue( ?queueName : String, ?callb : (Void -> Void) -> Void ) : { length : Int };
 
 	// ajax
-	static inline function getAjax(url : String, ?params : Dynamic, ?callb : Dynamic -> Void, ?dataType : String) : Void
-	{
+	static inline function getAjax( url : String, ?params : Dynamic, ?callb : Dynamic -> Void, ?dataType : String ) : Void {
 		untyped jQuery.get(url, params, callb, dataType);
 	}
-	static inline function postAjax(url : String, ?params : Dynamic, ?callb : Dynamic -> Void, ?dataType : String) : Void
-	{
+	static inline function postAjax( url : String, ?params : Dynamic, ?callb : Dynamic -> Void, ?dataType : String ) : Void {
 		untyped jQuery.post(url, params, callb, dataType);
 	}	
 
@@ -392,7 +390,7 @@ extern class JQuery implements ArrayAccess<Element> {
 	//	return untyped this["map"](function() return f(cur)).get();
 	//}
 
-	// haXe addition
+	// Haxe addition
 	@:runtime inline function iterator() : Iterator<JQuery> {
 		return untyped __define_feature__('js.JQuery.iterator', this["iterator"])();
 	}
@@ -425,7 +423,7 @@ extern class JQuery implements ArrayAccess<Element> {
 		if( untyped __js__("typeof($) == 'undefined'") )
 			haxe.macro.Compiler.includeFile("js/jquery-latest.min.js");
 		#end
-		var q : Dynamic = untyped __js__("window.jQuery");
+		var q : Dynamic = (untyped js.Browser.window).jQuery;
 		js.JQuery = q;
 		__feature__('js.JQuery.iterator',
 			q.fn.iterator = function() return { pos : 0, j : __this__, hasNext : function() return __this__.pos < __this__.j.length, next : function() return $(__this__.j[__this__.pos++]) }
