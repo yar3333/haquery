@@ -3,6 +3,7 @@ package haquery.macro;
 import sys.io.File;
 import haxe.io.Path;
 import stdlib.FileSystem;
+import haxe.macro.Compiler;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.Type;
@@ -15,6 +16,8 @@ class HaqBuild
 {
 	macro public static function startup()
 	{
+		defineClientServer();
+		
 		if (!Context.defined("display"))
 		{
 			Context.onGenerate(function(types:Array<Type>)
@@ -49,6 +52,39 @@ class HaqBuild
 		return macro null;
 	}
 	
+	static function defineClientServer()
+	{
+		var displayPos = Compiler.getDisplayPos();
+		if (displayPos != null)
+		{
+			var file = displayPos.file.toLowerCase();
+			for (cp in Context.getClassPath())
+			{
+				cp = FileSystem.fullPath(cp).toLowerCase();
+				if (file.startsWith(cp))
+				{
+					file = file.substr(cp.length);
+					break;
+				}
+			}
+			
+			if (file.startsWith("models\\server\\") || file.endsWith("\\server.hx"))
+			{
+				Compiler.define("server");
+			}
+			else
+			if (file.startsWith("models\\client\\") || file.endsWith("\\client.hx"))
+			{
+				Compiler.define("client");
+			}
+			else
+			{
+				Compiler.define("server");
+				Compiler.define("client");
+			}
+		}
+	}
+	
 	static function checkConstructorExist(clas:ClassType)
 	{
 		if (clas.constructor == null)
@@ -59,7 +95,7 @@ class HaqBuild
 	
 	static function generateSharedServer(componentClass:ClassType)
 	{
-		generateModuleIfNeed("SharedServer", componentClass, function(_)
+		generateModuleIfNeed("SharedServer", "haquery.client.HaqComponent", componentClass, function(_)
 		{
 			return [ 
 				  "component".makeVar(macro : haquery.client.HaqComponent)
@@ -87,7 +123,7 @@ class HaqBuild
 	
 	static function generateSharedClient(componentClass:ClassType)
 	{
-		generateModuleIfNeed("SharedClient", componentClass, function(_)
+		generateModuleIfNeed("SharedClient", "haquery.server.HaqComponent", componentClass, function(_)
 		{
 			return [ 
 				  "component".makeVar(macro : haquery.server.HaqComponent)
@@ -108,7 +144,7 @@ class HaqBuild
 		});
 	}
 	
-	static function generateModuleIfNeed(generateClassName:String, componentClass:ClassType, generateFunc:ClassType->Array<Field>)
+	static function generateModuleIfNeed(generateClassName:String, baseComponentClassName:String, componentClass:ClassType, generateFunc:ClassType->Array<Field>)
 	{
 		var componentModulePath = Context.resolvePath(StringTools.replace(componentClass.module, ".", "/") + ".hx");
 		var dstModulePath = "gen/" + componentClass.pack.join("/") + "/" + generateClassName + ".hx";
@@ -124,6 +160,7 @@ class HaqBuild
 				  + "\n"
 				  + "package " + componentClass.pack.join(".") + ";\n"
 				  + "\n"
+				  + "@:access(" + baseComponentClassName +")\n"
 				  + "class " + generateClassName + "\n"
 				  + "{\n"
 				  + renderedClassFields

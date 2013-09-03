@@ -11,13 +11,16 @@ using stdlib.StringTools;
 
 #end
 
-@:autoBuild(haquery.macro.HaqComponentTools.build()) @:keepSub class HaqComponent extends haquery.base.HaqComponent
+@:autoBuild(haquery.macro.HaqComponentTools.build()) 
+@:allow(haquery.client)
+class HaqComponent extends haquery.base.HaqComponent
 {
 #if !macro
 
 	var isDynamic : Bool;
 	
-	public function construct(fullTag:String, parent:HaqComponent, id:String, isDynamic:Bool, dynamicParams:Dynamic) : Void
+	#if !fullCompletion @:noCompletion #end
+	function construct(fullTag:String, parent:HaqComponent, id:String, isDynamic:Bool, dynamicParams:Dynamic) : Void
 	{
 		super.commonConstruct(fullTag, parent, id);
 		
@@ -29,7 +32,8 @@ using stdlib.StringTools;
 		createChildComponents();
 	}
 	
-	public function createChildComponents() : Void
+	#if !fullCompletion @:noCompletion #end
+	function createChildComponents() : Void
 	{
 		for (component in Lib.manager.getChildComponents(this))
 		{
@@ -37,7 +41,7 @@ using stdlib.StringTools;
 		}
 	}
 	
-	public function q(?arg:Dynamic, ?base:Dynamic) : HaqQuery
+	function q(?arg:Dynamic, ?base:Dynamic) : HaqQuery
 	{
 		var cssGlobalizer = new HaqCssGlobalizer(fullTag);
 		
@@ -49,6 +53,7 @@ using stdlib.StringTools;
 		return cssGlobalizer.fixJq(new HaqQuery(arg, base));
 	}
     
+	#if !fullCompletion @:noCompletion #end
     function connectElemEventHandlers() : Void
     {
 		HaqElemEventManager.connect(this, this);
@@ -57,7 +62,8 @@ using stdlib.StringTools;
 	/**
 	 * Call server method, marked as @shared.
 	 */
-	public function callSharedServerMethod(method:String, params:Array<Dynamic>, success:Dynamic->Void, fail:Exception->Void) : Void
+	#if !fullCompletion @:noCompletion #end
+	function callSharedServerMethod(method:String, params:Array<Dynamic>, success:Dynamic->Void, fail:Exception->Void) : Void
 	{
 		page.ajax.callSharedMethod(fullID, method, params, success);
 	}
@@ -65,19 +71,20 @@ using stdlib.StringTools;
 	/**
 	 * Call client method, marked with meta.
 	 */
-	public function callClientMethod(method:String, params:Array<Dynamic>, ?meta:String) : Dynamic
+	#if !fullCompletion @:noCompletion #end
+	function callClientMethod(method:String, params:Array<Dynamic>, ?meta:String) : Dynamic
 	{
 		return HaqComponentTools.callMethod(this, method, params, meta);
 	}
 
 #end
 	
-	macro public function template(ethis:haxe.macro.Expr)
+	macro function template(ethis:haxe.macro.Expr)
 	{
 		return haquery.macro.HaqComponentTools.template(ethis);
 	}
 	
-	macro public function server(ethis:haxe.macro.Expr)
+	macro function server(ethis:haxe.macro.Expr)
 	{
 		return haquery.macro.HaqComponentTools.shared(ethis);
 	}
