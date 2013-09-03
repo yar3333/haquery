@@ -21,7 +21,11 @@ private typedef BasePage = haquery.client.BasePage;
 
 #end
 
-@:keepSub class HaqComponent
+@:keepSub
+@:allow(haquery.common)
+@:allow(haquery.server)
+@:allow(haquery.client)
+class HaqComponent
 {
 #if !macro
 	
@@ -54,14 +58,16 @@ private typedef BasePage = haquery.client.BasePage;
      */
     public var components(default, null) : HaqComponents<Component>;
 	
+	#if !fullCompletion @:noCompletion #end
     var nextAnonimID : Int;
 	
-	public function new() : Void
+	function new() : Void
 	{
 		components = new Map<String,Component>();
 		nextAnonimID = 0;
 	}
 	
+	#if !fullCompletion @:noCompletion #end
 	function commonConstruct(fullTag:String, parent:Component, id:String) 
 	{
 		if (id == null || id == '') id = parent != null ? parent.getNextAnonimID() : '';
@@ -83,6 +89,7 @@ private typedef BasePage = haquery.client.BasePage;
 		}
 	}
 	
+	#if !fullCompletion @:noCompletion #end
 	function createEvents() : Void
 	{
 		if (parent != null)
@@ -103,7 +110,8 @@ private typedef BasePage = haquery.client.BasePage;
 		}
 	}
 	
-	public function connectEventHandlers(event:HaqEvent<Dynamic>) : Void
+	#if !fullCompletion @:noCompletion #end
+	function connectEventHandlers(event:HaqEvent<Dynamic>) : Void
 	{
         var handlerName = event.component.id + '_' + event.name;
         if (Reflect.isFunction(Reflect.field(this, handlerName)))
@@ -112,7 +120,8 @@ private typedef BasePage = haquery.client.BasePage;
         }
 	}
 	
-    public function forEachComponent(f:String, isFromTopToBottom=true) : Void
+	#if !fullCompletion @:noCompletion #end
+    function forEachComponent(f:String, isFromTopToBottom=true) : Void
     {
 		#if server
 		if (page.statusCode == 302 || page.statusCode == 301) return; 
@@ -143,7 +152,8 @@ private typedef BasePage = haquery.client.BasePage;
      * Find child by relative ID.
      * @param fullID Relative ID (for example: "header-menu-items").
      */
-    public function findComponent(fullID:String) : Component
+	#if !fullCompletion @:noCompletion #end
+    function findComponent(fullID:String) : Component
     {
         if (fullID == null) return null;
 		if (fullID == '') return cast this;
@@ -160,13 +170,15 @@ private typedef BasePage = haquery.client.BasePage;
 		return cast r;
     }
 	
-	public function getNextAnonimID() : String
+	#if !fullCompletion @:noCompletion #end
+	function getNextAnonimID() : String
 	{
 		nextAnonimID++;
 		return "haqc_" + Std.string(nextAnonimID);
 	}
 	
-	public function callElemEventHandler(elemID:String, eventName:String) : Dynamic
+	#if !fullCompletion @:noCompletion #end
+	function callElemEventHandler(elemID:String, eventName:String) : Dynamic
     {
 		var handler = elemID + '_' + eventName;
 		

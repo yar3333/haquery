@@ -17,6 +17,7 @@ import haxe.Json;
 import haxe.Serializer;
 using stdlib.StringTools;
 
+@:allow(haquery.server)
 class HaqPage extends HaqComponent
 {
     /**
@@ -65,6 +66,7 @@ class HaqPage extends HaqComponent
 	/**
 	 * Js code to response.
 	 */
+	#if !fullCompletion @:noCompletion #end
 	var ajaxResponse(default, null) : String;
 	
 	/**
@@ -78,8 +80,11 @@ class HaqPage extends HaqComponent
 	
     public var storage(default, null) : HaqStorage;
 	
-	public var registeredStyles(default, null) : Array<String>;
-	public var registeredScripts(default, null) : Array<String>;
+	#if !fullCompletion @:noCompletion #end
+	var registeredStyles(default, null) : Array<String>;
+	
+	#if !fullCompletion @:noCompletion #end
+	var registeredScripts(default, null) : Array<String>;
 	
 	public function new()
 	{
@@ -91,6 +96,7 @@ class HaqPage extends HaqComponent
 		registeredScripts = [];
 	}
 	
+	#if !fullCompletion @:noCompletion #end
 	public function generateResponseOnRender() : HaqResponse
 	{
 		return {
@@ -103,6 +109,7 @@ class HaqPage extends HaqComponent
 		};
 	}
 
+	#if !fullCompletion @:noCompletion #end
 	public function generateResponseOnPostback(componentFullID:String, method:String, params:Array<Dynamic>, ?meta:String) : HaqResponse
 	{
 		var component = findComponent(componentFullID);
@@ -136,6 +143,7 @@ class HaqPage extends HaqComponent
 		}
 	}
 	
+	#if !fullCompletion @:noCompletion #end
 	override public function render() : String 
 	{
         Lib.profiler.begin("preRender");
@@ -188,6 +196,7 @@ class HaqPage extends HaqComponent
 		}
 	}
     
+	#if !fullCompletion @:noCompletion #end
     function insertStyles(links:Array<String>)
     {
         var text = Lambda.map(links, function(path) return getStyleLink(path)).join("\n");
@@ -212,6 +221,7 @@ class HaqPage extends HaqComponent
         }
     }
     
+	#if !fullCompletion @:noCompletion #end
     function insertScripts(links:Array<String>)
     {
         var text = Lambda.map(links, function(path) return getScriptLink(path)).join("\n");
@@ -245,6 +255,7 @@ class HaqPage extends HaqComponent
         }
     }
     
+	#if !fullCompletion @:noCompletion #end
     function insertInitBlock(text:String)
     {
         var bodyes = doc.find(">html>body");
@@ -259,6 +270,7 @@ class HaqPage extends HaqComponent
         }
     }
     
+	#if !fullCompletion @:noCompletion #end
     function getScriptLink(url:String) : String
     {
 		if (url == null) return "";
@@ -274,6 +286,7 @@ class HaqPage extends HaqComponent
 		return "<script src='" + url + "'></script>";
     }
     
+	#if !fullCompletion @:noCompletion #end
 	function getStyleLink(url:String) : String
     {
 		if (url == null) return "";
@@ -314,6 +327,7 @@ class HaqPage extends HaqComponent
 		}
 	}
 	
+	#if !fullCompletion @:noCompletion #end
 	public inline function addAjaxResponse(jsCode:String) 
 	{
 		ajaxResponse += jsCode + "\n";
@@ -322,7 +336,7 @@ class HaqPage extends HaqComponent
 	/**
 	 * Called by HaQuery after request. Override to clear resources.
 	 */  
-	public function dispose() : Void {}
+	function dispose() : Void {}
 }
 
 #end

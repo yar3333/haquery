@@ -20,6 +20,7 @@ class HaxeClass
 	var baseFullClassName : String;
 	
 	var imports : Array<String>;
+	var metas : Array<String>;
 	var vars : Array<String>;
 	var methods : Array<String>;
 	var customs : Array<String>;
@@ -28,15 +29,21 @@ class HaxeClass
 	{
 		this.fullClassName = fullClassName;
 		this.baseFullClassName = baseFullClassName;
-		this.imports = new Array<String>();
-		this.vars = new Array<String>();
-		this.methods = new Array<String>();
-		this.customs = new Array<String>();
+		this.imports = [];
+		this.metas = [];
+		this.vars = [];
+		this.methods = [];
+		this.customs = [];
 	}
 	
 	public function addImport(packageName:String) : Void
 	{
 		imports.push("import " + packageName + ";");
+	}
+	
+	public function addMeta(meta:String) : Void
+	{
+		metas.push(meta);
 	}
 	
 	public function addVar(v:HaxeVar, isPrivate=false, isStatic=false, isReadOnlyProperty=false) : Void
@@ -90,15 +97,16 @@ class HaxeClass
 	{
 		var clas = splitFullClassName(fullClassName);
 		
-		var s = 'package ' + clas.packageName + ';\n'
-			  + '\n'
-			  + imports.join('\n') + (imports.length > 0 ? '\n\n' : '')
-			  + 'class ' + clas.className + (baseFullClassName != null ? ' extends ' + baseFullClassName : '') + '\n'
-			  + '{\n'
-			  + (vars.length > 0 ? '\t' + vars.join('\n\t') + '\n\n' : '')
-			  + (methods.length > 0 ? '\t' + methods.join('\n\n\t') + '\n' : '')
-			  + (customs.length > 0 ? '\t' + customs.join('\n\n\t') + '\n' : '')
-			  + '}';
+		var s = "package " + clas.packageName + ";\n"
+			  + "\n"
+			  + imports.join("\n") + (imports.length > 0 ? "\n\n" : "")
+			  + Lambda.map(metas, function (m) return m + "\n").join("\n")
+			  + "class " + clas.className + (baseFullClassName != null ? " extends " + baseFullClassName : "") + "\n"
+			  + "{\n"
+			  + (vars.length > 0 ? "\t" + vars.join("\n\t") + "\n\n" : "")
+			  + (methods.length > 0 ? "\t" + methods.join("\n\n\t") + "\n" : "")
+			  + (customs.length > 0 ? "\t" + customs.join("\n\n\t") + "\n" : "")
+			  + "}";
 		return s;
 	}
 	

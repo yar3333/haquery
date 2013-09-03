@@ -20,24 +20,26 @@ using stdlib.StringTools;
 
 #end
 
-@:autoBuild(haquery.macro.HaqComponentTools.build()) class HaqComponent extends haquery.base.HaqComponent
+@:allow(haquery.server)
+@:autoBuild(haquery.macro.HaqComponentTools.build())
+class HaqComponent extends haquery.base.HaqComponent
 {
 #if !macro
     
 	/**
      * template.html as DOM tree.
      */
-    public var doc(default, null) : HtmlDocument;
+    var doc(default, null) : HtmlDocument;
     
     /**
      * HTML element, which contain this component.
      */
-    public var innerNode(default, null) : HtmlNodeElement;
+    var innerNode(default, null) : HtmlNodeElement;
     
 	/**
 	 * True for components declared inside another components (i.e. between tags (<haq:*>...</haq:*>).
 	 */
-	public var isInnerComponent(default, null) : Bool;
+	var isInnerComponent(default, null) : Bool;
 	
     /**
      * These components was declared between <haq:*> and </haq:*> tags of this component.
@@ -49,7 +51,7 @@ using stdlib.StringTools;
      */
     public var visible : Bool;
     
-	public function new() : Void
+	function new() : Void
 	{
 		super();
 		
@@ -57,7 +59,8 @@ using stdlib.StringTools;
 		visible = true;
 	}
     
-    public function construct(fullTag:String, parent:HaqComponent, id:String, doc:HtmlDocument, params:Dynamic, innerNode:HtmlNodeElement, isInnerComponent:Bool) : Void
+   	#if !fullCompletion @:noCompletion #end
+	function construct(fullTag:String, parent:HaqComponent, id:String, doc:HtmlDocument, params:Dynamic, innerNode:HtmlNodeElement, isInnerComponent:Bool) : Void
     {
 		super.commonConstruct(fullTag, parent, id);
 		
@@ -82,6 +85,7 @@ using stdlib.StringTools;
 		Lib.profiler.end();
     }
 	
+	#if !fullCompletion @:noCompletion #end
 	function loadFieldValues(params:Dynamic) : Void
 	{
 		var fieldNames = HaqComponentTools.getFieldNamesToLoadParams(this);
@@ -119,6 +123,7 @@ using stdlib.StringTools;
 		}
 	}
 	
+	#if !fullCompletion @:noCompletion #end
 	function createChildComponents()
 	{
 		if (innerNode != null)
@@ -132,7 +137,8 @@ using stdlib.StringTools;
 		}
 	}
 
-    public function render() : String
+	#if !fullCompletion @:noCompletion #end
+    function render() : String
     {
 		if (!visible)
 		{
@@ -182,7 +188,7 @@ using stdlib.StringTools;
      * Like $ в jQuery. Select DOM nodes from this component's DOM tree.
      * @param query CSS selector.
      */
-    public function q(?query:Dynamic=null) : HaqQuery
+    function q(?query:Dynamic=null) : HaqQuery
     {
 		if (Type.getClass(query) == haquery.server.HaqQuery)
 		{
@@ -221,7 +227,8 @@ using stdlib.StringTools;
 	/**
 	 * Delayed call client method, marked as @shared.
 	 */
-	public function callSharedClientMethodDelayed(method:String, params:Array<Dynamic>) : Void
+	#if !fullCompletion @:noCompletion #end
+	function callSharedClientMethodDelayed(method:String, params:Array<Dynamic>) : Void
 	{
 		Debug.assert(page.isPostback, "HaqComponent.callSharedMethod() allowed on the postback only.");
         
@@ -231,7 +238,8 @@ using stdlib.StringTools;
 		);
 	}
     
-	public function callServerMethod(method:String, params:Array<Dynamic>, ?meta:String) : Dynamic
+	#if !fullCompletion @:noCompletion #end
+	function callServerMethod(method:String, params:Array<Dynamic>, ?meta:String) : Dynamic
 	{
 		return HaqComponentTools.callMethod(this, method, params, meta);
 	}
@@ -294,12 +302,12 @@ using stdlib.StringTools;
 
 #end
 	
-	macro public function template(ethis:haxe.macro.Expr)
+	macro function template(ethis:haxe.macro.Expr)
 	{
 		return haquery.macro.HaqComponentTools.template(ethis);
 	}
 	
-	macro public function client(ethis:haxe.macro.Expr)
+	macro function client(ethis:haxe.macro.Expr)
 	{
 		return haquery.macro.HaqComponentTools.shared(ethis);
 	}

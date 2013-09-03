@@ -7,7 +7,7 @@ import haxe.htmlparser.HtmlNodeElement;
 import haquery.base.HaqCssGlobalizer;
 using stdlib.StringTools;
 
-typedef Page =
+private typedef Page =
 {
 	var isPostback(default, null) : Bool;
 	var params(default, null) : Map<String,String>;

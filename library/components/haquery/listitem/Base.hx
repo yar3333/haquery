@@ -2,7 +2,7 @@ package components.haquery.listitem;
 
 import haquery.common.HaqEvent;
 
-class Base extends #if !client BaseServer #else BaseClient #end
+class Base extends #if server BaseServer #else BaseClient #end
 {
 	override function connectEventHandlers(event:HaqEvent<Dynamic>) : Void
 	{
