@@ -5,7 +5,7 @@
   "description": "Web framework with php/neko and js target.",
   "contributors": ["yar3333"],
   "releasenote": "Haxe 3 support.",
-  "version": "6.1",
+  "version": "6.1.0",
   "url": "http://haquery.com/",
   "dependencies": {
     "stdlib": "",
