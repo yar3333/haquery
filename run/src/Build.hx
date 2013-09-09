@@ -131,8 +131,8 @@ class Build
         var params = project.getBuildParams("js", clientPath + "/haquery.js", [ "noEmbedJS", "client" ]);
 		if (isDeadCodeElimination) params.push("--dead-code-elimination");
 		var r = Process.run(log, fs.getHaxePath(), params);
-		Lib.print(r.stdOut);
-		Lib.print(r.stdErr);
+		Lib.print(r.output);
+		Lib.print(r.error);
 		
 		if (FileSystem.exists(clientPath + "/haquery.js")
 		 && FileSystem.exists(clientPath + "/haquery.js.old"))
@@ -162,8 +162,8 @@ class Build
 		log.start("Build server");
         var params = project.getBuildParams(project.platform, project.platform != "neko" ? outputDir : outputDir + "/index.n", [ "server" ]);
 		var r = Process.run(log, fs.getHaxePath(), params);
-		Lib.print(r.stdOut);
-		Lib.print(r.stdErr);
+		Lib.print(r.output);
+		Lib.print(r.error);
 		
 		if (r.exitCode == 0)
 		{
@@ -194,8 +194,8 @@ class Build
 		var r = Process.run(log, fs.getHaxePath(), params, true);
 		fs.deleteAny(tempPath);
 		fs.deleteDirectory(Path.directory(tempPath));
-		if (r.stdOut.trim() != "") Lib.print(r.stdOut);
-		if (r.stdErr.trim() != "") Lib.print(r.stdErr);
+		if (r.output.trim() != "") Lib.print(r.output);
+		if (r.error.trim() != "") Lib.print(r.error);
 		if (r.exitCode == 0) log.finishOk();
 		else                 log.finishFail(new CompilationFailException("Server compilation errors."));
 	}
