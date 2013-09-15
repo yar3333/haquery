@@ -73,7 +73,7 @@ class Build
 			log.start("Publish to '" + outputDir + "'");
 				for (path in project.allClassPaths)
 				{
-					publisher.prepare(path, manager.fullTags);
+					publisher.prepare(path, manager.fullTags, project.allClassPaths);
 				}
 				publisher.publish(outputDir);
 			log.finishOk();

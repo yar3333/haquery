@@ -9,6 +9,7 @@
   "url": "http://haquery.com/",
   "dependencies": {
     "stdlib": "",
-    "HtmlParser": ""
+    "HtmlParser": "",
+    "jquery": ""
   }
 }
