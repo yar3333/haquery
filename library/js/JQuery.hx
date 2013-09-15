@@ -172,6 +172,7 @@ extern class JQuery implements ArrayAccess<Element> {
 	function filter( selector : String ) : JQuery;
 	function find( selector : String ) : JQuery;
 	function first() : JQuery;
+	@:overload(function(j:JQuery):Int{})
 	function index( ?selector : String ) : Int;
 	function last( ?selector : String ) : JQuery;
 	function has( selector : String ) : JQuery;
