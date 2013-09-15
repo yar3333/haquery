@@ -34,7 +34,7 @@ class Publisher
 		this.files = new Map<String,String>();
 	}
 	
-	public function prepare(src:String, fullTags:Array<String>) : Void
+	public function prepare(src:String, fullTags:Array<String>, allClassPaths:Array<String>) : Void
 	{
 		src = src.rtrim("/");
 		
@@ -67,7 +67,7 @@ class Publisher
 							var includeAttr = node.hasAttribute("include") ? node.getAttribute("include") : null;
 							var excludeAttr = node.hasAttribute("exclude") ? node.getAttribute("exclude") : null;
 							prepareFolder(
-								  src + "/" + srcAttr
+								  getFullPath(src, srcAttr, allClassPaths)
 								, destAttr
 								, ""
 								, includeAttr != null ? new EReg(includeAttr, "i") : null
@@ -82,7 +82,10 @@ class Publisher
 							var srcAttr = node.getAttribute("src");
 							if (srcAttr == null || srcAttr == "") throw "Tag 'dir' must have not empty 'src' attribute in file '" + configFile + "'.";
 							var destAttr = node.hasAttribute("dest") ? node.getAttribute("dest") : srcAttr;
-							prepareFile(src + "/" + srcAttr, destAttr);
+							prepareFile(
+								  getFullPath(src, srcAttr, allClassPaths)
+								, destAttr
+							);
 						}
 					
 					default:
@@ -116,7 +119,7 @@ class Publisher
 	
 	function prepareFolder(src:String, dest:String, localPath:String, include:EReg, exclude:EReg) : Void
 	{
-		if (FileSystem.exists(src) && FileSystem.isDirectory(src))
+		if (src != null && FileSystem.exists(src) && FileSystem.isDirectory(src))
 		{
 			for (file in FileSystem.readDirectory(src))
 			{
@@ -145,7 +148,7 @@ class Publisher
 	
 	function prepareFile(src:String, dest:String)
 	{
-		if (FileSystem.exists(src))
+		if (src != null && FileSystem.exists(src))
 		{
 			files.set(dest, src);
 		}
@@ -163,5 +166,16 @@ class Publisher
 				fs.copyFile(src, dest);
 			}
 		}
+	}
+	
+	function getFullPath(base:String, local:String, allClassPaths:Array<String>) : String
+	{
+		if (FileSystem.exists(base + "/" + local)) return base + "/" + local;
+		var i = allClassPaths.length - 1; while (i >= 0)
+		{
+			if (FileSystem.exists(allClassPaths[i] + "/" + local)) return allClassPaths[i] + "/" + local;
+			i--;
+		}
+		return null;
 	}
 }
