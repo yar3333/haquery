@@ -133,7 +133,7 @@ class HaqBuild
 					function(name:String, args:Array<FunctionArg>, ret:Null<ComplexType>, pos:Position) : Field
 					{
 						var callParams = [ 
-							  macro macro ${name}
+							  macro $v{name}
 							, Lambda.map(args, function(a) return Context.parse(a.name, pos)).toArray()
 						];
 						var callExpr = ExprDef.EBlock([ ExprDef.ECall(macro component.callSharedClientMethodDelayed, callParams).at(pos) ]).at(pos);
