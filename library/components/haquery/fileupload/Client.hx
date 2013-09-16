@@ -1,13 +1,11 @@
 package components.haquery.fileupload;
 
-import haquery.client.HaqElemEventManager;
+import js.html.IFrameElement;
 import haquery.common.HaqEvent;
 import haquery.common.HaqUploadResult;
 import haquery.client.HaqQuery;
 import haxe.Unserializer;
 import js.JQuery;
-import js.Dom;
-
 using stdlib.StringTools;
 
 class Client extends Base
@@ -45,10 +43,10 @@ class Client extends Base
         event_uploading.call(null);
         enabled = false;
 
-        var frame : IFrame = cast template().frame[0];
+        var frame : IFrameElement = cast template().frame[0];
 		q(frame).unbind("load").load(function(e:JqEvent) 
 		{
-            var text = frame.contentWindow.document.body.firstChild.innerHTML;
+            var text = (cast frame.contentWindow.document.body.firstChild).innerHTML;
 			enabled = true;
 			event_complete.call({ uploads:Unserializer.run(text) });
         });

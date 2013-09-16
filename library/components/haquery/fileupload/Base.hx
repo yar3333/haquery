@@ -2,14 +2,14 @@ package components.haquery.fileupload;
 
 class Base extends #if server BaseServer #else BaseClient #end
 {
-    public var enabled(enabled_getter, enabled_setter) : Bool;
+    public var enabled(get_enabled, set_enabled) : Bool;
     
-    function enabled_getter() : Bool
+    function get_enabled() : Bool
     {
         return !q('#form').hasClass('disabled');
     }
     
-    function enabled_setter(enable : Bool) : Bool
+    function set_enabled(enable : Bool) : Bool
     {
         if (enable) q('#form').removeClass('disabled');
         else        q('#form').addClass('disabled');
