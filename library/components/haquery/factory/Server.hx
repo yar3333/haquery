@@ -1,8 +1,9 @@
 package components.haquery.factory;
 
-import haquery.server.Lib;
-import haquery.common.HaqComponentTools;
 import haxe.htmlparser.HtmlNodeElement;
+import haquery.common.HaqStorage;
+import haquery.common.HaqComponentTools;
+import haquery.server.Lib;
 import stdlib.Exception;
 using stdlib.StringTools;
 
@@ -11,7 +12,7 @@ class Server extends BaseServer
     function preRender()
     {
 		storeDocs(parent.fullTag, innerNode);
-		page.storage.setInstanceVar(this, "html", innerNode.innerHTML, true);
+		page.storage.setInstanceVar(fullID, "html", innerNode.innerHTML, HaqStorage.DESTINATION_CLIENT);
     }
 	
 	function storeDocs(parentFullTag:String, parentDoc:HtmlNodeElement)
@@ -29,7 +30,7 @@ class Server extends BaseServer
 				
 				if (!page.storage.existsStaticVar(Server, t.fullTag))
 				{
-					page.storage.setStaticVar(Server, t.fullTag, t.serializedDoc, true);
+					page.storage.setStaticVar(Server, t.fullTag, t.serializedDoc, HaqStorage.DESTINATION_CLIENT);
 					storeDocs(t.fullTag, t.getDocCopy());
 				}
 			}

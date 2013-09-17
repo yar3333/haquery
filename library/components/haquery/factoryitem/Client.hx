@@ -80,12 +80,19 @@ class Client extends BaseClient
 			{
 				var id = getComponentID(prefixID, child);
 				var tag = HaqComponentTools.htmlTagToFullTag(child.name.substr("haq:".length));
+				
+				storage.setInstanceVar(prefixID + id, "html", child.innerHTML, HaqStorage.DESTINATION_CLIENT);
+				
 				var t = Lib.manager.get(tag);
 				if (t == null)
 				{
 					throw new Exception("Component template '" + tag + "' not found for parent component '" + fullTag + "'.");
 				}
-				var doc = Unserializer.run(storage.getStaticVar(Factory, t.fullTag));
+				
+				var doc = storage.existsStaticVar(Factory, t.fullTag)
+					? Unserializer.run(storage.getStaticVar(Factory, t.fullTag))
+					: child;
+				
 				r.push( { 
 					 fullTag: t.fullTag
 					,prefixID: prefixID

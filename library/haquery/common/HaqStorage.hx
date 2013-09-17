@@ -3,7 +3,7 @@ package haquery.common;
 import haquery.base.HaqComponent;
 using stdlib.StringTools;
 
-typedef Var =
+private typedef Var =
 {
 	var d : String; // send direction: s - to server, c - to client, b - both
 	var v : Dynamic;
@@ -13,6 +13,10 @@ typedef Var =
 {
     var staticVars : Map<String,Var>;
     var instanceVars : Map<String,Var>;
+	
+	public static inline var DESTINATION_BOTH = "b";
+	public static inline var DESTINATION_SERVER = "s";
+	public static inline var DESTINATION_CLIENT = "c";
 	
 	public function new()
 	{
@@ -34,15 +38,9 @@ typedef Var =
 		}
 	}
 	
-	public function setStaticVar(clas:Class<HaqComponent>, key:String, value:Dynamic, dontSendBack=false)
+	public function setStaticVar(clas:Class<HaqComponent>, key:String, value:Dynamic, destination=#if server DESTINATION_CLIENT #else DESTINATION_SERVER #end)
 	{
-		staticVars.set(
-			  getFullTag(clas) + ":" + key
-			, {
-				  d: dontSendBack ? #if server "c" #else "s" #end : "b"
-				, v: value
-			  }
-		);
+		staticVars.set(getFullTag(clas) + ":" + key , { d: destination, v: value });
 	}
 	
 	public function getStaticVar(clas:Class<HaqComponent>, key:String) : Dynamic
@@ -60,30 +58,24 @@ typedef Var =
 		staticVars.remove(getFullTag(clas) + ":" + key);
 	}
 	
-	public function setInstanceVar(component:HaqComponent, key:String, value:Dynamic, dontSendBack=false)
+	public function setInstanceVar(fullID:String, key:String, value:Dynamic, destination=#if server DESTINATION_CLIENT #else DESTINATION_SERVER #end)
 	{
-		instanceVars.set(
-			  component.fullID + ":" + key
-			, {
-				  d: dontSendBack ? #if server "c" #else "s" #end : "b"
-				, v: value
-			  }
-		);
+		instanceVars.set(fullID + ":" + key, { d: destination, v: value });
 	}
 	
-	public function getInstanceVar(component:HaqComponent, key:String) : Dynamic
+	public function getInstanceVar(fullID:String, key:String) : Dynamic
 	{
-		return instanceVars.get(component.fullID + ":" + key).v;
+		return instanceVars.get(fullID + ":" + key).v;
 	}
 	
-	public function existsInstanceVar(component:HaqComponent, key:String) : Bool
+	public function existsInstanceVar(fullID:String, key:String) : Bool
 	{
-		return instanceVars.exists(component.fullID + ":" + key);
+		return instanceVars.exists(fullID + ":" + key);
 	}
 	
-	public function removeInstanceVar(component:HaqComponent, key:String) : Void
+	public function removeInstanceVar(fullID:String, key:String) : Void
 	{
-		instanceVars.remove(component.fullID + ":" + key);
+		instanceVars.remove(fullID + ":" + key);
 	}
 	
 	public function getStorageToSend() : HaqStorage
@@ -93,7 +85,7 @@ typedef Var =
 		for (k in staticVars.keys())
 		{
 			var v = staticVars.get(k);
-			if (v.d != #if server "s" #else "c" #end)
+			if (v.d != #if server DESTINATION_SERVER #else DESTINATION_CLIENT #end)
 			{
 				r.staticVars.set(k, v);
 			}
@@ -102,7 +94,7 @@ typedef Var =
 		for (k in instanceVars.keys())
 		{
 			var v = instanceVars.get(k);
-			if (v.d != #if server "s" #else "c" #end)
+			if (v.d != #if server DESTINATION_SERVER #else DESTINATION_CLIENT #end)
 			{
 				r.instanceVars.set(k, v);
 			}

@@ -15,7 +15,7 @@
             </tr>
         </table>
             
-        <h3>DYNAMIC FACTORY</h3>
+        <h3>FACTORY</h3>
         <table id="table">
             <haq:factory id="users">
                 <tr>
@@ -26,7 +26,7 @@
             </haq:factory>
         </table>
         
-        <h3>DYNAMIC FACTORY with COMPLEX ITEM</h3>
+        <h3>FACTORY with COMPLEX ITEM</h3>
         <table id="table2">
             <haq:factory id="users2">
                 <tr>
@@ -36,6 +36,19 @@
             </haq:factory>
         </table>
         
+        <h3>FACTORY with inner FACTORY</h3>
+        <div id="table3">
+            <haq:factory id="users3">
+                A
+				<div id="tr3">
+					<haq:factory id="users3inner">
+						B<haq:item2 />C
+					</haq:factory>
+				</div>
+                D
+            </haq:factory>
+        </div>
+		
 		<h4>Status</h4>
         <span id="status"></span>
     </body>
