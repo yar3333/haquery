@@ -13,8 +13,8 @@ class Server extends BaseServer
     
     function get_length() : Int
     {
-		return page.storage.existsInstanceVar(this, "length")
-			? page.storage.getInstanceVar(this, "length")
+		return page.storage.existsInstanceVar(fullID, "length")
+			? page.storage.getInstanceVar(fullID, "length")
 			: 0;
     }
 	
@@ -39,7 +39,7 @@ class Server extends BaseServer
 		
 		var n = length;
 		var r = Lib.manager.createComponent(this, "components.haquery.listitem", Std.string(n), params, getItemInnerNode(), true);
-		page.storage.setInstanceVar(this, "length", n + 1);
+		page.storage.setInstanceVar(fullID, "length", n + 1);
 		return r;
 	}
 	

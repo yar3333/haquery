@@ -9,6 +9,16 @@ class Client extends BaseClient
 		
 		template().users2.create(template().table2, { login : "admin" });
 		template().users2.create(template().table2, { login : "user" });
+		
+		var user3_0 = template().users3.create(template().table3, {});
+		var users3inner_0 : components.haquery.factory.Client = cast user3_0.components.get("users3inner");
+		users3inner_0.create(user3_0.q("#tr3"), {});
+		users3inner_0.create(user3_0.q("#tr3"), {});
+		
+		var user3_1 = template().users3.create(template().table3, {});
+		var users3inner_1 : components.haquery.factory.Client = cast user3_1.components.get("users3inner");
+		users3inner_1.create(user3_1.q("#tr3"), {});
+		users3inner_1.create(user3_1.q("#tr3"), {});
 	}
 	
 	function pagebt_click(t, e)
