@@ -67,8 +67,8 @@ class Http {
 	public var async : Bool;
 #end
 	var postData : String;
-	var headers : Array<{ header:String, value:String }>;
-	var params : Array<{ param:String, value:String }>;
+	var headers : List<{ header:String, value:String }>;
+	var params : List<{ param:String, value:String }>;
 
 	#if sys
 	public static var PROXY : { host : String, port : Int, auth : { user : String, pass : String } } = null;
@@ -87,8 +87,9 @@ class Http {
 	**/
 	public function new( url : String ) {
 		this.url = url;
-		headers = [];
-		params = [];
+		headers = new List<{ header:String, value:String }>();
+		params = new List<{ param:String, value:String }>();
+		
 		#if js
 		async = true;
 		#elseif sys
@@ -107,10 +108,16 @@ class Http {
 		This method provides a fluent interface.
 	**/
 	public function setHeader( header : String, value : String ):Http {
+		headers = Lambda.filter(headers, function(h) return h.header != header);
 		headers.push({ header:header, value:value });
 		return this;
 	}
 
+	public function addHeader( header : String, value : String ):Http {
+		headers.push({ header:header, value:value });
+		return this;
+	}
+	
 	/**
 		Sets the parameter identified as `param` to value `value`.
 
@@ -119,10 +126,16 @@ class Http {
 		This method provides a fluent interface.
 	**/
 	public function setParameter( param : String, value : String ):Http {
+		params = Lambda.filter(params, function(p) return p.param != param);
 		params.push({ param:param, value:value });
 		return this;
 	}
 
+	public function addParameter( param : String, value : String ):Http {
+		params.push({ param:param, value:value });
+		return this;
+	}
+	
 	#if !flash8
 	/**
 		Sets the post data of `this` Http request to `data`.
