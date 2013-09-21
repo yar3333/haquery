@@ -186,14 +186,9 @@ class Build
 	
 	function genCodeFromServer(project:FlashDevelopProject)
 	{
-        var tempPath = project.platform == "neko" ?  "gen-temp/code.n" : "gen-temp/code";
-		
 		log.start("Generate source code files");
-		fs.createDirectory(project.platform == "neko" ? Path.directory(tempPath) : tempPath);
-		var params = project.getBuildParams(project.platform, tempPath, [ "haqueryGenCode", "server" ]);
+		var params = project.getBuildParams(project.platform, null, [ "haqueryGenCode", "server" ]);
 		var r = Process.run(log, fs.getHaxePath(), params, true);
-		fs.deleteAny(tempPath);
-		fs.deleteDirectory(Path.directory(tempPath));
 		if (r.output.trim() != "") Lib.print(r.output);
 		if (r.error.trim() != "") Lib.print(r.error);
 		if (r.exitCode == 0) log.finishOk();
