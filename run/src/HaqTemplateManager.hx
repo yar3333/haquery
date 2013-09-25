@@ -17,16 +17,19 @@ class HaqTemplateManager
 	var classPaths : Array<String>;
 	var basePage : String;
 	var staticUrlPrefix : String;
+	var substitutes : Array<{ from:EReg, to:String }>;
+	
 	var templates(default, null) : Map<String,HaqTemplate>;
 	
 	public var fullTags(default, null) : Array<String>;
 	
-	public function new(log:Log, classPaths:Array<String>, basePage:String, staticUrlPrefix:String)
+	public function new(log:Log, classPaths:Array<String>, basePage:String, staticUrlPrefix:String, substitutes:Array<{ from:EReg, to:String }>)
 	{
 		this.log = log;
 		this.classPaths = classPaths;
 		this.basePage = basePage;
 		this.staticUrlPrefix = staticUrlPrefix;
+		this.substitutes = substitutes;
 		
 		this.templates = new Map<String,HaqTemplate>();
 		fillTemplates(HaqDefines.folders.pages);
@@ -82,7 +85,7 @@ class HaqTemplateManager
 		{
 			try
 			{
-				var template = new HaqTemplate(log, classPaths, fullTag, basePage, staticUrlPrefix);
+				var template = new HaqTemplate(log, classPaths, fullTag, basePage, staticUrlPrefix, substitutes);
 				templates.set(fullTag, template);
 				
 				addTemplate(template.extend);
@@ -253,7 +256,7 @@ class HaqTemplateManager
 			var r = templates.get(fullTag);
 			if (r == null)
 			{
-				r = new HaqTemplate(log, classPaths, fullTag, basePage, staticUrlPrefix);
+				r = new HaqTemplate(log, classPaths, fullTag, basePage, staticUrlPrefix, substitutes);
 				templates.set(fullTag, r);
 			}
 			return r;
