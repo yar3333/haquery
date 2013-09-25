@@ -125,6 +125,7 @@ class Main
 			options.add("deadCodeElimination", false, [ "--dead-code-elimination" ], "For a while is not supported.");
 			options.add("basePage", "", [ "--base-page" ], "Default base page. For example: 'pages.layout'.");
 			options.add("staticUrlPrefix", "", [ "--static-url-prefix" ], "Prefix for URLs started with '~',\nlinks to system the system files\nand registered js/css files.\nAffected to HTML and CSS output only,\nnot to physical folders structure.");
+			options.addRepeatable("htmlSubstitutes", String, [ "--html-substitute" ], "Regular expression to find and replace in html templates.");
 			options.add("project", "", null, "FlashDevelop project file to read.\n(Default: find *.hxproj in the current directory.)");
 			
 			var run = function() : Void
@@ -134,6 +135,7 @@ class Main
 					, options.get("deadCodeElimination")
 					, options.get("basePage")
 					, options.get("staticUrlPrefix")
+					, options.get("htmlSubstitutes")
 				);
 			};
 			r.push( { name:name, description:description, options:options, run:run } );
