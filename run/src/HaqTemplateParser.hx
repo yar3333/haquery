@@ -22,10 +22,11 @@ class HaqTemplateParser
 	var childFullTags : Array<String>;
 	var basePage : String;
 	var staticUrlPrefix : String;
+	var substitutes : Array<{ from:EReg, to:String }>;
 	
 	var config : HaqTemplateConfig;
 	
-	public function new(log:Log, classPaths:Array<String>, fullTag:String, childFullTags:Array<String>, basePage:String, staticUrlPrefix:String)
+	public function new(log:Log, classPaths:Array<String>, fullTag:String, childFullTags:Array<String>, basePage:String, staticUrlPrefix:String, substitutes:Array<{ from:EReg, to:String }>)
 	{
 		if (Lambda.has(childFullTags, fullTag))
 		{
@@ -38,6 +39,7 @@ class HaqTemplateParser
 		this.childFullTags = childFullTags;
 		this.basePage = basePage;
 		this.staticUrlPrefix = staticUrlPrefix;
+		this.substitutes = substitutes;
 		
 		var folder = fullTag.replace(".", "/") + "/";
 		if (getFullPath(folder + "template.html") == null && getFullPath(folder + "Server.hx") == null && getFullPath(folder + "Client.hx") == null)
@@ -53,7 +55,7 @@ class HaqTemplateParser
 		if (config.extend == "") return null; 
 		try 
 		{
-			return new HaqTemplateParser(log, classPaths, config.extend, childFullTags.concat([fullTag]), basePage, staticUrlPrefix);
+			return new HaqTemplateParser(log, classPaths, config.extend, childFullTags.concat([fullTag]), basePage, staticUrlPrefix, substitutes);
 		}
 		catch (e:HaqTemplateNotFoundException)
 		{
@@ -264,7 +266,7 @@ class HaqTemplateParser
 	{
 		var path = getFullPath(fullTag.replace(".", "/") + "/template.html");
 		var text = path != null ? File.getContent(path) : "";
-		var doc = new HtmlDocument(text);
+		var doc = new HtmlDocument(applySubstitutes(text));
 		setDocComponentsParent(doc);
 		return doc;
 	}
@@ -357,5 +359,14 @@ class HaqTemplateParser
 	public function getExtend() : String
 	{
 		return config.extend;
+	}
+	
+	function applySubstitutes(s:String) : String
+	{
+		for (substitute in substitutes)
+		{
+			s = substitute.from.replace(s, substitute.to);
+		}
+		return s;
 	}
 }

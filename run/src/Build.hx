@@ -38,13 +38,13 @@ class Build
 		project = new FlashDevelopProject(projectFilePath);
 	}
 	
-	public function build(outputDir:String, isDeadCodeElimination:Bool, basePage:String, staticUrlPrefix:String)
+	public function build(outputDir:String, isDeadCodeElimination:Bool, basePage:String, staticUrlPrefix:String, htmlSubstitutes:Array<String>)
     {
         log.start("Build");
         
 		try
 		{
-			var manager = new HaqTemplateManager(log, project.allClassPaths, basePage, staticUrlPrefix);
+			var manager = new HaqTemplateManager(log, project.allClassPaths, basePage, staticUrlPrefix, parseSubstitutes(htmlSubstitutes));
 			
 			fs.createDirectory("gen/haquery/common");
 			File.saveContent("gen/haquery/common/Generated.hx", "package haquery.common;\n\nclass Generated\n{\n\tpublic static inline var staticUrlPrefix = \"" + staticUrlPrefix + "\";\n}");
@@ -335,4 +335,26 @@ class Build
 			}
 		}
 	}*/
+	
+	function parseSubstitutes(substitutes:Array<String>) : Array<{ from:EReg, to:String }>
+	{
+		return substitutes.map(function(s)
+		{
+			var parts = s.split(s.substr(0, 1));
+			if (parts.length != 3)
+			{
+				throw "Can't parse regular expression '" + s + "'.";
+			}
+			
+			try
+			{
+				return { from:new EReg(parts[1], "g"), to:parts[2] };
+			}
+			catch (e:Dynamic)
+			{
+				throw "Can't parse regular expression '" + s + "'.";
+				return null;
+			}
+		});
+	}
 }
