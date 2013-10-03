@@ -7,6 +7,5 @@
     <import component="components.haquery.*" />
     <import component="components.myproject.mycomponent" />
     <import component="components.myproject.mycomponent" as="tagalias" />
-    <import component="components.myproject.mycomponent" required="true" />
     -->
 </config>
