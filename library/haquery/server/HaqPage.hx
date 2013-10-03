@@ -279,7 +279,14 @@ class HaqPage extends HaqComponent
 		
 		if (!url.startsWith("http://") && !url.startsWith("/"))
 		{
-			url += "?" + FileSystem.stat(url).mtime.getTime() / 1000;
+			if (FileSystem.exists(url))
+			{
+				url += "?" + FileSystem.stat(url).mtime.getTime() / 1000;
+			}
+			else
+			{
+				trace("HAQUERY WARNING File '" + url + "' does not exists.");
+			}
 			url = Generated.staticUrlPrefix + "/" + url;
 		}
 		
@@ -295,7 +302,14 @@ class HaqPage extends HaqComponent
 		
 		if (!url.startsWith("http://") && !url.startsWith("/"))
 		{
-			url += "?" + FileSystem.stat(url).mtime.getTime() / 1000;
+			if (FileSystem.exists(url))
+			{
+				url += "?" + FileSystem.stat(url).mtime.getTime() / 1000;
+			}
+			else
+			{
+				trace("HAQUERY WARNING File '" + url + "' does not exists.");
+			}
 			url = Generated.staticUrlPrefix + "/" + url;
 		}
 		
