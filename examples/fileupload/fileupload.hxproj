@@ -29,6 +29,8 @@
   </build>
   <!-- haxelib libraries -->
   <haxelib>
+    <library name="stdlib" />
+    <library name="jquery" />
     <library name="HtmlParser" />
     <library name="WebSocket" />
   </haxelib>
@@ -40,6 +42,7 @@
   <hiddenPaths>
     <hidden path="bin" />
     <hidden path="gen" />
+    <hidden path="obj" />
   </hiddenPaths>
   <!-- Executed before build -->
   <preBuildCommand>haxelib run HaQuery build</preBuildCommand>
