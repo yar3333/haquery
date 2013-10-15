@@ -126,6 +126,7 @@ class Main
 			options.add("basePage", "", [ "--base-page" ], "Default base page. For example: 'pages.layout'.");
 			options.add("staticUrlPrefix", "", [ "--static-url-prefix" ], "Prefix for URLs started with '~',\nlinks to system the system files\nand registered js/css files.\nAffected to HTML and CSS output only,\nnot to physical folders structure.");
 			options.addRepeatable("htmlSubstitutes", String, [ "--html-substitute" ], "Regular expression to find and replace in html templates.");
+			options.addRepeatable("ignorePages", String, [ "--ignore-pages" ], "Path to the page files to ignore.");
 			options.add("project", "", null, "FlashDevelop project file to read.\n(Default: find *.hxproj in the current directory.)");
 			
 			var run = function() : Void
@@ -136,6 +137,7 @@ class Main
 					, options.get("basePage")
 					, options.get("staticUrlPrefix")
 					, options.get("htmlSubstitutes")
+					, options.get("ignorePages")
 				);
 			};
 			r.push( { name:name, description:description, options:options, run:run } );
