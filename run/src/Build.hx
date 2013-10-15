@@ -14,6 +14,7 @@ import haxe.io.Path;
 import haquery.common.HaqDefines;
 import stdlib.FileSystem;
 using stdlib.StringTools;
+using Lambda;
 
 class CompilationFailException extends Exception
 {
@@ -38,13 +39,13 @@ class Build
 		project = new FlashDevelopProject(projectFilePath);
 	}
 	
-	public function build(outputDir:String, isDeadCodeElimination:Bool, basePage:String, staticUrlPrefix:String, htmlSubstitutes:Array<String>)
+	public function build(outputDir:String, isDeadCodeElimination:Bool, basePage:String, staticUrlPrefix:String, htmlSubstitutes:Array<String>, ignorePages:Array<String>)
     {
         log.start("Build");
         
 		try
 		{
-			var manager = new HaqTemplateManager(log, project.allClassPaths, basePage, staticUrlPrefix, parseSubstitutes(htmlSubstitutes));
+			var manager = new HaqTemplateManager(log, project.allClassPaths, basePage, staticUrlPrefix, parseSubstitutes(htmlSubstitutes), ignorePages.map(function(s) return Path.addTrailingSlash(s.replace("\\", "/"))));
 			
 			fs.createDirectory("gen/haquery/common");
 			File.saveContent("gen/haquery/common/Generated.hx", "package haquery.common;\n\nclass Generated\n{\n\tpublic static inline var staticUrlPrefix = \"" + staticUrlPrefix + "\";\n}");

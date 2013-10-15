@@ -8,6 +8,7 @@ import stdlib.Exception;
 import stdlib.FileSystem;
 import haxe.htmlparser.HtmlNodeElement;
 using stdlib.StringTools;
+using Lambda;
 
 class PathNotFoundException extends Exception {}
 
@@ -18,18 +19,20 @@ class HaqTemplateManager
 	var basePage : String;
 	var staticUrlPrefix : String;
 	var substitutes : Array<{ from:EReg, to:String }>;
+	var ignorePages  :Array<String>;
 	
 	var templates(default, null) : Map<String,HaqTemplate>;
 	
 	public var fullTags(default, null) : Array<String>;
 	
-	public function new(log:Log, classPaths:Array<String>, basePage:String, staticUrlPrefix:String, substitutes:Array<{ from:EReg, to:String }>)
+	public function new(log:Log, classPaths:Array<String>, basePage:String, staticUrlPrefix:String, substitutes:Array<{ from:EReg, to:String }>, ignorePages:Array<String>)
 	{
 		this.log = log;
 		this.classPaths = classPaths;
 		this.basePage = basePage;
 		this.staticUrlPrefix = staticUrlPrefix;
 		this.substitutes = substitutes;
+		this.ignorePages = ignorePages;
 		
 		this.templates = new Map<String,HaqTemplate>();
 		fillTemplates(HaqDefines.folders.pages);
@@ -59,14 +62,17 @@ class HaqTemplateManager
 		while (i >= 0)
 		{
 			var path = classPaths[i] + localPath;
-			if (FileSystem.exists(path) && FileSystem.isDirectory(path))
+			if (!ignorePages.exists(function(s) return path.startsWith(s)))
 			{
-				pathWasFound = true;
-				for (file in FileSystem.readDirectory(path))
+				if (FileSystem.exists(path) && FileSystem.isDirectory(path))
 				{
-					if (file != HaqDefines.folders.support && FileSystem.isDirectory(path + '/' + file))
+					pathWasFound = true;
+					for (file in FileSystem.readDirectory(path))
 					{
-						addTemplate(pack + "." + file);
+						if (file != HaqDefines.folders.support && FileSystem.isDirectory(path + '/' + file))
+						{
+							addTemplate(pack + "." + file);
+						}
 					}
 				}
 			}
