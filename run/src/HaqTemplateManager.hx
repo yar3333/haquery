@@ -62,7 +62,8 @@ class HaqTemplateManager
 		while (i >= 0)
 		{
 			var path = classPaths[i] + localPath;
-			if (!ignorePages.exists(function(s) return path.startsWith(s)))
+			var pathWithEndSlash = path + "/";
+			if (!ignorePages.exists(function(s) return pathWithEndSlash.startsWith(s)))
 			{
 				if (FileSystem.exists(path) && FileSystem.isDirectory(path))
 				{
