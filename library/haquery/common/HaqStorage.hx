@@ -45,7 +45,8 @@ private typedef Var =
 	
 	public function getStaticVar(clas:Class<HaqComponent>, key:String) : Dynamic
 	{
-		return staticVars.get(getFullTag(clas) + ":" + key).v;
+		var v = staticVars.get(getFullTag(clas) + ":" + key);
+		return v != null ? v.v : null;
 	}
 	
 	public function existsStaticVar(clas:Class<HaqComponent>, key:String) : Bool
@@ -65,7 +66,8 @@ private typedef Var =
 	
 	public function getInstanceVar(fullID:String, key:String) : Dynamic
 	{
-		return instanceVars.get(fullID + ":" + key).v;
+		var v = instanceVars.get(fullID + ":" + key);
+		return v != null ? v.v : null;
 	}
 	
 	public function existsInstanceVar(fullID:String, key:String) : Bool
