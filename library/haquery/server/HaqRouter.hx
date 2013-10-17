@@ -6,7 +6,6 @@ using stdlib.StringTools;
 
 typedef HaqRoute = 
 {
-	var path : String;
 	var fullTag : String;
 	var pageID : String;
 }
@@ -28,50 +27,45 @@ class HaqRouter
 		
 		url = url.trim("/");
 		
-		if (url.startsWith("index.") || url == "index" || url.endsWith("/index"))
-		{
-			throw new HaqPageNotFoundException();
-		}
-		
-		if (url.indexOf(".") >= 0)
+		if (url.startsWith("index.") || url == "index" || url.endsWith("/index") || url.indexOf(".") >= 0)
 		{
 			throw new HaqPageNotFoundException();
 		}
 		
 		var path = pagesFolderPath + "/" + (url != "" ? url : "index");
 		
-		if (isPageExist(path + "/index"))
-		{
-			path += "/index";
-		}
-		
-		var pageID : String = null;
-		
-		if (!isPageExist(path))
-		{
-			var p = path.split('/');
-			pageID = p.pop();
-			path = p.join('/');
-		}
-		
-		if (!isPageExist(path))
-		{
-			path += '/index';
-		}
-		
-		if (!isPageExist(path))
-		{
-			throw new HaqPageNotFoundException();
-		}
-		
-		return { path:path, fullTag:path.replace("/", "."), pageID:pageID };
+		return getRouteInner(path.replace("/", "."), null);
 	}
 	
-    function isPageExist(path:String) : Bool
+	function getRouteInner(fullTag:String, pageID:String) : HaqRoute
+	{
+		trace("getRouteInner " + fullTag + " ," + pageID);
+		
+		var fullTagIndex = fullTag + ".index";
+		if (isPageExist(fullTagIndex))
+		{
+			return { fullTag:fullTagIndex, pageID:pageID };
+		}
+		
+		if (isPageExist(fullTag))
+		{
+			return { fullTag:fullTag, pageID:pageID };
+		}
+		
+		var n = fullTag.lastIndexOf(".");
+		if (n >= 0)
+		{
+			return getRouteInner(fullTag.substr(0, n), fullTag.substr(n + 1) + (pageID != null ? "/" + pageID : null));
+		}
+		
+		throw new HaqPageNotFoundException();
+	}
+	
+    function isPageExist(fullTag:String) : Bool
 	{
 		try
 		{
-			var template = manager.get(path.replace("/", "."));
+			var template = manager.get(fullTag);
 			return template != null;
 		}
 		catch (e:haquery.common.HaqTemplateExceptions.HaqTemplateNotFoundException)
