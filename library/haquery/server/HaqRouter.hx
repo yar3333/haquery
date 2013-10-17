@@ -39,8 +39,6 @@ class HaqRouter
 	
 	function getRouteInner(fullTag:String, pageID:String) : HaqRoute
 	{
-		trace("getRouteInner " + fullTag + " ," + pageID);
-		
 		var fullTagIndex = fullTag + ".index";
 		if (isPageExist(fullTagIndex))
 		{
