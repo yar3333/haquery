@@ -53,7 +53,7 @@ class HaqRouter
 		var n = fullTag.lastIndexOf(".");
 		if (n >= 0)
 		{
-			return getRouteInner(fullTag.substr(0, n), fullTag.substr(n + 1) + (pageID != null ? "/" + pageID : null));
+			return getRouteInner(fullTag.substr(0, n), fullTag.substr(n + 1) + (pageID != null ? "/" + pageID : ""));
 		}
 		
 		throw new HaqPageNotFoundException();
