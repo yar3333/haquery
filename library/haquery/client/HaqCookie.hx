@@ -4,54 +4,56 @@ package haquery.client;
 
 class HaqCookie
 {
-	var h : Map<String,String>;
-	
 	public function new() {}
 	
-	public inline function all() : Map<String,String>
+	public function all() : Map<String,String>
 	{
-		if (h == null)
+		var h = new Map<String,String>();
+		var a = js.Browser.document.cookie.split(";");
+		for (e in a)
 		{
-			h = new Map<String,String>();
-			var a = js.Browser.document.cookie.split(";");
-			for (e in a)
-			{
-				e = StringTools.ltrim(e);
-				var t = e.split("=");
-				if (t.length < 2) continue;
-				try h.set(t[0], StringTools.urlDecode(t[1]))
-				catch (e:Dynamic) {}
-			}
+			e = StringTools.ltrim(e);
+			var t = e.split("=");
+			if (t.length < 2) continue;
+			try h.set(t[0], StringTools.urlDecode(t[1]))
+			catch (e:Dynamic) {}
 		}
 		return h;
 	}
     
-	public inline function exists(name:String) : Bool
+	public function exists(name:String) : Bool
 	{
-		return all().exists(name);
+		for (e in js.Browser.document.cookie.split(";"))
+		{
+			e = StringTools.ltrim(e);
+			var t = e.split("=");
+			if (t[0] == name) return true;
+		}
+		return false;
 	}
    
 	public function get(name:String) : String
 	{
-		return all().get(name);
+		for (e in js.Browser.document.cookie.split(";"))
+		{
+			e = StringTools.ltrim(e);
+			var t = e.split("=");
+			if (t[0] == name)
+			{
+				return t.length > 1 ? (try StringTools.urlDecode(t[1]) catch(_:Dynamic) t[1]) : null;
+			}
+		}
+		return null;
 	}
 	
 	public function set(name:String, value:String, ?expire:Date, ?path:String, ?domain:String)
 	{
 		js.Cookie.set(name, value, expire != null ? Std.int((expire.getTime() - Date.now().getTime()) / 1000) : null, path, domain);
-		if (h != null)
-		{
-			h.set(name, value);
-		}
 	}
     
     public inline function remove(name:String, ?path:String, ?domain:String) : Void
 	{
 		js.Cookie.remove(name, path, domain);
-		if (h != null)
-		{
-			h.remove(name);
-		}
 	}
 }
 
