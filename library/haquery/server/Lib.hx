@@ -4,8 +4,8 @@ package haquery.server;
 
 import haquery.common.HaqStorage;
 import haxe.io.Path;
-import haxe.Serializer;
-import haxe.Unserializer;
+import stdlib.Serializer;
+import stdlib.Unserializer;
 import haxe.PosInfos;
 import haquery.common.HaqDefines;
 import haquery.server.HaqRouter;
@@ -74,10 +74,11 @@ class Lib
 					Web.setReturnCode(response.statusCode);
 					response.responseHeaders.send();
 					response.cookie.send();
+					
 					NativeLib.print(
-						!request.isPostback 
-							? response.content 
-							: Serializer.run(HaqMessageListenerAnswer.CallSharedServerMethodAnswer(response.ajaxResponse, response.result))
+						!request.isPostback
+						? response.content
+						: Serializer.run(HaqMessageListenerAnswer.CallSharedServerMethodAnswer(response.ajaxResponse, response.result), true)
 					);
 				}
 			}

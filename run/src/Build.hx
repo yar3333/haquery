@@ -39,7 +39,7 @@ class Build
 		project = new FlashDevelopProject(projectFilePath);
 	}
 	
-	public function build(outputDir:String, isDeadCodeElimination:Bool, basePage:String, staticUrlPrefix:String, htmlSubstitutes:Array<String>, ignorePages:Array<String>)
+	public function build(outputDir:String, isDeadCodeElimination:Bool, basePage:String, staticUrlPrefix:String, htmlSubstitutes:Array<String>, ignorePages:Array<String>, port:Int)
     {
         log.start("Build");
         
@@ -48,24 +48,24 @@ class Build
 			var manager = new HaqTemplateManager(log, project.allClassPaths, basePage, staticUrlPrefix, parseSubstitutes(htmlSubstitutes), ignorePages.map(function(s) return Path.addTrailingSlash(s.replace("\\", "/"))));
 			
 			fs.createDirectory("gen/haquery/common");
-			File.saveContent("gen/haquery/common/Generated.hx", "package haquery.common;\n\nclass Generated\n{\n\tpublic static inline var staticUrlPrefix = \"" + staticUrlPrefix + "\";\n}");
+			saveContentToFileIfNeed("gen/haquery/common/Generated.hx", "package haquery.common;\n\nclass Generated\n{\n\tpublic static inline var staticUrlPrefix = \"" + staticUrlPrefix + "\";\n}");
 			
 			fs.createDirectory("gen/haquery/server");
-			File.saveContent("gen/haquery/server/BasePage.hx", "package haquery.server;\n\ntypedef BasePage = " + (basePage != "" && project.findFile(basePage.replace(".", "/") + "/Server.hx") != null ? basePage + ".Server" : "haquery.server.HaqPage") + ";\n");
+			saveContentToFileIfNeed("gen/haquery/server/BasePage.hx", "package haquery.server;\n\ntypedef BasePage = " + (basePage != "" && project.findFile(basePage.replace(".", "/") + "/Server.hx") != null ? basePage + ".Server" : "haquery.server.HaqPage") + ";\n");
 			
 			fs.createDirectory("gen/haquery/client");
-			File.saveContent("gen/haquery/client/BasePage.hx", "package haquery.client;\n\ntypedef BasePage = " + (basePage != "" && project.findFile(basePage.replace(".", "/") + "/Client.hx") != null  ? basePage + ".Client" : "haquery.client.HaqPage") + ";\n");
+			saveContentToFileIfNeed("gen/haquery/client/BasePage.hx", "package haquery.client;\n\ntypedef BasePage = " + (basePage != "" && project.findFile(basePage.replace(".", "/") + "/Client.hx") != null  ? basePage + ".Client" : "haquery.client.HaqPage") + ";\n");
 			
 			genTrm(manager);
 			generateConfigClasses(manager);
 			generateImports(manager, project.srcPath);
 			
-			genCodeFromServer(project);
+			genCodeFromServer(project, port);
 			
 			try saveLibFolderFileTimes(outputDir) catch (e:Dynamic) {}
 			
-			buildClient(outputDir, isDeadCodeElimination);
-			buildServer(outputDir);
+			buildClient(outputDir, port, isDeadCodeElimination);
+			buildServer(outputDir, port);
 			
 			generateComponentsCssFile(manager, outputDir);
 			
@@ -95,13 +95,14 @@ class Build
         
         fs.createDirectory("gen");
 		
-		var fo = File.write("gen/Imports.hx", false);
-		fo.writeString("#if server\n\n");
-		fo.writeString(Lambda.map(manager.fullTags, function(s) return "import " + s + ".ConfigServer;").join('\n'));
-		fo.writeString("\n\n#elseif client\n\n");
-		fo.writeString(Lambda.map(manager.fullTags, function(s) return "import " + s + ".ConfigClient;").join('\n'));
-		fo.writeString("\n\n#end\n");
-        fo.close();
+		var s = "";
+		s += "#if server\n\n";
+		s += Lambda.map(manager.fullTags, function(s) return "import " + s + ".ConfigServer;").join('\n');
+		s += "\n\n#elseif client\n\n";
+		s += Lambda.map(manager.fullTags, function(s) return "import " + s + ".ConfigClient;").join('\n');
+		s += "\n\n#end\n";
+		
+		saveContentToFileIfNeed("gen/Imports.hx", s);
         
         log.finishOk();
     }
@@ -112,7 +113,7 @@ class Build
 		return a < b ? -1 : 1;
     }
 	
-	function buildClient(outputDir:String, isDeadCodeElimination:Bool)
+	function buildClient(outputDir:String, port:Int, isDeadCodeElimination:Bool)
     {
 		var clientPath = outputDir + '/haquery/client';
 		
@@ -131,9 +132,7 @@ class Build
         
         var params = project.getBuildParams("js", clientPath + "/haquery.js", [ "noEmbedJS", "client" ]);
 		if (isDeadCodeElimination) params.push("--dead-code-elimination");
-		var r = Process.run(log, fs.getHaxePath(), params);
-		Lib.print(r.output);
-		Lib.print(r.error);
+		var exitCode = runHaxe(params, port);
 		
 		if (FileSystem.exists(clientPath + "/haquery.js")
 		 && FileSystem.exists(clientPath + "/haquery.js.old"))
@@ -148,7 +147,7 @@ class Build
 			fs.deleteFile(clientPath + "/haquery.js.map.old");
 		}
 		
-		if (r.exitCode == 0)
+		if (exitCode == 0)
 		{
 			log.finishOk();
 		}
@@ -158,15 +157,14 @@ class Build
 		}
     }
 	
-	function buildServer(outputDir:String)
+	function buildServer(outputDir:String, port:Int)
 	{
 		log.start("Build server");
-        var params = project.getBuildParams(project.platform, project.platform != "neko" ? outputDir : outputDir + "/index.n", [ "server" ]);
-		var r = Process.run(log, fs.getHaxePath(), params);
-		Lib.print(r.output);
-		Lib.print(r.error);
+        
+		var params = project.getBuildParams(project.platform, outputDir + (project.platform == "neko" ? "/index.n" : ""), [ "server" ]);
+		var exitCode = runHaxe(params, port);
 		
-		if (r.exitCode == 0)
+		if (exitCode == 0)
 		{
 			log.finishOk();
 		}
@@ -185,15 +183,36 @@ class Build
         log.finishOk();
     }
 	
-	function genCodeFromServer(project:FlashDevelopProject)
+	function genCodeFromServer(project:FlashDevelopProject, port:Int)
 	{
 		log.start("Generate source code files");
 		var params = project.getBuildParams(project.platform, null, [ "haqueryGenCode", "server" ]);
+		var exitCode = runHaxe(params, port);
+		if (exitCode == 0) log.finishOk();
+		else               log.finishFail(new CompilationFailException("Server compilation errors."));
+	}
+	
+	function runHaxe(params:Array<String>, port:Int) : Int
+	{
+		if (port != 0)
+		{
+			var s = new sys.net.Socket();
+			try
+			{
+				s.connect(new sys.net.Host("127.0.0.1"), port);
+				s.close();
+			}
+			catch (e:Dynamic)
+			{
+				Process.run(log, fs.getHaxePath(), [ "--wait", Std.string(port) ]);
+			}
+			params = [ "--cwd", FileSystem.fullPath(".") ,"--connect", Std.string(port) ].concat(params);
+		}
+		
 		var r = Process.run(log, fs.getHaxePath(), params, true);
 		if (r.output.trim() != "") Lib.print(r.output);
 		if (r.error.trim() != "") Lib.print(r.error);
-		if (r.exitCode == 0) log.finishOk();
-		else                 log.finishFail(new CompilationFailException("Server compilation errors."));
+		return r.exitCode;
 	}
 	
 	function saveLibFolderFileTimes(outputDir:String)
@@ -228,7 +247,7 @@ class Build
 			var dir = "gen/" + fullTag.replace(".", "/");
 			FileSystem.createDirectory(dir);
 			
-			File.saveContent(dir + "/ConfigServer.hx"
+			saveContentToFileIfNeed(dir + "/ConfigServer.hx"
 				, "// This is autogenerated file. Do not edit!\n\n"
 				+ "package " + fullTag + ";\n\n"
 				+ "import " + template.serverClassName + ";\n\n"
@@ -240,7 +259,7 @@ class Build
 				+ "}\n"
 			);
 			
-			File.saveContent(dir + "/ConfigClient.hx"
+			saveContentToFileIfNeed(dir + "/ConfigClient.hx"
 				, "// This is autogenerated file. Do not edit!\n\n"
 				+ "package " + fullTag + ";\n\n"
 				+ "import " + template.clientClassName + ";\n\n"
@@ -290,6 +309,14 @@ class Build
 		File.saveContent(dir + "/haquery.css", text);
 		
 		log.finishOk();
+	}
+	
+	function saveContentToFileIfNeed(file:String, content:String)
+	{
+		if (!FileSystem.exists(file) || File.getContent(file) != content)
+		{
+			File.saveContent(file, content);
+		}
 	}
 	
 	/*
