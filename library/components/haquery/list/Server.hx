@@ -40,7 +40,7 @@ class Server extends BaseServer
 		
 		var n = length;
 		var r = Lib.manager.createComponent(this, "components.haquery.listitem", Std.string(n), params, getItemInnerNode(), true);
-		page.storage.setInstanceVar(fullID, "length", n + 1, true);
+		page.storage.setInstanceVar(fullID, "length", n + 1, HaqStorage.DESTINATION_BOTH);
 		return r;
 	}
 	
