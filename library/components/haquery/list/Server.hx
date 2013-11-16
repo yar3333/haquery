@@ -1,5 +1,6 @@
 package components.haquery.list;
 
+import haquery.common.HaqStorage;
 import haquery.server.Lib;
 import haxe.htmlparser.HtmlNodeElement;
 import stdlib.Std;
@@ -39,7 +40,7 @@ class Server extends BaseServer
 		
 		var n = length;
 		var r = Lib.manager.createComponent(this, "components.haquery.listitem", Std.string(n), params, getItemInnerNode(), true);
-		page.storage.setInstanceVar(fullID, "length", n + 1);
+		page.storage.setInstanceVar(fullID, "length", n + 1, true);
 		return r;
 	}
 	

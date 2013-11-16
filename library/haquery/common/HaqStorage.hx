@@ -38,9 +38,9 @@ private typedef Var =
 		}
 	}
 	
-	public function setStaticVar(clas:Class<HaqComponent>, key:String, value:Dynamic, destination=#if server DESTINATION_CLIENT #else DESTINATION_SERVER #end)
+	public function setStaticVar(clas:Class<HaqComponent>, key:String, value:Dynamic, syncInBothDirections=false)
 	{
-		staticVars.set(getFullTag(clas) + ":" + key , { d: destination, v: value });
+		staticVars.set(getFullTag(clas) + ":" + key , { d: syncInBothDirections ? DESTINATION_BOTH : #if server DESTINATION_CLIENT #else DESTINATION_SERVER #end, v: value });
 	}
 	
 	public function getStaticVar(clas:Class<HaqComponent>, key:String) : Dynamic
@@ -59,9 +59,9 @@ private typedef Var =
 		staticVars.remove(getFullTag(clas) + ":" + key);
 	}
 	
-	public function setInstanceVar(fullID:String, key:String, value:Dynamic, destination=#if server DESTINATION_CLIENT #else DESTINATION_SERVER #end)
+	public function setInstanceVar(fullID:String, key:String, value:Dynamic, syncInBothDirections=false)
 	{
-		instanceVars.set(fullID + ":" + key, { d: destination, v: value });
+		instanceVars.set(fullID + ":" + key, { d: syncInBothDirections ? DESTINATION_BOTH : #if server DESTINATION_CLIENT #else DESTINATION_SERVER #end, v: value });
 	}
 	
 	public function getInstanceVar(fullID:String, key:String) : Dynamic
