@@ -9,6 +9,7 @@ import haxe.macro.ExprTools;
 import haxe.macro.Type;
 using haxe.macro.TypeTools;
 using haquery.macro.HaqMacroTools;
+using StringTools;
 
 private typedef EventHandler = { name:String, pos:Position, args:Array<FunctionArg> };
 
@@ -264,11 +265,22 @@ class HaqComponentTools
 		}));
 		
 		var path = "gen/" + componentClass.pack.join("/") + "/ConfigClient.hx";
-		var text = File.getContent(path);
-		text = StringTools.replace(text
-			, "// SERVER_HANDLERS"
-			, "public static function getServerHandlers() : Array<String> return [ " + Lambda.map(handlers, function(h) return "'" + h.name + "'").join(", ") + " ];"
-		);
-		File.saveContent(path, text);
+		var prefix = "\tpublic static function getServerHandlers() : Array<String> return ";
+		if (FileSystem.exists(path))
+		{
+			var lines = File.getContent(path).split("\n");
+			for (i in 0...lines.length)
+			{
+				if (lines[i].startsWith(prefix))
+				{
+					lines[i] = prefix + "[ " + Lambda.map(handlers, function(h) return "'" + h.name + "'").join(", ") + " ];";
+				}
+			}
+			var content = lines.join("\n");
+			if (File.getContent(path) != content)
+			{
+				File.saveContent(path, content);
+			}
+		}
 	}
 }
