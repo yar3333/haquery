@@ -64,8 +64,8 @@ class Build
 			
 			try saveLibFolderFileTimes(outputDir) catch (e:Dynamic) {}
 			
-			buildClient(outputDir, port != 0 ? port + 1 : 0, isDeadCodeElimination);
-			buildServer(outputDir, port != 0 ? port + 2 : 0);
+			buildClient(outputDir, port, isDeadCodeElimination);
+			buildServer(outputDir, port);
 			
 			generateComponentsCssFile(manager, outputDir);
 			
