@@ -35,7 +35,7 @@ class HaqTemplateManager
 		this.ignorePages = ignorePages;
 		
 		templates = new Map<String,HaqTemplate>();
-		fillTemplates(HaqDefines.folders.pages, new Map<String, Int>());
+		fillTemplates(HaqDefines.folders.pages);
 		for (template in templates)
 		{
 			resolveComponentTags(template, template.doc);
@@ -52,11 +52,8 @@ class HaqTemplateManager
 		fullTags.sort(function(a, b) return a<b ? -1 : (a>b?1:0));
 	}
 	
-	function fillTemplates(pack:String, processedPacks:Map<String, Int>)
+	function fillTemplates(pack:String)
 	{
-		if (processedPacks.exists(pack)) return;
-		processedPacks.set(pack, 1);
-		
 		var localPath = pack.replace(".", "/");
 		
 		var pathWasFound = false;
@@ -75,7 +72,7 @@ class HaqTemplateManager
 					{
 						if (file != HaqDefines.folders.support && FileSystem.isDirectory(path + '/' + file))
 						{
-							addTemplate(pack + "." + file, processedPacks);
+							addTemplate(pack + "." + file);
 						}
 					}
 				}
@@ -89,7 +86,7 @@ class HaqTemplateManager
 		}
 	}
 	
-	function addTemplate(fullTag:String, processedPacks:Map<String, Int>)
+	function addTemplate(fullTag:String)
 	{
 		if (fullTag != null && fullTag != "" && !templates.exists(fullTag))
 		{
@@ -98,23 +95,23 @@ class HaqTemplateManager
 				var template = new HaqTemplate(log, classPaths, fullTag, basePage, staticUrlPrefix, substitutes);
 				templates.set(fullTag, template);
 				
-				addTemplate(template.extend, processedPacks);
+				addTemplate(template.extend);
 				
 				for (imp in template.imports)
 				{
 					if (imp.asTag == null)
 					{
-						fillTemplates(imp.component, processedPacks);
+						fillTemplates(imp.component);
 					}
 					else
 					{
-						addTemplate(imp.component, processedPacks);
+						addTemplate(imp.component);
 					}
 				}
 			}
 			catch (e:HaqTemplateNotFoundException)
 			{
-				fillTemplates(fullTag, processedPacks);
+				fillTemplates(fullTag);
 			}
 		}
 	}
