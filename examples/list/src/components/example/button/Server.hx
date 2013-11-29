@@ -8,6 +8,11 @@ class Server extends BaseServer
 
 	public var text : String;
 	
+	function init()
+	{
+		trace("button server init");
+	}
+	
 	function preRender()
 	{
         template().container.html(text);
