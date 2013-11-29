@@ -141,7 +141,9 @@ class Client extends BaseClient
 	{
 		for (c in childComponents)
 		{
-			Lib.manager.createComponent(this, c.fullTag, c.id, true);
+			var component = Lib.manager.createComponent(this, c.fullTag, c.id, true);
+			component.forEachComponent("preInit", true);
+			component.forEachComponent("init", false);
 		}
 	}
 	
