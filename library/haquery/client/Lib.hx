@@ -12,11 +12,17 @@ using stdlib.StringTools;
 {
 	public static var manager(default, null) : HaqTemplateManager;
 	
-	public static var page(get_page, null) : BasePage;
+	public static var page(get_page, set_page) : BasePage;
 	
 	static function get_page()
 	{
 		return manager != null ? manager.page : null;
+	}
+	
+	static function set_page(page:BasePage) : BasePage
+	{
+		if (manager != null) manager.page = page;
+		return page;
 	}
 	
 	static public function run(pageFullTag:String)

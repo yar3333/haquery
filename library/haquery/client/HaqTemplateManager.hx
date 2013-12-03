@@ -9,7 +9,7 @@ import haquery.common.HaqStorage;
 
 class HaqTemplateManager
 {
-	public var page(default, null) : BasePage;
+	public var page : BasePage;
 	
 	public function new() { }
 	
