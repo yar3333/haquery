@@ -26,7 +26,7 @@ class HaqElemEventManager
                 }
                 if (needHandler)
                 {
-                    new JQuery(elem).bind(eventName, function(e:JqEvent) {
+                    new JQuery(elem).on(eventName, function(e:JqEvent) {
                         elemEventHandler(componentWithHandlers, componentWithEvents, elem, e); 
                     });
                 }
