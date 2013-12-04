@@ -35,7 +35,7 @@ class HaqTemplateManager
 		this.ignorePages = ignorePages;
 		
 		templates = new Map<String,HaqTemplate>();
-		fillTemplates(HaqDefines.folders.pages);
+		fillTemplates(HaqDefines.folders.pages, new Map<String, Int>());
 		for (template in templates)
 		{
 			resolveComponentTags(template, template.doc);
@@ -52,8 +52,10 @@ class HaqTemplateManager
 		fullTags.sort(function(a, b) return a<b ? -1 : (a>b?1:0));
 	}
 	
-	function fillTemplates(pack:String)
+	function fillTemplates(pack:String, processedPacks:Map<String, Int>)
 	{
+		if (processedPacks.exists(pack)) return;
+		
 		var localPath = pack.replace(".", "/");
 		
 		var pathWasFound = false;
@@ -72,7 +74,8 @@ class HaqTemplateManager
 					{
 						if (file != HaqDefines.folders.support && FileSystem.isDirectory(path + '/' + file))
 						{
-							addTemplate(pack + "." + file);
+							addTemplate(pack + "." + file, processedPacks);
+							if (processedPacks.exists(pack)) break;
 						}
 					}
 				}
@@ -80,13 +83,15 @@ class HaqTemplateManager
 			i--;
 		}
 		
+		processedPacks.set(pack, 1);
+		
 		if (!pathWasFound)
 		{
 			throw new PathNotFoundException("Components path '" + localPath + "' not found.");
 		}
 	}
 	
-	function addTemplate(fullTag:String)
+	function addTemplate(fullTag:String, processedPacks:Map<String, Int>)
 	{
 		if (fullTag != null && fullTag != "" && !templates.exists(fullTag))
 		{
@@ -95,23 +100,23 @@ class HaqTemplateManager
 				var template = new HaqTemplate(log, classPaths, fullTag, basePage, staticUrlPrefix, substitutes);
 				templates.set(fullTag, template);
 				
-				addTemplate(template.extend);
+				addTemplate(template.extend, processedPacks);
 				
 				for (imp in template.imports)
 				{
 					if (imp.asTag == null)
 					{
-						fillTemplates(imp.component);
+						fillTemplates(imp.component, processedPacks);
 					}
 					else
 					{
-						addTemplate(imp.component);
+						addTemplate(imp.component, processedPacks);
 					}
 				}
 			}
 			catch (e:HaqTemplateNotFoundException)
 			{
-				fillTemplates(fullTag);
+				fillTemplates(fullTag, processedPacks);
 			}
 		}
 	}
