@@ -70,7 +70,19 @@ class HaqTemplateManager
 				if (FileSystem.exists(path) && FileSystem.isDirectory(path))
 				{
 					pathWasFound = true;
-					for (file in FileSystem.readDirectory(path))
+					
+					var files : Array<String> = null; 
+					try
+					{
+						files = FileSystem.readDirectory(path);
+					}
+					catch (e:Dynamic)
+					{
+						log.trace("Can't read directory '" + path + "'.");
+						Exception.rethrow(e);
+					}
+					
+					for (file in files)
 					{
 						if (file != HaqDefines.folders.support && FileSystem.isDirectory(path + '/' + file))
 						{
