@@ -9,8 +9,9 @@ class Server extends Base
     {
 		template().form
 			.attr("target", prefixID + "frame")
-			.attr("action", action)
-			.attr("accept", accept);
+			.attr("action", action);
+		
+		template().file.attr("accept", accept);
 		
         template().frame.attr("name", prefixID + "frame");
     }
