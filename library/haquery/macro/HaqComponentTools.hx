@@ -15,10 +15,12 @@ private typedef EventHandler = { name:String, pos:Position, args:Array<FunctionA
 
 class HaqComponentTools 
 {
+	static var setComponentClassEventHandlersArgTypes_level = 0;
+	static var setComponentClassEventHandlersArgTypes_levelLimit = 90;
+	
 	public static function build() : Array<Field>
 	{
 		var componentClass = Context.getLocalClass().get();
-        var pos = Context.currentPos();
 		
 		if (componentClass.name == "Server" || componentClass.name == "Client")
 		{
@@ -90,55 +92,70 @@ class HaqComponentTools
 	
 	static function setComponentClassEventHandlersArgTypes(componentClass:ClassType, handlers:Array<EventHandler>)
 	{
-		if (handlers != null && handlers.length > 0)
+		setComponentClassEventHandlersArgTypes_level++;
+		
+		if (setComponentClassEventHandlersArgTypes_level < setComponentClassEventHandlersArgTypes_levelLimit)
 		{
-			Context.getModule(componentClass.pack.join(".") + ".Template" + componentClass.name);
-			var templateClass = Context.getType(componentClass.pack.join(".") + ".Template" + componentClass.name).getClass();
-			if (templateClass != null)
+			if (handlers != null && handlers.length > 0)
 			{
-				for (handler in handlers)
+				Context.getModule(componentClass.pack.join(".") + ".Template" + componentClass.name);
+				var templateClass = Context.getType(componentClass.pack.join(".") + ".Template" + componentClass.name).getClass();
+				if (templateClass != null)
 				{
-					handler.args[0].type = ComplexType.TPath( { sub:null, params:[], pack:[ "haquery", (componentClass.name == "Server" ? "server" : "client") ], name:"HaqComponent" } );
-						
-					var splittedHandlerName = handler.name.split("_");
-					var templateFieldName = splittedHandlerName.slice(0, splittedHandlerName.length - 1).join("_");
-					var eventName = splittedHandlerName[splittedHandlerName.length - 1];
-					
-					var templateClassFieldClass = getTemplateClassFieldClass(templateClass, templateFieldName);
-					if (templateClassFieldClass != null)
+					for (handler in handlers)
 					{
-						var eventParamType = null;
-						var typePath = templateClassFieldClass.pack.join(".") + "." + templateClassFieldClass.name;
-						if (typePath == "haquery.client.HaqQuery" || typePath == "js.JQuery")
+						handler.args[0].type = ComplexType.TPath( { sub:null, params:[], pack:[ "haquery", (componentClass.name == "Server" ? "server" : "client") ], name:"HaqComponent" } );
+							
+						var splittedHandlerName = handler.name.split("_");
+						var templateFieldName = splittedHandlerName.slice(0, splittedHandlerName.length - 1).join("_");
+						var eventName = splittedHandlerName[splittedHandlerName.length - 1];
+						
+						var templateClassFieldClass = getTemplateClassFieldClass(templateClass, templateFieldName);
+						if (templateClassFieldClass != null)
 						{
-							eventParamType = HaqMacroTools.getModuleType("js.JQuery", "JqEvent");
+							var eventParamType = null;
+							var typePath = templateClassFieldClass.pack.join(".") + "." + templateClassFieldClass.name;
+							if (typePath == "haquery.client.HaqQuery" || typePath == "js.JQuery")
+							{
+								eventParamType = HaqMacroTools.getModuleType("js.JQuery", "JqEvent");
+							}
+							else
+							if (typePath == "haquery.server.HaqQuery")
+							{
+								eventParamType = Context.getType("Dynamic");
+							}
+							else
+							{
+								eventParamType = getComponentClassEventClassParamType(templateClassFieldClass, eventName);
+							}
+							
+							if (eventParamType != null)
+							{
+								handler.args[1].type = eventParamType.toComplexType();
+							}
 						}
 						else
-						if (typePath == "haquery.server.HaqQuery")
 						{
-							eventParamType = Context.getType("Dynamic");
+							Context.error("Field '" + templateFieldName + "' not found in template.", handler.pos);
 						}
-						else
-						{
-							eventParamType = getComponentClassEventClassParamType(templateClassFieldClass, eventName);
-						}
-						
-						if (eventParamType != null)
-						{
-							handler.args[1].type = eventParamType.toComplexType();
-						}
-					}
-					else
-					{
-						Context.error("Field '" + templateFieldName + "' not found in template.", handler.pos);
 					}
 				}
-			}
-			else
-			{
-				Context.error("To use handlers you need to have Template" + componentClass.name + " class. Check file 'template.html' existance.", componentClass.pos);
+				else
+				{
+					Context.error("To use handlers you need to have Template" + componentClass.name + " class. Check file 'template.html' existance.", componentClass.pos);
+				}
 			}
 		}
+		else
+		{
+			for (handler in handlers)
+			{
+				if (handler.args[0].type == null) handler.args[0].type = ComplexType.TPath( { sub:null, params:[], pack:[ "haquery", (componentClass.name == "Server" ? "server" : "client") ], name:"HaqComponent" } );
+				if (handler.args[1].type == null) handler.args[1].type = Context.getType("Dynamic").toComplexType();
+			}
+		}
+		
+		setComponentClassEventHandlersArgTypes_level--;
 	}
 	
 	static function getComponentClassHandlers(fields:Array<Field>) : Array<EventHandler>
@@ -159,11 +176,13 @@ class HaqComponentTools
 							{
 								handlers.push({ name:field.name, pos:field.pos, args:f.args });
 							}
+							/*
 							else
 							{
 								Context.error("Event handler's arguments types must not be specified.", field.pos);
 								return null;
 							}
+							*/
 						}
 						else
 						{
