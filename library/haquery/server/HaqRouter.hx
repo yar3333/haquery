@@ -29,15 +29,15 @@ class HaqRouter
 		
 		if (url.startsWith("index.") || url == "index" || url.endsWith("/index") || url.indexOf(".") >= 0)
 		{
-			throw new HaqPageNotFoundException();
+			throw new HaqPageNotFoundException(url);
 		}
 		
 		var path = pagesFolderPath + "/" + (url != "" ? url : "index");
 		
-		return getRouteInner(path.replace("/", "."), null);
+		return getRouteInner(url, path.replace("/", "."), null);
 	}
 	
-	function getRouteInner(fullTag:String, pageID:String) : HaqRoute
+	function getRouteInner(url:String, fullTag:String, pageID:String) : HaqRoute
 	{
 		var fullTagIndex = fullTag + ".index";
 		if (isPageExist(fullTagIndex))
@@ -53,10 +53,10 @@ class HaqRouter
 		var n = fullTag.lastIndexOf(".");
 		if (n >= 0)
 		{
-			return getRouteInner(fullTag.substr(0, n), fullTag.substr(n + 1) + (pageID != null ? "/" + pageID : ""));
+			return getRouteInner(url, fullTag.substr(0, n), fullTag.substr(n + 1) + (pageID != null ? "/" + pageID : ""));
 		}
 		
-		throw new HaqPageNotFoundException();
+		throw new HaqPageNotFoundException(url);
 	}
 	
     function isPageExist(fullTag:String) : Bool
