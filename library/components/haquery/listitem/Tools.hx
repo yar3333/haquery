@@ -1,7 +1,5 @@
 package components.haquery.listitem;
 
-import haxe.htmlparser.HtmlDocument;
-
 class Tools
 {
     @:isVar static var reHtmlParam(get_reHtmlParam, null) : EReg;
@@ -9,7 +7,7 @@ class Tools
 	{
 		if (reHtmlParam == null)
 		{
-			reHtmlParam = new EReg("[{]([_a-z][_a-z0-9]*)[}]", "ig");
+			reHtmlParam = new EReg("[{]([_a-z][_a-z0-9]*(?:[.][_a-z][_a-z0-9]*)*)[}]", "ig");
 		}
 		return reHtmlParam;
 	}
@@ -21,18 +19,30 @@ class Tools
             html = reHtmlParam.map(html, function(re) 
             {
                 var param = re.matched(1);
-                if (Reflect.isFunction(Reflect.field(params, "get_" + param)))
-                {
-					return Std.string(Reflect.callMethod(params, Reflect.field(params, "get_" + param), []));
+				var obj = params;
+				var n : Int;
+				while (obj != null && (n = param.indexOf(".")) >= 0)
+				{
+					obj = getHtmlParamValue(obj, param.substr(0, n));
+					param = param.substr(n + 1);
 				}
-				else
-                if (Reflect.hasField(params, param))
-                {
-					return Std.string(Reflect.field(params, param));
-                }
-                return re.matched(0);
+                return obj != null ? getHtmlParamValue(obj, param) : re.matched(0);
             });
         }
         return html;
     }
+	
+	static function getHtmlParamValue(params:Dynamic, param:String) : String
+	{
+		if (Reflect.isFunction(Reflect.field(params, "get_" + param)))
+		{
+			return Reflect.callMethod(params, Reflect.field(params, "get_" + param), []);
+		}
+		else
+		if (Reflect.hasField(params, param))
+		{
+			return Reflect.field(params, param);
+		}
+		return null;
+	}
 }
