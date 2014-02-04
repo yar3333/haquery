@@ -126,6 +126,7 @@ class Main
 			options.add("basePage", "", [ "--base-page" ], "Default base page. For example: 'pages.layout'.");
 			options.add("staticUrlPrefix", "", [ "--static-url-prefix" ], "Prefix for URLs started with '~',\nlinks to system the system files\nand registered js/css files.\nAffected to HTML and CSS output only,\nnot to physical folders structure.");
 			options.addRepeatable("htmlSubstitutes", String, [ "--html-substitute" ], "Regular expression to find and replace in html templates.");
+			options.addRepeatable("onlyPagesPackage", String, [ "--only-pages-package" ], "Pages package to compile. If not specified then all pages will be compiled.");
 			options.addRepeatable("ignorePages", String, [ "--ignore-pages" ], "Path to the page files to ignore.");
 			options.add("port", 0, [ "--port" ], "Use haxe server on specified port.");
 			options.add("project", "", null, "FlashDevelop project file to read.\n(Default: find *.hxproj in the current directory.)");
@@ -138,6 +139,7 @@ class Main
 					, options.get("basePage")
 					, options.get("staticUrlPrefix")
 					, options.get("htmlSubstitutes")
+					, options.get("onlyPagesPackage")
 					, options.get("ignorePages")
 					, options.get("port")
 				);

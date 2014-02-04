@@ -39,13 +39,24 @@ class Build
 		project = new FlashDevelopProject(projectFilePath);
 	}
 	
-	public function build(outputDir:String, isDeadCodeElimination:Bool, basePage:String, staticUrlPrefix:String, htmlSubstitutes:Array<String>, ignorePages:Array<String>, port:Int)
+	public function build(outputDir:String, isDeadCodeElimination:Bool, basePage:String, staticUrlPrefix:String, htmlSubstitutes:Array<String>, onlyPagesPackage:Array<String>, ignorePages:Array<String>, port:Int)
     {
         log.start("Build");
         
 		try
 		{
-			var manager = new HaqTemplateManager(log, project.allClassPaths, basePage, staticUrlPrefix, parseSubstitutes(htmlSubstitutes), ignorePages.map(function(s) return Path.addTrailingSlash(s.replace("\\", "/"))));
+			log.start("Collect pages and components data");
+			var manager = new HaqTemplateManager
+			(
+				log, 
+				project.allClassPaths, 
+				basePage, 
+				staticUrlPrefix, 
+				parseSubstitutes(htmlSubstitutes), 
+				onlyPagesPackage,
+				ignorePages.map(function(s) return Path.addTrailingSlash(s.replace("\\", "/")))
+			);
+			log.finishOk();
 			
 			fs.createDirectory("gen/haquery/common");
 			saveContentToFileIfNeed("gen/haquery/common/Generated.hx", "package haquery.common;\n\nclass Generated\n{\n\tpublic static inline var staticUrlPrefix = \"" + staticUrlPrefix + "\";\n}");
