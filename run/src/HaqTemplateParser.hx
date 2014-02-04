@@ -16,6 +16,8 @@ class HaqTemplateParser
 	static var MIN_DATE = new Date(2000, 0, 0, 0, 0, 0);
 	static var reSupportUrl = new EReg("~/([-_/\\.a-zA-Z0-9]*)", "g");
 	
+	static var configsCache = new Map<String, HtmlDocument>();
+	
 	var log : Log;
 	var classPaths : Array<String>;
 	var fullTag : String;
@@ -155,11 +157,22 @@ class HaqTemplateParser
 			var configPath = getFullPath(basePath + "config.xml");
 			if (configPath != null)
 			{
+				var doc : HtmlDocument;
+				
+				if (configsCache.exists(configPath))
+				{
+					doc = configsCache.get(configPath);
+				}
+				else
+				{
+					doc = new HtmlDocument(File.getContent(configPath));
+					configsCache.set(configPath, doc);
+				}
+				
 				try
 				{
-					r = new HaqTemplateConfig(r, new HtmlDocument(File.getContent(configPath)));
+					r = new HaqTemplateConfig(r, doc);
 				}
-
 				catch (e:HaqTemplateConfigParseException)
 				{
 					throw new HaqTemplateConfigParseException(e.message + " Check '" + configPath + "'.");

@@ -19,19 +19,22 @@ class HaqTemplateManager
 	var basePage : String;
 	var staticUrlPrefix : String;
 	var substitutes : Array<{ from:EReg, to:String }>;
+	var onlyPagesPackage : Array<String>;
 	var ignorePages : Array<String>;
 	
 	var templates(default, null) : Map<String,HaqTemplate>;
 	
 	public var fullTags(default, null) : Array<String>;
 	
-	public function new(log:Log, classPaths:Array<String>, basePage:String, staticUrlPrefix:String, substitutes:Array<{ from:EReg, to:String }>, ignorePages:Array<String>)
+	
+	public function new(log:Log, classPaths:Array<String>, basePage:String, staticUrlPrefix:String, substitutes:Array<{ from:EReg, to:String }>, onlyPagesPackage:Array<String>, ignorePages:Array<String>)
 	{
 		this.log = log;
 		this.classPaths = classPaths;
 		this.basePage = basePage;
 		this.staticUrlPrefix = staticUrlPrefix;
 		this.substitutes = substitutes;
+		this.onlyPagesPackage = onlyPagesPackage;
 		this.ignorePages = ignorePages;
 		
 		templates = new Map<String,HaqTemplate>();
@@ -138,8 +141,10 @@ class HaqTemplateManager
 		var usedFullTags = new Array<String>();
 		for (fullTag in templates.keys())
 		{
-			if (fullTag.startsWith(HaqDefines.folders.pages + "."))
-			{
+			if (
+				fullTag.startsWith(HaqDefines.folders.pages + ".")
+			 && (onlyPagesPackage.length == 0 || onlyPagesPackage.exists(function(s) return (fullTag + ".").startsWith(s)))
+			) {
 				getUsedFullTags_addToUsed(get(fullTag), usedFullTags);
 			}
 		}
