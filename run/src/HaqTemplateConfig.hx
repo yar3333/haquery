@@ -60,7 +60,7 @@ class HaqTemplateConfig
 							requires.push(componentPack);
 						}
 						var asTag = importNode.hasAttribute("as") ? importNode.getAttribute("as") : HaqTemplateTools.getTag(componentPack);
-						imports.unshift({ component:HaqTemplateTools.getPack(componentPack), asTag:asTag });
+						imports.unshift({ component:componentPack, asTag:asTag });
 					}
 					else
 					{
