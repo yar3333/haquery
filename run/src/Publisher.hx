@@ -163,7 +163,9 @@ class Publisher
 			if (!FileSystem.exists(dest) || FileSystem.stat(src).mtime.getTime() > FileSystem.stat(dest).mtime.getTime())
 			{
 				fs.createDirectory(Path.directory(dest));
+				log.start("Copy " + src + " => " + dest);
 				fs.copyFile(src, dest);
+				log.finishOk();
 			}
 		}
 	}
