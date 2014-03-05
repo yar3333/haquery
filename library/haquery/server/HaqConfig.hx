@@ -24,6 +24,11 @@ class HaqConfig
 	public var logSystemCalls = false;
 	
 	/**
+	 * Write to log call with greater cpu using (in seconds).
+	 */
+	public var logSlowSystemCalls = 0.0;
+	
+	/**
      * User-defined data.
      */
     public var customs(default, null) : Map<String,Dynamic>;
@@ -34,6 +39,7 @@ class HaqConfig
 	public var maxPostSize(default, null) : Int;
 	
 	public var secret : String;
+	
 	
 	function new(path:String)
 	{
@@ -62,6 +68,9 @@ class HaqConfig
 						
 						case "logSystemCalls":
 							logSystemCalls = Std.bool(value);
+						
+						case "logSlowSystemCalls":
+							logSlowSystemCalls = Std.parseFloat(value);
 						
 						case "filterTracesByIP":
 							filterTracesByIP = value;
