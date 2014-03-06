@@ -1,33 +1,6 @@
 package components.haquery.list;
 
-import haquery.server.Lib;
 import haquery.server.HaqComponent;
-
-private class LazyItemsIterator
-{
-	var length : Int;
-	var items : LazyItems;
-	
-	var n = 0;
-	
-	public function new(length:Int, items:LazyItems)
-	{
-		this.length = length;
-		this.items = items;
-	}
-	
-	public function hasNext() : Bool
-	{
-		return n < length;
-	}
-	
-	public function next() : HaqComponent
-	{
-		var r = items.get(Std.string(n));
-		n++;
-		return r;
-	}
-}
 
 class LazyItems 
 {
@@ -63,7 +36,7 @@ class LazyItems
 	
 	public function iterator() : StdTypes.Iterator<HaqComponent>
 	{
-		return new LazyItemsIterator(length, this);
+		return hash.iterator();
 	}
 	
 	public function remove(id:String) : Bool
