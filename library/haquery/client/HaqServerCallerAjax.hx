@@ -22,9 +22,9 @@ class HaqServerCallerAjax
 		this.url = url;
 	}
 	
-	public function callSharedMethod(componentID:String, method:String, ?params:Array<Dynamic>, ?callb:Dynamic->Void) : Void
+	public function callSharedMethod(componentID:String, method:String, nohtmldata=false, ?params:Array<Dynamic>, ?callb:Dynamic->Void) : Void
 	{
-		var sendData = getDataObjectForSendToServer(componentID, method, params);
+		var sendData = getDataObjectForSendToServer(componentID, method, nohtmldata, params);
 		JQuery.postAjax(url, sendData, function(data:String) : Void
 		{ 
 			var message : HaqMessageListenerAnswer = Unserializer.run(data);
@@ -42,7 +42,7 @@ class HaqServerCallerAjax
 	}
 	
 	
-    function getDataObjectForSendToServer(componentID:String, method:String, ?params:Array<Dynamic>) : Dynamic
+    function getDataObjectForSendToServer(componentID:String, method:String, nohtmldata:Bool, ?params:Array<Dynamic>) : Dynamic
     {
         var sendData : Dynamic = {
 			 HAQUERY_POSTBACK: 1
@@ -52,31 +52,34 @@ class HaqServerCallerAjax
 			,HAQUERY_STORAGE: Serializer.run(page.storage.getStorageToSend())
 		};
 
-        var sendedElements = getElemsForSendToServer();
-        for (sendElem in sendedElements)
-        {
-            var nodeName = sendElem.nodeName.toUpperCase();
-            if (nodeName == "INPUT" && getInputType(sendElem) == "CHECKBOX")
-            {
-                sendData[untyped sendElem.id] = Reflect.field(sendElem, "checked") ? "1" : "0";
-            }
-            else
-            if (nodeName == "INPUT" && getInputType(sendElem) == "RADIO")
-            {
-                if (Reflect.field(sendElem, "checked"))
-                {
-                    var name = sendElem.getAttribute("name");
-                    if (name != null && name != "")
-                    {
-                        sendData[untyped name] = sendElem.getAttribute("value");
-                    }
-                }
-            }
-            else
-            {
-                sendData[untyped sendElem.id] = new JQuery(sendElem).val();
-            }
-        }
+        if (!nohtmldata)
+		{
+			var sendedElements = getElemsForSendToServer();
+			for (sendElem in sendedElements)
+			{
+				var nodeName = sendElem.nodeName.toUpperCase();
+				if (nodeName == "INPUT" && getInputType(sendElem) == "CHECKBOX")
+				{
+					sendData[untyped sendElem.id] = Reflect.field(sendElem, "checked") ? "1" : "0";
+				}
+				else
+				if (nodeName == "INPUT" && getInputType(sendElem) == "RADIO")
+				{
+					if (Reflect.field(sendElem, "checked"))
+					{
+						var name = sendElem.getAttribute("name");
+						if (name != null && name != "")
+						{
+							sendData[untyped name] = sendElem.getAttribute("value");
+						}
+					}
+				}
+				else
+				{
+					sendData[untyped sendElem.id] = new JQuery(sendElem).val();
+				}
+			}
+		}
         
         return sendData;
     }
