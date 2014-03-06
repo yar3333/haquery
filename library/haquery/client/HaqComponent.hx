@@ -65,7 +65,7 @@ class HaqComponent extends haquery.base.HaqComponent
 	#if !fullCompletion @:noCompletion #end
 	function callSharedServerMethod(method:String, params:Array<Dynamic>, success:Dynamic->Void, fail:Exception->Void) : Void
 	{
-		page.ajax.callSharedMethod(fullID, method, params, success);
+		page.ajax.callSharedMethod(fullID, method, true, params, success);
 	}
 	
 	/**
