@@ -11,4 +11,9 @@ class Client extends BaseClient
     {
         q('#status').html("sbt_click client " + t.fullID);
     }
+	
+	function call_click(t, e)
+	{
+		server().test();
+	}
 }

@@ -22,4 +22,9 @@ class Server extends BaseServer
     {
         q('#status').html("sbt_click server " + t.fullID);
     }
+	
+	@shared function test()
+	{
+		template().users.components.get("0");
+	}
 }
