@@ -143,12 +143,19 @@ class HaqPage extends HaqComponent
 		}
 	}
 	
+	/**
+	 * Override if need.
+	 */
+	function afterPreRender() {}
+	
 	#if !fullCompletion @:noCompletion #end
 	override public function render() : String 
 	{
         Lib.profiler.begin("preRender");
 		forEachComponent('preRender');
         Lib.profiler.end();
+		
+		afterPreRender();
 		
 		var isRedirected = statusCode == 301 || statusCode == 307;
 		
