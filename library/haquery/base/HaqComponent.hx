@@ -177,11 +177,8 @@ class HaqComponent
         var r = this;
         for (id in ids)
         {
-            if (!r.components.exists(id))
-			{
-				return null;
-			}
             r = cast r.components.get(id);
+			if (r == null) return null;
         }
 		return cast r;
     }
