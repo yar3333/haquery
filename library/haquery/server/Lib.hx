@@ -27,8 +27,8 @@ typedef Web = neko.Web;
 
 class Lib
 {
-    public static var profiler(default, null) : Profiler;
-	public static var manager(default, null) : HaqTemplateManager;
+    public static var profiler : Profiler;
+	public static var manager : HaqTemplateManager;
 	public static var uploads(default, null) : HaqUploads;
     
 	public static function run() : Void

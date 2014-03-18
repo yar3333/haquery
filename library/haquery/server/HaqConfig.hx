@@ -40,7 +40,6 @@ class HaqConfig
 	
 	public var secret : String;
 	
-	
 	function new(path:String)
 	{
 		maxPostSize = 16 * 1024 * 1024;
