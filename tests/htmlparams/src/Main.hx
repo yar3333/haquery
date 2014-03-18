@@ -1,8 +1,10 @@
-import Imports;
+package ;
 
 #if php
+import php.Web;
 import php.Lib;
 #elseif neko
+import neko.Web;
 import neko.Lib;
 #end
 
@@ -10,15 +12,8 @@ class Main
 {
     static function main()
 	{
-		#if !client
-		
 		var r = new haxe.unit.TestRunner();
-		
-		r.add(new models.HaqQueryTest());
-		r.add(new models.HaqTemplatesTest());
-		
+		r.add(new HtmlParamsTest());
 		r.run();
-		
-		#end
 	}
 }

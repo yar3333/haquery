@@ -1,8 +1,4 @@
 <config>
-    <imports>
-        <components package="components.set0" />
-    </imports>
-    <requires>
-        <component package="components.set0.text" />
-    </requires>
+    <import component="components.set0.*" />
+    <import component="components.set0.text" required="true" />
 </config>

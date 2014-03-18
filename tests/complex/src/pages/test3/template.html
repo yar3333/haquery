@@ -1,0 +1,27 @@
+<ul id="questionsList" class="questions">
+	<haq:factory id="questionBlock">
+		<li id="item" data-questionid="{questionId}">
+			<a href="{linkToUserPage}" id="linkToUserImg" class="navigateAction"><img src="{userPhotoSrc}" class="avatar" alt="" /></a>
+			<div class="desc">
+				<div class="title"><i id="poll" class="quiz">Опрос</i> <a href="{linkToQuestionPage}" data-type="{type}" class="navigateAction">{questionTextShort}</a></div>
+				<div class="bread">
+					<a href="{linkToUserPage}" id="linkToUser" class="navigateAction">{userName}</a>
+					<span>{timeAgo} {linksToCategory}</span>					
+				</div>
+				<div class="desc-info">
+					<span id="subscribe" class="link">подписаться</span>
+					<span id="subscribed" class="link" style="display:none">вы подписаны</span>
+					<span class="answers">
+						<a href="{linkToQuestionPage}" data-type="{type}" class="navigateAction">{ansCount}</a>
+						<span id="newAns" class="new">{parenthesisLeft}<a href="{linkToQuestionPage}" data-type="{type}" class="navigateAction">{newAnsCount}</a>{parenthesisRight}</span>
+					</span>					
+					<div id="questionAnswer" class="response" style="display:none;">{answerText}</div>		
+					<div class="response vote" id="pollAnswer" style="padding: 0px 0px 5px 25px; display:none;">		
+						<table id="options">								
+						</table>		
+					</div>
+				</div>
+			</div>			
+		</li>
+	</haq:factory>
+</ul>

@@ -121,7 +121,7 @@ class HaqComponent
 	}
 	
 	#if !fullCompletion @:noCompletion #end
-    function forEachComponent(f:String, isFromTopToBottom=true) : Void
+    public function forEachComponent(f:String, isFromTopToBottom=true) : Void
     {
 		#if server
 		if (page.statusCode == 302 || page.statusCode == 301) return; 

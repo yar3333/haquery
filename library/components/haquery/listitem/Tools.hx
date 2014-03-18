@@ -2,35 +2,43 @@ package components.haquery.listitem;
 
 class Tools
 {
-    @:isVar static var reHtmlParam(get_reHtmlParam, null) : EReg;
-	static function get_reHtmlParam()
+	public static function applyHtmlParams(html:String, params:Dynamic) : String
 	{
-		if (reHtmlParam == null)
+		if (params == null || html.indexOf("{") < 0) return html;
+		
+		var r = new StringBuf();
+		var i = 0;
+		while (i < html.length)
 		{
-			reHtmlParam = new EReg("[{]([_a-z][_a-z0-9]*(?:[.][_a-z][_a-z0-9]*)*)[}]", "ig");
+			var start = html.indexOf("{", i);
+			if (start < 0) { r.addSub(html, i); break; }
+			var end = html.indexOf("}", i);
+			if (end < 0) { r.addSub(html, i); break; }
+			
+			r.addSub(html, i, start - i);
+			
+			var param = html.substring(start + 1, end);
+			
+			var obj = params;
+			var n : Int;
+			while (obj != null && (n = param.indexOf(".")) >= 0)
+			{
+				obj = getHtmlParamValue(obj, param.substr(0, n));
+				param = param.substr(n + 1);
+			}
+			if (obj != null)
+			{
+				r.add(getHtmlParamValue(obj, param));
+			}
+			else
+			{
+				r.addSub(html, i, end - start);
+			}
+			
+			i = end + 1;
 		}
-		return reHtmlParam;
+		return r.toString();
 	}
-	
-	static public function applyHtmlParams(html:String, params:Dynamic) : String
-    {
-        if (params != null)
-		{
-            html = reHtmlParam.map(html, function(re) 
-            {
-                var param = re.matched(1);
-				var obj = params;
-				var n : Int;
-				while (obj != null && (n = param.indexOf(".")) >= 0)
-				{
-					obj = getHtmlParamValue(obj, param.substr(0, n));
-					param = param.substr(n + 1);
-				}
-                return obj != null ? getHtmlParamValue(obj, param) : re.matched(0);
-            });
-        }
-        return html;
-    }
 	
 	static function getHtmlParamValue(params:Dynamic, param:String) : String
 	{

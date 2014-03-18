@@ -29,7 +29,7 @@ class HaqComponent extends haquery.base.HaqComponent
 	/**
      * template.html as DOM tree.
      */
-    var doc(default, null) : HtmlDocument;
+    var doc(default, null) : HtmlNodeElement;
     
     /**
      * HTML element, which contain this component.
@@ -60,7 +60,7 @@ class HaqComponent extends haquery.base.HaqComponent
 	}
     
    	#if !fullCompletion @:noCompletion #end
-	function construct(fullTag:String, parent:HaqComponent, id:String, doc:HtmlDocument, params:Dynamic, innerNode:HtmlNodeElement, isInnerComponent:Bool) : Void
+	function construct(fullTag:String, parent:HaqComponent, id:String, doc:HtmlNodeElement, params:Dynamic, innerNode:HtmlNodeElement, isInnerComponent:Bool) : Void
     {
 		super.commonConstruct(fullTag, parent, id);
 		
@@ -138,7 +138,7 @@ class HaqComponent extends haquery.base.HaqComponent
 	}
 
 	#if !fullCompletion @:noCompletion #end
-    function render() : String
+    public function render() : String
     {
 		if (!visible)
 		{

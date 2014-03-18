@@ -1,16 +1,18 @@
 package models;
 
 import haxe.unit.TestCase;
+import stdlib.Profiler;
 import sys.FileSystem;
 import haquery.server.HaqComponent;
 import haquery.server.HaqTemplateManager;
 import haquery.server.Lib;
 import haquery.common.HaqDefines;
+import haquery.server.HaqConfig;
 using stdlib.StringTools;
 
 class HaqTemplatesTest extends TestCase
 {
-	public function testEmpty()
+	/*public function testEmpty()
 	{
 		var manager = new HaqTemplateManager();
 		assertTrue(manager != null);
@@ -69,6 +71,8 @@ class HaqTemplatesTest extends TestCase
 	
 	public function testPlaceHolders()
 	{
+		Lib.profiler = new Profiler(true);
+		
 		var manager = new HaqTemplateManager();
 		assertTrue(manager != null);
 		
@@ -81,6 +85,22 @@ class HaqTemplatesTest extends TestCase
 		assertTrue(page != null);
 		
 		//trace("RESULT = " + page.render());
+	}*/
+	
+	public function testProfiler()
+	{
+		Lib.profiler = new Profiler(true);
+		Lib.manager = new HaqTemplateManager();
 		
+		var config = HaqConfig.load("");
+		
+		var page = Lib.manager.createPage("pages.test3", { config:config, storage:new haquery.common.HaqStorage() });
+		assertTrue(page != null);
+		
+		page.forEachComponent("init", false);
+		
+		page.render();
+		
+		Lib.profiler.traceResults(5, 100);
 	}
 }
