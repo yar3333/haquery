@@ -99,11 +99,17 @@ class HaqPage extends HaqComponent
 	#if !fullCompletion @:noCompletion #end
 	public function generateResponseOnRender() : HaqResponse
 	{
+		var content : String;
+		
+		Lib.profiler.begin("render");
+		content = render();
+		Lib.profiler.end();
+		
 		return {
 			responseHeaders: responseHeaders, 
 			statusCode: statusCode, 
 			cookie: cookie.response, 
-			content: render(), 
+			content: content, 
 			ajaxResponse: null, 
 			result: null
 		};
@@ -151,9 +157,7 @@ class HaqPage extends HaqComponent
 	#if !fullCompletion @:noCompletion #end
 	override public function render() : String 
 	{
-        Lib.profiler.begin("preRender");
-		forEachComponent('preRender');
-        Lib.profiler.end();
+		forEachComponent("preRender");
 		
 		afterPreRender();
 		
@@ -161,7 +165,7 @@ class HaqPage extends HaqComponent
 		
 		if (!isRedirected)
 		{
-			responseHeaders.set('Content-Type', contentType);
+			responseHeaders.set("Content-Type", contentType);
 			
 			if (!disableSystemHtmlInserts)
 			{

@@ -132,11 +132,15 @@ class HaqComponent
 			#if server
 			if (page.config.logSystemCalls) trace("HAQUERY forEachComponent [" + fullID + "/" + fullTag + "]." + f + "()");
 			var start = 0.0; if (page.config.logSlowSystemCalls != 0.0) start = Sys.cpuTime();
+			
+			haquery.server.Lib.profiler.begin("forEachComponent_" + f);
 			#end
 			
 			Reflect.callMethod(this, Reflect.field(this, f), []);
 			
 			#if server
+			haquery.server.Lib.profiler.end();
+			
 			if (page.config.logSlowSystemCalls != 0.0 && Sys.cpuTime() - start > page.config.logSlowSystemCalls)
 			{
 				trace("HAQUERY SLOW: forEachComponent [" + fullID + "/" + fullTag + "]." + f + "() // " + (Sys.cpuTime() - start));

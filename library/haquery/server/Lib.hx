@@ -27,7 +27,14 @@ typedef Web = neko.Web;
 
 class Lib
 {
-    public static var profiler : Profiler;
+    @:isVar public static var profiler(get, set) : Profiler;
+	static function get_profiler() : Profiler
+	{
+		if (profiler == null) profiler = new Profiler(false);
+		return profiler;
+	}
+	static function set_profiler(v) : Profiler return profiler = v;
+	
 	public static var manager : HaqTemplateManager;
 	public static var uploads(default, null) : HaqUploads;
     
@@ -92,7 +99,7 @@ class Lib
 	
 	static function getResponse(request:HaqRequest, route:HaqRoute) : HaqResponse
 	{
-		profiler = new Profiler(request.config.enableProfiling);
+		profiler = new Profiler(request.config.profilingLevel >= 0);
 		
 		profiler.begin("HAQUERY");
 			
@@ -132,7 +139,7 @@ class Lib
 			
 		
 		profiler.end();
-		profiler.traceResults();	
+		profiler.traceResults(request.config.profilingLevel);	
 			
 		return response;
 	}
