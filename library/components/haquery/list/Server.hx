@@ -60,12 +60,15 @@ class Server extends BaseServer
     
     override function render()
     {
-        var r = "";
+		var buf = new StringBuf();
 		for (item in components)
         {
-            r += item.render().trim() + "\n";
+            buf.add(item.render());
+			buf.add("\n");
         }
-        return r + "\n" + super.render();
+		buf.add("\n");
+		buf.add(super.render());
+		return buf.toString();
     }
     
 	function getItemInnerNode() : HtmlNodeElement

@@ -19,7 +19,10 @@ class HaqConfig
      */
     public var filterTracesByIP(default, null) : String;
 	
-    public var enableProfiling = false;
+	/**
+	 * -1 = no profiling, 0 - summary only, >0 - also nested report
+	 */
+	public var profilingLevel = -1;
 	
 	public var logSystemCalls = false;
 	
@@ -62,8 +65,8 @@ class HaqConfig
 						case "maxPostSize":
 							maxPostSize = Std.parseInt(value);
 						
-						case "enableProfiling":
-							enableProfiling = Std.bool(value);
+						case "profilingLevel":
+							profilingLevel = Std.parseInt(value);
 						
 						case "logSystemCalls":
 							logSystemCalls = Std.bool(value);

@@ -9,7 +9,19 @@ class Server extends Base
 {
 	override public function construct(fullTag:String, parent:HaqComponent, id:String, doc:HtmlNodeElement, params:Map<String,Dynamic>, innerNode:HtmlNodeElement, isInnerComponent:Bool):Void 
 	{
-        super.construct(fullTag, parent, id, new HtmlDocument(Tools.applyHtmlParams(innerNode.innerHTML, params)), params, null, isInnerComponent);
+        var html : String;
+		
+		Lib.profiler.begin("listitem.applyHtmlParams");
+		html = Tools.applyHtmlParams(innerNode.innerHTML, params);
+		Lib.profiler.end();
+		
+		var htmlDoc : HtmlDocument;
+		
+		Lib.profiler.begin("listitem.newHtmlDocument");
+		htmlDoc = new HtmlDocument(html);
+		Lib.profiler.end();
+		
+		super.construct(fullTag, parent, id, htmlDoc, params, null, isInnerComponent);
 	}
     
 	override function createChildComponents()

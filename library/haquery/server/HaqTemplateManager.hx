@@ -85,6 +85,8 @@ class HaqTemplateManager
 	
 	public function createDocComponents(parent:HaqComponent, baseNode:HtmlNodeElement, isCustomRender:Bool) : Array<HaqComponent>
     {
+		Lib.profiler.begin("createDocComponents");
+		
 		var r = [];
 		
 		for (node in baseNode.children)
@@ -101,6 +103,8 @@ class HaqTemplateManager
 				r = r.concat(createDocComponents(parent, node, isCustomRender));
 			}
         }
+		
+		Lib.profiler.end();
 		
 		return r;
     }
