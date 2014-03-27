@@ -46,9 +46,13 @@ class HaqComponentTools
 		{
 			case Type.TInst(t, params):
 				var clas = t.get();
-				if (clas.isExtendsFrom("haquery.base.HaqComponent"))
+				
+				var isClient = clas.isExtendsFrom("haquery.client.HaqComponent");
+				var isServer = clas.isExtendsFrom("haquery.server.HaqComponent");
+				
+				if (isClient || isServer)
 				{
-					var typePath = { sub:null, params:[], pack:clas.pack, name:"Template" + clas.name };
+					var typePath = { sub:null, params:[], pack:clas.pack, name:"Template" + (isClient ? "Client" : "Server") };
 					return { expr:ExprDef.ENew(typePath, [ ethis ]), pos:ethis.pos };
 				}
 				else
