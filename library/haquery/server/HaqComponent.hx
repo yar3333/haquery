@@ -154,45 +154,41 @@ class HaqComponent extends haquery.base.HaqComponent
 			return "";
 		}
         
-		var cacheID = getCacheID();
-		if (cacheID != null && Lib.cache.exists(cacheID))
+		return Lib.cache.get(getCacheID(), getCacheInvalidatePeriod(), function()
 		{
-			if (page.config.logSystemCalls) trace("HAQUERY render [" + fullID + "/" + fullTag + "] - cached");
-			return Lib.cache.get(cacheID);
-		}
-		
-		if (page.config.logSystemCalls) trace("HAQUERY render [" + fullID + "/" + fullTag + "]");
-		
-		HaqComponentTools.expandDocElemIDs(prefixID, doc);
-		if (parent != null && innerNode != null)
-		{
-			HaqComponentTools.expandDocElemIDs(parent.prefixID, innerNode);
-		}
-		
-		for (child in innerComponents)
-		{
-			child.innerNode.parent.replaceChild(child.innerNode, new HtmlNodeText(child.render()));
-		}
-		
-		for (child in components)
-		{
-			if (!child.isInnerComponent)
+			if (page.config.logSystemCalls) trace("HAQUERY render [" + fullID + "/" + fullTag + "]");
+			
+			HaqComponentTools.expandDocElemIDs(prefixID, doc);
+			if (parent != null && innerNode != null)
 			{
-				Debug.assert(child != null);
-				Debug.assert(child.innerNode != null);
-				Debug.assert(child.innerNode.parent != null);
+				HaqComponentTools.expandDocElemIDs(parent.prefixID, innerNode);
+			}
+			
+			for (child in innerComponents)
+			{
 				child.innerNode.parent.replaceChild(child.innerNode, new HtmlNodeText(child.render()));
 			}
-		}
-		
-		var text = doc.innerHTML;
-		if (innerNode != null)
-		{
-			var reInnerContent = new EReg("<innercontent\\s*[/]>|<innercontent></innercontent>", "i");
-			text = reInnerContent.replace(text, innerNode.innerHTML);
-		}
-		
-		return text.trim(" \t\r\n");
+			
+			for (child in components)
+			{
+				if (!child.isInnerComponent)
+				{
+					Debug.assert(child != null);
+					Debug.assert(child.innerNode != null);
+					Debug.assert(child.innerNode.parent != null);
+					child.innerNode.parent.replaceChild(child.innerNode, new HtmlNodeText(child.render()));
+				}
+			}
+			
+			var text = doc.innerHTML;
+			if (innerNode != null)
+			{
+				var reInnerContent = new EReg("<innercontent\\s*[/]>|<innercontent></innercontent>", "i");
+				text = reInnerContent.replace(text, innerNode.innerHTML);
+			}
+			
+			return text.trim(" \t\r\n");
+		});
     }
 
     /**
@@ -312,6 +308,8 @@ class HaqComponent extends haquery.base.HaqComponent
 	}
 	
 	function getCacheID() : String return null;
+	
+	function getCacheInvalidatePeriod() return 0.0;
 
 #end
 	

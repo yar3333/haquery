@@ -10,6 +10,7 @@ import haxe.PosInfos;
 import haquery.common.HaqDefines;
 import haquery.server.HaqRouter;
 import haquery.server.HaqPage;
+import haquery.server.HaqCache;
 import stdlib.Std;
 import stdlib.Exception;
 import stdlib.Profiler;
@@ -38,7 +39,7 @@ class Lib
 	public static var manager : HaqTemplateManager;
 	public static var uploads(default, null) : HaqUploads;
 	
-	public static var cache(default, null) = new Map<String, String>();
+	public static var cache(default, null) = new HaqCache(0);
     
 	public static function run() : Void
     {
@@ -54,6 +55,9 @@ class Lib
 		haxe.Log.trace = HaqTrace.log.bind(_, getClientIP(), null, null, _);
 		
 		var config = HaqConfig.load("config.xml");
+		
+		cache.maxSize = config.cacheSize;
+		
 		uploads = new HaqUploads(HaqDefines.folders.temp + "/uploads", config.maxPostSize);
 		
 		try
