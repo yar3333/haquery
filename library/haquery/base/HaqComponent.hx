@@ -126,8 +126,8 @@ class HaqComponent
 		if (Reflect.isFunction(Reflect.field(this, f)))
 		{
 			#if server
-			if (page.config.logSystemCalls) trace("HAQUERY forEachComponent [" + fullID + "/" + fullTag + "]." + f + "()");
-			var start = 0.0; if (page.config.logSlowSystemCalls != 0.0) start = Sys.cpuTime();
+			if (page.config.logSystemCalls) trace("HAQUERY " + f + " [" + fullID + "/" + fullTag + "]");
+			var start = 0.0; if (page.config.logSlowSystemCalls >= 0) start = Sys.time();
 			
 			haquery.server.Lib.profiler.begin("forEachComponent_" + f);
 			#end
@@ -137,9 +137,9 @@ class HaqComponent
 			#if server
 			haquery.server.Lib.profiler.end();
 			
-			if (page.config.logSlowSystemCalls > 0 && Sys.cpuTime() - start >= page.config.logSlowSystemCalls)
+			if (page.config.logSlowSystemCalls >= 0 && Sys.time() - start >= page.config.logSlowSystemCalls)
 			{
-				trace("HAQUERY SLOW: forEachComponent [" + fullID + "/" + fullTag + "]." + f + "() // " + (Sys.cpuTime() - start));
+				trace("HAQUERY SLOW: " + Std.string(Std.int((Sys.time() - start) * 1000)).lpad(" ", 5) + " " + f + " [" + fullID + "/" + fullTag + "]");
 			}
 			#end
 		}
