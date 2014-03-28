@@ -62,6 +62,8 @@ class HaqComponent extends haquery.base.HaqComponent
    	#if !fullCompletion @:noCompletion #end
 	function construct(fullTag:String, parent:HaqComponent, id:String, doc:HtmlNodeElement, params:Dynamic, innerNode:HtmlNodeElement, isInnerComponent:Bool) : Void
     {
+		Lib.profiler.begin("construct");
+		
 		super.commonConstruct(fullTag, parent, id);
 		
 		this.page = parent != null ? parent.page : cast this;
@@ -82,6 +84,8 @@ class HaqComponent extends haquery.base.HaqComponent
         
 		Lib.profiler.begin("createChildComponents");
 		createChildComponents();
+		Lib.profiler.end();
+		
 		Lib.profiler.end();
     }
 	
@@ -150,6 +154,13 @@ class HaqComponent extends haquery.base.HaqComponent
 			return "";
 		}
         
+		var cacheID = getCacheID();
+		if (Lib.cache.exists(cacheID))
+		{
+			if (page.config.logSystemCalls) trace("HAQUERY render [" + fullID + "/" + fullTag + "] - cached");
+			return Lib.cache.get(cacheID);
+		}
+		
 		if (page.config.logSystemCalls) trace("HAQUERY render [" + fullID + "/" + fullTag + "]");
 		
 		HaqComponentTools.expandDocElemIDs(prefixID, doc);
@@ -299,6 +310,8 @@ class HaqComponent extends haquery.base.HaqComponent
 		}
 		return relpath;
 	}
+	
+	function getCacheID() : String return null;
 
 #end
 	

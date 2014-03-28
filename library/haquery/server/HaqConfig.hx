@@ -24,6 +24,8 @@ class HaqConfig
 	 */
 	public var profilingLevel = -1;
 	
+	public var profilingResultsWidth = 120;
+	
 	public var logSystemCalls = false;
 	
 	/**
@@ -64,22 +66,25 @@ class HaqConfig
 					{
 						case "maxPostSize":
 							maxPostSize = Std.parseInt(value);
-						
+							
 						case "profilingLevel":
 							profilingLevel = Std.parseInt(value);
-						
+							
+						case "profilingResultsWidth":
+							profilingResultsWidth = Std.parseInt(value);
+							
 						case "logSystemCalls":
 							logSystemCalls = Std.bool(value);
-						
+							
 						case "logSlowSystemCalls":
 							logSlowSystemCalls = Std.parseFloat(value);
-						
+							
 						case "filterTracesByIP":
 							filterTracesByIP = value;
-						
+							
 						case "secret":
 							secret = value;
-						
+							
 						default:
 							throwBadConfigFileRecord(path, node);
 					}
