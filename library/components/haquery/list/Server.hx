@@ -11,6 +11,8 @@ using stdlib.StringTools;
 class Server extends BaseServer
 {
 	public var length(get_length, null) : Int;
+	
+	var binded = false;
     
     function get_length() : Int
     {
@@ -47,6 +49,9 @@ class Server extends BaseServer
 	public function bind<Data>(objects:Iterable<Data>, ?itemDataBound:HaqComponent->Data->Void)
     {
         Debug.assert(!page.isPostback, "List binding on postback is not allowed.");
+        Debug.assert(!binded, "Rebinding is not allowed.");
+		
+		binded = true;
 		
         for (obj in objects)
         {
