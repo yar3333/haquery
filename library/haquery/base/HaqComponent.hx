@@ -121,14 +121,10 @@ class HaqComponent
 	}
 	
 	#if !fullCompletion @:noCompletion #end
-    public function forEachComponent(f:String, isFromTopToBottom=true) : Void
-    {
-		#if server
-		if (page.statusCode == 302 || page.statusCode == 301) return; 
-		#end
-		
-		if (isFromTopToBottom && Reflect.isFunction(Reflect.field(this, f)))
-        {
+	function callMethod(f:String)
+	{
+		if (Reflect.isFunction(Reflect.field(this, f)))
+		{
 			#if server
 			if (page.config.logSystemCalls) trace("HAQUERY forEachComponent [" + fullID + "/" + fullTag + "]." + f + "()");
 			var start = 0.0; if (page.config.logSlowSystemCalls != 0.0) start = Sys.cpuTime();
@@ -146,26 +142,20 @@ class HaqComponent
 				trace("HAQUERY SLOW: forEachComponent [" + fullID + "/" + fullTag + "]." + f + "() // " + (Sys.cpuTime() - start));
 			}
 			#end
-        }
-        
+		}
+	}
+
+	
+	#if !fullCompletion @:noCompletion #end
+    public function forEachComponent(f:String, isFromTopToBottom=true) : Void
+    {
+		#if server
+		if (page.statusCode == 302 || page.statusCode == 301) return; 
+		#end
+		
+		if (isFromTopToBottom) callMethod(f);
         for (component in components) component.forEachComponent(f, isFromTopToBottom);
-        
-        if (!isFromTopToBottom && Reflect.isFunction(Reflect.field(this, f)))
-        {
-			#if server
-			if (page.config.logSystemCalls) trace("HAQUERY forEachComponent [" + fullID + "/" + fullTag + "]." + f + "()");
-			var start = 0.0; if (page.config.logSlowSystemCalls != 0.0) start = Date.now().getTime();
-			#end
-			
-            Reflect.callMethod(this, Reflect.field(this, f), []);
-			
-			#if server
-			if (page.config.logSlowSystemCalls != 0.0 && Sys.cpuTime() - start > page.config.logSlowSystemCalls)
-			{
-				trace("HAQUERY SLOW: forEachComponent [" + fullID + "/" + fullTag + "]." + f + "() // " + (Sys.cpuTime() - start));
-			}
-			#end
-        }
+        if (!isFromTopToBottom) callMethod(f);
     }
 	
     /**

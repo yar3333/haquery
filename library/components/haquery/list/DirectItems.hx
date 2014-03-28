@@ -11,7 +11,7 @@ class DirectItems
 	public function new() 
 	{
 		hash = new Map<String,HaqComponent>();
-		list = new Array<HaqComponent>();
+		list = [];
 	}
 	
 	public function get(id:String) : HaqComponent
