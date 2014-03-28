@@ -155,7 +155,7 @@ class HaqComponent extends haquery.base.HaqComponent
 		}
         
 		var cacheID = getCacheID();
-		if (Lib.cache.exists(cacheID))
+		if (cacheID != null && Lib.cache.exists(cacheID))
 		{
 			if (page.config.logSystemCalls) trace("HAQUERY render [" + fullID + "/" + fullTag + "] - cached");
 			return Lib.cache.get(cacheID);
