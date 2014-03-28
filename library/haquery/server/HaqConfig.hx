@@ -43,6 +43,8 @@ class HaqConfig
 	 */
 	public var maxPostSize(default, null) : Int;
 	
+	public var cacheSize : Int;
+	
 	public var secret : String;
 	
 	function new(path:String)
@@ -81,6 +83,9 @@ class HaqConfig
 							
 						case "filterTracesByIP":
 							filterTracesByIP = value;
+							
+						case "cacheSize":
+							cacheSize = Std.parseInt(value);
 							
 						case "secret":
 							secret = value;
