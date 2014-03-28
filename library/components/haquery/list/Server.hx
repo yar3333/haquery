@@ -34,7 +34,7 @@ class Server extends BaseServer
         }
 	}
 	
-	public function create(params:Dynamic) : HaqComponent
+	function create(params:Dynamic) : HaqComponent
 	{
         Debug.assert(!page.isPostback, "Component creating on the postback is not supported.");
 		
