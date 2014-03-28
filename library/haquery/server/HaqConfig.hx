@@ -31,7 +31,7 @@ class HaqConfig
 	/**
 	 * Write to log call with greater cpu using (in seconds).
 	 */
-	public var logSlowSystemCalls = 0.0;
+	public var logSlowSystemCalls = -1.0;
 	
 	/**
      * User-defined data.
