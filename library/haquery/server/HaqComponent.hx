@@ -157,6 +157,7 @@ class HaqComponent extends haquery.base.HaqComponent
 		return Lib.cache.get(getCacheID(), getCachePeriod(), function()
 		{
 			if (page.config.logSystemCalls) trace("HAQUERY render [" + fullID + "/" + fullTag + "]");
+			var start = 0.0; if (page.config.logSlowSystemCalls >= 0) start = Sys.time();
 			
 			HaqComponentTools.expandDocElemIDs(prefixID, doc);
 			if (parent != null && innerNode != null)
@@ -185,6 +186,11 @@ class HaqComponent extends haquery.base.HaqComponent
 			{
 				var reInnerContent = new EReg("<innercontent\\s*[/]>|<innercontent></innercontent>", "i");
 				text = reInnerContent.replace(text, innerNode.innerHTML);
+			}
+			
+			if (page.config.logSlowSystemCalls >= 0 && Sys.time() - start >= page.config.logSlowSystemCalls)
+			{
+				trace("HAQUERY SLOW: " + Std.string(Std.int((Sys.time() - start) * 1000)).lpad(" ", 5) + "  render [" + fullID + "/" + fullTag + "]" );
 			}
 			
 			return text.trim(" \t\r\n");

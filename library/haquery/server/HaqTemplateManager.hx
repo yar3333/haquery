@@ -61,6 +61,7 @@ class HaqTemplateManager
 		Debug.assert(attr == null || !Std.is(attr, haxe.ds.StringMap));
 		
 		if (parent != null && parent.page.config.logSystemCalls) trace("HAQUERY newComponent [" + parent.prefixID + id + "/" + template.fullTag + "]");
+		var start = 0.0; if (parent != null && parent.page.config.logSlowSystemCalls >= 0) start = Sys.time();
 		
 		Debug.assert(template != null, "Template for id = '" + id + "' not found.");
 		
@@ -79,6 +80,11 @@ class HaqTemplateManager
 		
 		component.construct(template.fullTag, parent, id, template.getDocCopy(), attr, parentNode, isCustomRender);
 		
+		if (parent != null && parent.page.config.logSlowSystemCalls >= 0 && Sys.time() - start >= parent.page.config.logSlowSystemCalls)
+		{
+			trace("HAQUERY SLOW: " + Std.string(Std.int((Sys.time() - start) * 1000)).lpad(" ", 5) + " newComponent [" + parent.page.prefixID + id + "/" + template.fullTag + "]");
+		}
+		
 		return component;
 	}
 	
@@ -89,6 +95,7 @@ class HaqTemplateManager
 		Lib.profiler.end();
 		return r;
 	}
+	
 	function createDocComponentsInner(parent:HaqComponent, baseNode:HtmlNodeElement, isCustomRender:Bool) : Array<HaqComponent>
     {
 		var r = [];
