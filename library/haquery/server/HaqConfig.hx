@@ -17,7 +17,7 @@ class HaqConfig
     /**
      * Log only if access from specified IP.
      */
-    public var filterTracesByIP(default, null) : String;
+    public var filterTracesByIP(default, null) = "";
 	
 	/**
 	 * -1 = no profiling, 0 - summary only, >0 - also nested report
@@ -41,16 +41,17 @@ class HaqConfig
 	/**
 	 * Default is 16M.
 	 */
-	public var maxPostSize(default, null) : Int;
+	public var maxPostSize(default, null) = 16 * 1024 * 1024;
 	
-	public var cacheSize : Int;
+	/**
+	 * Default is 16M.
+	 */
+	public var cacheSize = 16 * 1024 * 1024;
 	
 	public var secret : String;
 	
 	function new(path:String)
 	{
-		maxPostSize = 16 * 1024 * 1024;
-		filterTracesByIP = "";
 		customs = new Map<String,Dynamic>();
 		
 		if (FileSystem.exists(path))
