@@ -154,7 +154,7 @@ class HaqComponent extends haquery.base.HaqComponent
 			return "";
 		}
         
-		return Lib.cache.get(getCacheID(), getCacheInvalidatePeriod(), function()
+		return Lib.cache.get(getCacheID(), getCachePeriod(), function()
 		{
 			if (page.config.logSystemCalls) trace("HAQUERY render [" + fullID + "/" + fullTag + "]");
 			
@@ -309,7 +309,7 @@ class HaqComponent extends haquery.base.HaqComponent
 	
 	function getCacheID() : String return null;
 	
-	function getCacheInvalidatePeriod() return 0.0;
+	function getCachePeriod() return 0.0;
 
 #end
 	
