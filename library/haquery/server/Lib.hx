@@ -37,6 +37,8 @@ class Lib
 	
 	public static var manager : HaqTemplateManager;
 	public static var uploads(default, null) : HaqUploads;
+	
+	public static var cache(default, null) = new Map<String, String>();
     
 	public static function run() : Void
     {
@@ -139,7 +141,7 @@ class Lib
 			
 		
 		profiler.end();
-		profiler.traceResults(request.config.profilingLevel);	
+		profiler.traceResults(request.config.profilingLevel, request.config.profilingResultsWidth);	
 			
 		return response;
 	}

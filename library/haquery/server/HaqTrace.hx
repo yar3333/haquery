@@ -81,9 +81,12 @@ class HaqTrace
         {
 			if (text != "")
 			{
-				text = DateTools.format(Date.now(), "%Y-%m-%d %H:%M:%S ")
-				    + StringTools.replace(text, "\n", "\r\n\t") 
-					+ "\r\n";
+				var prefix = DateTools.format(Date.now(), "%Y-%m-%d %H:%M:%S ");
+				if (Lib.profiler.enabled)
+				{
+					prefix += Std.string(Std.int(Sys.cpuTime() * 1000)).lpad(" ", 8) + " ";
+				}
+				text = prefix + StringTools.replace(text, "\n", "\r\n\t") + "\r\n";
 			}
 			else
 			{

@@ -28,7 +28,7 @@ class HaqTemplateManager
 	{
         var template = get(pageFullTag);
 		Debug.assert(template != null, "HAQUERY ERROR could't find page '" + pageFullTag + "'.");
-		var component = newComponent(template, null, '', attr, null, false);
+		var component = newComponent(template, null, "", attr, null, false);
 		
 		var page : HaqPage;
 		try 
@@ -62,31 +62,35 @@ class HaqTemplateManager
 		
 		if (parent != null && parent.page.config.logSystemCalls) trace("HAQUERY newComponent [" + parent.prefixID + id + "/" + template.fullTag + "]");
 		
-        Lib.profiler.begin('newComponent');
-			Debug.assert(template != null, "Template for id = '" + id + "' not found.");
-			
-			var clas = Type.resolveClass(template.serverClassName);
-			Debug.assert(clas != null, "Server class '" + template.serverClassName + "' for component '" + template.fullTag + "' not found.");
-			
-			var component : HaqComponent = null;
-			try
-			{
-				component = cast(Type.createInstance(clas, []), HaqComponent);
-			}
-			catch (e:Dynamic)
-			{
-				Debug.assert(false, "Can't cast server class '" + template.serverClassName + "' to HaqComponent. Check class extends.");
-			}
-			
-			component.construct(template.fullTag, parent, id, template.getDocCopy(), attr, parentNode, isCustomRender);
-		Lib.profiler.end();
+		Debug.assert(template != null, "Template for id = '" + id + "' not found.");
+		
+		var clas = Type.resolveClass(template.serverClassName);
+		Debug.assert(clas != null, "Server class '" + template.serverClassName + "' for component '" + template.fullTag + "' not found.");
+		
+		var component : HaqComponent = null;
+		try
+		{
+			component = cast(Type.createInstance(clas, []), HaqComponent);
+		}
+		catch (e:Dynamic)
+		{
+			Debug.assert(false, "Can't cast server class '" + template.serverClassName + "' to HaqComponent. Check class extends.");
+		}
+		
+		component.construct(template.fullTag, parent, id, template.getDocCopy(), attr, parentNode, isCustomRender);
+		
 		return component;
 	}
 	
 	public function createDocComponents(parent:HaqComponent, baseNode:HtmlNodeElement, isCustomRender:Bool) : Array<HaqComponent>
-    {
+	{
 		Lib.profiler.begin("createDocComponents");
-		
+		var r =  createDocComponentsInner(parent, baseNode, isCustomRender);
+		Lib.profiler.end();
+		return r;
+	}
+	function createDocComponentsInner(parent:HaqComponent, baseNode:HtmlNodeElement, isCustomRender:Bool) : Array<HaqComponent>
+    {
 		var r = [];
 		
 		for (node in baseNode.children)
@@ -100,11 +104,9 @@ class HaqTemplateManager
             }
 			else
 			{
-				r = r.concat(createDocComponents(parent, node, isCustomRender));
+				r = r.concat(createDocComponentsInner(parent, node, isCustomRender));
 			}
         }
-		
-		Lib.profiler.end();
 		
 		return r;
     }
