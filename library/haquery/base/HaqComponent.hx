@@ -137,7 +137,7 @@ class HaqComponent
 			#if server
 			haquery.server.Lib.profiler.end();
 			
-			if (page.config.logSlowSystemCalls != 0.0 && Sys.cpuTime() - start > page.config.logSlowSystemCalls)
+			if (page.config.logSlowSystemCalls > 0 && Sys.cpuTime() - start >= page.config.logSlowSystemCalls)
 			{
 				trace("HAQUERY SLOW: forEachComponent [" + fullID + "/" + fullTag + "]." + f + "() // " + (Sys.cpuTime() - start));
 			}
