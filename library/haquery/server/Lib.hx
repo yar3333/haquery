@@ -4,6 +4,7 @@ package haquery.server;
 
 import haquery.common.HaqStorage;
 import haxe.io.Path;
+import haxe.Json;
 import stdlib.Serializer;
 import stdlib.Unserializer;
 import haxe.PosInfos;
@@ -16,6 +17,7 @@ import stdlib.Exception;
 import stdlib.Profiler;
 import stdlib.FileSystem;
 import haquery.common.HaqMessageListenerAnswer;
+import sys.io.File;
 using stdlib.StringTools;
 
 #if php
@@ -31,7 +33,7 @@ class Lib
     @:isVar public static var profiler(get, set) : Profiler;
 	static function get_profiler() : Profiler
 	{
-		if (profiler == null) profiler = new Profiler(false);
+		if (profiler == null) profiler = new Profiler(0);
 		return profiler;
 	}
 	static function set_profiler(v) : Profiler return profiler = v;
@@ -105,48 +107,55 @@ class Lib
 	
 	static function getResponse(request:HaqRequest, route:HaqRoute) : HaqResponse
 	{
-		profiler = new Profiler(request.config.profilingLevel >= 0);
+		profiler = new Profiler(request.config.profilingLevel);
 		
-		profiler.begin("HAQUERY");
-			
-			profiler.begin("page");
-				
-				trace("HAQUERY START page = " + route.fullTag +  ", HTTP_HOST = " + request.host + ", clientIP = " + request.clientIP + ", pageID = " + route.pageID);
-				
-				var page = manager.createPage(route.fullTag, request);
-				
-				haxe.Log.trace = HaqTrace.log.bind(_, page.clientIP, page.config.filterTracesByIP, page, _);
-				
-				var response : HaqResponse = null;
-				try
-				{
-					page.forEachComponent("preInit", true);
-					
-					page.forEachComponent("init", false);
-					
-					response = !request.isPostback
-							 ? page.generateResponseOnRender()
-							 : page.generateResponseOnPostback(
-									  request.params.get('HAQUERY_COMPONENT')
-									, request.params.get('HAQUERY_METHOD')
-									, Unserializer.run(request.params.get('HAQUERY_PARAMS'))
-									, "shared"
-							   );
-				}
-				catch (e:Dynamic)
-				{
-					try page.dispose() catch (_:Dynamic) {}
-					Exception.rethrow(e);
-				}
-				
-				page.dispose();
-				
-			profiler.end();
-			
+		var response : HaqResponse = null;
 		
-		profiler.end();
-		profiler.traceResults(request.config.profilingLevel, request.config.profilingResultsWidth);	
+		profiler.measure("getResponse", function()
+		{
+			trace("HAQUERY START page = " + route.fullTag +  ", HTTP_HOST = " + request.host + ", clientIP = " + request.clientIP + ", pageID = " + route.pageID);
 			
+			var page = manager.createPage(route.fullTag, request);
+			
+			haxe.Log.trace = HaqTrace.log.bind(_, page.clientIP, page.config.filterTracesByIP, page, _);
+			
+			try
+			{
+				page.forEachComponent("preInit", true);
+				
+				page.forEachComponent("init", false);
+				
+				response = !request.isPostback
+						 ? page.generateResponseOnRender()
+						 : page.generateResponseOnPostback(
+								  request.params.get('HAQUERY_COMPONENT')
+								, request.params.get('HAQUERY_METHOD')
+								, Unserializer.run(request.params.get('HAQUERY_PARAMS'))
+								, "shared"
+						   );
+			}
+			catch (e:Dynamic)
+			{
+				try page.dispose() catch (_:Dynamic) {}
+				Exception.rethrow(e);
+			}
+			
+			page.dispose();
+		});
+		
+		if (request.config.profilingLevel > 0)
+		{
+			var profilerFolder = HaqDefines.folders.temp + "/profiler";
+			var profilerBaseFileName = profilerFolder + "/" + DateTools.format(Date.now(), "%Y-%m-%d-%H-%M-%S");
+			FileSystem.createDirectory(profilerFolder);
+			File.saveContent(profilerBaseFileName + ".summary.txt", request.uri + "\n" + profiler.getGistogram(profiler.getSummaryResults(), request.config.profilingResultsWidth));
+			File.saveContent(profilerBaseFileName + ".nested.txt", request.uri + "\n" + profiler.getGistogram(profiler.getNestedResults(), request.config.profilingResultsWidth));
+			if (request.config.profilingLevel > 1)
+			{
+				File.saveContent(profilerBaseFileName + ".callstack.json", Json.stringify(profiler.getCallStack()));
+			}
+		}
+		
 		return response;
 	}
 	

@@ -62,7 +62,7 @@ class HaqComponent extends haquery.base.HaqComponent
    	#if !fullCompletion @:noCompletion #end
 	function construct(fullTag:String, parent:HaqComponent, id:String, doc:HtmlNodeElement, params:Dynamic, innerNode:HtmlNodeElement, isInnerComponent:Bool) : Void
     {
-		Lib.profiler.begin("construct");
+		Lib.profiler.begin("construct", fullTag);
 		
 		super.commonConstruct(fullTag, parent, id);
 		
