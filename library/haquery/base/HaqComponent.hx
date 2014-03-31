@@ -129,7 +129,7 @@ class HaqComponent
 			if (page.config.logSystemCalls) trace("HAQUERY " + f + " [" + fullID + "/" + fullTag + "]");
 			var start = 0.0; if (page.config.logSlowSystemCalls >= 0) start = Sys.time();
 			
-			haquery.server.Lib.profiler.begin("forEachComponent_" + f);
+			haquery.server.Lib.profiler.begin(f, fullTag);
 			#end
 			
 			Reflect.callMethod(this, Reflect.field(this, f), []);
