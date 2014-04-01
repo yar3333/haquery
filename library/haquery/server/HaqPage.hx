@@ -102,7 +102,7 @@ class HaqPage extends HaqComponent
 	{
 		var content : String;
 		
-		Lib.profiler.begin("render");
+		Lib.profiler.begin("generateResponseOnRender");
 		content = renderCached();
 		Lib.profiler.end();
 		
