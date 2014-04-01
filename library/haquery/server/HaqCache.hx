@@ -27,7 +27,7 @@ class HaqCache
 		queue = [];
 	}
 	
-	public function get(key:String, period=0.0, getData:Void->Dynamic) : Dynamic
+	public function get(key:String, period=0.0, getData:Void->Dynamic, ?onCacheHit:Void->Void) : Dynamic
 	{
 		if (key == null) return getData();
 		
@@ -61,6 +61,7 @@ class HaqCache
 		}
 		else
 		{
+			if (onCacheHit != null) onCacheHit();
 			hits++;
 		}
 		

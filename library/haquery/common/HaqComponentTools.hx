@@ -11,7 +11,7 @@ import haquery.server.HaqComponent;
 import haquery.client.HaqComponent;
 #end
 
-class HaqComponentTools 
+class HaqComponentTools
 {
 	public static function getTemplateClass(componentClass:Class<Dynamic>) : Class<Dynamic>
 	{
@@ -179,15 +179,20 @@ class HaqComponentTools
 	{
 		if (component.visible)
 		{
-			if (!destTagIDs.exists(component.fullTag))
+			if (component.componentTagIDs == null)
 			{
-				destTagIDs.set(component.fullTag, []);
+				if (!destTagIDs.exists(component.fullTag)) destTagIDs.set(component.fullTag, []);
+				destTagIDs.get(component.fullTag).push(component.fullID);
+				
+				for (child in component.components) fillTagIDs(child, destTagIDs);
 			}
-			destTagIDs.get(component.fullTag).push(component.fullID);
-			
-			for (child in component.components)
+			else
 			{
-				fillTagIDs(child, destTagIDs);
+				for (fullTag in component.componentTagIDs.keys())
+				{
+					if (!destTagIDs.exists(fullTag)) destTagIDs.set(fullTag, []);
+					destTagIDs.set(fullTag, destTagIDs.get(fullTag).concat(component.componentTagIDs.get(fullTag)));
+				}
 			}
 		}
 		
