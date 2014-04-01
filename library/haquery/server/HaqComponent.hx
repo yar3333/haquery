@@ -21,6 +21,7 @@ using stdlib.StringTools;
 #end
 
 @:allow(haquery.server)
+@:allow(haquery.common.HaqComponentTools)
 @:autoBuild(haquery.macro.HaqComponentTools.build())
 class HaqComponent extends haquery.base.HaqComponent
 {
@@ -50,6 +51,9 @@ class HaqComponent extends haquery.base.HaqComponent
      * Need render?
      */
     public var visible : Bool;
+	
+	#if !fullCompletion @:noCompletion #end
+	var componentTagIDs : Map<String, Array<String>>;
     
 	function new() : Void
 	{
@@ -153,19 +157,32 @@ class HaqComponent extends haquery.base.HaqComponent
 			return "";
 		}
 		
-		var cacheID = getCacheID();
+		var cacheID = getCacheID(); if (cacheID != null) cacheID = fullTag + "/" + fullID + ":" + cacheID;
 		
-		return Lib.cache.get(cacheID != null ? fullTag + "/" + fullID + ":" + cacheID : null, getCachePeriod(), function()
+		var htmlAndComponentTagIDs : { html:String, componentTagIDs:Map<String, Array<String>> } = Lib.cache.get(cacheID, getCachePeriod(), function()
 		{
+			callMethod("postInit");
+			
 			callMethod("preRender");
 			
-			var r : String;  
+			var html : String;  
 			Lib.profiler.measure("renderDirect", fullTag, function()
 			{
-				r = renderDirect();
+				html = renderDirect();
 			});
-			return r;
+			
+			var componentTagIDs = HaqComponentTools.fillTagIDs(this, new Map<String, Array<String>>());
+			
+			return { html:html, componentTagIDs:componentTagIDs };
+		}, 
+		function()
+		{
+			forEachComponent("postInit");
 		});
+		
+		componentTagIDs = htmlAndComponentTagIDs.componentTagIDs;
+		
+		return htmlAndComponentTagIDs.html;
 	}
 	
 	#if !fullCompletion @:noCompletion #end

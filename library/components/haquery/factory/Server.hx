@@ -9,14 +9,13 @@ using stdlib.StringTools;
 
 class Server extends BaseServer
 {
-	override function renderCached() : String 
+	function postInit()
 	{
-		if (!visible) return "";
-		
-		storeDocs(parent.fullTag, innerNode);
-		page.storage.setInstanceVar(fullID, "html", innerNode.innerHTML, HaqStorage.DESTINATION_CLIENT);
-		
-		return super.renderCached();
+		if (visible)
+		{
+			storeDocs(parent.fullTag, innerNode);
+			page.storage.setInstanceVar(fullID, "html", innerNode.innerHTML, HaqStorage.DESTINATION_CLIENT);
+		}
 	}
 	
 	function storeDocs(parentFullTag:String, parentDoc:HtmlNodeElement)
