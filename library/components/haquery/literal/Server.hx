@@ -4,7 +4,7 @@ class Server extends BaseServer
 {
     public var text : String;
 	
-    override function render()
+    override function renderDirect()
 	{
         return text != null ? text : "";
 	}

@@ -142,59 +142,67 @@ class HaqComponent extends haquery.base.HaqComponent
 	}
 
 	#if !fullCompletion @:noCompletion #end
-    public function render() : String
-    {
+    public function renderCached() : String
+	{
 		if (!visible)
 		{
 			for (child in innerComponents)
 			{
 				child.visible = false;
 			}
-			
 			return "";
 		}
-        
-		return Lib.cache.get(getCacheID(), getCachePeriod(), function()
+		
+		var cacheID = getCacheID();
+		
+		return Lib.cache.get(cacheID != null ? fullTag + "/" + fullID + ":" + cacheID : null, getCachePeriod(), function()
 		{
-			if (page.config.logSystemCalls) trace("HAQUERY render [" + fullID + "/" + fullTag + "]");
-			var start = 0.0; if (page.config.logSlowSystemCalls >= 0) start = Sys.time();
-			
-			HaqComponentTools.expandDocElemIDs(prefixID, doc);
-			if (parent != null && innerNode != null)
-			{
-				HaqComponentTools.expandDocElemIDs(parent.prefixID, innerNode);
-			}
-			
-			for (child in innerComponents)
-			{
-				child.innerNode.parent.replaceChild(child.innerNode, new HtmlNodeText(child.render()));
-			}
-			
-			for (child in components)
-			{
-				if (!child.isInnerComponent)
-				{
-					Debug.assert(child != null);
-					Debug.assert(child.innerNode != null);
-					Debug.assert(child.innerNode.parent != null);
-					child.innerNode.parent.replaceChild(child.innerNode, new HtmlNodeText(child.render()));
-				}
-			}
-			
-			var text = doc.innerHTML;
-			if (innerNode != null)
-			{
-				var reInnerContent = new EReg("<innercontent\\s*[/]>|<innercontent></innercontent>", "i");
-				text = reInnerContent.replace(text, innerNode.innerHTML);
-			}
-			
-			if (page.config.logSlowSystemCalls >= 0 && Sys.time() - start >= page.config.logSlowSystemCalls)
-			{
-				trace("HAQUERY SLOW: " + Std.string(Std.int((Sys.time() - start) * 1000)).lpad(" ", 5) + "  render [" + fullID + "/" + fullTag + "]" );
-			}
-			
-			return text.trim(" \t\r\n");
+			callMethod("preRender");
+			return renderDirect();
 		});
+	}
+	
+	#if !fullCompletion @:noCompletion #end
+    public function renderDirect() : String
+    {
+		if (page.config.logSystemCalls) trace("HAQUERY render [" + fullID + "/" + fullTag + "]");
+		var start = 0.0; if (page.config.logSlowSystemCalls >= 0) start = Sys.time();
+		
+		HaqComponentTools.expandDocElemIDs(prefixID, doc);
+		if (parent != null && innerNode != null)
+		{
+			HaqComponentTools.expandDocElemIDs(parent.prefixID, innerNode);
+		}
+		
+		for (child in innerComponents)
+		{
+			child.innerNode.parent.replaceChild(child.innerNode, new HtmlNodeText(child.renderCached()));
+		}
+		
+		for (child in components)
+		{
+			if (!child.isInnerComponent)
+			{
+				Debug.assert(child != null);
+				Debug.assert(child.innerNode != null);
+				Debug.assert(child.innerNode.parent != null);
+				child.innerNode.parent.replaceChild(child.innerNode, new HtmlNodeText(child.renderCached()));
+			}
+		}
+		
+		var text = doc.innerHTML;
+		if (innerNode != null)
+		{
+			var reInnerContent = new EReg("<innercontent\\s*[/]>|<innercontent></innercontent>", "i");
+			text = reInnerContent.replace(text, innerNode.innerHTML);
+		}
+		
+		if (page.config.logSlowSystemCalls >= 0 && Sys.time() - start >= page.config.logSlowSystemCalls)
+		{
+			trace("HAQUERY SLOW: " + Std.string(Std.int((Sys.time() - start) * 1000)).lpad(" ", 5) + "  render [" + fullID + "/" + fullTag + "]" );
+		}
+		
+		return text.trim(" \t\r\n");
     }
 
     /**

@@ -109,8 +109,12 @@ class HaqComponentTools
 	
     static var baseComponentFields : Array<String> = null;
 	
+	static var fieldNamesToLoadParamsCache = new Map<String, Map<String, String>>();
+	
 	public static function getFieldNamesToLoadParams(component:HaqComponent) : Map<String,String>
     {
+		if (fieldNamesToLoadParamsCache.exists(component.fullTag)) return fieldNamesToLoadParamsCache.get(component.fullTag);
+		
 		if (baseComponentFields == null)
 		{
 			baseComponentFields = Type.getInstanceFields(HaqComponent);
@@ -127,6 +131,8 @@ class HaqComponentTools
                 r.set(field.toLowerCase(), field);
             }
         }
+		
+		fieldNamesToLoadParamsCache.set(component.fullTag, r);
 		
 		return r;
     }

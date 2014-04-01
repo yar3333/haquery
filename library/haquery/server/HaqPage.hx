@@ -16,6 +16,7 @@ import haquery.server.Lib;
 import haxe.Json;
 import haxe.Serializer;
 using stdlib.StringTools;
+using Lambda;
 
 @:allow(haquery.server)
 class HaqPage extends HaqComponent
@@ -102,7 +103,7 @@ class HaqPage extends HaqComponent
 		var content : String;
 		
 		Lib.profiler.begin("render");
-		content = render();
+		content = renderCached();
 		Lib.profiler.end();
 		
 		return {
@@ -149,64 +150,125 @@ class HaqPage extends HaqComponent
 		}
 	}
 	
-	/**
-	 * Override if need.
-	 */
-	function afterPreRender() {}
+	#if !fullCompletion @:noCompletion #end
+	override public function renderCached() : String
+	{
+		if (statusCode == 301 || statusCode == 307) return "";
+		return super.renderCached();
+	}
 	
 	#if !fullCompletion @:noCompletion #end
-	override public function render() : String 
+	override public function renderDirect() : String 
 	{
-		forEachComponent("preRender");
-		
-		afterPreRender();
-		
-		var isRedirected = statusCode == 301 || statusCode == 307;
-		
-		if (!isRedirected)
-		{
-			responseHeaders.set("Content-Type", contentType);
+        prepareSystemHolders();
+		var r = super.renderDirect();
+		r = fillSystemHolders(r);
+		responseHeaders.set("Content-Type", contentType);
+		return r;
+	}
+	
+	#if !fullCompletion @:noCompletion #end
+	function prepareSystemHolders()
+	{
+		var heads = doc.find(">html>head");
+        if (heads.length > 0)
+        {
+			var head : HtmlNodeElement = heads[0];
 			
-			if (!disableSystemHtmlInserts)
+			var childCss : HtmlNodeElement = null;
+			if (head.children.length > 0)
 			{
-				var tagIDs = HaqComponentTools.fillTagIDs(this, new Map<String,Array<String>>());
-				
-				var systemStyles = [];
-				if (!disableSystemScriptsAndStylesRegistering)
+				childCss = head.children[0];
+				while (childCss != null && !(childCss.name == "link" && (childCss.getAttribute("rel") == "stylesheet" || childCss.getAttribute("type") == "text/css")))
 				{
-					systemStyles.push("haquery/client/haquery.css");
+					childCss = childCss.getNextSiblingElement();
 				}
-				insertStyles(systemStyles.concat(registeredStyles));
-				
-				var systemScripts = [];
-				if (!disableSystemScriptsAndStylesRegistering)
-				{
-					systemScripts.push("haquery/client/jquery.js");
-					systemScripts.push("haquery/client/haquery.js");
-				}
-				insertScripts(systemScripts.concat(registeredScripts));
-				
-				insertInitBlock(
-					  "<script>\n"
-					+ "if(typeof haquery=='undefined') alert('haquery.js must be loaded!');\n"
-					+ "haquery.client.HaqInternals.setTagIDs({\n"
-					+ Lambda.map({ iterator:tagIDs.keys }, function(tag) return "'" + tag + "':" + Json.stringify(tagIDs.get(tag))).join(",\n")
-					+ "\n});\n"
-					+ "haquery.client.HaqInternals.storage = haquery.client.HaqInternals.unserialize('" + Serializer.run(storage.getStorageToSend()) + "');\n"
-					+ "haquery.client.Lib.run('" + fullTag + "');\n"
-					+ ajaxResponse
-					+ "</script>"
-				);
 			}
+			head.addChild(new HtmlNodeText("{HAQUERY_CSS}\n"), childCss);
 			
-			return super.render();
+			var childJs : HtmlNodeElement = null;
+			if (head.children.length > 0)
+			{
+				childJs = head.children[0];
+				while (childJs != null && childJs.name != "script")
+				{
+					childJs = childJs.getNextSiblingElement();
+				}
+			}
+			head.addChild(new HtmlNodeText("{HAQUERY_JS}\n"), childJs);
+        }
+        else
+        {
+            doc.addChild(new HtmlNodeText("{HAQUERY_CSS}\n"), doc.nodes.length > 0 ? doc.nodes[0] : null);
+			
+            var childJs : HtmlNodeElement = null;
+            if (doc.children.length > 0)
+            {
+                childJs = doc.children[0];
+                while (childJs != null && childJs.name == "link"  && (childJs.getAttribute("rel") == "stylesheet" || childJs.getAttribute("type") == "text/css"))
+                {
+                    childJs = childJs.getNextSiblingElement();
+                }
+            }
+            doc.addChild(new HtmlNodeText("{HAQUERY_JS}\n"), childJs);
+        }
+		
+        var bodyes = doc.find(">html>body");
+        if (bodyes.length > 0)
+        {
+            var body = bodyes[0];
+            body.addChild(new HtmlNodeText("{HAQUERY_INIT}"));
+        }
+        else
+        {
+            doc.addChild(new HtmlNodeText("{HAQUERY_INIT}"));
+        }
+	}
+    
+	#if !fullCompletion @:noCompletion #end
+	function fillSystemHolders(r:String) : String
+	{
+		if (!disableSystemHtmlInserts)
+		{
+			var tagIDs = HaqComponentTools.fillTagIDs(this, new Map<String,Array<String>>());
+			
+			var systemStyles = [];
+			if (!disableSystemScriptsAndStylesRegistering)
+			{
+				systemStyles.push("haquery/client/haquery.css");
+			}
+			r = r.replace("{HAQUERY_CSS}", systemStyles.concat(registeredStyles).map(function(path) return getStyleLink(path)).join("\n") + "\n");
+			
+			var systemScripts = [];
+			if (!disableSystemScriptsAndStylesRegistering)
+			{
+				systemScripts.push("haquery/client/jquery.js");
+				systemScripts.push("haquery/client/haquery.js");
+			}
+			r = r.replace("{HAQUERY_JS}", systemScripts.concat(registeredScripts).map(function(path) return getScriptLink(path)).join("\n") + "\n");
+			
+			var initBlock = 
+				  "\n<script>\n"
+				+ "if(typeof haquery=='undefined') alert('haquery.js must be loaded!');\n"
+				+ "haquery.client.HaqInternals.setTagIDs({\n"
+				+ Lambda.map({ iterator:tagIDs.keys }, function(tag) return "'" + tag + "':" + Json.stringify(tagIDs.get(tag))).join(",\n")
+				+ "\n});\n"
+				+ "haquery.client.HaqInternals.storage = haquery.client.HaqInternals.unserialize('" + Serializer.run(storage.getStorageToSend()) + "');\n"
+				+ "haquery.client.Lib.run('" + fullTag + "');\n"
+				+ ajaxResponse
+				+ "</script>\n";
+			r = r.replace("{HAQUERY_INIT}", initBlock);
 		}
 		else
 		{
-			return "";
+			r = r.replace("{HAQUERY_CSS}", "");
+			r = r.replace("{HAQUERY_JS}", "");
+			r = r.replace("{HAQUERY_INIT}", "");
 		}
+		
+		return r;
 	}
-    
+	
 	#if !fullCompletion @:noCompletion #end
     function insertStyles(links:Array<String>)
     {
@@ -263,21 +325,6 @@ class HaqPage extends HaqComponent
                 }
             }
             doc.addChild(new HtmlNodeText(text + "\n"), child);
-        }
-    }
-    
-	#if !fullCompletion @:noCompletion #end
-    function insertInitBlock(text:String)
-    {
-        var bodyes = doc.find(">html>body");
-        if (bodyes.length > 0)
-        {
-            var body = bodyes[0];
-            body.addChild(new HtmlNodeText("\n        " + text.replace('\n', '\n        ') + '\n    '));
-        }
-        else
-        {
-            doc.addChild(new HtmlNodeText("\n" + text + '\n'));
         }
     }
     
