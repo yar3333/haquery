@@ -63,16 +63,16 @@ class Server extends BaseServer
         }
     }
     
-    override function render()
+    override function renderDirect()
     {
 		var buf = new StringBuf();
 		for (item in components)
         {
-            buf.add(item.render());
+            buf.add(item.renderCached());
 			buf.add("\n");
         }
 		buf.add("\n");
-		buf.add(super.render());
+		buf.add(super.renderDirect());
 		return buf.toString();
     }
     

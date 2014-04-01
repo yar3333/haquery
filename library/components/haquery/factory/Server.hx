@@ -9,11 +9,15 @@ using stdlib.StringTools;
 
 class Server extends BaseServer
 {
-    function preRender()
-    {
+	override function renderCached() : String 
+	{
+		if (!visible) return "";
+		
 		storeDocs(parent.fullTag, innerNode);
 		page.storage.setInstanceVar(fullID, "html", innerNode.innerHTML, HaqStorage.DESTINATION_CLIENT);
-    }
+		
+		return super.renderCached();
+	}
 	
 	function storeDocs(parentFullTag:String, parentDoc:HtmlNodeElement)
 	{

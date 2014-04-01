@@ -90,23 +90,37 @@ class HaqComponent
 	}
 	
 	#if !fullCompletion @:noCompletion #end
+	static var eventNamesCache = new Map<String, Array<String>>();
+	
+	#if !fullCompletion @:noCompletion #end
 	function createEvents() : Void
 	{
-		if (parent != null)
+		if (parent == null) return;
+		
+		var eventNames = eventNamesCache.get(fullTag);
+		if (eventNames == null)
 		{
+			eventNames = [];
 			for (field in Type.getInstanceFields(Type.getClass(this)))
 			{
 				if (field.startsWith('event_'))
 				{
-					var event : HaqEvent<Dynamic> = Reflect.field(this, field);
-					if (event == null)
-					{
-						event = new HaqEvent(cast this, field.substr("event_".length));
-						Reflect.setField(this, field, event);
-					}
-					parent.connectEventHandlers(event);
+					eventNames.push(field.substr("event_".length));
 				}
 			}
+			eventNamesCache.set(fullTag, eventNames);
+		}
+		
+		for (eventName in eventNames)
+		{
+			var field = "event_" + eventName;
+			var event : HaqEvent<Dynamic> = Reflect.field(this, field);
+			if (event == null)
+			{
+				event = new HaqEvent(cast this, eventName);
+				Reflect.setField(this, field, event);
+			}
+			parent.connectEventHandlers(event);
 		}
 	}
 	
