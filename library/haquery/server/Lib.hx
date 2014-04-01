@@ -41,7 +41,7 @@ class Lib
 	public static var manager : HaqTemplateManager;
 	public static var uploads(default, null) : HaqUploads;
 	
-	public static var cache(default, null) = new HaqCache(0);
+	public static var cache(default, null) : HaqCache;
     
 	public static function run() : Void
     {
@@ -58,7 +58,11 @@ class Lib
 		
 		var config = HaqConfig.load("config.xml");
 		
-		cache.maxSize = config.cacheSize;
+		if (cache == null)
+		{
+			cache = new HaqCache(config.cacheSize);
+			/*if (config.logSystemCalls) */trace("HAQUERY new cache");
+		}
 		
 		uploads = new HaqUploads(HaqDefines.folders.temp + "/uploads", config.maxPostSize);
 		

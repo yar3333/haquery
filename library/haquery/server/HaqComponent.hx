@@ -158,7 +158,13 @@ class HaqComponent extends haquery.base.HaqComponent
 		return Lib.cache.get(cacheID != null ? fullTag + "/" + fullID + ":" + cacheID : null, getCachePeriod(), function()
 		{
 			callMethod("preRender");
-			return renderDirect();
+			
+			var r : String;  
+			Lib.profiler.measure("renderDirect", fullTag, function()
+			{
+				r = renderDirect();
+			});
+			return r;
 		});
 	}
 	
