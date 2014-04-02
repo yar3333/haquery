@@ -6,8 +6,6 @@ class Client extends BaseClient
     
     function get_length() : Int
     {
-		return page.storage.existsInstanceVar(fullID, "length")
-			? page.storage.getInstanceVar(fullID, "length")
-			: 0;
+		return Lambda.count(components);
     }
 }
