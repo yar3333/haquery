@@ -25,7 +25,7 @@ class HaqCache
 		queue = [];
 	}
 	
-	public function get(key:String, ?period:Float, ?predefinedDataSize:Int, getData:Void->Dynamic, ?onCacheHit:Dynamic->Void) : Dynamic
+	public function get(key:String, period=1.0e100, ?predefinedDataSize:Int, getData:Void->Dynamic, ?onCacheHit:Dynamic->Void) : Dynamic
 	{
 		if (key == null) return getData();
 		
@@ -36,7 +36,7 @@ class HaqCache
 		if (!cached || obj != null && obj.invalidate < now)
 		{
 			miss++;
-			var invalidate = period != null ? now + period : 1.0e100;
+			var invalidate = now + period;
 			var data = getData();
 			if (obj == null)
 			{
