@@ -2,7 +2,6 @@ package haquery.server;
 
 #if server
 
-import haxe.Serializer;
 import haxe.Unserializer;
 import haxe.htmlparser.HtmlDocument;
 import haquery.common.HaqDefines;
@@ -14,6 +13,9 @@ class HaqTemplate extends haquery.base.HaqTemplate
 	public var extend(default, null) : String;
 	public var serverClassName(default, null) : String;
 	public var serializedDoc(default, null) : String;
+	
+	public var doc(get, null) : HtmlDocument;
+	function get_doc() return Lib.cache.get(Type.getClassName(Type.getClass(this)) + ":" + fullTag, null, serializedDoc.length, function() return getDocCopy());
 	
 	public function new(fullTag:String) 
 	{
