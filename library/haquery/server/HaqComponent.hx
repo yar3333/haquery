@@ -175,7 +175,8 @@ class HaqComponent extends haquery.base.HaqComponent
 				html = renderDirect();
 			});
 			
-			return { html:html, components:components};
+			var r : CachedObject = { html:html, components:components }
+			return r;
 		}, 
 		function(cachedObject:CachedObject)
 		{
@@ -347,7 +348,7 @@ class HaqComponent extends haquery.base.HaqComponent
 	
 	function getCacheID() : String return null;
 	
-	function getCachePeriod() return 0.0;
+	function getCachePeriod() return 1.0e100;
 
 #end
 	
