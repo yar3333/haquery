@@ -1,6 +1,5 @@
 package components.haquery.list;
 
-import haquery.common.HaqStorage;
 import haquery.server.Lib;
 import haxe.htmlparser.HtmlNodeElement;
 import stdlib.Std;
@@ -16,9 +15,7 @@ class Server extends BaseServer
     
     function get_length() : Int
     {
-		return page.storage.existsInstanceVar(fullID, "length")
-			? page.storage.getInstanceVar(fullID, "length")
-			: 0;
+		return Lambda.count(components);
     }
 	
 	override function createChildComponents():Void 
@@ -40,10 +37,7 @@ class Server extends BaseServer
 	{
         Debug.assert(!page.isPostback, "Component creating on the postback is not supported.");
 		
-		var n = length;
-		var r = Lib.manager.createComponent(this, "components.haquery.listitem", Std.string(n), params, getItemInnerNode(), true);
-		page.storage.setInstanceVar(fullID, "length", n + 1, HaqStorage.DESTINATION_BOTH);
-		return r;
+		return Lib.manager.createComponent(this, "components.haquery.listitem", Std.string(length), params, getItemInnerNode(), true);
 	}
 	
 	public function bind<Data>(objects:Iterable<Data>, ?itemDataBound:HaqComponent->Data->Void)
@@ -62,7 +56,7 @@ class Server extends BaseServer
 			}
         }
     }
-    
+	
     override function renderDirect()
     {
 		var buf = new StringBuf();
