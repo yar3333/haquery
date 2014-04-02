@@ -16,7 +16,14 @@ import haquery.common.HaqComponentTools;
 import haxe.PosInfos;
 import haxe.Serializer;
 import haquery.common.Generated;
+import haquery.base.HaqComponents;
 using stdlib.StringTools;
+
+private typedef CachedObject =
+{
+	var html : String;
+	var components : HaqComponents<HaqComponent>;
+}
 
 #end
 
@@ -52,9 +59,6 @@ class HaqComponent extends haquery.base.HaqComponent
      */
     public var visible : Bool;
 	
-	#if !fullCompletion @:noCompletion #end
-	var componentTagIDs : Map<String, Array<String>>;
-    
 	function new() : Void
 	{
 		super();
@@ -159,7 +163,7 @@ class HaqComponent extends haquery.base.HaqComponent
 		
 		var cacheID = getCacheID(); if (cacheID != null) cacheID = fullTag + "/" + fullID + ":" + cacheID;
 		
-		var htmlAndComponentTagIDs : { html:String, componentTagIDs:Map<String, Array<String>> } = Lib.cache.get(cacheID, getCachePeriod(), function()
+		var cachedObject : CachedObject = Lib.cache.get(cacheID, getCachePeriod(), 16*1024, function()
 		{
 			callMethod("postInit");
 			
@@ -171,18 +175,15 @@ class HaqComponent extends haquery.base.HaqComponent
 				html = renderDirect();
 			});
 			
-			var componentTagIDs = HaqComponentTools.fillTagIDs(this, new Map<String, Array<String>>());
-			
-			return { html:html, componentTagIDs:componentTagIDs };
+			return { html:html, components:components};
 		}, 
-		function()
+		function(cachedObject:CachedObject)
 		{
-			forEachComponent("postInit");
+			components = cachedObject.components;
+			forEachComponent("postInit", true);
 		});
 		
-		componentTagIDs = htmlAndComponentTagIDs.componentTagIDs;
-		
-		return htmlAndComponentTagIDs.html;
+		return cachedObject.html;
 	}
 	
 	#if !fullCompletion @:noCompletion #end

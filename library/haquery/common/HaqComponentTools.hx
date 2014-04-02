@@ -179,23 +179,10 @@ class HaqComponentTools
 	{
 		if (component.visible)
 		{
-			if (component.componentTagIDs == null)
-			{
-				if (!destTagIDs.exists(component.fullTag)) destTagIDs.set(component.fullTag, []);
-				destTagIDs.get(component.fullTag).push(component.fullID);
-				
-				for (child in component.components) fillTagIDs(child, destTagIDs);
-			}
-			else
-			{
-				for (fullTag in component.componentTagIDs.keys())
-				{
-					if (!destTagIDs.exists(fullTag)) destTagIDs.set(fullTag, []);
-					destTagIDs.set(fullTag, destTagIDs.get(fullTag).concat(component.componentTagIDs.get(fullTag)));
-				}
-			}
+			if (!destTagIDs.exists(component.fullTag)) destTagIDs.set(component.fullTag, []);
+			destTagIDs.get(component.fullTag).push(component.fullID);
+			for (child in component.components) fillTagIDs(child, destTagIDs);
 		}
-		
 		return destTagIDs;
 	}
 	

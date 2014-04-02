@@ -1,7 +1,5 @@
 package haquery.server;
 
-import haxe.Serializer;
-
 private typedef Object =
 {
 	var invalidate : Float;
@@ -27,7 +25,7 @@ class HaqCache
 		queue = [];
 	}
 	
-	public function get(key:String, period=0.0, getData:Void->Dynamic, ?onCacheHit:Void->Void) : Dynamic
+	public function get(key:String, ?period:Float, ?predefinedDataSize:Int, getData:Void->Dynamic, ?onCacheHit:Dynamic->Void) : Dynamic
 	{
 		if (key == null) return getData();
 		
@@ -38,14 +36,14 @@ class HaqCache
 		if (!cached || obj != null && obj.invalidate < now)
 		{
 			miss++;
-			var invalidate = period != 0.0 ? now + period : 1.0e100;
+			var invalidate = period != null ? now + period : 1.0e100;
 			var data = getData();
 			if (obj == null)
 			{
 				obj = {
 					invalidate: invalidate,
 					data: data,
-					size: getObjectSize(key, data)
+					size: predefinedDataSize != null ? predefinedDataSize : getObjectSize(key, data)
 				};
 				cache.set(key, obj);
 			}
@@ -55,13 +53,13 @@ class HaqCache
 				
 				obj.invalidate = invalidate;
 				obj.data = data;
-				obj.size = getObjectSize(key, data);
+				obj.size = predefinedDataSize != null ? predefinedDataSize : getObjectSize(key, data);
 			}
 			cacheSize += obj.size;
 		}
 		else
 		{
-			if (onCacheHit != null) onCacheHit();
+			if (onCacheHit != null) onCacheHit(obj.data);
 			hits++;
 		}
 		
@@ -85,11 +83,7 @@ class HaqCache
 	
 	function getObjectSize(key:String, o:Dynamic) : Int
 	{
-		var ser = new Serializer();
-		ser.useCache = true;
-		ser.useEnumIndex = true;
-		ser.serialize(o);
-		return 10 + key.length + ser.toString().length;
+		return 10 + key.length + stdlib.Serializer.run(o, true).length;
 	}
 	
 	public function stat()
