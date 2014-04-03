@@ -149,14 +149,17 @@ class Lib
 		
 		if (request.config.profilingLevel > 0)
 		{
+			var pageName = request.uri + (request.isPostback ? " - POSTBACK" : "");
+			
 			var profilerFolder = HaqDefines.folders.temp + "/profiler";
 			var profilerBaseFileName = profilerFolder + "/" + DateTools.format(Date.now(), "%Y-%m-%d-%H-%M-%S");
 			FileSystem.createDirectory(profilerFolder);
-			File.saveContent(profilerBaseFileName + ".summary.txt", request.uri + "\n" + profiler.getGistogram(profiler.getSummaryResults(), request.config.profilingResultsWidth));
-			File.saveContent(profilerBaseFileName + ".nested.txt", request.uri + "\n" + profiler.getGistogram(profiler.getNestedResults(), request.config.profilingResultsWidth));
+			File.saveContent(profilerBaseFileName + ".summary.txt", pageName + "\n" + profiler.getGistogram(profiler.getSummaryResults(), request.config.profilingResultsWidth));
+			File.saveContent(profilerBaseFileName + ".nested.txt", pageName + "\n" + profiler.getGistogram(profiler.getNestedResults(), request.config.profilingResultsWidth));
 			if (request.config.profilingLevel > 1)
 			{
-				File.saveContent(profilerBaseFileName + ".callstack.json", Json.stringify(profiler.getCallStack()));
+				File.saveContent(profilerBaseFileName + ".callstack.json", Json.stringify( { name:pageName, stack:profiler.getCallStack() } ));
+				File.saveContent(profilerBaseFileName + ".callstack-long.json", Json.stringify( { name:pageName, stack:profiler.getCallStack(10) } ));
 			}
 		}
 		

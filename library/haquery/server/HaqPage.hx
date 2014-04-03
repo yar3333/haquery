@@ -228,6 +228,8 @@ class HaqPage extends HaqComponent
 	#if !fullCompletion @:noCompletion #end
 	function fillSystemHolders(r:String) : String
 	{
+		Lib.profiler.begin("fillSystemHolders");
+		
 		if (!disableSystemHtmlInserts)
 		{
 			var tagIDs = HaqComponentTools.fillTagIDs(this, new Map<String,Array<String>>());
@@ -265,6 +267,8 @@ class HaqPage extends HaqComponent
 			r = r.replace("{HAQUERY_JS}", "");
 			r = r.replace("{HAQUERY_INIT}", "");
 		}
+		
+		Lib.profiler.end();
 		
 		return r;
 	}
