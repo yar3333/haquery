@@ -222,8 +222,6 @@ class Build
 		}
 		
 		var r = Process.run(log, fs.getHaxePath(), params, true);
-		if (r.output.trim() != "") Lib.print(r.output);
-		if (r.error.trim() != "") Lib.print(r.error);
 		return r.exitCode;
 	}
 	
