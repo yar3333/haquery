@@ -1,5 +1,6 @@
 package haquery.common;
 
+import haxe.ds.StringMap;
 import haxe.htmlparser.HtmlNodeElement;
 import stdlib.Exception;
 import stdlib.Debug;
@@ -175,7 +176,7 @@ class HaqComponentTools
         }
     }
 	
-	public static function fillTagIDs(component:HaqComponent, destTagIDs:Map<String,Array<String>>) : Map<String,Array<String>>
+	public static function fillTagIDs(component:HaqComponent, destTagIDs:StringMap<Array<String>>) : StringMap<Array<String>>
 	{
 		if (component.visible)
 		{
