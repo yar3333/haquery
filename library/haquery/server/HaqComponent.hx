@@ -154,10 +154,7 @@ class HaqComponent extends haquery.base.HaqComponent
 	{
 		if (!visible)
 		{
-			for (child in innerComponents)
-			{
-				child.visible = false;
-			}
+			for (child in innerComponents) child.visible = false;
 			return "";
 		}
 		
@@ -167,7 +164,21 @@ class HaqComponent extends haquery.base.HaqComponent
 		{
 			callMethod("postInit");
 			
+			if (!visible)
+			{
+				for (child in innerComponents) child.visible = false;
+				var r : CachedObject = { html:"", components:new Map<String,HaqComponent>() }
+				return r;
+			}
+			
 			callMethod("preRender");
+			
+			if (!visible)
+			{
+				for (child in innerComponents) child.visible = false;
+				var r : CachedObject = { html:"", components:new Map<String,HaqComponent>() }
+				return r;
+			}
 			
 			var html : String;  
 			Lib.profiler.measure("renderDirect", fullTag, function()
