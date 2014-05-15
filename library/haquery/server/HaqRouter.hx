@@ -2,6 +2,7 @@ package haquery.server;
 
 #if server
 
+import stdlib.Regex;
 using stdlib.StringTools;
 
 typedef HaqRoute = 
@@ -21,7 +22,7 @@ class HaqRouter
 		this.manager = manager;
 	}
 	
-	public function getRoute(url:String) : HaqRoute
+	public function getRoute(url:String, urlRewriteRegex:Array<Regex>) : HaqRoute
 	{
 		if (url == null) url = "";
 		
@@ -30,6 +31,13 @@ class HaqRouter
 		if (url.startsWith("index.") || url == "index" || url.endsWith("/index") || url.indexOf(".") >= 0)
 		{
 			throw new HaqPageNotFoundException(url);
+		}
+		
+		var orig = url;
+		for (re in urlRewriteRegex)
+		{
+			url = re.apply(url);
+			if (url != orig) break;
 		}
 		
 		var path = pagesFolderPath + "/" + (url != "" ? url : "index");

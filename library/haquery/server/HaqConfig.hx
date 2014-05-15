@@ -5,6 +5,7 @@ package haquery.server;
 import stdlib.Std;
 import stdlib.Exception;
 import stdlib.FileSystem;
+import stdlib.Regex;
 import haxe.htmlparser.HtmlDocument;
 import haxe.htmlparser.HtmlNodeElement;
 import sys.io.File;
@@ -48,11 +49,14 @@ class HaqConfig
 	 */
 	public var cacheSize = 16 * 1024 * 1024;
 	
+	public var urlRewriteRegex : Array<Regex>;
+	
 	public var secret : String;
 	
 	function new(path:String)
 	{
 		customs = new Map<String,Dynamic>();
+		urlRewriteRegex = [];
 		
 		if (FileSystem.exists(path))
 		{
@@ -87,6 +91,9 @@ class HaqConfig
 							
 						case "cacheSize":
 							cacheSize = Std.parseInt(value);
+							
+						case "urlRewriteRegex":
+							urlRewriteRegex.push(new Regex(value));
 							
 						case "secret":
 							secret = value;
