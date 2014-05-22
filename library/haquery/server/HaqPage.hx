@@ -184,7 +184,7 @@ class HaqPage extends HaqComponent
 					childCss = childCss.getNextSiblingElement();
 				}
 			}
-			head.addChild(new HtmlNodeText("{HAQUERY_CSS}\n"), childCss);
+			head.addChild(new HtmlNodeText("{HAQUERY_CSS}"), childCss);
 			
 			var childJs : HtmlNodeElement = null;
 			if (head.children.length > 0)
@@ -195,11 +195,11 @@ class HaqPage extends HaqComponent
 					childJs = childJs.getNextSiblingElement();
 				}
 			}
-			head.addChild(new HtmlNodeText("{HAQUERY_JS}\n"), childJs);
+			head.addChild(new HtmlNodeText("{HAQUERY_JS}"), childJs);
         }
         else
         {
-            doc.addChild(new HtmlNodeText("{HAQUERY_CSS}\n"), doc.nodes.length > 0 ? doc.nodes[0] : null);
+            doc.addChild(new HtmlNodeText("{HAQUERY_CSS}"), doc.nodes.length > 0 ? doc.nodes[0] : null);
 			
             var childJs : HtmlNodeElement = null;
             if (doc.children.length > 0)
@@ -210,7 +210,7 @@ class HaqPage extends HaqComponent
                     childJs = childJs.getNextSiblingElement();
                 }
             }
-            doc.addChild(new HtmlNodeText("{HAQUERY_JS}\n"), childJs);
+            doc.addChild(new HtmlNodeText("{HAQUERY_JS}"), childJs);
         }
 		
         var bodyes = doc.find(">html>body");
