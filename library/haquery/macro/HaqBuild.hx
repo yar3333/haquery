@@ -79,8 +79,16 @@ class HaqBuild
 			}
 			else
 			{
-				Compiler.define("server");
-				Compiler.define("client");
+				// TODO: smart #if-else-end parser
+				var text = File.getContent(displayPos.file).replace("\r\n", "\n").substr(0, displayPos.pos);
+				var reDefine = ~/#if\s+(client|server)\b/;
+				var def = "";
+				var pos = 0; while (pos < text.length && reDefine.matchSub(text, pos))
+				{
+					def = reDefine.matched(1);
+					pos = reDefine.matchedPos().pos + reDefine.matchedPos().len;
+				}
+				if (def != "") Compiler.define(def);
 			}
 		}
 	}
