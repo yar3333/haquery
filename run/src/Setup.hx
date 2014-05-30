@@ -20,7 +20,7 @@ class Setup
 	{
 		this.log = log;
 		this.fs = fs;
-		this.exeDir = PathTools.path2normal(exeDir) + "/";
+		this.exeDir = PathTools.normalize(exeDir) + "/";
 	}
 	
 	public function install()

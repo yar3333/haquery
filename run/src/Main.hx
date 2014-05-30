@@ -24,7 +24,7 @@ class Main
 {
 	static function main()
 	{
-		var exeDir = PathTools.path2normal(Sys.getCwd());
+		var exeDir = PathTools.normalize(Sys.getCwd());
         
 		var args = Sys.args();
 		if (args.length > 0)
@@ -40,7 +40,7 @@ class Main
 		if (k64Index >= 0) args.remove("-64");
 		
 		var log = new Log(2);
-		var fs = new FileSystemTools(log, exeDir + "/hant-" + Sys.systemName().toLowerCase() + (k64Index >=0 ? "64" : ""));
+		var fs = new FileSystemTools(log);
 		
 		var commands = getCommands(log, fs, exeDir, k64Index >= 0);
 		
@@ -159,13 +159,13 @@ class Main
 			var run = function() : Void
 			{
 				var project = new FlashDevelopProject(options.get("hxproj"));
-				var srcPath = PathTools.path2normal(options.get("srcPath") != "" ? options.get("srcPath") : project.srcPath) + "/";
+				var srcPath = PathTools.normalize(options.get("srcPath") != "" ? options.get("srcPath") : project.srcPath) + "/";
 				var databaseConnectionString = options.get("databaseConnectionString") != "" 
 					? options.get("databaseConnectionString") 
 					: HaqConfig.load(srcPath + "config.xml").customs.get("databaseConnectionString");
 				if (databaseConnectionString != null && databaseConnectionString != "")
 				{
-					Process.run(log, "haxelib", 
+					Process.run("haxelib", 
 						[ 
 							  "run", "orm"
 							, databaseConnectionString
@@ -174,7 +174,7 @@ class Main
 							, "-s", srcPath
 							, "-p", project.projectFilePath
 						]
-						, true
+						, true, log
 					);
 				}
 				else
