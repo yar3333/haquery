@@ -1,18 +1,16 @@
 package ;
 
-import hant.FlashDevelopProject;
-import hant.Log;
 import hant.FileSystemTools;
+import hant.FlashDevelopProject;
+import hant.Haxe;
+import hant.Log;
 import hant.PathTools;
 import hant.Process;
-import stdlib.Exception;
-import haxe.htmlparser.HtmlNodeElement;
-import haxe.Serializer;
-import neko.Lib;
-import sys.io.File;
 import haxe.io.Path;
-import haquery.common.HaqDefines;
+import haxe.Serializer;
+import stdlib.Exception;
 import stdlib.FileSystem;
+import sys.io.File;
 using stdlib.StringTools;
 using Lambda;
 
@@ -34,7 +32,7 @@ class Build
 	{
 		this.log = log;
 		this.fs = fs;
-		this.exeDir = PathTools.path2normal(exeDir) + "/";
+		this.exeDir = PathTools.normalize(exeDir) + "/";
 		this.is64 = is64;
 		project = new FlashDevelopProject(projectFilePath);
 	}
@@ -215,13 +213,13 @@ class Build
 			}
 			catch (e:Dynamic)
 			{
-				new sys.io.Process(fs.getHaxePath(), [ "--wait", Std.string(port) ]);
+				new sys.io.Process(Haxe.getCompilerPath(), [ "--wait", Std.string(port) ]);
 				Sys.sleep(1);
 			}
 			params = [ "--cwd", FileSystem.fullPath(".") ,"--connect", Std.string(port) ].concat(params);
 		}
 		
-		var r = Process.run(log, fs.getHaxePath(), params, true);
+		var r = Process.run(Haxe.getCompilerPath(), params, true, log);
 		return r.exitCode;
 	}
 	
