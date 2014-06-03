@@ -2,8 +2,8 @@ package components.haquery.listitem;
 
 import haquery.server.Lib;
 import haquery.server.HaqComponent;
-import haxe.htmlparser.HtmlDocument;
-import haxe.htmlparser.HtmlNodeElement;
+import htmlparser.HtmlDocument;
+import htmlparser.HtmlNodeElement;
 
 class Server extends Base
 {

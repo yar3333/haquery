@@ -1,6 +1,6 @@
 package components.haquery.factory;
 
-import haxe.htmlparser.HtmlNodeElement;
+import htmlparser.HtmlNodeElement;
 import haquery.common.HaqStorage;
 import haquery.common.HaqComponentTools;
 import haquery.server.Lib;

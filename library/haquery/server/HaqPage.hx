@@ -4,8 +4,8 @@ package haquery.server;
 
 import haquery.common.Generated;
 import haquery.common.HaqStorage;
-import haxe.htmlparser.HtmlNodeElement;
-import haxe.htmlparser.HtmlNodeText;
+import htmlparser.HtmlNodeElement;
+import htmlparser.HtmlNodeText;
 import haquery.common.HaqDefines;
 import haquery.common.HaqComponentTools;
 import haquery.server.HaqComponent;

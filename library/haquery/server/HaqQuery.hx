@@ -3,7 +3,7 @@ package haquery.server;
 #if server
 
 import stdlib.Std;
-import haxe.htmlparser.HtmlNodeElement;
+import htmlparser.HtmlNodeElement;
 import haquery.base.HaqCssGlobalizer;
 using stdlib.StringTools;
 

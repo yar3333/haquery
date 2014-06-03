@@ -3,7 +3,7 @@ package haquery.server;
 #if server
 
 import haxe.Unserializer;
-import haxe.htmlparser.HtmlDocument;
+import htmlparser.HtmlDocument;
 import haquery.common.HaqDefines;
 import stdlib.FileSystem;
 using stdlib.StringTools;

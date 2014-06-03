@@ -6,8 +6,8 @@ import stdlib.Std;
 import stdlib.Exception;
 import stdlib.FileSystem;
 import stdlib.Regex;
-import haxe.htmlparser.HtmlDocument;
-import haxe.htmlparser.HtmlNodeElement;
+import htmlparser.HtmlDocument;
+import htmlparser.HtmlNodeElement;
 import sys.io.File;
 using stdlib.StringTools;
 

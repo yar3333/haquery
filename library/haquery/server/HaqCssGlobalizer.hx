@@ -2,7 +2,7 @@ package haquery.server;
 
 #if server
 
-import haxe.htmlparser.HtmlNodeElement;
+import htmlparser.HtmlNodeElement;
 using stdlib.StringTools;
 
 class HaqCssGlobalizer extends haquery.base.HaqCssGlobalizer
