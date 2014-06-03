@@ -1,7 +1,7 @@
 package ;
 
 import hant.Log;
-import haxe.htmlparser.HtmlDocument;
+import htmlparser.HtmlDocument;
 import haxe.Serializer;
 import haxe.Unserializer;
 

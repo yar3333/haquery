@@ -8,8 +8,8 @@ import hant.Process;
 import stdlib.FileSystem;
 import sys.io.File;
 import haxe.io.Path;
-import haxe.htmlparser.HtmlDocument;
-import haxe.htmlparser.HtmlNodeElement;
+import htmlparser.HtmlDocument;
+import htmlparser.HtmlNodeElement;
 using stdlib.StringTools;
 
 class Publisher 

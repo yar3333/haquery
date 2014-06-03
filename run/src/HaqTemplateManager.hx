@@ -6,7 +6,7 @@ import haquery.common.HaqDefines;
 import haquery.common.HaqTemplateExceptions;
 import stdlib.Exception;
 import stdlib.FileSystem;
-import haxe.htmlparser.HtmlNodeElement;
+import htmlparser.HtmlNodeElement;
 using stdlib.StringTools;
 using Lambda;
 
