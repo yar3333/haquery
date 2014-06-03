@@ -3,7 +3,7 @@ package ;
 import hant.FileSystemTools;
 import haquery.common.HaqComponentTools;
 import haxe.io.Path;
-import haxe.htmlparser.HtmlNodeElement;
+import htmlparser.HtmlNodeElement;
 import sys.FileSystem;
 import sys.io.File;
 import HaxeClass;

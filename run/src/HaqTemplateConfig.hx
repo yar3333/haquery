@@ -1,6 +1,6 @@
 package ;
 
-import haxe.htmlparser.HtmlDocument;
+import htmlparser.HtmlDocument;
 import haquery.common.HaqTemplateExceptions;
 import haquery.server.HaqTemplateTools;
 import stdlib.Std;
