@@ -1,7 +1,7 @@
 package components.haquery.list;
 
 import haquery.server.Lib;
-import haxe.htmlparser.HtmlNodeElement;
+import htmlparser.HtmlNodeElement;
 import stdlib.Std;
 import stdlib.Debug;
 import haquery.server.HaqComponent;

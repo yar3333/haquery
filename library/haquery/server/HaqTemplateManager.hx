@@ -10,7 +10,7 @@ import stdlib.Debug;
 import haquery.server.HaqComponent;
 import haquery.server.HaqTemplate;
 import haquery.server.Lib;
-import haxe.htmlparser.HtmlNodeElement;
+import htmlparser.HtmlNodeElement;
 import haquery.common.HaqTemplateExceptions;
 import haquery.common.Generated;
 using stdlib.StringTools;

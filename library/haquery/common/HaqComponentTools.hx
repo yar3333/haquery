@@ -1,7 +1,7 @@
 package haquery.common;
 
 import haxe.ds.StringMap;
-import haxe.htmlparser.HtmlNodeElement;
+import htmlparser.HtmlNodeElement;
 import stdlib.Exception;
 import stdlib.Debug;
 using stdlib.StringTools;
