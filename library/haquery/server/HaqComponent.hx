@@ -9,12 +9,12 @@ import stdlib.Exception;
 import stdlib.Std;
 import stdlib.Debug;
 import stdlib.FileSystem;
+import stdlib.Serializer;
 import htmlparser.HtmlDocument;
 import htmlparser.HtmlNodeElement;
 import htmlparser.HtmlNodeText;
 import haquery.common.HaqComponentTools;
 import haxe.PosInfos;
-import haxe.Serializer;
 import haquery.common.Generated;
 import haquery.base.HaqComponents;
 using stdlib.StringTools;
@@ -291,7 +291,7 @@ class HaqComponent extends haquery.base.HaqComponent
         
         page.addAjaxResponse(
 			  "page." + (fullID != "" ? "findComponent('" + fullID + "')." : "") + method
-			+ "(" + Lambda.map(params != null ? params : [], function(p) return "haquery.client.HaqInternals.unserialize('" + Serializer.run(p) + "')").join(",") + ');'
+			+ "(" + Lambda.map(params != null ? params : [], function(p) return "haquery.client.HaqInternals.unserialize('" + Serializer.run(p, true) + "')").join(",") + ');'
 		);
 	}
     

@@ -4,7 +4,7 @@ package haquery.client;
 
 import haquery.common.HaqMessageListenerAnswer;
 import haquery.common.HaqStorage;
-import haxe.Serializer;
+import stdlib.Serializer;
 import haxe.Unserializer;
 import js.JQuery;
 import js.Lib;
@@ -48,7 +48,7 @@ class HaqServerCallerAjax
 			 HAQUERY_POSTBACK: 1
 			,HAQUERY_COMPONENT: componentID
 			,HAQUERY_METHOD: method
-			,HAQUERY_PARAMS: Serializer.run(params)
+			,HAQUERY_PARAMS: Serializer.run(params, true)
 			,HAQUERY_STORAGE: Serializer.run(page.storage.getStorageToSend())
 		};
 
