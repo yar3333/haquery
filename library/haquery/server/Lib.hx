@@ -168,7 +168,7 @@ class Lib
 	
 	static function getRequest(route:HaqRoute, config:HaqConfig) : HaqRequest
 	{
-		var params = Web.getParams();
+		var params = new HaqParams(Web.getParams());
 		var isPostback = params.get("HAQUERY_POSTBACK") != null;
 		return new HaqRequest(
 			  route.fullTag

@@ -10,7 +10,7 @@ using stdlib.StringTools;
 private typedef Page =
 {
 	var isPostback(default, null) : Bool;
-	var params(default, null) : Map<String,String>;
+	var params(default, null) : HaqParams;
 	function addAjaxResponse(js:String) : Void;
 };
 
@@ -296,7 +296,7 @@ class HaqQuery
                 var fullID = prefixID + node.getAttribute('id');
 				if (page.params.exists(fullID))
 				{
-					page.params.set(fullID, val);
+					page.params.map.set(fullID, val);
 				}
             }
             
