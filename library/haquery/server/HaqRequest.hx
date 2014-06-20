@@ -18,7 +18,7 @@ class HaqRequest
      */
     public var isPostback : Bool;
 
-	public var params : Map<String,String>;
+	public var params : HaqParams;
 	
 	public var cookie : HaqCookie;
 	
@@ -40,7 +40,7 @@ class HaqRequest
 		  pageFullTag : String
 		, pageID : String
 		, isPostback : Bool
-		, params : Map<String,String>
+		, params : HaqParams
 		, cookie : HaqCookie
 		, requestHeaders : HaqRequestHeaders
 		, clientIP : String

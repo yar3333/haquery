@@ -33,7 +33,7 @@ class HaqPage extends HaqComponent
      */
     public var isPostback(default, null) : Bool;
 
-	public var params(default, null) : Map<String,String>;
+	public var params(default, null) : HaqParams;
 	
 	public var cookie(default, null) : HaqCookie;
 	
