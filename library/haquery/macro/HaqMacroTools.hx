@@ -104,8 +104,9 @@ class HaqMacroTools
 		{
 			switch (t)
 			{
-				case ComplexType.TPath(p):
-					return p.name == "StdTypes" && p.pack.length == 0 && p.sub == "Void";
+				case haxe.macro.Expr.ComplexType.TPath(p):
+					return p.name == "Void" && p.pack.length == 0 && p.sub == null
+						|| p.name == "StdTypes" && p.pack.length == 0 && p.sub == "Void";
 				default:
 			}
 		}
