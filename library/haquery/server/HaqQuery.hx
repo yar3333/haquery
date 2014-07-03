@@ -439,6 +439,17 @@ class HaqQuery
 	{
 		return Lambda.map(nodes, function(node) return new HaqQuery(page, prefixID, cssGlobalizer, query, [node])).iterator();
 	}
+	
+	public function find(selector:String) : HaqQuery
+	{
+		selector = selector.trim();
+		var r = [];
+		for (node in nodes)
+		{
+			r = r.concat(node.find(selector));
+		}
+		return new HaqQuery(page, prefixID, cssGlobalizer, query + (selector.startsWith(">") ? "" : " ") + selector, r);
+	}
 }
 
 #end
