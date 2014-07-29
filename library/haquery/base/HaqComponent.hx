@@ -158,21 +158,20 @@ class HaqComponent
 			#end
 		}
 	}
-
 	
 	#if !fullCompletion @:noCompletion #end
-    public function forEachComponent(f:String, isFromTopToBottom=true) : Void
+    public function callMethodForEach(f:String, isFromTopToBottom=true) : Void
     {
 		#if server
 		if (page.statusCode == 302 || page.statusCode == 301) return; 
 		#end
 		
 		if (isFromTopToBottom) callMethod(f);
-        for (component in components) component.forEachComponent(f, isFromTopToBottom);
+        for (component in components) component.callMethodForEach(f, isFromTopToBottom);
         if (!isFromTopToBottom) callMethod(f);
     }
 	
-    /**
+	/**
      * Find child by relative ID.
      * @param fullID Relative ID (for example: "header-menu-items").
      */

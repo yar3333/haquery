@@ -64,7 +64,7 @@ class HaqTemplatesTest extends TestCase
 		assertTrue(randnum != null);
 		assertEquals("components.set1.randnum.Server", Type.getClassName(Type.getClass(randnum)));
 		
-		randnum.forEachComponent("preRender");
+		randnum.callMethodForEach("preRender");
 		var html = randnum.render();
 		assertEquals(StringTools.htmlEscape("<div id='rn-n'>123</div>"), StringTools.htmlEscape(html.trim(" \t\r\n")));
 	}
@@ -97,7 +97,7 @@ class HaqTemplatesTest extends TestCase
 		var page = Lib.manager.createPage("pages.test3", { config:config, storage:new haquery.common.HaqStorage() });
 		assertTrue(page != null);
 		
-		page.forEachComponent("init", false);
+		page.callMethodForEach("init", false);
 		
 		page.render();
 		

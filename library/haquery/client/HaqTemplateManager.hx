@@ -22,8 +22,8 @@ class HaqTemplateManager
     {
 		page = cast cast(newComponent(get(fullTag), null, "", false), HaqPage);
 		
-		page.forEachComponent("preInit", true);
-		page.forEachComponent("init", false);
+		page.callMethodForEach("preInit", true);
+		page.callMethodForEach("init", false);
     }
 	
 	public function createComponent(parent:HaqComponent, fullTag:String, id:String, isDynamic:Bool, dynamicParams:Dynamic=null) : HaqComponent
