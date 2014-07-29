@@ -191,8 +191,8 @@ class HaqComponent extends haquery.base.HaqComponent
 		}, 
 		function(cachedObject:CachedObject)
 		{
-			for (component in cachedObject.components) component.page = page;
 			components = cachedObject.components;
+			for (child in components) child.forEach(function(c) c.page = page);
 			callMethodForEach("postInit", true);
 		});
 		

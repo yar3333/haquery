@@ -171,6 +171,14 @@ class HaqComponent
         if (!isFromTopToBottom) callMethod(f);
     }
 	
+	#if !fullCompletion @:noCompletion #end
+    public function forEach(callb:HaqComponent->Void, isFromTopToBottom=true) : Void
+    {
+		if (isFromTopToBottom) callb(this);
+        for (component in components) component.forEach(callb, isFromTopToBottom);
+        if (!isFromTopToBottom) callb(this);
+    }
+	
 	/**
      * Find child by relative ID.
      * @param fullID Relative ID (for example: "header-menu-items").
