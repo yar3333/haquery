@@ -125,9 +125,9 @@ class Lib
 			
 			try
 			{
-				page.forEachComponent("preInit", true);
+				page.callMethodForEach("preInit", true);
 				
-				page.forEachComponent("init", false);
+				page.callMethodForEach("init", false);
 				
 				response = !request.isPostback
 						 ? page.generateResponseOnRender()

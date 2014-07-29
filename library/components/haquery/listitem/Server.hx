@@ -31,8 +31,8 @@ class Server extends Base
 			Lib.manager.createDocComponents(this, doc, false);
 		}
 		
-		forEachComponent("preInit", true);
-		forEachComponent("init", false);		
+		callMethodForEach("preInit", true);
+		callMethodForEach("init", false);		
 	}
 	
 	override function callElemEventHandler(elemID:String, eventName:String) : Dynamic
