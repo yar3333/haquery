@@ -1,4 +1,5 @@
 package haquery.server;
+import haxe.Unserializer;
 
 #if (server || macro)
 
@@ -206,10 +207,6 @@ class HaqComponent extends haquery.base.HaqComponent
 		var start = 0.0; if (page.config.logSlowSystemCalls >= 0) start = Sys.time();
 		
 		HaqComponentTools.expandDocElemIDs(prefixID, doc);
-		if (parent != null && innerNode != null)
-		{
-			HaqComponentTools.expandDocElemIDs(parent.prefixID, innerNode);
-		}
 		
 		for (child in innerComponents)
 		{
@@ -228,10 +225,27 @@ class HaqComponent extends haquery.base.HaqComponent
 		}
 		
 		var text = doc.innerHTML;
+		
 		if (innerNode != null)
 		{
-			var reInnerContent = new EReg("<innercontent\\s*[/]>|<innercontent></innercontent>", "i");
-			text = reInnerContent.replace(text, innerNode.innerHTML);
+			var expandedInnerNodeText : String = null;
+			text = ~/<innercontent\s*\/>|<innercontent><\/innercontent>/i.map(text, function(_)
+			{
+				if (expandedInnerNodeText == null)
+				{
+					if (parent != null)
+					{
+						var expandedInnerNode : HtmlNodeElement = Unserializer.run(Serializer.run(innerNode, true));
+						HaqComponentTools.expandDocElemIDs(parent.prefixID, expandedInnerNode);
+						expandedInnerNodeText = expandedInnerNode.innerHTML;
+					}
+					else
+					{
+						expandedInnerNodeText = innerNode.innerHTML;
+					}
+				}
+				return expandedInnerNodeText;
+			});
 		}
 		
 		if (page.config.logSlowSystemCalls >= 0 && Sys.time() - start >= page.config.logSlowSystemCalls)
