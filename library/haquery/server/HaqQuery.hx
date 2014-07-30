@@ -125,7 +125,14 @@ class HaqQuery
         return this;
     }
 
-    public function hasClass(cssClass:String) : Bool
+    public function toggleClass(cssClass:String, on:Bool) : HaqQuery
+    {
+        if (on) addClass(cssClass);
+		else    removeClass(cssClass);
+        return this;
+    }
+    
+	public function hasClass(cssClass:String) : Bool
     {
         cssClass = cssGlobalizer.className(cssClass);
         
