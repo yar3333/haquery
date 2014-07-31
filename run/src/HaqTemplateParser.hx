@@ -3,11 +3,11 @@ package ;
 import hant.Log;
 import haquery.common.HaqDefines;
 import haquery.common.HaqTemplateExceptions;
-import stdlib.Exception;
-import stdlib.FileSystem;
+import haquery.server.HaqCssGlobalizer;
 import htmlparser.HtmlDocument;
 import htmlparser.HtmlNodeElement;
-import haquery.server.HaqCssGlobalizer;
+import stdlib.Exception;
+import stdlib.FileSystem;
 import sys.io.File;
 using StringTools;
 
@@ -235,23 +235,31 @@ class HaqTemplateParser
 			parsers.push(p);
 		}
 		
+		var cssGlobalizer = new HaqCssGlobalizer(fullTag);
+		
+		var cssBlocks : Array<String> = [];
+		
 		var doc = new HtmlDocument();
 		while (parsers.length > 0)
 		{
 			var p = parsers.pop();
+			
 			var rawDoc = p.getRawDoc();
 			for (node in rawDoc.nodes)
 			{
 				doc.addChild(node);
+			}
+			
+			var rawCss = p.getRawCss();
+			if (rawCss != null)
+			{
+				cssBlocks.push(cssGlobalizer.styles(rawCss));
 			}
 		}
 		
 		resolveSupportUrls(doc);
 		resolvePlaceHolders(doc);
 		
-		var cssGlobalizer = new HaqCssGlobalizer(fullTag);
-		
-		var cssBlocks : Array<String> = [];
 		var i = 0; 
 		while (i < doc.children.length)
 		{
@@ -282,6 +290,13 @@ class HaqTemplateParser
 		var doc = new HtmlDocument(applySubstitutes(text));
 		setDocComponentsParent(doc);
 		return doc;
+	}
+	
+	function getRawCss() : String
+	{
+		var path = getFullPath(fullTag.replace(".", "/") + "/template.css");
+		if (path == null) return null;
+		return applySubstitutes(File.getContent(path));
 	}
 	
 	function resolveSupportUrls(doc:HtmlNodeElement)
