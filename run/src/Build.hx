@@ -37,7 +37,7 @@ class Build
 		project = new FlashDevelopProject(projectFilePath);
 	}
 	
-	public function build(outputDir:String, isDeadCodeElimination:Bool, basePage:String, staticUrlPrefix:String, htmlSubstitutes:Array<String>, onlyPagesPackage:Array<String>, ignorePages:Array<String>, port:Int)
+	public function build(outputDir:String, isDeadCodeElimination:Bool, basePage:String, staticUrlPrefix:String, htmlSubstitutes:Array<String>, onlyPagesPackage:Array<String>, ignorePages:Array<String>, libs:Array<String>, defines:Array<String>, port:Int)
     {
         log.start("Build");
         
@@ -69,12 +69,12 @@ class Build
 			generateConfigClasses(manager);
 			generateImports(manager, project.srcPath);
 			
-			genCodeFromServer(project, port);
+			genCodeFromServer(libs, defines, port);
 			
 			try saveLibFolderFileTimes(outputDir) catch (e:Dynamic) {}
 			
-			buildClient(outputDir, port, isDeadCodeElimination);
-			buildServer(outputDir, port);
+			buildClient(outputDir, libs, defines, port, isDeadCodeElimination);
+			buildServer(outputDir, libs, defines, port);
 			
 			generateComponentsCssFile(manager, outputDir);
 			
@@ -122,7 +122,7 @@ class Build
 		return a < b ? -1 : 1;
     }
 	
-	function buildClient(outputDir:String, port:Int, isDeadCodeElimination:Bool)
+	function buildClient(outputDir:String, libs:Array<String>, defines:Array<String>, port:Int, isDeadCodeElimination:Bool)
     {
 		var clientPath = outputDir + '/haquery/client';
 		
@@ -139,7 +139,7 @@ class Build
 		
 		fs.createDirectory(clientPath);
         
-        var params = project.getBuildParams("js", clientPath + "/haquery.js", [ "noEmbedJS", "client" ]);
+        var params = project.getBuildParams("js", clientPath + "/haquery.js", [ "noEmbedJS", "client" ].concat(defines), null, libs);
 		if (isDeadCodeElimination) params.push("--dead-code-elimination");
 		var exitCode = runHaxe(params, port);
 		
@@ -166,11 +166,11 @@ class Build
 		}
     }
 	
-	function buildServer(outputDir:String, port:Int)
+	function buildServer(outputDir:String, libs:Array<String>, defines:Array<String>, port:Int)
 	{
 		log.start("Build server");
         
-		var params = project.getBuildParams(project.platform, outputDir + (project.platform == "neko" ? "/index.n" : ""), [ "server" ]);
+		var params = project.getBuildParams(project.platform, outputDir + (project.platform == "neko" ? "/index.n" : ""), [ "server" ].concat(defines), null, libs);
 		var exitCode = runHaxe(params, port);
 		
 		if (exitCode == 0)
@@ -192,10 +192,10 @@ class Build
         log.finishOk();
     }
 	
-	function genCodeFromServer(project:FlashDevelopProject, port:Int)
+	function genCodeFromServer(libs:Array<String>, defines:Array<String>, port:Int)
 	{
 		log.start("Generate source code files");
-		var params = project.getBuildParams(project.platform, null, [ "haqueryGenCode", "server" ]);
+		var params = project.getBuildParams(project.platform, null, [ "haqueryGenCode", "server" ].concat(defines), null, libs);
 		var exitCode = runHaxe(params, port);
 		if (exitCode == 0) log.finishOk();
 		else               log.finishFail(new CompilationFailException("Server compilation errors."));

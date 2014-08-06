@@ -128,12 +128,15 @@ class Main
 			options.addRepeatable("htmlSubstitutes", String, [ "--html-substitute" ], "Regular expression to find and replace in html templates.");
 			options.addRepeatable("onlyPagesPackage", String, [ "--only-pages-package" ], "Pages package to compile. If not specified then all pages will be compiled.");
 			options.addRepeatable("ignorePages", String, [ "--ignore-pages" ], "Path to the page files to ignore.");
+			options.addRepeatable("libs", String, [ "-lib" ], "Specify additional haxe library.)");
+			options.addRepeatable("defines", String, [ "-D" ], "Specify additional compiler define.)");
 			options.add("port", 0, [ "--port" ], "Use haxe server on specified port.");
 			options.add("project", "", null, "FlashDevelop project file to read.\n(Default: find *.hxproj in the current directory.)");
 			
 			var run = function() : Void
 			{
-				new Build(log, fs, exeDir, k64, options.get("project")).build(
+				new Build(log, fs, exeDir, k64, options.get("project")).build
+				(
 					  options.get("output")
 					, options.get("deadCodeElimination")
 					, options.get("basePage")
@@ -141,6 +144,8 @@ class Main
 					, options.get("htmlSubstitutes")
 					, options.get("onlyPagesPackage")
 					, options.get("ignorePages")
+					, options.get("libs")
+					, options.get("defines")
 					, options.get("port")
 				);
 			};
