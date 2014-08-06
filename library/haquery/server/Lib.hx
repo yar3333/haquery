@@ -212,7 +212,12 @@ class Lib
 		return s;
 	}
 	
-	static function getCwd() { return Web.getCwd().replace("\\", "/").rtrim("/"); }
+	static function getCwd()
+	{
+		var cwd = Web.getCwd();
+		if (cwd == null || cwd == "") return ".";
+		return cwd.replace("\\", "/").rtrim("/");
+	}
 }
 
 #end
