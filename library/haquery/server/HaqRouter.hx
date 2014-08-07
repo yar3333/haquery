@@ -28,16 +28,16 @@ class HaqRouter
 		
 		url = url.trim("/");
 		
-		if (url.startsWith("index.") || url == "index" || url.endsWith("/index") || url.indexOf(".") >= 0)
-		{
-			throw new HaqPageNotFoundException(url);
-		}
-		
 		var orig = url;
 		for (re in urlRewriteRegex)
 		{
 			url = re.apply(url);
 			if (url != orig) break;
+		}
+		
+		if (url.startsWith("index.") || url == "index" || url.endsWith("/index") || url.indexOf(".") >= 0)
+		{
+			throw new HaqPageNotFoundException(url);
 		}
 		
 		var path = pagesFolderPath + "/" + (url != "" ? url : "index");
