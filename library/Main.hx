@@ -6,28 +6,17 @@ class Main
 	{
 		#if server
 			
-			#if !HXFCGI
+			#if php
 				
-				#if php
-					
-					haquery.server.Lib.run();
-					
-				#elseif neko
-					
-					neko.Web.cacheModule(haquery.server.Lib.run);
-					haquery.server.Lib.run();
-					
-				#end
+				haquery.server.Lib.run();
 				
-			#else
+			#elseif neko
 				
-				neko.Web.cacheModule(function()
-				{
-					haquery.server.Lib.run();
-				});
+				neko.Web.cacheModule(haquery.server.Lib.run);
+				haquery.server.Lib.run();
 				
 			#end
-			
+				
 		#end
  	}
 }
