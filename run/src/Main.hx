@@ -74,6 +74,11 @@ class Main
 					log.trace(e.message);
 					fail();
 				}
+				catch (e:Dynamic)
+				{
+					log.trace(Std.string(e));
+					fail();
+				}
 			}
 			else
 			{
