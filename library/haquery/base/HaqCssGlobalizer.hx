@@ -17,7 +17,7 @@ class HaqCssGlobalizer
 		#if client
 		if (!Std.is(name, String)) return name;
 		#end
-		return ~/[~]/g.replace(name, prefix);
+		return ~/[~]|\bL-/g.replace(name, prefix);
 	}
 
 	public function selector(selector:String) : String
@@ -25,6 +25,6 @@ class HaqCssGlobalizer
 		#if client
         if (!Std.is(selector, String)) return selector;
 		#end
-		return ~/[.][~]/g.replace(selector, "." + prefix);
+		return ~/[.][~]|[.]L-/g.replace(selector, "." + prefix);
 	}
 }
