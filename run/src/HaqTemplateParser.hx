@@ -6,6 +6,7 @@ import haquery.common.HaqTemplateExceptions;
 import haquery.server.HaqCssGlobalizer;
 import htmlparser.HtmlDocument;
 import htmlparser.HtmlNodeElement;
+import htmlparser.HtmlNodeText;
 import stdlib.Exception;
 import stdlib.FileSystem;
 import sys.io.File;
@@ -235,10 +236,6 @@ class HaqTemplateParser
 			parsers.push(p);
 		}
 		
-		var cssGlobalizer = new HaqCssGlobalizer(fullTag);
-		
-		var cssBlocks : Array<String> = [];
-		
 		var doc = new HtmlDocument();
 		while (parsers.length > 0)
 		{
@@ -249,16 +246,13 @@ class HaqTemplateParser
 			{
 				doc.addChild(node);
 			}
-			
-			var rawCss = p.getRawCss();
-			if (rawCss != null)
-			{
-				cssBlocks.push(cssGlobalizer.styles(rawCss));
-			}
 		}
 		
 		resolveSupportUrls(doc);
 		resolvePlaceHolders(doc);
+		
+		var cssGlobalizer = new HaqCssGlobalizer(fullTag);
+		var cssBlocks : Array<String> = [];
 		
 		var i = 0; 
 		while (i < doc.children.length)
@@ -285,18 +279,21 @@ class HaqTemplateParser
 	
 	function getRawDoc() : HtmlDocument
 	{
-		var path = getFullPath(fullTag.replace(".", "/") + "/template.html");
-		var text = path != null ? File.getContent(path) : "";
-		var doc = new HtmlDocument(applySubstitutes(text));
+		var pathHtml = getFullPath(fullTag.replace(".", "/") + "/template.html");
+		var html = pathHtml != null ? File.getContent(pathHtml) : "";
+		var doc = new HtmlDocument(applySubstitutes(html));
 		setDocComponentsParent(doc);
+		
+		var pathCss = getFullPath(fullTag.replace(".", "/") + "/template.css");
+		if (pathCss != null) 
+		{
+			var css = applySubstitutes(File.getContent(pathCss));
+			var node = new HtmlNodeElement("style", []);
+			node.addChild(new HtmlNodeText(css));
+			doc.addChild(node, doc.nodes.length > 0 ? doc.nodes[0] : null);
+		}
+		
 		return doc;
-	}
-	
-	function getRawCss() : String
-	{
-		var path = getFullPath(fullTag.replace(".", "/") + "/template.css");
-		if (path == null) return null;
-		return applySubstitutes(File.getContent(path));
 	}
 	
 	function resolveSupportUrls(doc:HtmlNodeElement)
