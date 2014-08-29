@@ -4,8 +4,8 @@
   "tags": ["js","php","neko","web","framework"],
   "description": "Web framework with php/neko and js target.",
   "contributors": ["yar3333"],
-  "releasenote": "UrlRewriteRegex support.\nNew build options --ignore-pages and --only-pages-package.\nComponents final html cache support.\nNested fields for list.bind() objects (you can write \"{obj.field}\" in template.html).\nAdded logSlowSystemCalls config option.\nProfiler improvements.\nSpeedup.\nMany bugfixes.",
-  "version": "6.2.0",
+  "releasenote": "You can use \"template.css\" near the \"template.html\" (from now \"L-\" is a synonim for \"~\" as prefix for css classes). \nAdd HaqQuery.toggleClass().\nAvoid HaqPageNotFoundException before urlRewriteRegex.\nExit code fix.",
+  "version": "6.2.1",
   "url": "http://haquery.com/",
   "dependencies": {"stdlib":"","HtmlParser":"","jquery":""}
 }
