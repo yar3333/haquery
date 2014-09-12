@@ -16,11 +16,12 @@ class HaqDefines
 	 */
     public static inline var DELIMITER = '-';
 	
-    public static var elemEventNames : Array<String> = [
+    public static var elemEventNames =
+	[
 		'click', 'change', 'load',
 		'mousedown', 'mouseup', 'mousemove',
 		'mouseover', 'mouseout', 'mouseenter', 'mouseleave',
 		'keypress', 'keydown', 'keyup', 
-		'focus', 'focusin', 'focusout',
+		'focus', 'blur', 'focusin', 'focusout'
     ];
 }
