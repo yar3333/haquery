@@ -31,7 +31,7 @@ class HaqRouter
 		var orig = url;
 		for (re in urlRewriteRegex)
 		{
-			url = re.apply(url);
+			url = re.replace(url);
 			if (url != orig) break;
 		}
 		
