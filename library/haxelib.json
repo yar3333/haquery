@@ -4,8 +4,8 @@
   "tags": ["js","php","neko","web","framework"],
   "description": "Web framework with php/neko and js target.",
   "contributors": ["yar3333"],
-  "releasenote": "You can use \"template.css\" near the \"template.html\" (from now \"L-\" is a synonim for \"~\" as prefix for css classes). \nAdd HaqQuery.toggleClass().\nAvoid HaqPageNotFoundException before urlRewriteRegex.\nExit code fix.",
-  "version": "6.2.1",
+  "releasenote": "Blur event support. Minors due stdlib upgrade.",
+  "version": "6.2.2",
   "url": "http://haquery.com/",
   "dependencies": {"stdlib":"","HtmlParser":"","jquery":""}
 }
