@@ -5,6 +5,9 @@ using stdlib.StringTools;
 
 class HaqCssGlobalizer 
 {
+	static var reClassName = ~/[~]|\bL-/g;
+	static var reSelector = ~/[.][~]|[.]L-/g;
+	
 	public var prefix : String;
 
 	public function new(fullTag:String) 
@@ -17,7 +20,7 @@ class HaqCssGlobalizer
 		#if client
 		if (!Std.is(name, String)) return name;
 		#end
-		return ~/[~]|\bL-/g.replace(name, prefix);
+		return reClassName.replace(name, prefix);
 	}
 
 	public function selector(selector:String) : String
@@ -25,6 +28,6 @@ class HaqCssGlobalizer
 		#if client
         if (!Std.is(selector, String)) return selector;
 		#end
-		return ~/[.][~]|[.]L-/g.replace(selector, "." + prefix);
+		return reSelector.replace(selector, "." + prefix);
 	}
 }
