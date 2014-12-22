@@ -4,8 +4,8 @@
   "tags": ["js","php","neko","web","framework"],
   "description": "Web framework with php/neko and js target.",
   "contributors": ["yar3333"],
-  "releasenote": "Blur event support. Minors due stdlib upgrade.",
-  "version": "6.2.2",
+  "releasenote": "Minor speedup optimization.",
+  "version": "6.2.3",
   "url": "http://haquery.com/",
   "dependencies": {"stdlib":"","HtmlParser":"","jquery":""}
 }
