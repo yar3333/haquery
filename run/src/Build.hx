@@ -133,8 +133,6 @@ class Build
 		fs.createDirectory(clientPath);
         
         var params = project.getBuildParams("js", clientPath + "/haquery.js", [ "noEmbedJS", "client" ]);
-		params.push("--macro");
-		params.push("haquery.macro.HaqBuild.startup()");
 		var exitCode = runHaxe(params);
 		
 		if (FileSystem.exists(clientPath + "/haquery.js")
@@ -190,8 +188,6 @@ class Build
 	{
 		log.start("Generate source code files");
 		var params = project.getBuildParams(null, null, [ "haqueryGenCode", "server" ]);
-		params.push("--macro");
-		params.push("haquery.macro.HaqBuild.startup()");
 		var exitCode = runHaxe(params);
 		if (exitCode == 0) log.finishOk();
 		else               log.finishFail(new CompilationFailException("Server compilation errors."));
