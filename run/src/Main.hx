@@ -127,31 +127,53 @@ class Main
 			
 			var options = new CmdOptions();
 			options.add("output", "bin", [ "--output" ], "Output folder (by default is 'bin').");
-			options.add("deadCodeElimination", false, [ "--dead-code-elimination" ], "For a while is not supported.");
-			options.add("basePage", "", [ "--base-page" ], "Default base page. For example: 'pages.layout'.");
+			options.addRepeatable("classPaths", String, [ "-cp" ], "Specify additional class path.)");
+			options.addRepeatable("libs", String, [ "-lib" ], "Specify additional haxe library.)");
+			options.addRepeatable("defines", String, [ "-D" ], "Specify additional compiler define.)");
+			options.addRepeatable("haxeOptions", String, [ "-ho", "--haxe-option" ], "Specify additional haxe compiler option.)");
+			options.add("basePage", "", [ "--base-page" ], "Default base page. For example: 'pages.layout'. Default is 'haquery.(client/server).BasePage'.");
 			options.add("staticUrlPrefix", "", [ "--static-url-prefix" ], "Prefix for URLs started with '~',\nlinks to system the system files\nand registered js/css files.\nAffected to HTML and CSS output only,\nnot to physical folders structure.");
 			options.addRepeatable("htmlSubstitutes", String, [ "--html-substitute" ], "Regular expression to find and replace in html templates.");
 			options.addRepeatable("onlyPagesPackage", String, [ "--only-pages-package" ], "Pages package to compile. If not specified then all pages will be compiled.");
 			options.addRepeatable("ignorePages", String, [ "--ignore-pages" ], "Path to the page files to ignore.");
-			options.addRepeatable("libs", String, [ "-lib" ], "Specify additional haxe library.)");
-			options.addRepeatable("defines", String, [ "-D" ], "Specify additional compiler define.)");
-			options.add("port", 0, [ "--port" ], "Use haxe server on specified port.");
+			options.add("port", 0, [ "--port" ], "Use haxe compiler server on specified port. Run server if it not running.");
+			options.add("platform", "", [ "-p", "--platform" ], "Target server platform ('php' or 'neko'). Default is 'neko'.");
 			options.add("project", "", null, "FlashDevelop project file to read.\n(Default: find *.hxproj in the current directory.)");
 			
 			var run = function() : Void
 			{
-				new Build(log, fs, exeDir, k64, options.get("project")).build
+				var project = FlashDevelopProject.load(options.get("project"));
+				if (project != null)
+				{
+					project.binPath = options.get("output");
+					project.classPaths = project.classPaths.concat(options.get("classPaths"));
+					project.addLibs(options.get("libs"));
+					project.directives = project.directives.concat(options.get("defines"));
+					project.additionalCompilerOptions = project.additionalCompilerOptions.concat(options.get("haxeOptions"));
+					if (options.get("platform") != "") project.platform = options.get("platform");
+				}
+				else
+				{
+					project = new FlashDevelopProject
+					(
+						null,
+						options.get("output"),
+						options.get("classPaths"),
+						options.get("libs"),
+						false, 
+						options.get("platform") != "" ? options.get("platform") : "neko",
+						options.get("haxeOptions"),
+						options.get("defines")
+					);
+				}
+				
+				new Build(log, fs, exeDir, k64, project, options.get("port")).build
 				(
-					  options.get("output")
-					, options.get("deadCodeElimination")
-					, options.get("basePage")
+					  options.get("basePage")
 					, options.get("staticUrlPrefix")
 					, options.get("htmlSubstitutes")
 					, options.get("onlyPagesPackage")
 					, options.get("ignorePages")
-					, options.get("libs")
-					, options.get("defines")
-					, options.get("port")
 				);
 			};
 			r.push( { name:name, description:description, options:options, run:run } );
@@ -164,28 +186,31 @@ class Main
 			var options = new CmdOptions();
 			options.add("databaseConnectionString", "", null, "Database connecting string like 'mysql://user:pass@localhost/mydb'.\nRead from config.xml custom 'databaseConnectionString' node if not specified.");
 			options.add("hxproj", "", [ "-p", "--hxproj" ], "Path to the FlashDevelop *.hxproj file.\nUsed to detect class paths.\nIf not specified then *.hxproj from the current folder will be used.");
-			options.add("srcPath", "", [ "-s", "--src-path" ], "Path to your source files directory.\nThis is a base path for generated files.\nRead last src path from the project file if not specified.");
+			options.add("srcPath", "", [ "-s", "--src-path" ], "Path to your source files directory.\nThis is a base path for generated files.\nUsed last classpath from the project file if not specified.\nIf project file not found used 'src'.");
 			
 			var run = function() : Void
 			{
-				var project = new FlashDevelopProject(options.get("hxproj"));
-				var srcPath = PathTools.normalize(options.get("srcPath") != "" ? options.get("srcPath") : project.srcPath) + "/";
+				var project = FlashDevelopProject.load(options.get("hxproj"));
+				var srcPath = PathTools.normalize(options.get("srcPath") != "" ? options.get("srcPath") : (project != null && project.classPaths.length > 0 ? project.classPaths[project.classPaths.length - 1] : "src"));
 				var databaseConnectionString = options.get("databaseConnectionString") != "" 
 					? options.get("databaseConnectionString") 
-					: HaqConfig.load(srcPath + "config.xml").customs.get("databaseConnectionString");
+					: HaqConfig.load(srcPath + "/config.xml").customs.get("databaseConnectionString");
 				if (databaseConnectionString != null && databaseConnectionString != "")
 				{
-					Process.run("haxelib", 
-						[ 
-							  "run", "orm"
-							, databaseConnectionString
-							, "-a", "models.server.autogenerated"
-							, "-c", "models.server"
-							, "-s", srcPath
-							, "-p", project.projectFilePath
-						]
-						, true, log
-					);
+					var params =
+					[ 
+						  "run", "orm"
+						, databaseConnectionString
+						, "-a", "models.server.autogenerated"
+						, "-c", "models.server"
+						, "-s", srcPath
+					];
+					if (project != null)
+					{
+						params.push("-p");
+						params.push(project.projectFilePath);
+					}
+					Process.run("haxelib", params, true, log);
 				}
 				else
 				{

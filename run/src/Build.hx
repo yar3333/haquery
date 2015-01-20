@@ -3,6 +3,7 @@ package ;
 import hant.FileSystemTools;
 import hant.FlashDevelopProject;
 import hant.Haxe;
+import hant.Haxelib;
 import hant.Log;
 import hant.PathTools;
 import hant.Process;
@@ -23,21 +24,22 @@ class Build
 {
 	var log : Log;
     var fs : FileSystemTools;
-	var exeDir : String;
 	var is64 : Bool;
-    
+	
 	var project : FlashDevelopProject;
+	var port : Int;
 
-	public function new(log:Log, fs:FileSystemTools, exeDir:String, is64:Bool, projectFilePath:String) 
+	public function new(log:Log, fs:FileSystemTools, exeDir:String, is64:Bool, project:FlashDevelopProject, port:Int) 
 	{
 		this.log = log;
 		this.fs = fs;
-		this.exeDir = PathTools.normalize(exeDir) + "/";
 		this.is64 = is64;
-		project = new FlashDevelopProject(projectFilePath);
+		
+		this.project = project;
+		this.port = port;
 	}
 	
-	public function build(outputDir:String, isDeadCodeElimination:Bool, basePage:String, staticUrlPrefix:String, htmlSubstitutes:Array<String>, onlyPagesPackage:Array<String>, ignorePages:Array<String>, libs:Array<String>, defines:Array<String>, port:Int)
+	public function build(basePage:String, staticUrlPrefix:String, htmlSubstitutes:Array<String>, onlyPagesPackage:Array<String>, ignorePages:Array<String>)
     {
         log.start("Build");
         
@@ -56,39 +58,34 @@ class Build
 			);
 			log.finishOk();
 			
-			fs.createDirectory("gen/haquery/common");
 			saveContentToFileIfNeed("gen/haquery/common/Generated.hx", "package haquery.common;\n\nclass Generated\n{\n\tpublic static inline var staticUrlPrefix = \"" + staticUrlPrefix + "\";\n}");
-			
-			fs.createDirectory("gen/haquery/server");
 			saveContentToFileIfNeed("gen/haquery/server/BasePage.hx", "package haquery.server;\n\ntypedef BasePage = " + (basePage != "" && project.findFile(basePage.replace(".", "/") + "/Server.hx") != null ? basePage + ".Server" : "haquery.server.HaqPage") + ";\n");
-			
-			fs.createDirectory("gen/haquery/client");
 			saveContentToFileIfNeed("gen/haquery/client/BasePage.hx", "package haquery.client;\n\ntypedef BasePage = " + (basePage != "" && project.findFile(basePage.replace(".", "/") + "/Client.hx") != null  ? basePage + ".Client" : "haquery.client.HaqPage") + ";\n");
 			
 			genTrm(manager);
 			generateConfigClasses(manager);
-			generateImports(manager, project.srcPath);
+			generateImports(manager);
 			
-			genCodeFromServer(libs, defines, port);
+			genCodeFromServer();
 			
-			try saveLibFolderFileTimes(outputDir) catch (e:Dynamic) {}
+			try saveLibFolderFileTimes() catch (e:Dynamic) {}
 			
-			buildClient(outputDir, libs, defines, port, isDeadCodeElimination);
-			buildServer(outputDir, libs, defines, port);
+			buildClient();
+			buildServer();
 			
-			generateComponentsCssFile(manager, outputDir);
+			generateComponentsCssFile(manager);
 			
 			var publisher = new Publisher(log, fs, project.platform, is64);
 			
-			log.start("Publish to '" + outputDir + "'");
+			log.start("Publish to '" + project.binPath + "'");
 				for (path in project.allClassPaths)
 				{
-					publisher.prepare(path, manager.fullTags, project.allClassPaths);
+					publisher.prepare(path, manager.fullTags, project.allClassPaths.concat(Haxelib.getPaths(["jquery"]).array()));
 				}
-				publisher.publish(outputDir);
+				publisher.publish(project.binPath);
 			log.finishOk();
 			
-			loadLibFolderFileTimes(outputDir);
+			loadLibFolderFileTimes();
 			
 			log.finishOk();
 		}
@@ -98,7 +95,7 @@ class Build
 		}
     }
     
-	function generateImports(manager:HaqTemplateManager, src:String)
+	function generateImports(manager:HaqTemplateManager)
     {
         log.start("Generate imports");
         
@@ -122,9 +119,9 @@ class Build
 		return a < b ? -1 : 1;
     }
 	
-	function buildClient(outputDir:String, libs:Array<String>, defines:Array<String>, port:Int, isDeadCodeElimination:Bool)
+	function buildClient()
     {
-		var clientPath = outputDir + '/haquery/client';
+		var clientPath = project.binPath + "/haquery/client";
 		
 		log.start("Build client");
         
@@ -139,9 +136,10 @@ class Build
 		
 		fs.createDirectory(clientPath);
         
-        var params = project.getBuildParams("js", clientPath + "/haquery.js", [ "noEmbedJS", "client" ].concat(defines), null, libs);
-		if (isDeadCodeElimination) params.push("--dead-code-elimination");
-		var exitCode = runHaxe(params, port);
+        var params = project.getBuildParams("js", clientPath + "/haquery.js", [ "noEmbedJS", "client" ]);
+		params.push("--macro");
+		params.push("haquery.macro.HaqBuild.startup()");
+		var exitCode = runHaxe(params);
 		
 		if (FileSystem.exists(clientPath + "/haquery.js")
 		 && FileSystem.exists(clientPath + "/haquery.js.old"))
@@ -166,12 +164,12 @@ class Build
 		}
     }
 	
-	function buildServer(outputDir:String, libs:Array<String>, defines:Array<String>, port:Int)
+	function buildServer()
 	{
 		log.start("Build server");
         
-		var params = project.getBuildParams(project.platform, outputDir + (project.platform == "neko" ? "/index.n" : ""), [ "server" ].concat(defines), null, libs);
-		var exitCode = runHaxe(params, port);
+		var params = project.getBuildParams(null, project.binPath + (project.platform == "neko" ? "/index.n" : ""), [ "server" ]);
+		var exitCode = runHaxe(params);
 		
 		if (exitCode == 0)
 		{
@@ -192,16 +190,18 @@ class Build
         log.finishOk();
     }
 	
-	function genCodeFromServer(libs:Array<String>, defines:Array<String>, port:Int)
+	function genCodeFromServer()
 	{
 		log.start("Generate source code files");
-		var params = project.getBuildParams(project.platform, null, [ "haqueryGenCode", "server" ].concat(defines), null, libs);
-		var exitCode = runHaxe(params, port);
+		var params = project.getBuildParams(null, null, [ "haqueryGenCode", "server" ]);
+		params.push("--macro");
+		params.push("haquery.macro.HaqBuild.startup()");
+		var exitCode = runHaxe(params);
 		if (exitCode == 0) log.finishOk();
 		else               log.finishFail(new CompilationFailException("Server compilation errors."));
 	}
 	
-	function runHaxe(params:Array<String>, port:Int) : Int
+	function runHaxe(params:Array<String>) : Int
 	{
 		if (port != 0)
 		{
@@ -223,24 +223,24 @@ class Build
 		return r.exitCode;
 	}
 	
-	function saveLibFolderFileTimes(outputDir:String)
+	function saveLibFolderFileTimes()
 	{
-		if (FileSystem.exists(outputDir + "/lib"))
+		if (FileSystem.exists(project.binPath + "/lib"))
 		{
-			log.start("Save file times of the " + outputDir + "/lib folder");
-			loadLibFolderFileTimes(outputDir);
-			fs.rename(outputDir + "/lib", outputDir + "/lib.old");
+			log.start("Save file times of the " + project.binPath + "/lib folder");
+			loadLibFolderFileTimes();
+			fs.rename(project.binPath + "/lib", project.binPath + "/lib.old");
 			log.finishOk();
 		}
 	}
 
-	function loadLibFolderFileTimes(outputDir:String)
+	function loadLibFolderFileTimes()
 	{
-		if (FileSystem.exists(outputDir + "/lib.old"))
+		if (FileSystem.exists(project.binPath + "/lib.old"))
 		{
 			log.start("Load lib folder file times");
-			fs.restoreFileTimes(outputDir + "/lib.old", outputDir + "/lib", ~/[.](?:php|js)/i);
-			fs.deleteDirectory(outputDir + "/lib.old");
+			fs.restoreFileTimes(project.binPath + "/lib.old", project.binPath + "/lib", ~/[.](?:php|js)/i);
+			fs.deleteDirectory(project.binPath + "/lib.old");
 			log.finishOk();
 		}
 	}
@@ -313,11 +313,11 @@ class Build
 		log.finishOk();
 	}
 	
-	function generateComponentsCssFile(manager:HaqTemplateManager, binDir:String)
+	function generateComponentsCssFile(manager:HaqTemplateManager)
 	{
 		log.start("Generate style file");
 		
-		var dir = binDir + "/haquery/client";
+		var dir = project.binPath + "/haquery/client";
 		FileSystem.createDirectory(dir);
 		
 		var addedCssBlocks = [];
@@ -354,6 +354,8 @@ class Build
 	{
 		if (!FileSystem.exists(file) || File.getContent(file) != content)
 		{
+			var dir = Path.directory(file);
+			if (dir != "" && !FileSystem.exists(dir)) FileSystem.createDirectory(dir);
 			File.saveContent(file, content);
 		}
 	}
