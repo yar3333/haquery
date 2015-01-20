@@ -24,17 +24,13 @@ class Build
 {
 	var log : Log;
     var fs : FileSystemTools;
-	var is64 : Bool;
-	
 	var project : FlashDevelopProject;
 	var port : Int;
 
-	public function new(log:Log, fs:FileSystemTools, exeDir:String, is64:Bool, project:FlashDevelopProject, port:Int) 
+	public function new(log:Log, fs:FileSystemTools, project:FlashDevelopProject, port:Int) 
 	{
 		this.log = log;
 		this.fs = fs;
-		this.is64 = is64;
-		
 		this.project = project;
 		this.port = port;
 	}
@@ -75,7 +71,7 @@ class Build
 			
 			generateComponentsCssFile(manager);
 			
-			var publisher = new Publisher(log, fs, project.platform, is64);
+			var publisher = new Publisher(log, fs, project.platform);
 			
 			log.start("Publish to '" + project.binPath + "'");
 				for (path in project.allClassPaths)
