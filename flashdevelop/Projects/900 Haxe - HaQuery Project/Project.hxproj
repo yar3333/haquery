@@ -24,13 +24,10 @@
     <option flashStrict="False" />
     <option mainClass="Main" />
     <option enabledebug="True" />
-    <option additional="--macro haquery.macro.HaqBuild.startup()" />
+    <option additional="" />
   </build>
   <!-- haxelib libraries -->
   <haxelib>
-    <library name="stdlib" />
-    <library name="jquery" />
-    <library name="HtmlParser" />
     <library name="HaQuery" />
   </haxelib>
   <!-- Class files to compile (other referenced classes will automatically be included) -->

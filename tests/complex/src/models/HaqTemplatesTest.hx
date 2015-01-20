@@ -89,7 +89,7 @@ class HaqTemplatesTest extends TestCase
 	
 	public function testProfiler()
 	{
-		Lib.profiler = new Profiler(true);
+		Lib.profiler = new Profiler(10);
 		Lib.manager = new HaqTemplateManager();
 		
 		var config = HaqConfig.load("");
@@ -99,8 +99,8 @@ class HaqTemplatesTest extends TestCase
 		
 		page.callMethodForEach("init", false);
 		
-		page.render();
+		page.generateResponseOnRender();
 		
-		Lib.profiler.traceResults(5, 100);
+		Lib.profiler.traceResults(100);
 	}
 }

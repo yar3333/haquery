@@ -1,6 +1,6 @@
 package models;
 
-import haxe.htmlparser.HtmlDocument;
+import htmlparser.HtmlDocument;
 import haquery.server.HaqQuery;
 import haquery.server.HaqCssGlobalizer;
 

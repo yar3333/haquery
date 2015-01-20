@@ -8,23 +8,25 @@ class Server extends BaseServer
 		{
 			for (i in 0...100)
 			{
-				template().questionBlock.create
-				({
-					questionId: "questionId",
-					userPhotoSrc: "userPhotoSrc",
-					questionTextShort: "question.textShort",
-					linkToQuestionPage: "/x/otvet/",
-					type: "question.type",
-					userName: "userName",
-					linksToCategory: "linksToCategory",
-					timeAgo: "timeAgo",
-					linkToUserPage: "linkToUserPage",
-					ansCount: "ansCount",
-					parenthesisLeft: "(",
-					parenthesisRight:  ")",
-					newAnsCount: "новый",
-					answerText: "a"
-				});
+				template().questionBlock.bind
+				([ for (i in 0...100)
+					{
+						questionId: "questionId",
+						userPhotoSrc: "userPhotoSrc",
+						questionTextShort: "question.textShort",
+						linkToQuestionPage: "/x/otvet/",
+						type: "question.type",
+						userName: "userName",
+						linksToCategory: "linksToCategory",
+						timeAgo: "timeAgo",
+						linkToUserPage: "linkToUserPage",
+						ansCount: "ansCount",
+						parenthesisLeft: "(",
+						parenthesisRight:  ")",
+						newAnsCount: "новый",
+						answerText: "a"
+					}
+				]);
 			}
 		});	
 	}
