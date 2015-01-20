@@ -36,7 +36,8 @@ class Publisher
 	
 	public function prepare(src:String, fullTags:Array<String>, allClassPaths:Array<String>) : Void
 	{
-		src = src.rtrim("/");
+		src = PathTools.normalize(src);
+		allClassPaths = allClassPaths.map(PathTools.normalize);
 		
 		if (fullTags != null)
 		{
@@ -97,6 +98,9 @@ class Publisher
 	
 	function prepareComponents(src:String, dest:String, pack:String, fullTags:Array<String>) : Void
 	{
+		src = PathTools.normalize(src);
+		dest = PathTools.normalize(dest);
+		
 		if (FileSystem.exists(src) && FileSystem.isDirectory(src))
 		{
 			for (file in FileSystem.readDirectory(src))
@@ -156,6 +160,8 @@ class Publisher
 	
 	public function publish(destDir:String)
 	{
+		destDir = PathTools.normalize(destDir);
+		
 		for (destLocal in files.keys())
 		{
 			var src = files.get(destLocal);

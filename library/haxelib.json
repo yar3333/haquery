@@ -7,5 +7,5 @@
   "releasenote": "Mac64 support.",
   "version": "6.2.4",
   "url": "http://haquery.com/",
-  "dependencies": {"stdlib":"","HtmlParser":"","jquery":""}
+  "dependencies": {"stdlib":"","jquery":"","HtmlParser":""}
 }
