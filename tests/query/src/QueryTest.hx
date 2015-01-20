@@ -1,6 +1,4 @@
-package;
-
-import haxe.htmlparser.HtmlDocument;
+import htmlparser.HtmlDocument;
 
 class QueryTest extends haxe.unit.TestCase
 {
