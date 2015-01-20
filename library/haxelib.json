@@ -4,8 +4,8 @@
   "tags": ["js","php","neko","web","framework"],
   "description": "Web framework with php/neko and js target.",
   "contributors": ["yar3333"],
-  "releasenote": "Don't need special options to compile your projects anymore. Just \"-lib HaQuery\". Added command-line options for compiling witout FlashDevelop. See \"haxelib run HaQuery\".",
-  "version": "6.3.0",
+  "releasenote": "Autocompletion bugfix.",
+  "version": "6.3.1",
   "url": "http://haquery.com/",
   "dependencies": {"stdlib":"","HtmlParser":"","jquery":""}
 }
