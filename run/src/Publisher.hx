@@ -17,7 +17,6 @@ class Publisher
 	var log : Log;
     var fs : FileSystemTools;
 	var platform : String;
-	var is64 : Bool;
 	var exeDir : String;
 	
 	/**
@@ -25,12 +24,11 @@ class Publisher
 	 */
 	var files : Map<String,String>;
 	
-	public function new(log:Log, fs:FileSystemTools, platform:String, is64:Bool)
+	public function new(log:Log, fs:FileSystemTools, platform:String)
 	{
 		this.log = log;
 		this.fs = fs;
 		this.platform = platform;
-		this.is64 = is64;
 		this.files = new Map<String,String>();
 	}
 	

@@ -36,13 +36,10 @@ class Main
 			fail("run this program via haxelib utility.");
 		}
 		
-		var k64Index = Lambda.indexOf(args, "-64");
-		if (k64Index >= 0) args.remove("-64");
-		
 		var log = new Log(2);
 		var fs = new FileSystemTools(log);
 		
-		var commands = getCommands(log, fs, exeDir, k64Index >= 0);
+		var commands = getCommands(log, fs, exeDir);
 		
 		if (args.length > 0)
 		{
@@ -88,7 +85,7 @@ class Main
 		else
 		{
 			Lib.println("HaQuery building support and deploying tool.");
-			Lib.println("Usage: haxelib run HaQuery <command> [<command_options>] [-64]");
+			Lib.println("Usage: haxelib run HaQuery <command> [<command_options>]");
 			Lib.println("");
 			Lib.println("    where <command> and <command_options> may be:");
 			Lib.println("");
@@ -96,17 +93,16 @@ class Main
 			for (command in commands)
 			{
 				Lib.println("        " + StringTools.rpad(command.name, " ", 16) + command.description + "\n");
-				Lib.println(command.options.getHelpMessage("            "));
+				var help = command.options.getHelpMessage("            ").rtrim();
+				if (help != "") Lib.println(help + "\n");
 			}
-			
-			Lib.println("        -64             Use 64-bit ndll files.");
 		}
         
         Sys.exit(0);
 	}
 	
 	
-	static function getCommands(log:Log, fs:FileSystemTools, exeDir:String, k64:Bool) : Array<Command>
+	static function getCommands(log:Log, fs:FileSystemTools, exeDir:String) : Array<Command>
 	{
 		var r = new Array<Command>();
 		
@@ -126,11 +122,11 @@ class Main
 			var description = "Do project building.";
 			
 			var options = new CmdOptions();
-			options.add("output", "bin", [ "--output" ], "Output folder (by default is 'bin').");
-			options.addRepeatable("classPaths", String, [ "-cp" ], "Specify additional class path.)");
-			options.addRepeatable("libs", String, [ "-lib" ], "Specify additional haxe library.)");
-			options.addRepeatable("defines", String, [ "-D" ], "Specify additional compiler define.)");
-			options.addRepeatable("haxeOptions", String, [ "-ho", "--haxe-option" ], "Specify additional haxe compiler option.)");
+			options.add("output", "bin", [ "--output" ], "Output folder (default is 'bin').");
+			options.addRepeatable("classPaths", String, [ "-cp" ], "Specify class path.");
+			options.addRepeatable("libs", String, [ "-lib" ], "Specify haxe library.");
+			options.addRepeatable("defines", String, [ "-D" ], "Specify compiler define.");
+			options.addRepeatable("haxeOptions", String, [ "-ho", "--haxe-option" ], "Specify haxe compiler option.");
 			options.add("basePage", "", [ "--base-page" ], "Default base page. For example: 'pages.layout'. Default is 'haquery.(client/server).BasePage'.");
 			options.add("staticUrlPrefix", "", [ "--static-url-prefix" ], "Prefix for URLs started with '~',\nlinks to system the system files\nand registered js/css files.\nAffected to HTML and CSS output only,\nnot to physical folders structure.");
 			options.addRepeatable("htmlSubstitutes", String, [ "--html-substitute" ], "Regular expression to find and replace in html templates.");
@@ -167,7 +163,7 @@ class Main
 					);
 				}
 				
-				new Build(log, fs, exeDir, k64, project, options.get("port")).build
+				new Build(log, fs, project, options.get("port")).build
 				(
 					  options.get("basePage")
 					, options.get("staticUrlPrefix")
