@@ -1,5 +1,3 @@
-package ;
-
 import hant.CmdOptions;
 import hant.FlashDevelopProject;
 import hant.PathTools;
@@ -36,10 +34,9 @@ class Main
 			fail("run this program via haxelib utility.");
 		}
 		
-		var log = new Log(2);
-		var fs = new FileSystemTools(log);
+		Log.instance = new Log(2);
 		
-		var commands = getCommands(log, fs, exeDir);
+		var commands = getCommands(exeDir);
 		
 		if (args.length > 0)
 		{
@@ -58,22 +55,22 @@ class Main
 				}
 				catch (e:HaqTemplateNotFoundException)
 				{
-					log.trace("ERROR: component not found [ " + e.toString() + " ].");
+					Log.echo("ERROR: component not found [ " + e.toString() + " ].");
 					fail();
 				}
 				catch (e:HaqTemplateRecursiveExtendsException)
 				{
-					log.trace("ERROR: recursive extend detected [ " + e.toString() + " ].");
+					Log.echo("ERROR: recursive extend detected [ " + e.toString() + " ].");
 					fail();
 				}
 				catch (e:Exception)
 				{
-					log.trace(e.message);
+					Log.echo(e.message);
 					fail();
 				}
 				catch (e:Dynamic)
 				{
-					log.trace(Std.string(e));
+					Log.echo(Std.string(e));
 					fail();
 				}
 			}
@@ -102,7 +99,7 @@ class Main
 	}
 	
 	
-	static function getCommands(log:Log, fs:FileSystemTools, exeDir:String) : Array<Command>
+	static function getCommands(exeDir:String) : Array<Command>
 	{
 		var r = new Array<Command>();
 		
@@ -112,7 +109,7 @@ class Main
 			var options = new CmdOptions();
 			var run = function() : Void
 			{
-				new Setup(log, fs, exeDir).install();
+				new Setup(exeDir).install();
 			};
 			r.push( { name:name, description:description, options:options, run:run } );
 		}
@@ -143,7 +140,7 @@ class Main
 				{
 					project.binPath = options.get("output");
 					project.classPaths = project.classPaths.concat(options.get("classPaths"));
-					project.addLibs(options.get("libs"));
+					project.libs = project.libs.concat(options.get("libs"));
 					project.directives = project.directives.concat(options.get("defines"));
 					project.additionalCompilerOptions = project.additionalCompilerOptions.concat(options.get("haxeOptions"));
 					if (options.get("platform") != "") project.platform = options.get("platform");
@@ -159,11 +156,12 @@ class Main
 						false, 
 						options.get("platform") != "" ? options.get("platform") : "neko",
 						options.get("haxeOptions"),
-						options.get("defines")
+						options.get("defines"),
+						"Main"
 					);
 				}
 				
-				new Build(log, fs, project, options.get("port")).build
+				new Build(project, options.get("port")).build
 				(
 					  options.get("basePage")
 					, options.get("staticUrlPrefix")
@@ -206,7 +204,7 @@ class Main
 						params.push("-p");
 						params.push(project.projectFilePath);
 					}
-					Process.run("haxelib", params, true, log);
+					Process.run("haxelib", params, null, true, true);
 				}
 				else
 				{

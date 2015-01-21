@@ -1,5 +1,3 @@
-package ;
-
 import hant.Log;
 import haquery.common.HaqComponentTools;
 import haquery.common.HaqDefines;
@@ -14,7 +12,6 @@ class PathNotFoundException extends Exception {}
 
 class HaqTemplateManager
 {
-	var log : Log;
 	var classPaths : Array<String>;
 	var basePage : String;
 	var staticUrlPrefix : String;
@@ -27,9 +24,8 @@ class HaqTemplateManager
 	public var fullTags(default, null) : Array<String>;
 	
 	
-	public function new(log:Log, classPaths:Array<String>, basePage:String, staticUrlPrefix:String, substitutes:Array<{ from:EReg, to:String }>, onlyPagesPackage:Array<String>, ignorePages:Array<String>)
+	public function new(classPaths:Array<String>, basePage:String, staticUrlPrefix:String, substitutes:Array<{ from:EReg, to:String }>, onlyPagesPackage:Array<String>, ignorePages:Array<String>)
 	{
-		this.log = log;
 		this.classPaths = classPaths;
 		this.basePage = basePage;
 		this.staticUrlPrefix = staticUrlPrefix;
@@ -81,7 +77,7 @@ class HaqTemplateManager
 					}
 					catch (e:Dynamic)
 					{
-						log.trace("Can't read directory '" + path + "'.");
+						Log.echo("Can't read directory '" + path + "'.");
 						Exception.rethrow(e);
 					}
 					
@@ -112,7 +108,7 @@ class HaqTemplateManager
 		{
 			try
 			{
-				var template = new HaqTemplate(log, classPaths, fullTag, basePage, staticUrlPrefix, substitutes);
+				var template = new HaqTemplate(classPaths, fullTag, basePage, staticUrlPrefix, substitutes);
 				templates.set(fullTag, template);
 				
 				addTemplate(template.extend, processedPacks);
@@ -285,7 +281,7 @@ class HaqTemplateManager
 			var r = templates.get(fullTag);
 			if (r == null)
 			{
-				r = new HaqTemplate(log, classPaths, fullTag, basePage, staticUrlPrefix, substitutes);
+				r = new HaqTemplate(classPaths, fullTag, basePage, staticUrlPrefix, substitutes);
 				templates.set(fullTag, r);
 			}
 			return r;

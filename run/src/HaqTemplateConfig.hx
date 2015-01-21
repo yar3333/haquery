@@ -1,5 +1,3 @@
-package ;
-
 import htmlparser.HtmlDocument;
 import haquery.common.HaqTemplateExceptions;
 import haquery.server.HaqTemplateTools;

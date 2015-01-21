@@ -1,5 +1,3 @@
-package ;
-
 import hant.Log;
 import htmlparser.HtmlDocument;
 import haxe.Serializer;
@@ -29,11 +27,11 @@ class HaqTemplate extends haquery.base.HaqTemplate
 	public var imports(default, null) : Array<{ component:String, asTag:String }>;
 	public var requires(default, null) : Array<String>;
 	
-	public function new(log:Log, classPaths:Array<String>, fullTag:String, basePage:String, staticUrlPrefix:String, substitutes:Array<{ from:EReg, to:String }>)
+	public function new(classPaths:Array<String>, fullTag:String, basePage:String, staticUrlPrefix:String, substitutes:Array<{ from:EReg, to:String }>)
 	{
 		super(fullTag);
 
-		var parser = new HaqTemplateParser(log, classPaths, fullTag, [], basePage, staticUrlPrefix, substitutes);
+		var parser = new HaqTemplateParser(classPaths, fullTag, [], basePage, staticUrlPrefix, substitutes);
 		
 		var docAndCss = parser.getDocAndCss();
 		doc = docAndCss.doc;

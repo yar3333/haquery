@@ -1,5 +1,3 @@
-package ;
-
 import neko.Lib;
 import haxe.zip.Reader;
 import haxe.io.Path;
@@ -12,14 +10,10 @@ using stdlib.StringTools;
 
 class Setup 
 {
-	var log : Log;
-    var fs : FileSystemTools;
 	var exeDir : String;
     
-	public function new(log:Log, fs:FileSystemTools, exeDir:String)
+	public function new(exeDir:String)
 	{
-		this.log = log;
-		this.fs = fs;
 		this.exeDir = PathTools.normalize(exeDir) + "/";
 	}
 	
@@ -38,7 +32,7 @@ class Setup
     
     function installFlashDevelopTemplates()
     {
-        log.start('Install FlashDevelop templates');
+        Log.start('Install FlashDevelop templates');
         
         var srcPath = exeDir + "flashdevelop.zip";
         var userLocalPath = Sys.getEnv('LOCALAPPDATA') != null 
@@ -49,17 +43,17 @@ class Setup
 		if (FileSystem.exists(flashDevelopUserDataPath))
 		{
 			unzip(srcPath, flashDevelopUserDataPath, false);
-			log.finishOk();
+			Log.finishSuccess();
 		}
 		else
 		{
 			try
 			{
-				log.finishFail("User folder for FlashDevelop templates not found. Before install FlashDevelop templates, ensure FlashDevelop installed and runned at least once.");
+				Log.finishFail("User folder for FlashDevelop templates not found. Before install FlashDevelop templates, ensure FlashDevelop installed and runned at least once.");
 			}
 			catch (e:String)
 			{
-				log.trace(e);
+				Log.echo(e);
 			}
 		}
     }
@@ -76,11 +70,11 @@ class Setup
 		{
 			if (!file.fileName.endsWith("/"))
 			{
-				log.start(file.fileName);
+				Log.start(file.fileName);
 				
 				var destFilePath = targetPath + '/' + file.fileName;
 				
-				fs.createDirectory(Path.directory(destFilePath));
+				FileSystemTools.createDirectory(Path.directory(destFilePath), false);
 				
 				if (isMakeBackup && FileSystem.exists(destFilePath))
 				{
@@ -95,7 +89,7 @@ class Setup
 				fout.write(Reader.unzip(file));
 				fout.close();
 				
-				log.finishOk();
+				Log.finishSuccess();
 			}
 		}
 	}
