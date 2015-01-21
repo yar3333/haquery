@@ -1,5 +1,3 @@
-package ;
-
 import hant.Haxelib;
 import hant.Log;
 import hant.FileSystemTools;
@@ -14,8 +12,6 @@ using stdlib.StringTools;
 
 class Publisher 
 {
-	var log : Log;
-    var fs : FileSystemTools;
 	var platform : String;
 	var exeDir : String;
 	
@@ -24,10 +20,8 @@ class Publisher
 	 */
 	var files : Map<String,String>;
 	
-	public function new(log:Log, fs:FileSystemTools, platform:String)
+	public function new(platform:String)
 	{
-		this.log = log;
-		this.fs = fs;
 		this.platform = platform;
 		this.files = new Map<String,String>();
 	}
@@ -166,10 +160,7 @@ class Publisher
 			var dest = destDir + "/" + destLocal;
 			if (!FileSystem.exists(dest) || FileSystem.stat(src).mtime.getTime() > FileSystem.stat(dest).mtime.getTime())
 			{
-				fs.createDirectory(Path.directory(dest));
-				log.start("Copy " + src + " => " + dest);
-				fs.copyFile(src, dest);
-				log.finishOk();
+				FileSystemTools.copyFile(src, dest);
 			}
 		}
 	}

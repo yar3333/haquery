@@ -1,5 +1,3 @@
-package ;
-
 import hant.Log;
 import haquery.common.HaqDefines;
 import haquery.common.HaqTemplateExceptions;
@@ -19,7 +17,6 @@ class HaqTemplateParser
 	
 	static var configsCache = new Map<String, HtmlDocument>();
 	
-	var log : Log;
 	var classPaths : Array<String>;
 	var fullTag : String;
 	var childFullTags : Array<String>;
@@ -29,14 +26,13 @@ class HaqTemplateParser
 	
 	var config : HaqTemplateConfig;
 	
-	public function new(log:Log, classPaths:Array<String>, fullTag:String, childFullTags:Array<String>, basePage:String, staticUrlPrefix:String, substitutes:Array<{ from:EReg, to:String }>)
+	public function new(classPaths:Array<String>, fullTag:String, childFullTags:Array<String>, basePage:String, staticUrlPrefix:String, substitutes:Array<{ from:EReg, to:String }>)
 	{
 		if (Lambda.has(childFullTags, fullTag))
 		{
 			throw new HaqTemplateRecursiveExtendsException(childFullTags.join(" - ") + " - " + fullTag);
 		}
 		
-		this.log = log;
 		this.classPaths = classPaths;
 		this.fullTag = fullTag;
 		this.childFullTags = childFullTags;
@@ -58,7 +54,7 @@ class HaqTemplateParser
 		if (config.extend == "") return null; 
 		try 
 		{
-			return new HaqTemplateParser(log, classPaths, config.extend, childFullTags.concat([fullTag]), basePage, staticUrlPrefix, substitutes);
+			return new HaqTemplateParser(classPaths, config.extend, childFullTags.concat([fullTag]), basePage, staticUrlPrefix, substitutes);
 		}
 		catch (e:HaqTemplateNotFoundException)
 		{
