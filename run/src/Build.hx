@@ -319,8 +319,7 @@ class Build
 	{
 		if (!FileSystem.exists(file) || File.getContent(file) != content)
 		{
-			var dir = Path.directory(file);
-			if (dir != "" && !FileSystem.exists(dir)) FileSystem.createDirectory(dir);
+			FileSystemTools.createDirectory(Path.directory(file), false );
 			File.saveContent(file, content);
 		}
 	}

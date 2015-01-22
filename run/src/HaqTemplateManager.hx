@@ -189,7 +189,7 @@ class HaqTemplateManager
 		var i = classPaths.length - 1;
 		while (i >= 0)
 		{
-			var fullPath = classPaths[i] + path;
+			var fullPath = Path.join([ classPaths[i], path ]);
 			if (FileSystem.exists(fullPath))
 			{
 				return fullPath;

@@ -135,6 +135,7 @@ class Main
 					project.outputPath = options.get("output");
 					project.additionalCompilerOptions = project.additionalCompilerOptions.concat(additionalCompilerOptions);
 					if (options.get("platform") != "") project.platform = options.get("platform");
+					if (project.mainClass == "") project.mainClass = "Main";
 				}
 				else
 				{
