@@ -61,16 +61,6 @@ class Main
 					Log.echo("ERROR: recursive extend detected [ " + e.toString() + " ].");
 					fail();
 				}
-				catch (e:Exception)
-				{
-					Log.echo(e.message);
-					fail();
-				}
-				catch (e:Dynamic)
-				{
-					Log.echo(Exception.string(e));
-					fail();
-				}
 			}
 			else
 			{

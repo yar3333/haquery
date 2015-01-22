@@ -81,6 +81,7 @@ class Build
 		catch (e:Dynamic)
 		{
 			Log.finishFail(e);
+			Exception.rethrow(e);
 		}
     }
     
@@ -181,6 +182,7 @@ class Build
 	{
 		Log.start("Generate source code files");
 		var params = project.getBuildParams(null, null, [ "haqueryGenCode", "server" ]);
+		params.push("--no-output");
 		var exitCode = HaxeCompiler.run(params, port);
 		if (exitCode == 0) Log.finishSuccess();
 		else               { Log.finishFail(); new CompilationFailException("Server compilation errors."); }
