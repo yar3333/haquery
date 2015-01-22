@@ -2,6 +2,7 @@ import hant.Log;
 import haquery.common.HaqComponentTools;
 import haquery.common.HaqDefines;
 import haquery.common.HaqTemplateExceptions;
+import haxe.io.Path;
 import stdlib.Exception;
 import stdlib.FileSystem;
 import htmlparser.HtmlNodeElement;
@@ -62,9 +63,8 @@ class HaqTemplateManager
 		var i = classPaths.length - 1;
 		while (i >= 0)
 		{
-			var path = classPaths[i] + localPath;
-			var pathWithEndSlash = path + "/";
-			if (!ignorePages.exists(function(s) return pathWithEndSlash.startsWith(s)))
+			var path = Path.join([ classPaths[i], localPath ]);
+			if (!ignorePages.exists(function(s) return (path + "/").startsWith(s)))
 			{
 				if (FileSystem.exists(path) && FileSystem.isDirectory(path))
 				{
