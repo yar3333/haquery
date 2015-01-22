@@ -142,14 +142,14 @@ class Main
 				var project = FlashDevelopProject.load(options.get("project"));
 				if (project != null)
 				{
-					project.binPath = options.get("output");
+					project.outputPath = options.get("output");
 					project.additionalCompilerOptions = project.additionalCompilerOptions.concat(additionalCompilerOptions);
 					if (options.get("platform") != "") project.platform = options.get("platform");
 				}
 				else
 				{
 					project = new FlashDevelopProject();
-					project.binPath = options.get("output");
+					project.outputPath = options.get("output");
 					project.platform = options.get("platform") != "" ? options.get("platform") : "neko";
 					project.additionalCompilerOptions = additionalCompilerOptions;
 					project.mainClass = "Main";

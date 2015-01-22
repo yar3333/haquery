@@ -66,12 +66,12 @@ class Build
 			
 			var publisher = new Publisher(project.platform);
 			
-			Log.start("Publish to '" + project.binPath + "'");
+			Log.start("Publish to '" + project.outputPath + "'");
 				for (path in project.allClassPaths)
 				{
 					publisher.prepare(path, manager.fullTags, project.allClassPaths.concat(Haxelib.getPaths(["jquery"]).array()));
 				}
-				publisher.publish(project.binPath);
+				publisher.publish(project.outputPath);
 			Log.finishSuccess();
 			
 			loadLibFolderFileTimes();
@@ -110,7 +110,7 @@ class Build
 	
 	function buildClient()
     {
-		var clientPath = project.binPath + "/haquery/client";
+		var clientPath = project.outputPath + "/haquery/client";
 		
 		Log.start("Build client");
         
@@ -155,7 +155,7 @@ class Build
 	{
 		Log.start("Build server");
         
-		var params = project.getBuildParams(null, project.binPath + (project.platform == "neko" ? "/index.n" : ""), [ "server" ]);
+		var params = project.getBuildParams(null, project.outputPath + (project.platform == "neko" ? "/index.n" : ""), [ "server" ]);
 		var exitCode = HaxeCompiler.run(params, port);
 		
 		if (exitCode == 0)
@@ -188,22 +188,22 @@ class Build
 	
 	function saveLibFolderFileTimes()
 	{
-		if (FileSystem.exists(project.binPath + "/lib"))
+		if (FileSystem.exists(project.outputPath + "/lib"))
 		{
-			Log.start("Save file times of the " + project.binPath + "/lib folder");
+			Log.start("Save file times of the " + project.outputPath + "/lib folder");
 			loadLibFolderFileTimes();
-			FileSystemTools.rename(project.binPath + "/lib", project.binPath + "/lib.old");
+			FileSystemTools.rename(project.outputPath + "/lib", project.outputPath + "/lib.old");
 			Log.finishSuccess();
 		}
 	}
 
 	function loadLibFolderFileTimes()
 	{
-		if (FileSystem.exists(project.binPath + "/lib.old"))
+		if (FileSystem.exists(project.outputPath + "/lib.old"))
 		{
 			Log.start("Load lib folder file times");
-			FileSystemTools.restoreFileTimes(project.binPath + "/lib.old", project.binPath + "/lib", ~/[.](?:php|js)/i);
-			FileSystemTools.deleteDirectory(project.binPath + "/lib.old");
+			FileSystemTools.restoreFileTimes(project.outputPath + "/lib.old", project.outputPath + "/lib", ~/[.](?:php|js)/i);
+			FileSystemTools.deleteDirectory(project.outputPath + "/lib.old");
 			Log.finishSuccess();
 		}
 	}
@@ -280,7 +280,7 @@ class Build
 	{
 		Log.start("Generate style file");
 		
-		var dir = project.binPath + "/haquery/client";
+		var dir = project.outputPath + "/haquery/client";
 		FileSystem.createDirectory(dir);
 		
 		var addedCssBlocks = [];
