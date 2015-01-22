@@ -149,6 +149,7 @@ class Build
 		else
 		{
 			Log.finishFail("Client compilation errors.");
+			throw new CompilationFailException("Client compilation errors.");
 		}
     }
 	
@@ -166,6 +167,7 @@ class Build
 		else
 		{
 			Log.finishFail("Server compilation errors.");
+			throw new CompilationFailException("Server compilation errors.");
 		}
 	}
 	
@@ -184,8 +186,15 @@ class Build
 		var params = project.getBuildParams(null, null, [ "haqueryGenCode", "server" ]);
 		params.push("--no-output");
 		var exitCode = HaxeCompiler.run(params, port);
-		if (exitCode == 0) Log.finishSuccess();
-		else               { Log.finishFail(); new CompilationFailException("Server compilation errors."); }
+		if (exitCode == 0)
+		{
+			Log.finishSuccess();
+		}
+		else
+		{
+			Log.finishFail();
+			throw new CompilationFailException("Server compilation errors.");
+		}
 	}
 	
 	function saveLibFolderFileTimes()
