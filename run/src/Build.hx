@@ -1,6 +1,6 @@
 import hant.FileSystemTools;
 import hant.FlashDevelopProject;
-import hant.Haxe;
+import hant.HaxeCompiler;
 import hant.Haxelib;
 import hant.Log;
 import hant.PathTools;
@@ -126,7 +126,7 @@ class Build
 		FileSystemTools.createDirectory(clientPath);
         
         var params = project.getBuildParams("js", clientPath + "/haquery.js", [ "noEmbedJS", "client" ]);
-		var exitCode = Haxe.run(params, port);
+		var exitCode = HaxeCompiler.run(params, port);
 		
 		if (FileSystem.exists(clientPath + "/haquery.js")
 		 && FileSystem.exists(clientPath + "/haquery.js.old"))
@@ -156,7 +156,7 @@ class Build
 		Log.start("Build server");
         
 		var params = project.getBuildParams(null, project.binPath + (project.platform == "neko" ? "/index.n" : ""), [ "server" ]);
-		var exitCode = Haxe.run(params, port);
+		var exitCode = HaxeCompiler.run(params, port);
 		
 		if (exitCode == 0)
 		{
@@ -181,7 +181,7 @@ class Build
 	{
 		Log.start("Generate source code files");
 		var params = project.getBuildParams(null, null, [ "haqueryGenCode", "server" ]);
-		var exitCode = Haxe.run(params, port);
+		var exitCode = HaxeCompiler.run(params, port);
 		if (exitCode == 0) Log.finishSuccess();
 		else               { Log.finishFail(); new CompilationFailException("Server compilation errors."); }
 	}
