@@ -1,3 +1,4 @@
+import haxe.io.Path;
 import hant.Log;
 import haquery.common.HaqDefines;
 import haquery.common.HaqTemplateExceptions;
@@ -8,7 +9,7 @@ import htmlparser.HtmlNodeText;
 import stdlib.Exception;
 import stdlib.FileSystem;
 import sys.io.File;
-using StringTools;
+using stdlib.StringTools;
 
 class HaqTemplateParser
 {
@@ -72,10 +73,10 @@ class HaqTemplateParser
 		var i = classPaths.length - 1;
 		while (i >= 0)
 		{
-			var fullPath = classPaths[i] + path;
+			var fullPath = Path.join([ classPaths[i], path ]);
 			if (FileSystem.exists(fullPath))
 			{
-				return !noSrcPrefix ? fullPath : fullPath.substr(classPaths[i].length);
+				return !noSrcPrefix ? fullPath : fullPath.substr(classPaths[i].length).ltrim("/\\");
 			}
 			i--;
 		}
