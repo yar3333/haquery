@@ -239,7 +239,7 @@ class HaqPage extends HaqComponent
 			{
 				systemStyles.push("haquery/client/haquery.css");
 			}
-			r = r.replace("{HAQUERY_CSS}", systemStyles.concat(registeredStyles).map(function(path) return getStyleLink(path)).join("\n") + "\n");
+			r = fillSystemHolder(r, "{HAQUERY_CSS}", systemStyles.concat(registeredStyles).map(function(path) return getStyleLink(path)));
 			
 			var systemScripts = [];
 			if (!disableSystemScriptsAndStylesRegistering)
@@ -247,7 +247,7 @@ class HaqPage extends HaqComponent
 				systemScripts.push("haquery/client/jquery.js");
 				systemScripts.push("haquery/client/haquery.js");
 			}
-			r = r.replace("{HAQUERY_JS}", systemScripts.concat(registeredScripts).map(function(path) return getScriptLink(path)).join("\n") + "\n");
+			r = fillSystemHolder(r, "{HAQUERY_JS}", systemScripts.concat(registeredScripts).map(function(path) return getScriptLink(path)));
 			
 			var initBlock = 
 				  "\n<script>\n"
@@ -274,63 +274,25 @@ class HaqPage extends HaqComponent
 	}
 	
 	#if !fullCompletion @:noCompletion #end
-    function insertStyles(links:Array<String>)
-    {
-        var text = Lambda.map(links, function(path) return getStyleLink(path)).join("\n");
-        var heads = doc.find(">html>head");
-        if (heads.length > 0)
-        {
-            var head : HtmlNodeElement = heads[0];
-            var child : HtmlNodeElement = null;
-            if (head.children.length > 0)
-            {
-                child = head.children[0];
-                while (child != null && !(child.name == "link" && (child.getAttribute("rel") == "stylesheet" || child.getAttribute("type") == "text/css")))
-                {
-                    child = child.getNextSiblingElement();
-                }
-            }
-            head.addChild(new HtmlNodeText(text + "\n"), child);
-        }
-        else
-        {
-            doc.addChild(new HtmlNodeText(text + "\n"), doc.nodes.length > 0 ? doc.nodes[0] : null);
-        }
-    }
-    
-	#if !fullCompletion @:noCompletion #end
-    function insertScripts(links:Array<String>)
-    {
-        var text = Lambda.map(links, function(path) return getScriptLink(path)).join("\n");
-        var heads = doc.find(">html>head");
-        if (heads.length > 0)
-        {
-            var head : HtmlNodeElement = heads[0];
-            var child : HtmlNodeElement = null;
-            if (head.children.length > 0)
-            {
-                child = head.children[0];
-                while (child != null && child.name != "script")
-                {
-                    child = child.getNextSiblingElement();
-                }
-            }
-            head.addChild(new HtmlNodeText(text + "\n"), child);
-        }
-        else
-        {
-            var child : HtmlNodeElement = null;
-            if (doc.children.length > 0)
-            {
-                child = doc.children[0];
-                while (child != null && child.name == "link"  && (child.getAttribute("rel") == "stylesheet" || child.getAttribute("type") == "text/css"))
-                {
-                    child = child.getNextSiblingElement();
-                }
-            }
-            doc.addChild(new HtmlNodeText(text + "\n"), child);
-        }
-    }
+	function fillSystemHolder(text:String, holder:String, by:Array<String>) : String
+	{
+		if (by.length == 0) return text.replace(holder, "");
+		
+		var n = text.indexOf(holder);
+		if (n < 0) return text;
+		
+		var space = "";
+		var i = n - 1;
+		while (i >= 0)
+		{
+			var c = text.charAt(i);
+			if (c != " " && c != "\t") break;
+			space = c + space;
+			i--;
+		}
+		
+		return text.substring(0, n) + by.join("\n" + space) + "\n" + space + text.substring(n + holder.length);
+	}
     
 	#if !fullCompletion @:noCompletion #end
     function getScriptLink(url:String) : String
