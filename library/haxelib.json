@@ -4,8 +4,8 @@
   "tags": ["js","php","neko","web","framework"],
   "description": "Web framework with php/neko and js target.",
   "contributors": ["yar3333"],
-  "releasenote": "Minor bugfixes & improvements.",
-  "version": "6.3.2",
+  "releasenote": "Beauty embedding system code to html & remove unused methods. Changes related to haxe.io.Path.join() bug (now used hant.Path.join() instead).",
+  "version": "6.3.3",
   "url": "http://haquery.com/",
   "dependencies": {"stdlib":"","HtmlParser":"","jquery":""}
 }
