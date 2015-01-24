@@ -1,4 +1,4 @@
-import haxe.io.Path;
+import hant.Path;
 import hant.Log;
 import haquery.common.HaqDefines;
 import haquery.common.HaqTemplateExceptions;
