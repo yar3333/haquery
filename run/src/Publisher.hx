@@ -1,11 +1,10 @@
 import hant.Haxelib;
 import hant.Log;
 import hant.FileSystemTools;
-import hant.PathTools;
+import hant.Path;
 import hant.Process;
 import stdlib.FileSystem;
 import sys.io.File;
-import haxe.io.Path;
 import htmlparser.HtmlDocument;
 import htmlparser.HtmlNodeElement;
 using stdlib.StringTools;
@@ -28,8 +27,8 @@ class Publisher
 	
 	public function prepare(src:String, fullTags:Array<String>, allClassPaths:Array<String>) : Void
 	{
-		src = PathTools.normalize(src);
-		allClassPaths = allClassPaths.map(PathTools.normalize);
+		src = Path.normalize(src);
+		allClassPaths = allClassPaths.map(Path.normalize);
 		
 		if (fullTags != null)
 		{
@@ -90,8 +89,8 @@ class Publisher
 	
 	function prepareComponents(src:String, dest:String, pack:String, fullTags:Array<String>) : Void
 	{
-		src = PathTools.normalize(src);
-		dest = PathTools.normalize(dest);
+		src = Path.normalize(src);
+		dest = Path.normalize(dest);
 		
 		if (FileSystem.exists(src) && FileSystem.isDirectory(src))
 		{
@@ -152,7 +151,7 @@ class Publisher
 	
 	public function publish(destDir:String)
 	{
-		destDir = PathTools.normalize(destDir);
+		destDir = Path.normalize(destDir);
 		
 		for (destLocal in files.keys())
 		{

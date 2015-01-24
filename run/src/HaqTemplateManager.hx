@@ -1,8 +1,8 @@
 import hant.Log;
+import hant.Path;
 import haquery.common.HaqComponentTools;
 import haquery.common.HaqDefines;
 import haquery.common.HaqTemplateExceptions;
-import haxe.io.Path;
 import stdlib.Exception;
 import stdlib.FileSystem;
 import htmlparser.HtmlNodeElement;

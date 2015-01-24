@@ -1,11 +1,10 @@
 import neko.Lib;
 import haxe.zip.Reader;
-import haxe.io.Path;
 import sys.io.File;
 import sys.FileSystem;
 import hant.Log;
 import hant.FileSystemTools;
-import hant.PathTools;
+import hant.Path;
 using stdlib.StringTools;
 
 class Setup 
@@ -14,7 +13,7 @@ class Setup
     
 	public function new(exeDir:String)
 	{
-		this.exeDir = PathTools.normalize(exeDir) + "/";
+		this.exeDir = Path.normalize(exeDir) + "/";
 	}
 	
 	public function install()

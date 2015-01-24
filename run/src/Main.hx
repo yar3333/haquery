@@ -1,13 +1,11 @@
 import hant.CmdOptions;
 import hant.FlashDevelopProject;
-import hant.PathTools;
-import hant.FileSystemTools;
-import hant.Process;
-import stdlib.Exception;
-import neko.Lib;
 import hant.Log;
-import haquery.server.HaqConfig;
+import hant.Path;
+import hant.Process;
 import haquery.common.HaqTemplateExceptions;
+import haquery.server.HaqConfig;
+import neko.Lib;
 using StringTools;
 
 typedef Command =
@@ -22,7 +20,7 @@ class Main
 {
 	static function main()
 	{
-		var exeDir = PathTools.normalize(Sys.getCwd());
+		var exeDir = Path.normalize(Sys.getCwd());
         
 		var args = Sys.args();
 		if (args.length > 0)
@@ -172,7 +170,7 @@ class Main
 				options.parse(args);
 				
 				var project = FlashDevelopProject.load(options.get("hxproj"));
-				var srcPath = PathTools.normalize(options.get("srcPath") != "" ? options.get("srcPath") : (project != null && project.classPaths.length > 0 ? project.classPaths[project.classPaths.length - 1] : "src"));
+				var srcPath = Path.normalize(options.get("srcPath") != "" ? options.get("srcPath") : (project != null && project.classPaths.length > 0 ? project.classPaths[project.classPaths.length - 1] : "src"));
 				var databaseConnectionString = options.get("databaseConnectionString") != "" 
 					? options.get("databaseConnectionString") 
 					: HaqConfig.load(srcPath + "/config.xml").customs.get("databaseConnectionString");
