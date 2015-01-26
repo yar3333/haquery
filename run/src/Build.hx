@@ -12,11 +12,6 @@ import sys.io.File;
 using stdlib.StringTools;
 using Lambda;
 
-class CompilationFailException extends Exception
-{
-	override public function toString() return message;
-}
-
 class Build 
 {
 	var project : FlashDevelopProject;
@@ -79,7 +74,7 @@ class Build
 		}
 		catch (e:Dynamic)
 		{
-			Log.finishFail(e);
+			Log.finishFail();
 			Exception.rethrow(e);
 		}
     }
@@ -147,8 +142,8 @@ class Build
 		}
 		else
 		{
-			Log.finishFail("Client compilation errors.");
-			throw new CompilationFailException("Client compilation errors.");
+			Log.finishFail();
+			throw new CompilationFailException();
 		}
     }
 	
@@ -165,8 +160,8 @@ class Build
 		}
 		else
 		{
-			Log.finishFail("Server compilation errors.");
-			throw new CompilationFailException("Server compilation errors.");
+			Log.finishFail();
+			throw new CompilationFailException();
 		}
 	}
 	
@@ -192,7 +187,7 @@ class Build
 		else
 		{
 			Log.finishFail();
-			throw new CompilationFailException("Server compilation errors.");
+			throw new CompilationFailException();
 		}
 	}
 	

@@ -59,6 +59,10 @@ class Main
 					Log.echo("ERROR: recursive extend detected [ " + e.toString() + " ].");
 					fail();
 				}
+				catch (e:CompilationFailException)
+				{
+					fail();
+				}
 			}
 			else
 			{
