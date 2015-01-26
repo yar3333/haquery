@@ -63,6 +63,11 @@ class Main
 				{
 					fail();
 				}
+				catch (e:AmbiguousProjectFilesException)
+				{
+					Log.echo("ERROR: " + e.message);
+					fail();
+				}
 			}
 			else
 			{
