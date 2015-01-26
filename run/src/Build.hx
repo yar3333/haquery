@@ -27,56 +27,48 @@ class Build
     {
         Log.start("Build");
         
-		try
-		{
-			Log.start("Collect pages and components data");
-			var manager = new HaqTemplateManager
-			(
-				project.allClassPaths, 
-				basePage, 
-				staticUrlPrefix, 
-				parseSubstitutes(htmlSubstitutes), 
-				onlyPagesPackage,
-				ignorePages.map(function(s) return Path.addTrailingSlash(s.replace("\\", "/")))
-			);
-			Log.finishSuccess();
-			
-			saveContentToFileIfNeed("gen/haquery/common/Generated.hx", "package haquery.common;\n\nclass Generated\n{\n\tpublic static inline var staticUrlPrefix = \"" + staticUrlPrefix + "\";\n}");
-			saveContentToFileIfNeed("gen/haquery/server/BasePage.hx", "package haquery.server;\n\ntypedef BasePage = " + (basePage != "" && project.findFile(basePage.replace(".", "/") + "/Server.hx") != null ? basePage + ".Server" : "haquery.server.HaqPage") + ";\n");
-			saveContentToFileIfNeed("gen/haquery/client/BasePage.hx", "package haquery.client;\n\ntypedef BasePage = " + (basePage != "" && project.findFile(basePage.replace(".", "/") + "/Client.hx") != null  ? basePage + ".Client" : "haquery.client.HaqPage") + ";\n");
-			
-			genTrm(manager);
-			generateConfigClasses(manager);
-			generateImports(manager);
-			
-			genCodeFromServer();
-			
-			try saveLibFolderFileTimes() catch (e:Dynamic) {}
-			
-			buildClient();
-			buildServer();
-			
-			generateComponentsCssFile(manager);
-			
-			var publisher = new Publisher(project.platform);
-			
-			Log.start("Publish to '" + project.outputPath + "'");
-				for (path in project.allClassPaths)
-				{
-					publisher.prepare(path, manager.fullTags, project.allClassPaths.concat(Haxelib.getPaths(["jquery"]).array()));
-				}
-				publisher.publish(project.outputPath);
-			Log.finishSuccess();
-			
-			loadLibFolderFileTimes();
-			
-			Log.finishSuccess();
-		}
-		catch (e:Dynamic)
-		{
-			Log.finishFail();
-			Exception.rethrow(e);
-		}
+		Log.start("Collect pages and components data");
+		var manager = new HaqTemplateManager
+		(
+			project.allClassPaths, 
+			basePage, 
+			staticUrlPrefix, 
+			parseSubstitutes(htmlSubstitutes), 
+			onlyPagesPackage,
+			ignorePages.map(function(s) return Path.addTrailingSlash(s.replace("\\", "/")))
+		);
+		Log.finishSuccess();
+		
+		saveContentToFileIfNeed("gen/haquery/common/Generated.hx", "package haquery.common;\n\nclass Generated\n{\n\tpublic static inline var staticUrlPrefix = \"" + staticUrlPrefix + "\";\n}");
+		saveContentToFileIfNeed("gen/haquery/server/BasePage.hx", "package haquery.server;\n\ntypedef BasePage = " + (basePage != "" && project.findFile(basePage.replace(".", "/") + "/Server.hx") != null ? basePage + ".Server" : "haquery.server.HaqPage") + ";\n");
+		saveContentToFileIfNeed("gen/haquery/client/BasePage.hx", "package haquery.client;\n\ntypedef BasePage = " + (basePage != "" && project.findFile(basePage.replace(".", "/") + "/Client.hx") != null  ? basePage + ".Client" : "haquery.client.HaqPage") + ";\n");
+		
+		genTrm(manager);
+		generateConfigClasses(manager);
+		generateImports(manager);
+		
+		genCodeFromServer();
+		
+		try saveLibFolderFileTimes() catch (e:Dynamic) {}
+		
+		buildClient();
+		buildServer();
+		
+		generateComponentsCssFile(manager);
+		
+		var publisher = new Publisher(project.platform);
+		
+		Log.start("Publish to '" + project.outputPath + "'");
+			for (path in project.allClassPaths)
+			{
+				publisher.prepare(path, manager.fullTags, project.allClassPaths.concat(Haxelib.getPaths(["jquery"]).array()));
+			}
+			publisher.publish(project.outputPath);
+		Log.finishSuccess();
+		
+		loadLibFolderFileTimes();
+		
+		Log.finishSuccess();
     }
     
 	function generateImports(manager:HaqTemplateManager)
@@ -121,7 +113,7 @@ class Build
 		FileSystemTools.createDirectory(clientPath);
         
         var params = project.getBuildParams("js", clientPath + "/haquery.js", [ "noEmbedJS", "client" ]);
-		var exitCode = HaxeCompiler.run(params, port);
+		var exitCode = HaxeCompiler.run(params, port, true);
 		
 		if (FileSystem.exists(clientPath + "/haquery.js")
 		 && FileSystem.exists(clientPath + "/haquery.js.old"))
@@ -142,7 +134,6 @@ class Build
 		}
 		else
 		{
-			Log.finishFail();
 			throw new CompilationFailException();
 		}
     }
@@ -160,7 +151,6 @@ class Build
 		}
 		else
 		{
-			Log.finishFail();
 			throw new CompilationFailException();
 		}
 	}
@@ -186,7 +176,6 @@ class Build
 		}
 		else
 		{
-			Log.finishFail();
 			throw new CompilationFailException();
 		}
 	}
