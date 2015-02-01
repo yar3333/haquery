@@ -9,8 +9,6 @@ import htmlparser.HtmlNodeElement;
 using stdlib.StringTools;
 using Lambda;
 
-class PathNotFoundException extends Exception {}
-
 class HaqTemplateManager
 {
 	var classPaths : Array<String>;
@@ -98,7 +96,7 @@ class HaqTemplateManager
 		
 		if (!pathWasFound)
 		{
-			throw new PathNotFoundException("Components path '" + localPath + "' not found.");
+			throw new PathNotFoundException("Components path '" + localPath + "' is not found.");
 		}
 	}
 	

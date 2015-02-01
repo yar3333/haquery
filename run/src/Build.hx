@@ -30,10 +30,10 @@ class Build
 		Log.start("Collect pages and components data");
 		var manager = new HaqTemplateManager
 		(
-			project.allClassPaths, 
-			basePage, 
-			staticUrlPrefix, 
-			parseSubstitutes(htmlSubstitutes), 
+			project.allClassPaths,
+			basePage,
+			staticUrlPrefix,
+			parseSubstitutes(htmlSubstitutes),
 			onlyPagesPackage,
 			ignorePages.map(function(s) return Path.addTrailingSlash(s.replace("\\", "/")))
 		);
