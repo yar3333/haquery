@@ -151,16 +151,46 @@ class Main
 					project.platform = options.get("platform") != "" ? options.get("platform") : "neko";
 					project.additionalCompilerOptions = additionalCompilerOptions;
 					project.mainClass = "Main";
+					
+					var i = 0; while (i < additionalCompilerOptions.length - 1)
+					{
+						if (additionalCompilerOptions[i] == "-cp")
+						{
+							project.classPaths.push(additionalCompilerOptions[i + 1]);
+							additionalCompilerOptions.splice(i, 2);
+						}
+						else
+						if (additionalCompilerOptions[i] == "-lib")
+						{
+							project.libs.push(additionalCompilerOptions[i + 1]);
+							additionalCompilerOptions.splice(i, 2);
+						}
+						else
+						{
+							i++;
+						}
+					}
 				}
 				
-				new Build(project, options.get("port")).build
-				(
-					  options.get("basePage")
-					, options.get("staticUrlPrefix")
-					, options.get("htmlSubstitutes")
-					, options.get("onlyPagesPackage")
-					, options.get("ignorePages")
-				);
+				if (project.libs.indexOf("HaQuery") < 0) project.libs.unshift("HaQuery");
+				if (project.classPaths.indexOf("gen") < 0) project.classPaths.unshift("gen");
+				
+				try
+				{
+					new Build(project, options.get("port")).build
+					(
+						  options.get("basePage")
+						, options.get("staticUrlPrefix")
+						, options.get("htmlSubstitutes")
+						, options.get("onlyPagesPackage")
+						, options.get("ignorePages")
+					);
+				}
+				catch (e:PathNotFoundException)
+				{
+					Log.echo(e.message);
+					fail();
+				}
 			};
 			r.push( { name:name, description:description, options:options, run:run } );
 		}
