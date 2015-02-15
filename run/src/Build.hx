@@ -61,7 +61,7 @@ class Build
 		Log.start("Publish to '" + project.outputPath + "'");
 			for (path in project.allClassPaths)
 			{
-				publisher.prepare(path, manager.fullTags, project.allClassPaths.concat(Haxelib.getPaths(["jquery"]).array()));
+				publisher.prepare(path, manager.fullTags, project.allClassPaths.concat([ Haxelib.getPath("jquery") ]));
 			}
 			publisher.publish(project.outputPath);
 		Log.finishSuccess();
