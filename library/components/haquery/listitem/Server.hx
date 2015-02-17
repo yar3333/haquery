@@ -11,15 +11,15 @@ class Server extends Base
 	{
         var html : String;
 		
-		Lib.profiler.begin("listitem.applyHtmlParams");
+		#if profiler Profiler.begin("listitem.applyHtmlParams"); #end
 		html = Tools.applyHtmlParams(innerNode.innerHTML, params);
-		Lib.profiler.end();
+		#if profiler Profiler.end(); #end
 		
 		var htmlDoc : HtmlDocument;
 		
-		Lib.profiler.begin("listitem.newHtmlDocument");
+		#if profiler Profiler.begin("listitem.newHtmlDocument"); #end
 		htmlDoc = new HtmlDocument(html);
-		Lib.profiler.end();
+		#if profiler Profiler.end(); #end
 		
 		super.construct(fullTag, parent, id, htmlDoc, params, null, isInnerComponent);
 	}
