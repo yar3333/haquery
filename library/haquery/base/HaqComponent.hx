@@ -143,13 +143,13 @@ class HaqComponent
 			if (page.config.logSystemCalls) trace("HAQUERY " + f + " [" + fullID + "/" + fullTag + "]");
 			var start = 0.0; if (page.config.logSlowSystemCalls >= 0) start = Sys.time();
 			
-			haquery.server.Lib.profiler.begin(f, fullTag);
+			#if profiler Profiler.begin(f, fullTag); #end
 			#end
 			
 			Reflect.callMethod(this, Reflect.field(this, f), []);
 			
 			#if server
-			haquery.server.Lib.profiler.end();
+			#if profiler Profiler.end(); #end
 			
 			if (page.config.logSlowSystemCalls >= 0 && Sys.time() - start >= page.config.logSlowSystemCalls)
 			{

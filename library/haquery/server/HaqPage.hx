@@ -102,9 +102,9 @@ class HaqPage extends HaqComponent
 	{
 		var content : String;
 		
-		Lib.profiler.begin("generateResponseOnRender");
+		#if profiler Profiler.begin("generateResponseOnRender"); #end
 		content = renderCached();
-		Lib.profiler.end();
+		#if profiler Profiler.end(); #end
 		
 		return {
 			responseHeaders: responseHeaders, 
@@ -228,7 +228,7 @@ class HaqPage extends HaqComponent
 	#if !fullCompletion @:noCompletion #end
 	function fillSystemHolders(r:String) : String
 	{
-		Lib.profiler.begin("fillSystemHolders");
+		#if profiler Profiler.begin("fillSystemHolders"); #end
 		
 		if (!disableSystemHtmlInserts)
 		{
@@ -268,7 +268,7 @@ class HaqPage extends HaqComponent
 			r = r.replace("{HAQUERY_INIT}", "");
 		}
 		
-		Lib.profiler.end();
+		#if profiler Profiler.end(); #end
 		
 		return r;
 	}

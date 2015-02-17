@@ -71,7 +71,7 @@ class HaqComponent extends haquery.base.HaqComponent
    	#if !fullCompletion @:noCompletion #end
 	function construct(fullTag:String, parent:HaqComponent, id:String, doc:HtmlNodeElement, params:Dynamic, innerNode:HtmlNodeElement, isInnerComponent:Bool) : Void
     {
-		Lib.profiler.begin("construct", fullTag);
+		#if profiler Profiler.begin("construct", fullTag); #end
 		
 		super.commonConstruct(fullTag, parent, id);
 		
@@ -82,20 +82,20 @@ class HaqComponent extends haquery.base.HaqComponent
 		
 		if (params != null)
 		{
-			Lib.profiler.begin("loadFieldValues");
+			#if profiler Profiler.begin("loadFieldValues"); #end
 			loadFieldValues(params);
-			Lib.profiler.end();
+			#if profiler Profiler.end(); #end
 		}
         
-		Lib.profiler.begin("createEvents");
+		#if profiler Profiler.begin("createEvents"); #end
 		createEvents();
-		Lib.profiler.end();
+		#if profiler Profiler.end(); #end
         
-		Lib.profiler.begin("createChildComponents");
+		#if profiler Profiler.begin("createChildComponents"); #end
 		createChildComponents();
-		Lib.profiler.end();
+		#if profiler Profiler.end(); #end
 		
-		Lib.profiler.end();
+		#if profiler Profiler.end(); #end
     }
 	
 	#if !fullCompletion @:noCompletion #end
@@ -181,11 +181,9 @@ class HaqComponent extends haquery.base.HaqComponent
 				return r;
 			}
 			
-			var html : String;  
-			Lib.profiler.measure("renderDirect", fullTag, function()
-			{
-				html = renderDirect();
-			});
+			#if profiler Profiler.begin("renderDirect", fullTag); #end
+			var html = renderDirect();
+			#if profiler Profiler.end(); #end
 			
 			var r : CachedObject = { html:html, components:components }
 			return r;

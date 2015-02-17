@@ -14,7 +14,6 @@ import haquery.server.HaqPage;
 import haquery.server.HaqCache;
 import stdlib.Std;
 import stdlib.Exception;
-import stdlib.Profiler;
 import stdlib.FileSystem;
 import haquery.common.HaqMessageListenerAnswer;
 import sys.io.File;
@@ -30,14 +29,6 @@ typedef Web = neko.Web;
 
 class Lib
 {
-    @:isVar public static var profiler(get, set) : Profiler;
-	static function get_profiler() : Profiler
-	{
-		if (profiler == null) profiler = new Profiler(0);
-		return profiler;
-	}
-	static function set_profiler(v) : Profiler return profiler = v;
-	
 	public static var manager : HaqTemplateManager;
 	public static var uploads(default, null) : HaqUploads;
 	
@@ -111,12 +102,12 @@ class Lib
 	
 	static function getResponse(request:HaqRequest, route:HaqRoute) : HaqResponse
 	{
-		profiler = new Profiler(request.config.profilingLevel);
-		
 		var response : HaqResponse = null;
 		
-		profiler.measure("getResponse", function()
+		#if profiler
+		Profiler.measure("getResponse", function()
 		{
+		#end
 			trace("HAQUERY START page = " + route.fullTag +  ", HTTP_HOST = " + request.host + ", clientIP = " + request.clientIP + ", pageID = " + route.pageID);
 			
 			var page = manager.createPage(route.fullTag, request);
@@ -145,8 +136,11 @@ class Lib
 			}
 			
 			page.dispose();
+		#if profiler
 		});
+		#end
 		
+		#if profiler
 		if (request.config.profilingLevel > 0)
 		{
 			var pageName = request.uri + (request.isPostback ? " - POSTBACK" : "");
@@ -154,14 +148,15 @@ class Lib
 			var profilerFolder = HaqDefines.folders.temp + "/profiler";
 			var profilerBaseFileName = profilerFolder + "/" + DateTools.format(Date.now(), "%Y-%m-%d-%H-%M-%S");
 			FileSystem.createDirectory(profilerFolder);
-			File.saveContent(profilerBaseFileName + ".summary.txt", pageName + "\n" + profiler.getGistogram(profiler.getSummaryResults(), request.config.profilingResultsWidth));
-			File.saveContent(profilerBaseFileName + ".nested.txt", pageName + "\n" + profiler.getGistogram(profiler.getNestedResults(), request.config.profilingResultsWidth));
+			File.saveContent(profilerBaseFileName + ".summary.txt", pageName + "\n" + Profiler.getGistogram(Profiler.getSummaryResults(), request.config.profilingResultsWidth));
+			File.saveContent(profilerBaseFileName + ".nested.txt", pageName + "\n" + Profiler.getGistogram(Profiler.getNestedResults(), request.config.profilingResultsWidth));
 			if (request.config.profilingLevel > 1)
 			{
-				File.saveContent(profilerBaseFileName + ".callstack.json", Json.stringify( { name:pageName, stack:profiler.getCallStack() } ));
-				File.saveContent(profilerBaseFileName + ".callstack-long.json", Json.stringify( { name:pageName, stack:profiler.getCallStack(10) } ));
+				File.saveContent(profilerBaseFileName + ".callstack.json", Json.stringify( { name:pageName, stack:Profiler.getCallStack() } ));
+				File.saveContent(profilerBaseFileName + ".callstack-long.json", Json.stringify( { name:pageName, stack:Profiler.getCallStack(10) } ));
 			}
 		}
+		#end
 		
 		return response;
 	}

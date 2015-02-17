@@ -90,9 +90,9 @@ class HaqTemplateManager
 	
 	public function createDocComponents(parent:HaqComponent, baseNode:HtmlNodeElement, isCustomRender:Bool) : Array<HaqComponent>
 	{
-		Lib.profiler.begin("createDocComponents");
+		#if profiler Profiler.begin("createDocComponents"); #end
 		var r =  createDocComponentsInner(parent, baseNode, isCustomRender);
-		Lib.profiler.end();
+		#if profiler Profiler.end(); #end
 		return r;
 	}
 	
