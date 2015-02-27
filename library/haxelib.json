@@ -4,8 +4,8 @@
   "tags": ["js","php","neko","web","framework"],
   "description": "Web framework with php/neko and js target.",
   "contributors": ["yar3333"],
-  "releasenote": "Profiler now is optional (just use \"profiler\" haxe library if you want to profile).",
-  "version": "6.4.0",
+  "releasenote": "toggleClass(): support local css class names.",
+  "version": "6.4.1",
   "url": "http://haquery.com/",
   "dependencies": {"stdlib":"","HtmlParser":"","jquery":""}
 }
