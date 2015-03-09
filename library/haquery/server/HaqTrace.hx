@@ -1,11 +1,9 @@
 package haquery.server;
 
-#if server
-
-import stdlib.FileSystem;
-import haxe.PosInfos;
 import haquery.common.HaqDefines;
+import haxe.PosInfos;
 import stdlib.Debug;
+import stdlib.FileSystem;
 import sys.io.File;
 using stdlib.StringTools;
 
@@ -93,5 +91,3 @@ class HaqTrace
         }
 	}
 }
-
-#end

@@ -1,7 +1,5 @@
 package haquery.client;
 
-#if client
-
 class HaqCookie
 {
 	public function new() {}
@@ -56,5 +54,3 @@ class HaqCookie
 		js.Cookie.remove(name, path, domain);
 	}
 }
-
-#end

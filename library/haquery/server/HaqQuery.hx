@@ -1,7 +1,5 @@
 package haquery.server;
 
-#if server
-
 import stdlib.Std;
 import htmlparser.HtmlNodeElement;
 import haquery.base.HaqCssGlobalizer;
@@ -458,5 +456,3 @@ class HaqQuery
 		return new HaqQuery(page, prefixID, cssGlobalizer, query + (selector.startsWith(">") ? "" : " ") + selector, r);
 	}
 }
-
-#end

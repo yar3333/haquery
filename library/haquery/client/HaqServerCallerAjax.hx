@@ -1,7 +1,5 @@
 package haquery.client;
 
-#if client
-
 import haquery.common.HaqMessageListenerAnswer;
 import haquery.common.HaqStorage;
 import stdlib.Serializer;
@@ -105,5 +103,3 @@ class HaqServerCallerAjax
 		return type.toUpperCase();
 	}
 }
-
-#end

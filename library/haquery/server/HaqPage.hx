@@ -1,20 +1,16 @@
 package haquery.server;
 
-#if server
-
 import haquery.common.Generated;
-import haquery.common.HaqStorage;
-import htmlparser.HtmlNodeElement;
-import htmlparser.HtmlNodeText;
-import haquery.common.HaqDefines;
 import haquery.common.HaqComponentTools;
+import haquery.common.HaqStorage;
 import haquery.server.HaqComponent;
 import haquery.server.HaqCookie;
-import stdlib.FileSystem;
-import stdlib.Exception;
-import haquery.server.Lib;
 import haxe.Json;
 import haxe.Serializer;
+import htmlparser.HtmlNodeElement;
+import htmlparser.HtmlNodeText;
+import stdlib.Exception;
+import stdlib.FileSystem;
 using stdlib.StringTools;
 using Lambda;
 
@@ -376,5 +372,3 @@ class HaqPage extends HaqComponent
 	 */  
 	function dispose() : Void {}
 }
-
-#end

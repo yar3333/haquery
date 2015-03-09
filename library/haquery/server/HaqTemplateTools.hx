@@ -1,7 +1,5 @@
 package haquery.server;
 
-#if server
-
 class HaqTemplateTools 
 {
 	public static function getPack(fullTag:String)
@@ -16,5 +14,3 @@ class HaqTemplateTools
 		return n >= 0 ? fullTag.substr(n + 1) : fullTag;
 	}
 }
-
-#end

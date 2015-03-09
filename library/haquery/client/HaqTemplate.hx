@@ -1,7 +1,5 @@
 package haquery.client;
 
-#if client
-
 class HaqTemplate extends haquery.base.HaqTemplate
 { 
 	public var clientClassName(default, null) : String;
@@ -17,5 +15,3 @@ class HaqTemplate extends haquery.base.HaqTemplate
 		serverHandlers = config.serverHandlers;
 	}
 }
-
-#end

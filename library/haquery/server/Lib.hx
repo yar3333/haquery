@@ -1,7 +1,5 @@
 package haquery.server;
 
-#if server
-
 import haquery.common.HaqStorage;
 import haxe.io.Path;
 import haxe.Json;
@@ -18,14 +16,6 @@ import stdlib.FileSystem;
 import haquery.common.HaqMessageListenerAnswer;
 import sys.io.File;
 using stdlib.StringTools;
-
-#if php
-private typedef NativeLib = php.Lib;
-typedef Web = php.Web;
-#elseif neko
-private typedef NativeLib = neko.Lib;
-typedef Web = neko.Web;
-#end
 
 class Lib
 {
@@ -85,7 +75,7 @@ class Lib
 					response.responseHeaders.send();
 					response.cookie.send();
 					
-					NativeLib.print(
+					Sys.print(
 						!request.isPostback
 						? response.content
 						: Serializer.run(HaqMessageListenerAnswer.CallSharedServerMethodAnswer(response.ajaxResponse, response.result), true)
@@ -214,5 +204,3 @@ class Lib
 		return cwd.replace("\\", "/").rtrim("/");
 	}
 }
-
-#end

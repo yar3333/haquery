@@ -1,7 +1,5 @@
 package haquery.client;
 
-#if client
-
 class HaqCssGlobalizer extends haquery.base.HaqCssGlobalizer
 {
 	public function fixJq(jq:js.JQuery) : js.JQuery
@@ -25,5 +23,3 @@ class HaqCssGlobalizer extends haquery.base.HaqCssGlobalizer
 		return jq;
 	}
 }
-
-#end

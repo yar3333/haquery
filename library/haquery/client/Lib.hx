@@ -1,7 +1,5 @@
 package haquery.client;
 
-#if client
-
 import stdlib.Exception;
 import stdlib.Debug;
 import haquery.common.Generated;
@@ -38,5 +36,3 @@ using stdlib.StringTools;
 		untyped __js__("if (typeof console !== 'undefined') console.log(s)");
     }
 }
-
-#end

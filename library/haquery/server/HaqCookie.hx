@@ -1,13 +1,5 @@
 package haquery.server;
 
-#if server
-
-#if php
-import php.Web;
-#elseif neko
-import neko.Web;
-#end
-
 class HaqCookie
 {
 	var cookies : Map<String,String>;
@@ -45,5 +37,3 @@ class HaqCookie
 		}
     }
 }
-
-#end

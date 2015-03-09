@@ -1,7 +1,5 @@
 package haquery.server;
 
-#if server
-
 import haquery.common.Generated;
 using stdlib.StringTools;
 
@@ -105,5 +103,3 @@ class HaqSystemHtml
 			.replace("{rawContent}", rawContent);
 	}
 }
-
-#end
