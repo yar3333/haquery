@@ -1,7 +1,5 @@
 package haquery.client;
 
-#if client
-
 import haquery.common.HaqStorage;
 import haxe.Unserializer;
 
@@ -33,5 +31,3 @@ import haxe.Unserializer;
 	
 	static function unserialize(s:String) : String return Unserializer.run(s);
 }
-
-#end

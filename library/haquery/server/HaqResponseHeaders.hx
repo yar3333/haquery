@@ -1,13 +1,5 @@
 package haquery.server;
 
-#if server
-
-#if php
-import php.Web;
-#elseif neko
-import neko.Web;
-#end
-
 class HaqResponseHeaders
 {
     var isPostback : Bool;
@@ -32,5 +24,3 @@ class HaqResponseHeaders
 		}
 	}
 }
-
-#end

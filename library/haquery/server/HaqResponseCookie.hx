@@ -1,13 +1,5 @@
 package haquery.server;
 
-#if server
-
-#if php
-import php.Web;
-#elseif neko
-import neko.Web;
-#end
-
 class HaqResponseCookie
 {
 	var cookies : Map<String,{ value:String, expire:Date, path:String, domain:String }>;
@@ -41,5 +33,3 @@ class HaqResponseCookie
 		cookies = new Map<String,{ value:String, expire:Date, path:String, domain:String }>();
 	}
 }
-
-#end

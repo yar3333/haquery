@@ -1,7 +1,5 @@
 package haquery.server;
 
-#if server
-
 import haquery.common.HaqTemplateExceptions;
 
 class HaqTemplateConfig
@@ -22,5 +20,3 @@ class HaqTemplateConfig
 		serializedDoc = Reflect.field(clas, "serializedDoc");
 	}
 }
-
-#end

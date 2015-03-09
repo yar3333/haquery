@@ -1,23 +1,12 @@
 package haquery.server;
 
-#if server
-
-import haquery.common.HaqDefines;
-import haquery.common.HaqUploadResult;
 import haquery.common.HaqUploadError;
+import haquery.common.HaqUploadResult;
 import haxe.io.Bytes;
 import haxe.Serializer;
 import haxe.Unserializer;
-import sys.io.File;
 import stdlib.FileSystem;
-
-#if php
-private typedef NativeLib = php.Lib;
-private typedef NativeWeb = php.Web;
-#elseif neko
-private typedef NativeLib = neko.Lib;
-private typedef NativeWeb = neko.Web;
-#end
+import sys.io.File;
 
 class HaqUploads 
 {
@@ -62,7 +51,7 @@ class HaqUploads
 		var lastFilePath : String = null;
 		var error : HaqUploadError = null;
 		
-		NativeWeb.parseMultipart(
+		Web.parseMultipart(
 			function(partName:String, fileName:String)
 			{
 				if (partName != lastPartName)
@@ -152,5 +141,3 @@ class HaqUploads
 		files.set(inputID, { fileID:fileID, name:uploadedFile.name, size:uploadedFile.size, error:uploadedFile.error });
 	}
 }
-
-#end

@@ -1,23 +1,13 @@
 package haquery.server;
 
-#if server
-
 import haquery.common.Generated;
 import haquery.common.HaqDefines;
 import haxe.Serializer;
+import stdlib.FileSystem;
+import stdlib.Std;
 import sys.io.File;
 import sys.io.FileSeek;
-import stdlib.Std;
-import stdlib.FileSystem;
 using stdlib.StringTools;
-
-#if php
-private typedef NativeLib = php.Lib;
-private typedef NativeWeb = php.Web;
-#elseif neko
-private typedef NativeLib = neko.Lib;
-private typedef NativeWeb = neko.Web;
-#end
 
 class HaqSystem 
 {
@@ -44,7 +34,7 @@ class HaqSystem
 				system.doUploadCommand();
 			
 			default:
-				NativeLib.println("Unknow system command '" + command + "'.");
+				Sys.println("Unknow system command '" + command + "'.");
 		}
 	}
 	
@@ -52,7 +42,7 @@ class HaqSystem
 	{
 		return config.secret != null 
 			&& config.secret != "" 
-			&& NativeWeb.getCookies().get("haquery_secret") == config.secret.urlEncode();
+			&& Web.getCookies().get("haquery_secret") == config.secret.urlEncode();
 	}
 	
 	function doStatusCommand()
@@ -86,7 +76,7 @@ class HaqSystem
 				.end;
 		}
 		
-		NativeLib.println(html);
+		Sys.println(html);
 	}
 	
 	function doStatusLogCommand()
@@ -109,17 +99,15 @@ class HaqSystem
 		{
 			html += "Access denided, please reload a page.";
 		}
-		NativeLib.println(html);
+		Sys.println(html);
 	}
 	
 	function doUploadCommand()
 	{
-		var uploadsDir = NativeWeb.getCwd().rtrim("/") + "/" + HaqDefines.folders.temp + "/uploads";
+		var uploadsDir = Web.getCwd().rtrim("/") + "/" + HaqDefines.folders.temp + "/uploads";
 		FileSystem.createDirectory(uploadsDir);
-		NativeWeb.setHeader("Content-Type", "text/plain; charset=utf-8");
+		Web.setHeader("Content-Type", "text/plain; charset=utf-8");
 		var files = Lib.uploads.upload();
-		NativeLib.println(Serializer.run(files));
+		Sys.println(Serializer.run(files));
 	}
 }
-
-#end

@@ -1,7 +1,5 @@
 package haquery.server;
 
-#if server
-
 class HaqRequest
 {
 	public var pageFullTag : String;
@@ -64,5 +62,3 @@ class HaqRequest
 		this.storage = storage;
 	}
 }
-
-#end

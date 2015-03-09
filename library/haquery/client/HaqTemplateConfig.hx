@@ -1,7 +1,5 @@
 package haquery.client;
 
-#if client
-
 import haquery.common.HaqTemplateExceptions;
 
 class HaqTemplateConfig
@@ -22,5 +20,3 @@ class HaqTemplateConfig
 		serverHandlers = getServerHandlers != null ? Reflect.callMethod(clas, getServerHandlers, []) : [];
 	}
 }
-
-#end

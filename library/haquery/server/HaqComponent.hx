@@ -1,7 +1,4 @@
 package haquery.server;
-import haxe.Unserializer;
-
-#if (server || macro)
 
 #if !macro
 
@@ -11,12 +8,10 @@ import stdlib.Std;
 import stdlib.Debug;
 import stdlib.FileSystem;
 import stdlib.Serializer;
-import htmlparser.HtmlDocument;
+import stdlib.Unserializer;
 import htmlparser.HtmlNodeElement;
 import htmlparser.HtmlNodeText;
 import haquery.common.HaqComponentTools;
-import haxe.PosInfos;
-import haquery.common.Generated;
 import haquery.base.HaqComponents;
 using stdlib.StringTools;
 
@@ -386,5 +381,3 @@ class HaqComponent extends haquery.base.HaqComponent
 		return haquery.macro.HaqComponentTools.shared(ethis);
 	}
 }
-
-#end

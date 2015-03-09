@@ -1,7 +1,5 @@
 package haquery.client;
 
-#if client
-
 import haquery.client.HaqComponent;
 import haquery.client.HaqTemplate;
 import haquery.common.HaqDefines;
@@ -52,5 +50,3 @@ class HaqTemplateManager
 		return r;
 	}
 }
-
-#end

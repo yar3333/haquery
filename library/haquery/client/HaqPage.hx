@@ -1,7 +1,5 @@
 package haquery.client;
 
-#if client
-
 import js.Browser;
 import haquery.client.HaqComponent;
 import haquery.client.HaqCookie;
@@ -40,5 +38,3 @@ class HaqPage extends HaqComponent
         untyped __js__("window.location.reload(true)");
 	}
 }
-
-#end

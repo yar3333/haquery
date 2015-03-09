@@ -1,7 +1,5 @@
 package haquery.server;
 
-#if server
-
 import stdlib.Std;
 import stdlib.Exception;
 import stdlib.FileSystem;
@@ -137,5 +135,3 @@ class HaqConfig
 		throw new Exception("HAQUERY ERROR: Bad config file ('" + path + "') record ('" + node.toString() + "').");
 	}
 }
-
-#end

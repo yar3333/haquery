@@ -1,7 +1,5 @@
 package haquery.server;
 
-#if server
-
 import stdlib.Regex;
 using stdlib.StringTools;
 
@@ -80,5 +78,3 @@ class HaqRouter
 		}
 	}
 }
-
-#end

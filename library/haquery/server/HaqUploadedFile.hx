@@ -1,7 +1,5 @@
 package haquery.server;
 
-#if server
-
 import haquery.common.HaqUploadError;
 
 class HaqUploadedFile
@@ -19,5 +17,3 @@ class HaqUploadedFile
         this.error = error;
     }
 }
-
-#end

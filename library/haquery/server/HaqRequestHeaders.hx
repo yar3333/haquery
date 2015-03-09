@@ -1,13 +1,5 @@
 package haquery.server;
 
-#if server
-
-#if php
-import php.Web;
-#elseif neko
-import neko.Web;
-#end
-
 class HaqRequestHeaders
 {
     public function new() {}
@@ -17,5 +9,3 @@ class HaqRequestHeaders
 		return Web.getClientHeader(name);
     }
 }
-
-#end

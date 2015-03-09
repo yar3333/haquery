@@ -1,7 +1,5 @@
 package haquery.server;
 
-#if server
-
 import haquery.common.HaqComponentTools;
 import haquery.common.HaqStorage;
 import stdlib.Exception;
@@ -118,5 +116,3 @@ class HaqTemplateManager
 		return r;
     }
 }
-
-#end
