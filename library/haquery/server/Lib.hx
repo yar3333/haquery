@@ -138,8 +138,8 @@ class Lib
 			var profilerFolder = HaqDefines.folders.temp + "/profiler";
 			var profilerBaseFileName = profilerFolder + "/" + DateTools.format(Date.now(), "%Y-%m-%d-%H-%M-%S");
 			FileSystem.createDirectory(profilerFolder);
-			File.saveContent(profilerBaseFileName + ".summary.txt", pageName + "\n" + Profiler.getGistogram(Profiler.getSummaryResults(), request.config.profilingResultsWidth));
-			File.saveContent(profilerBaseFileName + ".nested.txt", pageName + "\n" + Profiler.getGistogram(Profiler.getNestedResults(), request.config.profilingResultsWidth));
+			File.saveContent(profilerBaseFileName + ".summary.txt", pageName + "\n" + Profiler.getSummaryGistogram(request.config.profilingResultsWidth));
+			File.saveContent(profilerBaseFileName + ".nested.txt", pageName + "\n" + Profiler.getNestedGistogram(request.config.profilingResultsWidth));
 			if (request.config.profilingLevel > 1)
 			{
 				File.saveContent(profilerBaseFileName + ".callstack.json", Json.stringify( { name:pageName, stack:Profiler.getCallStack() } ));
