@@ -414,6 +414,11 @@ class HaqQuery
         return css("display", "none");
     }
     
+    public function toggle(b:Bool) : HaqQuery
+    {
+        return css("display", b ? "" : "none");
+    }
+    
     /**
      * Call specified function for each selected element.
      */
