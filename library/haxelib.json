@@ -6,6 +6,6 @@
   "contributors": ["yar3333"],
   "releasenote": "Remove \"#if server/client\" guards due to completion problem with classes not in models package.",
   "version": "6.4.2",
-  "url": "http://haquery.com/",
+  "url": "http://haquery.haqteam.com/",
   "dependencies": {"stdlib":"","HtmlParser":"","jquery":""}
 }
