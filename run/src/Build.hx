@@ -56,7 +56,7 @@ class Build
 		
 		generateComponentsCssFile(manager);
 		
-		var publisher = new Publisher(project.platform);
+		var publisher = new Publisher(project.platform, project.directives);
 		
 		Log.start("Publish to '" + project.outputPath + "'");
 			for (path in project.allClassPaths)
