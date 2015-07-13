@@ -107,7 +107,7 @@ class HaqComponent extends haquery.base.HaqComponent
 			if (paramNames.exists("get_" + fieldNameLC))
 			{
 				fieldName = fieldNames.get(fieldNameLC);
-				rawValue = Reflect.callMethod(params, paramNames.get("get_" + fieldNameLC), []);
+				rawValue = Reflect.callMethod(params, Reflect.field(params, paramNames.get("get_" + fieldNameLC)), []);
 			}
 			else
 			if (paramNames.exists(fieldNameLC))

@@ -40,7 +40,7 @@ class Server extends Base
         if (parent != null && parent.parent != null)
         {
             var handler = elemID + '_' + eventName;
-            return Reflect.callMethod(parent.parent, handler, [ this, null ]);
+            return Reflect.callMethod(parent.parent, Reflect.field(parent.parent, handler), [ this, null ]);
         }
 		return null;
     }
