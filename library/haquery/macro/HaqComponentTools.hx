@@ -98,9 +98,11 @@ class HaqComponentTools
 	{
 		setComponentClassEventHandlersArgTypes_level++;
 		
+		#if (haxe_ver < 3.2) // due to the https://github.com/HaxeFoundation/haxe/issues/4404
+		
 		if (setComponentClassEventHandlersArgTypes_level < setComponentClassEventHandlersArgTypes_levelLimit)
 		{
-			if (handlers != null && handlers.length > 0)
+			if (handlers.length > 0)
 			{
 				Context.getModule(componentClass.pack.join(".") + ".Template" + componentClass.name);
 				var templateClass = Context.getType(componentClass.pack.join(".") + ".Template" + componentClass.name).getClass();
@@ -152,14 +154,25 @@ class HaqComponentTools
 		}
 		else
 		{
-			for (handler in handlers)
-			{
-				if (handler.args[0].type == null) handler.args[0].type = ComplexType.TPath( { sub:null, params:[], pack:[ "haquery", (componentClass.name == "Server" ? "server" : "client") ], name:"HaqComponent" } );
-				if (handler.args[1].type == null) handler.args[1].type = Context.getType("Dynamic").toComplexType();
-			}
+			setComponentClassEventHandlersArgTypesSimple(componentClass, handlers);
 		}
 		
+		#else
+		
+		setComponentClassEventHandlersArgTypesSimple(componentClass, handlers);
+		
+		#end
+		
 		setComponentClassEventHandlersArgTypes_level--;
+	}
+	
+	static function setComponentClassEventHandlersArgTypesSimple(componentClass:ClassType, handlers:Array<EventHandler>)
+	{
+		for (handler in handlers)
+		{
+			if (handler.args[0].type == null) handler.args[0].type = ComplexType.TPath({ sub:null, params:[], pack:[ "haquery", (componentClass.name == "Server" ? "server" : "client") ], name:"HaqComponent" });
+			if (handler.args[1].type == null) handler.args[1].type = Context.getType("Dynamic").toComplexType();
+		}
 	}
 	
 	static function getComponentClassHandlers(fields:Array<Field>) : Array<EventHandler>
