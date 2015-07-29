@@ -18,6 +18,7 @@
 				<exclude name="library.zip" />
 				<exclude name="make.*" />
 			</fileset>
+			<fileset file="..\README.md" />
 		</zip>
 	</target>
 
