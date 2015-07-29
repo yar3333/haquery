@@ -4,8 +4,8 @@
   "tags": ["js","php","neko","web","framework"],
   "description": "Web framework with php/neko and js target.",
   "contributors": ["yar3333"],
-  "releasenote": "Remove \"#if server/client\" guards due to completion problem with classes not in models package.",
-  "version": "6.4.2",
+  "releasenote": "Upgrade profiler support. Linux64 fix. Server jQuery emulation: toggle(). Publish config: if / if-all / if-any attributes support. Haxe 3.2.0 support.",
+  "version": "6.5.0",
   "url": "http://haquery.haqteam.com/",
   "dependencies": {"stdlib":"","HtmlParser":"","jquery":""}
 }
