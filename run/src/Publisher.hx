@@ -132,7 +132,7 @@ class Publisher
 		}
 		else
 		{
-			if (defines.indexOf(define) < 0) return true;
+			if (defines.indexOf(define.substring(1)) < 0) return true;
 		}
 		return false;
 	}
