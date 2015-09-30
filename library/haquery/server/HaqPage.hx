@@ -297,7 +297,7 @@ class HaqPage extends HaqComponent
 		
 		if (url.startsWith("<")) return url;
 		
-		if (!url.startsWith("http://") && !url.startsWith("/"))
+		if (url.indexOf("://") < 0 && !url.startsWith("/"))
 		{
 			if (FileSystem.exists(url))
 			{
@@ -320,7 +320,7 @@ class HaqPage extends HaqComponent
 		
 		if (url.startsWith("<")) return url;
 		
-		if (!url.startsWith("http://") && !url.startsWith("/"))
+		if (url.indexOf("://") < 0 && !url.startsWith("/"))
 		{
 			if (FileSystem.exists(url))
 			{

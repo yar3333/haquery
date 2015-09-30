@@ -194,7 +194,7 @@ class HaqComponentTools
 			url = url.substr(2);
 		}
 		
-		if (fullTag != null && !url.startsWith("http://") && !url.startsWith("/") && !url.startsWith("<"))
+		if (fullTag != null && url.indexOf("://") < 0 && !url.startsWith("/") && !url.startsWith("<"))
 		{
 			var template = haquery.server.Lib.manager.get(fullTag);
 			Debug.assert(template != null, "Template '" + fullTag + "' not found.");
