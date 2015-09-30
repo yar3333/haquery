@@ -51,7 +51,7 @@ class Client extends Base
 			event_complete.call({ uploads:Unserializer.run(text) });
         });
         
-        cast(template().form[0]).submit();
+        (cast template().form[0]).submit();
         
         return true;
     }
