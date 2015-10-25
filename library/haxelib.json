@@ -4,8 +4,8 @@
   "tags": ["js","php","neko","web","framework"],
   "description": "Web framework with php/neko and js target.",
   "contributors": ["yar3333"],
-  "releasenote": "HTTPS support. fileupload haxe 3.2 bugfix.",
-  "version": "6.5.3",
+  "releasenote": "Upgrade due hant changes (ndllfinder).",
+  "version": "6.6.0",
   "url": "http://haquery.haqteam.com/",
   "dependencies": {"stdlib":"","HtmlParser":"","jquery":""}
 }
