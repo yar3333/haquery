@@ -199,7 +199,7 @@ class HaqQuery
         for (node in nodes)
         {
             if (isParse) node.innerHTML = html;
-            else         node.setInnerText(html);
+            else         node.fastSetInnerHTML(html);
         }
         
         if (page.isPostback)
@@ -437,7 +437,7 @@ class HaqQuery
 		{
 			if (val == true) val = "true";
 			else if (val == false) val = "false";
-			return attr("data-" + name, val);
+			return attr("data-" + name, Std.string(val));
 		}
 		else
 		{
