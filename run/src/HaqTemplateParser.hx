@@ -314,7 +314,7 @@ class HaqTemplateParser
 			
 			if (node.name == "style")
 			{
-				node.setInnerText(reSupportUrl.map(node.innerHTML, function(re)
+				node.fastSetInnerHTML(reSupportUrl.map(node.innerHTML, function(re)
 				{
 					var f = getSupportFilePath(re.matched(1));
 					return f != null ? staticUrlPrefix + "/" + f : re.matched(0);
