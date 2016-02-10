@@ -66,10 +66,12 @@ class HaqTemplateManager
 		var clas = Type.resolveClass(template.serverClassName);
 		Debug.assert(clas != null, "Server class '" + template.serverClassName + "' for component '" + template.fullTag + "' not found.");
 		
+		var instance = Type.createInstance(clas, []);
+		
 		var component : HaqComponent = null;
 		try
 		{
-			component = cast(Type.createInstance(clas, []), HaqComponent);
+			component = cast(instance, HaqComponent);
 		}
 		catch (e:Dynamic)
 		{
