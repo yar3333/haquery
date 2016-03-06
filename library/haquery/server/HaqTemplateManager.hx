@@ -22,6 +22,11 @@ class HaqTemplateManager
 		return new HaqTemplate(fullTag);
 	}
 	
+	public function exist(fullTag:String) : Bool
+	{
+		return try get(fullTag) != null catch (e:HaqTemplateNotFoundException) false;
+	}
+	
 	public function createPage(pageFullTag:String, attr:Dynamic) : HaqPage
 	{
         var template = get(pageFullTag);

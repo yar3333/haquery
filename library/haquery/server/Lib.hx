@@ -62,7 +62,7 @@ class Lib
 			}
 			else
 			{
-				var route = new HaqRouter(HaqDefines.folders.pages, manager).getRoute(uri, config.urlRewriteRegex);
+				var route = new Router(HaqDefines.folders.pages, manager, config).getRoute(uri);
 				
 				haxe.Log.trace = HaqTrace.log.bind(_, getClientIP(), config.filterTracesByIP, null, _);
 				
