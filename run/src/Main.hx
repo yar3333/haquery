@@ -5,6 +5,7 @@ import hant.Path;
 import hant.Process;
 import haquery.common.HaqTemplateExceptions;
 import haquery.server.HaqConfig;
+import htmlparser.HtmlParserException;
 import neko.Lib;
 using StringTools;
 
@@ -66,6 +67,11 @@ class Main
 				catch (e:AmbiguousProjectFilesException)
 				{
 					Log.echo("ERROR: " + e.message);
+					fail();
+				}
+				catch (e:HtmlParserException)
+				{
+					Log.echo(e.message);
 					fail();
 				}
 			}

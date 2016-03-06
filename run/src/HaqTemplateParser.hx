@@ -6,6 +6,7 @@ import haquery.server.HaqCssGlobalizer;
 import htmlparser.HtmlDocument;
 import htmlparser.HtmlNodeElement;
 import htmlparser.HtmlNodeText;
+import htmlparser.HtmlParserException;
 import stdlib.Exception;
 import stdlib.FileSystem;
 import sys.io.File;
@@ -14,7 +15,12 @@ using stdlib.StringTools;
 class HaqTemplateParser
 {
 	static var MIN_DATE = new Date(2000, 0, 0, 0, 0, 0);
-	static var reSupportUrl = new EReg("~/([-_/\\.a-zA-Z0-9]*)", "g");
+	static var reSupportUrl(get, null) : EReg;
+	static function get_reSupportUrl()
+	{
+		if (reSupportUrl == null) reSupportUrl = new EReg("~/([-_/\\.a-zA-Z0-9]*)", "g");
+		return reSupportUrl;
+	}
 	
 	static var configsCache = new Map<String, HtmlDocument>();
 	
@@ -278,7 +284,15 @@ class HaqTemplateParser
 	{
 		var pathHtml = getFullPath(fullTag.replace(".", "/") + "/template.html");
 		var html = pathHtml != null ? File.getContent(pathHtml) : "";
-		var doc = new HtmlDocument(applySubstitutes(html));
+		
+		var doc : HtmlDocument;
+		try doc = new HtmlDocument(applySubstitutes(html))
+		catch (e:HtmlParserException)
+		{
+			e.message = FileSystem.fullPath(pathHtml) + ":" + e.line + ": characters " + e.column + "-" + (e.column + e.length) + " : " + e.message;
+			throw e;
+		}
+		
 		setDocComponentsParent(doc);
 		
 		var pathCss = getFullPath(fullTag.replace(".", "/") + "/template.css");
