@@ -1,7 +1,7 @@
 package models;
 
 import haxe.unit.TestCase;
-import stdlib.Profiler;
+//import stdlib.Profiler;
 import sys.FileSystem;
 import haquery.server.HaqComponent;
 import haquery.server.HaqTemplateManager;
@@ -87,7 +87,7 @@ class HaqTemplatesTest extends TestCase
 		//trace("RESULT = " + page.render());
 	}*/
 	
-	public function testProfiler()
+	/*public function testProfiler()
 	{
 		Lib.profiler = new Profiler(10);
 		Lib.manager = new HaqTemplateManager();
@@ -102,5 +102,5 @@ class HaqTemplatesTest extends TestCase
 		page.generateResponseOnRender();
 		
 		Lib.profiler.traceResults(100);
-	}
+	}*/
 }
