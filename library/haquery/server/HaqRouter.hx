@@ -1,44 +1,48 @@
 package haquery.server;
 
-import stdlib.Regex;
 using stdlib.StringTools;
 
-typedef HaqRoute = 
+typedef HaqRoute =
 {
+	/**
+	 * Package with Server/Client classes. For example: "pages.login".
+	 */
 	var fullTag : String;
+	
+	/**
+	 * Path tail to store into `Page.pageID` variable.
+	 */
 	var pageID : String;
 }
 
 class HaqRouter
 {
-	var pagesFolderPath : String;
+	var pagesDirectory : String;
 	var manager : HaqTemplateManager;
+	var config : HaqConfig;
 	
-	public function new(pagesFolderPath:String, manager:HaqTemplateManager)
+	public function new(pagesDirectory:String, manager:HaqTemplateManager, config:HaqConfig)
 	{
-		this.pagesFolderPath = pagesFolderPath;
+		this.pagesDirectory = pagesDirectory;
 		this.manager = manager;
+		this.config = config;
 	}
 	
-	public function getRoute(url:String, urlRewriteRegex:Array<Regex>) : HaqRoute
+	/**
+	 * You can override this method in your custom Route class.
+	 */
+	public function getRoute(url:String) : HaqRoute
 	{
 		if (url == null) url = "";
 		
 		url = url.trim("/");
-		
-		var orig = url;
-		for (re in urlRewriteRegex)
-		{
-			url = re.replace(url);
-			if (url != orig) break;
-		}
 		
 		if (url.startsWith("index.") || url == "index" || url.endsWith("/index") || url.indexOf(".") >= 0)
 		{
 			throw new HaqPageNotFoundException(url);
 		}
 		
-		var path = pagesFolderPath + "/" + (url != "" ? url : "index");
+		var path = pagesDirectory + "/" + (url != "" ? url : "index");
 		
 		return getRouteInner(url, path.replace("/", "."), null);
 	}
@@ -46,12 +50,12 @@ class HaqRouter
 	function getRouteInner(url:String, fullTag:String, pageID:String) : HaqRoute
 	{
 		var fullTagIndex = fullTag + ".index";
-		if (isPageExist(fullTagIndex))
+		if (manager.exist(fullTagIndex))
 		{
 			return { fullTag:fullTagIndex, pageID:pageID };
 		}
 		
-		if (isPageExist(fullTag))
+		if (manager.exist(fullTag))
 		{
 			return { fullTag:fullTag, pageID:pageID };
 		}
@@ -63,18 +67,5 @@ class HaqRouter
 		}
 		
 		throw new HaqPageNotFoundException(url);
-	}
-	
-    function isPageExist(fullTag:String) : Bool
-	{
-		try
-		{
-			var template = manager.get(fullTag);
-			return template != null;
-		}
-		catch (e:haquery.common.HaqTemplateExceptions.HaqTemplateNotFoundException)
-		{
-			return false;
-		}
 	}
 }
