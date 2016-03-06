@@ -4,8 +4,8 @@
   "tags": ["js","php","neko","web","framework"],
   "description": "Web framework with php/neko and js target.",
   "contributors": ["yar3333"],
-  "releasenote": "Minor.",
-  "version": "6.6.2",
+  "releasenote": "Remove `urlRewriteRegex` for routing support (now you can override `Router` class for custom routing). Improve HTML parsing errors.",
+  "version": "6.7.0",
   "url": "http://haquery.haqteam.com/",
   "dependencies": {"stdlib":"","HtmlParser":"","jquery":""}
 }
