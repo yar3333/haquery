@@ -33,10 +33,6 @@ class HaqRouter
 	 */
 	public function getRoute(url:String) : HaqRoute
 	{
-		if (url == null) url = "";
-		
-		url = url.trim("/");
-		
 		if (url.startsWith("index.") || url == "index" || url.endsWith("/index") || url.indexOf(".") >= 0)
 		{
 			throw new HaqPageNotFoundException(url);

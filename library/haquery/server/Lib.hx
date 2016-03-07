@@ -62,7 +62,7 @@ class Lib
 			}
 			else
 			{
-				var route = new Router(HaqDefines.folders.pages, manager, config).getRoute(uri);
+				var route = new Router(HaqDefines.folders.pages, manager, config).getRoute(uri.trim("/"));
 				
 				haxe.Log.trace = HaqTrace.log.bind(_, getClientIP(), config.filterTracesByIP, null, _);
 				
@@ -72,8 +72,8 @@ class Lib
 				if (response != null)
 				{
 					Web.setReturnCode(response.statusCode);
-					response.responseHeaders.send();
 					response.cookie.send();
+					response.responseHeaders.send();
 					
 					Sys.print(
 						!request.isPostback
@@ -112,11 +112,12 @@ class Lib
 				
 				response = !request.isPostback
 						 ? page.generateResponseOnRender()
-						 : page.generateResponseOnPostback(
-								  request.params.get('HAQUERY_COMPONENT')
-								, request.params.get('HAQUERY_METHOD')
-								, Unserializer.run(request.params.get('HAQUERY_PARAMS'))
-								, "shared"
+						 : page.generateResponseOnPostback
+						   (
+								request.params.get('HAQUERY_COMPONENT'),
+								request.params.get('HAQUERY_METHOD'),
+								Unserializer.run(request.params.get('HAQUERY_PARAMS')),
+								"shared"
 						   );
 			}
 			catch (e:Dynamic)
