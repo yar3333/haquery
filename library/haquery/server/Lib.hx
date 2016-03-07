@@ -47,8 +47,10 @@ class Lib
 		
 		uploads = new HaqUploads(HaqDefines.folders.temp + "/uploads", config.maxPostSize);
 		
+		#if neko
 		try
         {
+		#end
 			haxe.Log.trace = HaqTrace.log.bind(_, getClientIP(), config.filterTracesByIP, null, _);
 			
 			if (manager == null)
@@ -82,12 +84,14 @@ class Lib
 					);
 				}
 			}
+		#if neko
         }
 		catch (e:Dynamic)
         {
 			trace("EXCEPTION: " + Exception.string(e));
 			Exception.rethrow(e);
         }
+		#end
 	}
 	
 	static function getResponse(request:HaqRequest, route:HaqRoute) : HaqResponse
@@ -104,8 +108,10 @@ class Lib
 			
 			haxe.Log.trace = HaqTrace.log.bind(_, page.clientIP, page.config.filterTracesByIP, page, _);
 			
+			#if neko
 			try
 			{
+			#end
 				page.callMethodForEach("preInit", true);
 				
 				page.callMethodForEach("init", false);
@@ -119,12 +125,14 @@ class Lib
 								Unserializer.run(request.params.get('HAQUERY_PARAMS')),
 								"shared"
 						   );
+			#if neko
 			}
 			catch (e:Dynamic)
 			{
 				try page.dispose() catch (_:Dynamic) {}
 				Exception.rethrow(e);
 			}
+			#end
 			
 			page.dispose();
 		#if profiler
