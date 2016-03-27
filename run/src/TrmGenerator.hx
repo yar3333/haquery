@@ -142,7 +142,7 @@ class TrmGenerator
 			{
 				var componentID = child.getAttribute("id").trim();
 				
-				if (~/^[_a-zA-Z][_a-zA-Z0-9]+$/.match(componentID))
+				if (~/^[_a-zA-Z][_a-zA-Z0-9]*$/.match(componentID))
 				{
 					var type = queryClassName;
 					var body = "return component.q('#" + componentID + "');";
