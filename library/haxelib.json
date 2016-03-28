@@ -4,8 +4,8 @@
   "tags": ["js","php","neko","web","framework"],
   "description": "Web framework with php/neko and js target.",
   "contributors": ["yar3333"],
-  "releasenote": "php: avoid rethrow to have a stack trace on exception.",
-  "version": "6.7.1",
+  "releasenote": "One-char ID bugfix.",
+  "version": "6.7.2",
   "url": "http://haquery.haqteam.com/",
   "dependencies": {"stdlib":"","HtmlParser":"","jquery":""}
 }
