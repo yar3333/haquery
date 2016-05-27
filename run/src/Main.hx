@@ -55,6 +55,11 @@ class Main
 					Log.echo("ERROR: component not found [ " + e.toString() + " ].");
 					fail();
 				}
+				catch (e:HaqTemplateCriticalException)
+				{
+					Log.echo("ERROR: " + e.toString());
+					fail();
+				}
 				catch (e:HaqTemplateRecursiveExtendsException)
 				{
 					Log.echo("ERROR: recursive extend detected [ " + e.toString() + " ].");

@@ -207,24 +207,24 @@ class HaqTemplateManager
 				
 				if (node.getAttribute("__parent") == null)
 				{
-					throw new HaqTemplateNotFoundCriticalException("__parent not defined for tag 'haq:" + tag + "' in '" + parent.fullTag + "'.");
+					throw new HaqTemplateCriticalException("__parent not defined for tag 'haq:" + tag + "' in '" + parent.fullTag + "'.");
 				}
 				
 				var baseTemplate = resolveComponentTag(get(node.getAttribute("__parent")), tag);
 				if (baseTemplate == null)
 				{
-					throw new HaqTemplateNotFoundCriticalException("Component '" + tag + "' used in '" + node.getAttribute("__parent") + "' can not be resolved.");
+					throw new HaqTemplateNotFoundCriticalException(tag, node.getAttribute("__parent"));
 				}
 				
 				var realTemplate = resolveComponentTag(parent, tag);
 				if (realTemplate == null)
 				{
-					throw new HaqTemplateNotFoundCriticalException("Component '" + tag + "' used in '" + parent.fullTag + "' can not be resolved.");
+					throw new HaqTemplateNotFoundCriticalException(tag, parent.fullTag);
 				}
 				
 				if (!isTemplateExtends(realTemplate, baseTemplate))
 				{
-					throw new HaqTemplateNotFoundCriticalException("Component '" + tag + "' (resolved as '" + realTemplate.fullTag + "') used in '" + parent.fullTag + "' must be extended from '" + baseTemplate.fullTag + "'.");
+					throw new HaqTemplateCriticalException("Component '" + tag + "' (resolved as '" + realTemplate.fullTag + "') used in '" + parent.fullTag + "' must be extended from '" + baseTemplate.fullTag + "'.");
 				}
 				
 				node.removeAttribute("__parent");
