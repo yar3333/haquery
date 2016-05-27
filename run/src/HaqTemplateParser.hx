@@ -65,7 +65,7 @@ class HaqTemplateParser
 		}
 		catch (e:HaqTemplateNotFoundException)
 		{
-			throw new HaqTemplateNotFoundCriticalException(e.toString());
+			throw new HaqTemplateCriticalException("Base component [ " + config.extend + " ] which extends [ " + fullTag + " ] is not found.");
 		}
 	}
 	
@@ -265,7 +265,7 @@ class HaqTemplateParser
 			{
 				if (node.getAttribute("type") == "text/less")
 				{
-					throw new Exception("Less compiler is no more supported.");
+					throw new HaqTemplateCriticalException("Less compiler is no more supported in [ " + fullTag + " ].");
 				}
 				cssBlocks.push(cssGlobalizer.styles(node.innerHTML));
 				node.remove();
