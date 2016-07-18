@@ -34,7 +34,8 @@ class Lib
 		#if neko
 		Sys.setCwd(getCwd());
 		#end
-
+		
+		HaqTrace.logFilePathPrefix = Path.addTrailingSlash(getCwd());
 		haxe.Log.trace = HaqTrace.log.bind(_, getClientIP(), null, null, _);
 		
 		var config = HaqConfig.load("config.xml");

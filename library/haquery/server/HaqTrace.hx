@@ -9,6 +9,8 @@ using stdlib.StringTools;
 
 class HaqTrace 
 {
+	public static var logFilePathPrefix = "";
+	
 	public static function log(v:Dynamic, ?clientIP:String, ?filterTracesByIP:String, ?page:HaqPage, ?pos:PosInfos)
 	{
 		if (clientIP == null || filterTracesByIP == null || filterTracesByIP == "" || filterTracesByIP == clientIP)
@@ -74,7 +76,7 @@ class HaqTrace
             FileSystem.createDirectory(HaqDefines.folders.temp);
         }
         
-        var f = File.append(HaqDefines.folders.temp + "/haquery.log");
+        var f = File.append(logFilePathPrefix + HaqDefines.folders.temp + "/haquery.log");
         if (f != null)
         {
 			if (text != "")
