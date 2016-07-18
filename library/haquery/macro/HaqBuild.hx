@@ -95,7 +95,7 @@ class HaqBuild
 	
 	static function checkConstructorExist(clas:ClassType)
 	{
-		if (clas.constructor == null)
+		if (!clas.isExtern && clas.constructor == null)
 		{
 			Context.error("Please, add the constructor to the " + clas.pack.join(".") + "." + clas.name + " class due haxe bug #2117.\nInsert the next line into your code for workaround:\nfunction new() super();", clas.pos);
 		}
