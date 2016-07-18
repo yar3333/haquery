@@ -35,6 +35,9 @@ class HaqServerCallerAjax
 					{
 						callb(result);
 					}
+					
+				case _:
+					throw "HaqMessageListenerAnswer.CallSharedServerMethodAnswer is only possible (received " + message.getName() + ").";
 			}
 		});
 	}
