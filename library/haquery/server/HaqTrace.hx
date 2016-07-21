@@ -71,12 +71,14 @@ class HaqTrace
 	
 	static function writeToFile(text:String)
 	{
-		if (!FileSystem.exists(HaqDefines.folders.temp))
+		var tempFolder = logFilePathPrefix + HaqDefines.folders.temp;
+		
+		if (!FileSystem.exists(tempFolder))
         {
-            FileSystem.createDirectory(HaqDefines.folders.temp);
+            FileSystem.createDirectory(tempFolder);
         }
         
-        var f = File.append(logFilePathPrefix + HaqDefines.folders.temp + "/haquery.log");
+        var f = File.append(tempFolder + "/haquery.log");
         if (f != null)
         {
 			if (text != "")
