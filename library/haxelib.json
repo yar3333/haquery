@@ -4,8 +4,8 @@
   "tags": ["js","php","neko","web","framework"],
   "description": "Web framework with php/neko and js target.",
   "contributors": ["yar3333"],
-  "releasenote": "One-char ID bugfix.",
-  "version": "6.7.2",
+  "releasenote": "Improve compile-time error messages. Pin log file folder. Avoid \"Add constructor...\" error for extern classes.",
+  "version": "6.7.3",
   "url": "http://haquery.haqteam.com/",
   "dependencies": {"stdlib":"","HtmlParser":"","jquery":""}
 }
