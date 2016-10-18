@@ -45,24 +45,30 @@ class HaqEvent<EventArgs:Dynamic>
 			var obj = handlers[i].o;
 			var func = handlers[i].f;
             
-			try
-			{
-				var r = Reflect.callMethod(obj, Reflect.field(obj, func), [ component.parent, param ]);
-				#if !js
-					if (r == false) return false;
-				#else
-					if (untyped __js__('r === false')) return false;
-				#end
-				i--;
-			}
-			catch (e:String)
-			{
-				if (e == "Invalid call")
+			#if !js
+				
+				try
 				{
-					throw new Exception("Invalid call: " + Type.getClassName(Type.getClass(obj)) + "." + func + "(t, e).");
+					var r = Reflect.callMethod(obj, Reflect.field(obj, func), [ component.parent, param ]);
+					if (r == false) return false;
 				}
-				Exception.rethrow(e);
-			}
+				catch (e:String)
+				{
+					if (e == "Invalid call")
+					{
+						throw new Exception("Invalid call: " + Type.getClassName(Type.getClass(obj)) + "." + func + "(t, e).");
+					}
+					Exception.rethrow(e);
+				}
+				
+			#else
+				
+				var r = Reflect.callMethod(obj, Reflect.field(obj, func), [ component.parent, param ]);
+				if (untyped __js__('r === false')) return false;
+				
+			#end
+			
+			i--;
 		}
 		return true;
 	}
