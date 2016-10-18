@@ -56,7 +56,7 @@ class HaqPage extends HaqComponent
 	public var disableSystemHtmlInserts = false;
 	
 	/**
-	 * Disable inserting "<script src='jquery.js'>", "<script src='haquery.js'>" and "<link href='haquery.css'>" tags into your page's html.
+	 * Disable inserting "&lt;script src='jquery.js'>", "&lt;script src='haquery.js'>" and "&lt;link href='haquery.css'>" tags into your page's html.
 	 */
 	public var disableSystemScriptsAndStylesRegistering = false;
 	
