@@ -7,9 +7,11 @@ import htmlparser.HtmlNodeElement;
 
 class Server extends Base
 {
-	override public function construct(fullTag:String, parent:HaqComponent, id:String, doc:HtmlNodeElement, params:Map<String,Dynamic>, innerNode:HtmlNodeElement, isInnerComponent:Bool):Void 
+	override public function construct(fullTag:String, parent:HaqComponent, id:String, doc:HtmlNodeElement, _params:Dynamic, innerNode:HtmlNodeElement, isInnerComponent:Bool):Void 
 	{
-        var html : String;
+        var params = (cast _params : Map<String,Dynamic>);
+		
+		var html : String;
 		
 		#if profiler Profiler.begin("listitem.applyHtmlParams"); #end
 		html = Tools.applyHtmlParams(innerNode.innerHTML, params);
