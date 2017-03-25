@@ -97,7 +97,7 @@ class Build
 	
 	function buildClient()
     {
-		var clientPath = project.outputPath + "/haquery/client";
+		var clientPath = project.outputPath + "/haquery";
 		
 		Log.start("Build client");
         
@@ -274,7 +274,7 @@ class Build
 	{
 		Log.start("Generate style file");
 		
-		var dir = project.outputPath + "/haquery/client";
+		var dir = project.outputPath + "/haquery";
 		FileSystem.createDirectory(dir);
 		
 		var addedCssBlocks = [];

@@ -1,5 +1,5 @@
 <publish>
 	<file src=".htaccess--neko" dest=".htaccess" platform="neko" />
 	<file src=".htaccess--php" dest=".htaccess" platform="php" />
-	<file src="js/jquery-latest.min.js" dest="haquery/client/jquery.js" />
+	<file src="js/jquery-latest.min.js" dest="haquery/jquery.js" />
 </publish>
