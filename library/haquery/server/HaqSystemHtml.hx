@@ -12,7 +12,7 @@ class HaqSystemHtml
 		<style>
 {rawStyle}
 		</style>
-		<script src="{staticUrlPrefix}/haquery/client/jquery.js"></script>
+		<script src="{staticUrlPrefix}/haquery/jquery.js"></script>
 		<script>
 			function setCookie(c_name, value, exdays)
 			{

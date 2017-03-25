@@ -233,15 +233,15 @@ class HaqPage extends HaqComponent
 			var systemStyles = [];
 			if (!disableSystemScriptsAndStylesRegistering)
 			{
-				systemStyles.push("haquery/client/haquery.css");
+				systemStyles.push("haquery/haquery.css");
 			}
 			r = fillSystemHolder(r, "{HAQUERY_CSS}", systemStyles.concat(registeredStyles).map(function(path) return getStyleLink(path)));
 			
 			var systemScripts = [];
 			if (!disableSystemScriptsAndStylesRegistering)
 			{
-				systemScripts.push("haquery/client/jquery.js");
-				systemScripts.push("haquery/client/haquery.js");
+				systemScripts.push("haquery/jquery.js");
+				systemScripts.push("haquery/haquery.js");
 			}
 			r = fillSystemHolder(r, "{HAQUERY_JS}", systemScripts.concat(registeredScripts).map(function(path) return getScriptLink(path)));
 			
