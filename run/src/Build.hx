@@ -30,7 +30,7 @@ class Build
 		Log.start("Collect pages and components data");
 		var manager = new HaqTemplateManager
 		(
-			project.allClassPaths,
+			project.getAllClassPaths(),
 			basePage,
 			staticUrlPrefix,
 			parseSubstitutes(htmlSubstitutes),
@@ -59,9 +59,10 @@ class Build
 		var publisher = new Publisher(project.platform, project.directives);
 		
 		Log.start("Publish to '" + project.outputPath + "'");
-			for (path in project.allClassPaths)
+			var allClassPaths = project.getAllClassPaths();
+			for (path in allClassPaths)
 			{
-				publisher.prepare(path, manager.fullTags, project.allClassPaths.concat([ Haxelib.getPath("jquery") ]));
+				publisher.prepare(path, manager.fullTags, allClassPaths.concat([ Haxelib.getPath("jquery") ]));
 			}
 			publisher.publish(project.outputPath);
 		Log.finishSuccess();
