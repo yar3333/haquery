@@ -4,8 +4,8 @@
   "tags": ["js","php","neko","web","framework"],
   "description": "Web framework with php/neko and js target.",
   "contributors": ["yar3333"],
-  "releasenote": "Minors.",
-  "version": "6.7.4",
+  "releasenote": "Add Haxe 3.4.0 and Apache 2.4 support.<br>\nMove \"out_dir/haquery/client\" to \"out_dir/haquery\".",
+  "version": "6.8.0",
   "url": "http://haquery.haqteam.com/",
   "dependencies": {"stdlib":"","HtmlParser":"","jquery":""}
 }
