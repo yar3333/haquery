@@ -121,8 +121,8 @@ class HaqComponent extends haquery.base.HaqComponent
 				var v : Dynamic;
 				switch (Type.typeof(Reflect.field(this, fieldName)))
 				{
-					case ValueType.TInt:    v = Std.is(rawValue, Int) ? rawValue : Std.parseInt(rawValue);
-					case ValueType.TFloat:  v = Std.is(rawValue, Float) ? rawValue : Std.parseFloat(rawValue);
+					case ValueType.TInt:    v = Std.isOfType(rawValue, Int) ? rawValue : Std.parseInt(rawValue);
+					case ValueType.TFloat:  v = Std.isOfType(rawValue, Float) ? rawValue : Std.parseFloat(rawValue);
 					case ValueType.TBool:   v = Std.bool(rawValue);
 					default:				v = rawValue;
 				}
@@ -273,13 +273,13 @@ class HaqComponent extends haquery.base.HaqComponent
 			return new HaqQuery(page, prefixID, cssGlobalizer, "", [ query ]);
 		}
 		
-		if (Std.is(query, Array))
+		if (Std.isOfType(query, Array))
 		{
 			Debug.assert(!page.isPostback, "Calling of the HaqComponent.q() with Array parameter do not possible on the postback.");
 			return new HaqQuery(page, prefixID, cssGlobalizer, "", query);
 		}
         
-		if (Std.is(query, String))
+		if (Std.isOfType(query, String))
 		{
 			
 			var nodes = doc.find(cssGlobalizer.selector(query));

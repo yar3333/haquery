@@ -39,7 +39,7 @@ class HaqTrace
 	
 	static function object2string(v:Dynamic, pos:PosInfos) : String
 	{
-        if (Std.is(v, String))
+        if (Std.isOfType(v, String))
 		{
 			var s : String = cast v;
 			if (!s.startsWith('EXCEPTION:') && !s.startsWith('HAQUERY'))

@@ -1,0 +1,6 @@
+--neko bin\index.n
+--define server
+--define client
+--library stdlib
+--library HtmlParser
+--class-path library

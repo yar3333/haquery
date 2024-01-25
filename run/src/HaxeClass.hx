@@ -59,7 +59,7 @@ class HaxeClass
 		var s = "\n\t"
 		      + (isPrivate ? "" : "public ")
 			  + (isStatic ? "static " : "")
-			  + "var " + v.haxeName + "(get_" + v.haxeName + ", null)" + " : " + v.haxeType
+			  + "var " + v.haxeName + "(get, null)" + " : " + v.haxeType
 			  + ";\n";
 		
 		s += (isInline ? "\tinline " : "\t")
